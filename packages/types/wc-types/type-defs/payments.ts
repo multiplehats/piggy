@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { ReactNode } from 'react';
-import { ApiErrorResponse } from '../type-defs';
+import type { ApiErrorResponse } from '../type-defs';
 /**
  * Internal dependencies
  */

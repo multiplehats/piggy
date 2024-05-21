@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Countries } from '../../countries';
+import type { Countries } from '../../countries';
 import type { SymbolPosition } from '../../wc-types';
 import * as adminFields from './adminTypes';
 
