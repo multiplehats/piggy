@@ -70,7 +70,7 @@ class Bootstrap {
 				function() {
 					$this->init();
 					/**
-					 * Fires after the PIGGY plugin has loaded.
+					 * Fires after the Piggy plugin has loaded.
 					 *
 					 * This hook is intended to be used as a safe event hook for when the plugin has been loaded, and all
 					 * dependency requirements have been met.
@@ -88,7 +88,7 @@ class Bootstrap {
 	 */
 	protected function init() {
 		/**
-		 * Action triggered before PIGGY initialization begins.
+		 * Action triggered before Piggy initialization begins.
 		 *
 		 * @since 1.0.0
 		 */
@@ -119,7 +119,7 @@ class Bootstrap {
 		$this->container->get( StoreApiExtensionApi::class );
 
 		/**
-		* Action triggered after PIGGY initialization finishes.
+		* Action triggered after Piggy initialization finishes.
 		*
 		* @since 1.0.0
 		*/
@@ -153,7 +153,7 @@ class Bootstrap {
 								<p>
 								<?php
 									/* translators: %s: Required WooCommerce version */
-									printf( esc_html__( 'The PIGGY plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce.', 'piggy' ), esc_html( $plugin_data['RequiredWCVersion'] ) );
+									printf( esc_html__( 'The Piggy plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce.', 'piggy' ), esc_html( $plugin_data['RequiredWCVersion'] ) );
 								?>
 								</p>
 							</div>
@@ -213,7 +213,7 @@ class Bootstrap {
 				echo '<div class="error"><p>';
 				printf(
 					/* translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command. */
-					esc_html__( 'PIGGY requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes.', 'piggy' ),
+					esc_html__( 'Piggy requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes.', 'piggy' ),
 					'<code>pnpm install</code>',
 					'<code>pnpm run build</code>',
 					'<code>pnpm start</code>'

@@ -1,4 +1,4 @@
-# PIGGY Monorepo
+# Piggy Monorepo
 
 ### Development
 

@@ -3,8 +3,16 @@ import OnboardingConnectAccount from '$lib/components/onboarding/onboarding-conn
 import type { SvelteComponent } from 'svelte';
 import { derived, writable } from 'svelte/store';
 
+export const OnboardingStepId = {
+	welcome: 'welcome',
+	connectAccount: 'connect-account',
+	generalSettings: 'general-settings'
+} as const;
+
+export type OnboardingStepId = typeof OnboardingStepId[keyof typeof OnboardingStepId];
+
 export interface Step {
-	id: string;
+	id: OnboardingStepId;
 	title: string;
 	href: string;
 	status: 'completed' | 'current' | 'upcoming';
@@ -41,10 +49,14 @@ export const currentOnboardingStep = derived(onboardingSteps, ($onboardingSteps)
 	return $onboardingSteps.find((step) => step.status === 'current');
 });
 
-export const navigateToOnboardingStep = (stepId: string) => {
+export const navigateToOnboardingStep = (stepId: OnboardingStepId) => {
+	let updatingStep: Step | undefined;
+
 	onboardingSteps.update((steps) => {
 		return steps.map((step) => {
 			if (step.id === stepId) {
+				updatingStep =  step
+
 				return {
 					...step,
 					status: 'current'
@@ -59,4 +71,14 @@ export const navigateToOnboardingStep = (stepId: string) => {
 			return step;
 		});
 	});
+
+	if(!updatingStep) {
+		throw new Error(`Step with id ${stepId} not found`);
+	}
+
+	const { href } = updatingStep;
+
+	return {
+		href
+	}
 };

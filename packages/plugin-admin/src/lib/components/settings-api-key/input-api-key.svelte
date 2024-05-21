@@ -2,13 +2,9 @@
 	import { __ } from '@wordpress/i18n';
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import type { FormInputEvent } from '$lib/components/ui/input';
-	import { saveSettings, settingsState } from '$lib/stores/settings';
+	import { settingsState } from '$lib/stores/settings';
+	import ComboboxPiggyShop from '../combobox-piggy-shop.svelte';
 
-	const onSaved = async () => {
-		await saveSettings();
-	};
-
-	// Create a function that handles the on change, to only update the state when the first 6 characters are different than the current value.
 	const handleOnChange = (e: FormInputEvent<Event>) => {
 		e.preventDefault();
 
@@ -30,3 +26,5 @@
 	value={$settingsState.api_key.value}
 	on:change={handleOnChange}
 />
+
+<ComboboxPiggyShop />

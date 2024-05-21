@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Plugin Name: PIGGY - Loyalty & Marketing
+ * Plugin Name: Piggy - Loyalty & Marketing
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
  * Version: 0.0.1
- * Author: PIGGY, Chris Jayden
+ * Author: Piggy, Chris Jayden
  * Author URI: https://piggy.com
  * Text Domain: piggy
  * Requires at least: 5.9
@@ -64,7 +64,7 @@ if ( version_compare( $GLOBALS['wp_version'], $minimum_wp_version, '<' ) ) {
 		if ( should_display_compatibility_notices() ) {
 			?>
 			<div class="notice notice-error">
-				<p><?php esc_html_e( 'The PIGGY plugin requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying PIGGY.', 'piggy' ); ?></p>
+				<p><?php esc_html_e( 'The Piggy plugin requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Piggy.', 'piggy' ); ?></p>
 			</div>
 			<?php
 		}
@@ -88,7 +88,7 @@ if ( is_readable( $autoloader ) ) {
 		error_log(  // phpcs:ignore
 			sprintf(
 				/* translators: 1: composer command. 2: plugin directory */
-				esc_html__( 'Your installation of the PIGGY plugin is incomplete. Please run %1$s within the %2$s directory.', 'piggy' ),
+				esc_html__( 'Your installation of the Piggy plugin is incomplete. Please run %1$s within the %2$s directory.', 'piggy' ),
 				'`composer install`',
 				'`' . esc_html( str_replace( ABSPATH, '', __DIR__ ) ) . '`'
 			)
@@ -107,7 +107,7 @@ if ( is_readable( $autoloader ) ) {
 				<?php
 				printf(
 					/* translators: 1: composer command. 2: plugin directory */
-					esc_html__( 'Your installation of the PIGGY plugin is incomplete. Please run %1$s within the %2$s directory.', 'piggy' ),
+					esc_html__( 'Your installation of the Piggy plugin is incomplete. Please run %1$s within the %2$s directory.', 'piggy' ),
 					'<code>composer install</code>',
 					'<code>' . esc_html( str_replace( ABSPATH, '', __DIR__ ) ) . '</code>'
 				);

@@ -74,7 +74,7 @@ class Options {
 						'default' => 'on',
 						'type'    => self::CHECKBOX,
 						'label'   => __( 'Enable plugin', 'piggy' ),
-						'tooltip' => __( 'If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable PIGGY without deactivating the entire plugin.', 'piggy' ),
+						'tooltip' => __( 'If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable Piggy without deactivating the entire plugin.', 'piggy' ),
 					),
 					array(
 						'id'      => 'plugin_reset',

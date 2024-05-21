@@ -24,6 +24,8 @@
 			navigate(step.href);
 		});
 	});
+
+	$: console.log($onboardingSteps);
 </script>
 
 <div class="mx-auto max-w-4xl py-24">
