@@ -1,0 +1,39 @@
+{
+  "name": "piggy-turborepo",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo clean",
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint-staged": "lint-staged",
+    "prepare": "husky install",
+    "format": "turbo format --continue -- --cache --cache-location='node_modules/.cache/.prettiercache'",
+    "format:fix": "turbo format --continue -- --write --cache --cache-location='node_modules/.cache/.prettiercache'",
+    "lint": "turbo lint --continue -- --cache --cache-location 'node_modules/.cache/.eslintcache'",
+    "lint:fix": "turbo lint --continue -- --fix --cache --cache-location 'node_modules/.cache/.eslintcache'",
+    "typecheck": "turbo typecheck"
+  },
+  "devDependencies": {
+    "@piggy/prettier-config": "workspace:^",
+    "@commitlint/cli": "^18.1.0",
+    "@commitlint/config-conventional": "^18.1.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.2",
+    "prettier": "^3.0.3",
+    "turbo": "^1.10.15"
+  },
+  "engines": {
+    "node": ">=22.x",
+    "pnpm": ">=9.x"
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.26.2"
+  },
+  "prettier": "@piggy/prettier-config"
+}

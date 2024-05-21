@@ -1,0 +1,8 @@
+{
+	"apps/**/*.{js,ts,svelte,svx}": [
+		""
+	],
+	"packages/components/**/*.{js,ts,svelte,svx}": [
+		""
+	]
+}

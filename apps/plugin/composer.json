@@ -1,0 +1,57 @@
+{
+	"name": "piggy/plugin",
+	"description": "Piggy plugin.",
+	"homepage": "https://piggy.com/",
+	"type": "wordpress-plugin",
+	"version": "2.0.4",
+	"keywords": [
+		"woocommerce"
+	],
+	"license": "GPL-3.0-or-later",
+	"prefer-stable": true,
+	"minimum-stability": "dev",
+	"require": {
+		"composer/installers": "^1.7.0",
+		"kucrut/vite-for-wp": "^0.5.1",
+		"freemius/wordpress-sdk": "^2.5"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "*",
+		"phpcompatibility/php-compatibility": "*",
+		"woocommerce/woocommerce-sniffs": "0.1.3",
+		"wp-coding-standards/wpcs": "*",
+		"php-stubs/woocommerce-stubs": "^7.1",
+		"wp-cli/i18n-command": "^2.6"
+	},
+	"autoload": {
+		"psr-4": {
+			"Piggy\\": "src/"
+		}
+	},
+	"scripts": {
+		"phpcs": [
+			"phpcs --extensions=php -s -p"
+		],
+		"phpcbf": [
+			"phpcbf -p --extensions=php"
+		],
+		"makepot": [
+			"wp i18n make-pot . ./languages/piggy.pot --include=\"piggy.php,src,dist/frontend/assets, dist/admin/assets\""
+		]
+	},
+	"config": {
+		"platform": {
+			"php": "7.4.24"
+		},
+		"allow-plugins": {
+			"composer/installers": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"extra": {
+		"scripts-description": {
+			"phpcs": "Analyze code against the WordPress coding standards with PHP_CodeSniffer",
+			"phpcbf": "Fix coding standards warnings/errors automatically with PHP Code Beautifier"
+		}
+	}
+}

@@ -1,0 +1,43 @@
+cd "$1" || exit
+rsync ./ "$2"/ --recursive --delete --delete-excluded \
+	--exclude=".*/" \
+	--exclude="*.md" \
+	--exclude=".*" \
+	--exclude="composer.*" \
+	--exclude="*.lock" \
+	--exclude=bin/ \
+	--exclude=node_modules/ \
+	--exclude=tests/ \
+	--exclude=docs/ \
+	--exclude=ts/ \
+	--exclude=stats.html \
+	--exclude=phpcs.xml \
+	--exclude=phpunit.xml.dist \
+	--exclude=CODEOWNERS \
+	--exclude=renovate.json \
+	--exclude=README.md \
+	--exclude="*.config.js" \
+	--exclude="*.config.ts" \
+	--exclude="*-config.js" \
+	--exclude="*-config.ts" \
+	--exclude="*.config.json" \
+	--exclude="*.config.mjs" \
+	--exclude="*.config.cjs" \
+	--exclude="vite-admin.config.ts.timestamp*" \
+	--exclude="vite-frontend.config.ts.timestamp*" \
+	--exclude="*vite.config*.ts" \
+	--exclude=package.json \
+	--exclude=package-lock.json \
+	--exclude=none \
+	--exclude=blocks.ini \
+	--exclude=docker-compose.yml \
+	--exclude=tsconfig.json \
+	--exclude=tsconfig.base.json \
+	--exclude=tsconfig.node.json \
+	--exclude=piggy.zip \
+	--exclude="zip-file/" \
+	--exclude=packages/ \
+    --exclude=patches/ \
+    --exclude=reports/ \
+	--exclude=storybook/
+echo -e "\nDone copying files!\n"

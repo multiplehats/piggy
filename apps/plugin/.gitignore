@@ -1,0 +1,46 @@
+# Parcel
+.cache/
+coverage/
+dist/*
+!dist/index.html
+node_modules/
+
+# Composer
+/vendor/
+/composer.phar
+*.zip
+
+# PHP
+.phpcs.xml
+.phpunit.result.cache
+phpcs.xml
+phpunit.xml
+
+# Tests
+!tests/_zips/*.zip
+
+
+
+# Logs
+/logs/
+*.log
+npm-debug.log*
+
+# Env
+.env*
+!.env.example
+
+# IDE
+.idea
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Miscellaneous
+*.local
