@@ -1,7 +1,7 @@
 <?php
-namespace Piggy;
+namespace PiggyWP;
 
-use Piggy\Options;
+use PiggyWP\Options;
 
 /**
  * Takes care of the migrations.

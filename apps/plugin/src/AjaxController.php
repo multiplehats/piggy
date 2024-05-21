@@ -1,8 +1,8 @@
 <?php
-namespace Piggy;
+namespace PiggyWP;
 
-use Piggy\Options;
-use Piggy\Utils\AdminUtils;
+use PiggyWP\Options;
+use PiggyWP\Utils\AdminUtils;
 use WC_Data_Store;
 
 /**

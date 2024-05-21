@@ -1,8 +1,8 @@
 <?php
-namespace Piggy\Utils;
+namespace PiggyWP\Utils;
 
-use Piggy\Options;
-use Piggy\Utils\Common;
+use PiggyWP\Options;
+use PiggyWP\Utils\Common;
 use WooCommerce;
 
 /**

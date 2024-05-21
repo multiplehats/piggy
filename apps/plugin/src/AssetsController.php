@@ -1,8 +1,8 @@
 <?php
-namespace Piggy;
+namespace PiggyWP;
 
-use Piggy\Options;
-use Piggy\Assets\Api as AssetApi;
+use PiggyWP\Options;
+use PiggyWP\Assets\Api as AssetApi;
 use Kucrut\Vite;
 
 /**

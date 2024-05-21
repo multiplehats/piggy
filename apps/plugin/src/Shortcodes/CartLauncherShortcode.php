@@ -1,6 +1,6 @@
 <?php
 
-namespace Piggy\Shortcodes;
+namespace PiggyWP\Shortcodes;
 
 class CartLauncherShortcode extends AbstractShortcode {
 	/**

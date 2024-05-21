@@ -1,14 +1,14 @@
 <?php
 
-namespace Piggy\StoreApiExtension;
+namespace PiggyWP\StoreApiExtension;
 
-use Piggy\Options;
-use Piggy\Package;
+use PiggyWP\Options;
+use PiggyWP\Package;
 use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
-use Piggy\StoreApiExtension\Core\Common as Common;
-use Piggy\StoreApiExtension\Core\FreeShippingMeter;
-use Piggy\StoreApiExtension\Core\ProductSuggestions;
-use Piggy\StoreApiExtension\Compat\CompatRegistry;
+use PiggyWP\StoreApiExtension\Core\Common as Common;
+use PiggyWP\StoreApiExtension\Core\FreeShippingMeter;
+use PiggyWP\StoreApiExtension\Core\ProductSuggestions;
+use PiggyWP\StoreApiExtension\Compat\CompatRegistry;
 
 /**
  * The Api class provides an interface to StoreApi extension registration.

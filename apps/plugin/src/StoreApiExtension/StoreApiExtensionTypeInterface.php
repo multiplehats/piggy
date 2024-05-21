@@ -1,7 +1,7 @@
 <?php
-namespace Piggy\StoreApiExtension;
+namespace PiggyWP\StoreApiExtension;
 
-use Piggy\Integrations\IntegrationInterface;
+use PiggyWP\Integrations\IntegrationInterface;
 
 interface StoreApiExtensionTypeInterface extends IntegrationInterface {
 	/**

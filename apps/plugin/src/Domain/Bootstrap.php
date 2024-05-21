@@ -1,27 +1,28 @@
 <?php
-namespace Piggy\Domain;
+namespace PiggyWP\Domain;
 
-use Piggy\Options;
-use Piggy\Assets\Api as AssetApi;
-use Piggy\Assets\AssetDataRegistry;
-use Piggy\Utils\AdminUtils;
-use Piggy\AssetsController;
-use Piggy\CustomizerController;
-use Piggy\AjaxController;
-use Piggy\Installer;
-use Piggy\Registry\Container;
-use Piggy\Migration;
-use Piggy\Domain\Services\OrderContext;
-use Piggy\Shortcodes\CartLauncherShortcode;
-use Piggy\StoreApiExtension\Api as StoreApiExtensionApi;
-use Piggy\StoreApiExtension\StoreApiExtensionRegistry;
-use Piggy\StoreApiExtension\Core\FreeShippingMeter;
-use Piggy\StoreApiExtension\Core\ProductSuggestions;
-use Piggy\StoreApiExtension\Core\Common;
+use PiggyWP\Options;
+use PiggyWP\Assets\Api as AssetApi;
+use PiggyWP\Assets\AssetDataRegistry;
+use PiggyWP\Utils\AdminUtils;
+use PiggyWP\AssetsController;
+use PiggyWP\CustomizerController;
+use PiggyWP\AjaxController;
+use PiggyWP\Installer;
+use PiggyWP\Registry\Container;
+use PiggyWP\Migration;
+use PiggyWP\Domain\Services\OrderContext;
+use PiggyWP\Shortcodes\CartLauncherShortcode;
+use PiggyWP\StoreApiExtension\Api as StoreApiExtensionApi;
+use PiggyWP\StoreApiExtension\StoreApiExtensionRegistry;
+use PiggyWP\StoreApiExtension\Core\FreeShippingMeter;
+use PiggyWP\StoreApiExtension\Core\ProductSuggestions;
+use PiggyWP\StoreApiExtension\Core\Common;
+use PiggyWP\Api\Api;
 use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 use Automattic\WooCommerce\StoreApi\SchemaController;
 use Automattic\WooCommerce\StoreApi\StoreApi;
-use Piggy\StoreApiExtension\Compat\CompatRegistry;
+use PiggyWP\StoreApiExtension\Compat\CompatRegistry;
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -105,6 +106,9 @@ class Bootstrap {
 		}
 
 		$is_rest = wc()->is_rest_api_request();
+
+		// Load and init assets.
+		$this->container->get( Api::class )->init();
 
 		// Load assets in admin and on the frontend.
 		if ( ! $is_rest ) {
@@ -309,6 +313,12 @@ class Bootstrap {
 				$extend_schema      = StoreApi::container()->get( ExtendSchema::class );
 
 				return new StoreApiExtensionApi( $store_api_registry, $extend_schema, $options );
+			}
+		);
+		$this->container->register(
+			Api::class,
+			function () {
+				return new Api();
 			}
 		);
 	}

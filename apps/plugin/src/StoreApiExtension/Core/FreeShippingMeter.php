@@ -1,7 +1,7 @@
 <?php
-namespace Piggy\StoreApiExtension\Core;
+namespace PiggyWP\StoreApiExtension\Core;
 
-use Piggy\StoreApiExtension\AbstractStoreApiExtensionType;
+use PiggyWP\StoreApiExtension\AbstractStoreApiExtensionType;
 use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
 use WC_Shipping_Zones;
 

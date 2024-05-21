@@ -1,5 +1,5 @@
 <?php
-namespace Piggy\StoreApiExtension\Compat;
+namespace PiggyWP\StoreApiExtension\Compat;
 
 use Automattic\WooCommerce\StoreApi\Utilities\CartController;
 

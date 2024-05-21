@@ -1,9 +1,9 @@
 <?php
-namespace Piggy;
+namespace PiggyWP;
 
-use Piggy\Options;
-use Piggy\Assets\Api as AssetApi;
-use Piggy\Utils\Customizer as Customizer;
+use PiggyWP\Options;
+use PiggyWP\Assets\Api as AssetApi;
+use PiggyWP\Utils\Customizer as Customizer;
 
 /**
  * CustomizerController class.

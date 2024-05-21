@@ -1,9 +1,4 @@
 <script lang="ts">
-	import type {
-		PluginAdminConfig,
-		PluginOptionsAdmin,
-		PluginOptionsAdminKeys
-	} from '@piggy/types/plugin';
 	import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import Layout from '$lib/components/layout-wrapper.svelte';
 	import PageGeneralSettings from '$lib/routes/page-general-settings.svelte';
@@ -12,9 +7,15 @@
 	import { history } from '$lib/utils/custom-history';
 	import type { SvelteComponent } from 'svelte';
 	import { Route, Router } from 'svelte-navigator';
+	import type {
+		PluginAdminConfig,
+		PluginOptionsAdmin,
+		PluginOptionsAdminKeys
+	} from '@piggy/types/plugin';
 	import '@piggy/tailwind-config/global.postcss';
 	import { __ } from '@wordpress/i18n';
 	import toast from 'svelte-french-toast';
+	import { api } from './config/api';
 	import PageOnboarding from './routes/page-onboarding.svelte';
 
 	export let pluginSettings: PluginOptionsAdmin;

@@ -120,4 +120,4 @@ if ( is_readable( $autoloader ) ) {
 	return;
 }
 
-add_action( 'plugins_loaded', array( '\Piggy\Package', 'init' ) );
+add_action( 'plugins_loaded', array( '\PiggyWP\Package', 'init' ) );

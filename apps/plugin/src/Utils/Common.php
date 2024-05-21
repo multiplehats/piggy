@@ -1,5 +1,5 @@
 <?php
-namespace Piggy\Utils;
+namespace PiggyWP\Utils;
 
 /**
  * Common Helper class.

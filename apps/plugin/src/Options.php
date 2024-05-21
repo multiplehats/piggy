@@ -1,6 +1,6 @@
 <?php
 
-namespace Piggy;
+namespace PiggyWP;
 
 /**
  * Contains all the default options and options from the database.

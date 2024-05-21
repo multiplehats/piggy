@@ -1,5 +1,5 @@
 <?php
-namespace Piggy;
+namespace PiggyWP;
 
 /**
  * Installer class.

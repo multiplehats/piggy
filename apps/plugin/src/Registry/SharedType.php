@@ -1,5 +1,5 @@
 <?php
-namespace Piggy\Registry;
+namespace PiggyWP\Registry;
 
 /**
  * A definition for the SharedType dependency type.

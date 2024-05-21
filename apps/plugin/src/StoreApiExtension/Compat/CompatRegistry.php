@@ -1,8 +1,8 @@
 <?php
 
-namespace Piggy\StoreApiExtension\Compat;
+namespace PiggyWP\StoreApiExtension\Compat;
 
-use Piggy\StoreApiExtension\AbstractStoreApiExtensionType;
+use PiggyWP\StoreApiExtension\AbstractStoreApiExtensionType;
 
 /**
  * Compatibility

@@ -1,6 +1,6 @@
 <?php
 
-namespace Piggy\StoreApiExtension\Compat;
+namespace PiggyWP\StoreApiExtension\Compat;
 
 use Automattic\WooCommerce\StoreApi\Schemas\V1\CartItemSchema;
 use Automattic\WooCommerce\StoreApi\Utilities\CartController;
