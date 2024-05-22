@@ -32,6 +32,7 @@ class SchemaController {
 		$this->schemas = [
 			'v1' => [
 				Schemas\V1\Admin\Shops::IDENTIFIER => Schemas\V1\Admin\Shops::class,
+				Schemas\V1\Admin\ApiKey::IDENTIFIER => Schemas\V1\Admin\ApiKey::class,
 			],
 		];
 	}

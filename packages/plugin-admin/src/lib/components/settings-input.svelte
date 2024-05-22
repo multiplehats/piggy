@@ -3,13 +3,15 @@
 	import { Label } from '$lib/components/ui/label';
 	import { cn } from '$lib/utils/tw.js';
 
+	let className: string | undefined = undefined;
 	export let el: HTMLInputElement | undefined = undefined;
 	export let label: string | undefined = undefined;
 	export let hideLabel = false;
 	export let placeholder: string | undefined = undefined;
 	export let description: string | undefined = undefined;
-	export let value: string | number;
+	export let value: string | number | undefined = undefined;
 	export let id: string;
+	export { className as class };
 </script>
 
 <div>
@@ -42,7 +44,7 @@
 		on:paste
 		on:input
 		{id}
-		class={cn('max-w-xl', label && 'mt-2', $$props.class)}
+		class={cn('max-w-xl', label && '!mt-2', className)}
 		{...$$restProps}
 	/>
 </div>

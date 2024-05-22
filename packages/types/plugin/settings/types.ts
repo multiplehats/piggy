@@ -74,7 +74,11 @@ export type PluginOptionsAdminKeys = keyof PluginOptionsAdmin;
 export const zPluginOptionsFrontend = transformSchema(zBasePluginOptions);
 export type PluginOptionsFrontend = z.infer<typeof zPluginOptionsFrontend>;
 
-// Window object: PluginAdminConfig
+/**
+ * Window object: PluginAdminConfig
+ *
+ * @deprecated This is deprecated and should not be used.
+ */
 export interface PluginAdminConfig {
 	nonce: string;
 	nonceTimestamp: string;

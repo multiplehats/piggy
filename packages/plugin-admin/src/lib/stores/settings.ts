@@ -1,14 +1,12 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { api } from '$lib/config/api';
 import toast from 'svelte-french-toast';
 import { get, writable } from 'svelte/store';
-import type { PluginAdminConfig, PluginOptionsAdmin, PluginOptionsAdminKeys } from '@piggy/types';
+import type { PluginOptionsAdmin, PluginOptionsAdminKeys } from '@piggy/types';
 import { zPluginOptionsAdmin } from '@piggy/types/plugin';
 
 // Settings State
 
 export const settingsState = writable<PluginOptionsAdmin>();
-export const adminConfigState = writable<PluginAdminConfig>();
 
 // ACTIONS
 
@@ -63,21 +61,5 @@ export const saveSettings = async () => {
 		return;
 	}
 
-	return toast.promise(
-		api
-			.post<PluginOptionsAdmin>('save_options', {
-				settings: get(settingsState)
-			})
-			.then((response) => {
-				if (!response.data) {
-					throw new Error('No data returned');
-				}
-				return response.data;
-			}),
-		{
-			loading: __('Saving settings...', 'piggy'),
-			success: __('Settings saved.', 'piggy'),
-			error: __('Error saving settings.', 'piggy')
-		}
-	);
+	console.log('save settings');
 };

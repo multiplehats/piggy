@@ -1,10 +1,3 @@
-<script lang="ts" context="module">
-	export type ComboboxItem = {
-		value: string;
-		label: string;
-	};
-</script>
-
 <script lang="ts">
 	import { __, sprintf } from '@wordpress/i18n';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -14,18 +7,25 @@
 	import Check from 'lucide-svelte/icons/check';
 	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
 	import { tick } from 'svelte';
+	import type { ComboboxProps } from '.';
 
-	export let items: ComboboxItem[] = [];
+	type $$Props = ComboboxProps;
+
+	let className: $$Props['class'] = undefined;
+
 	/** Needs to be a translate string, this turns into things such as "Select a `product`" */
-	export let label: string;
-	export let widthClass = 'w-[300px] justify-between';
+	export let itemName: $$Props['itemName'];
+	export let items: $$Props['items'] = [];
+	export let widthClass: $$Props['widthClass'] = 'w-[300px] justify-between';
+	export let id: $$Props['id'] = undefined;
+	export { className as class };
 
 	let open = false;
 	let value = '';
 
 	$: selectedValue =
-		// translators: %s: label
-		items.find((f) => f.value === value)?.label ?? sprintf(__('Select a %s'), label);
+		// translators: %s: itemName
+		items.find((f) => f.value === value)?.label ?? sprintf(__('Select a %s'), itemName);
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
@@ -45,17 +45,19 @@
 			variant="outline"
 			role="combobox"
 			aria-expanded={open}
-			class={cn(widthClass)}
+			class={cn('h-8', className, widthClass)}
 		>
 			{selectedValue}
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 		</Button>
+
+		<input type="hidden" name={id} {value} {id} />
 	</Popover.Trigger>
 	<Popover.Content class={cn('p-0', widthClass)}>
 		<Command.Root>
 			<Command.Input
 				placeholder={// translators: %s: label
-				sprintf(__('Search a %s'), label)}
+				sprintf(__('Search a %s'), itemName)}
 			/>
 
 			<Command.Empty>
@@ -71,7 +73,12 @@
 					<Command.Item
 						value={item.value}
 						onSelect={(currentValue) => {
-							value = currentValue;
+							if (value === currentValue) {
+								// Clear the value if the user selects the same item.
+								value = '';
+							} else {
+								value = currentValue;
+							}
 							closeAndFocusTrigger(ids.trigger);
 						}}
 					>

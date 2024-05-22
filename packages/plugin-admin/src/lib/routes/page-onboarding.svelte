@@ -13,19 +13,15 @@
 
 	const navigate = useNavigate();
 
-	onMount(() => {
-		currentOnboardingStep.subscribe((step) => {
-			if (!step) {
-				navigate(initialOnboardingSteps[0].href);
-
-				return;
-			}
-
-			navigate(step.href);
-		});
+	onMount(async () => {
+		// currentOnboardingStep.subscribe((step) => {
+		// 	if (!step) {
+		// 		navigate(initialOnboardingSteps[0].href);
+		// 		return;
+		// 	}
+		// 	navigate(step.href);
+		// });
 	});
-
-	$: console.log($onboardingSteps);
 </script>
 
 <div class="mx-auto max-w-4xl py-24">

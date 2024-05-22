@@ -69,13 +69,13 @@ abstract class AbstractRoute implements RouteInterface {
 	}
 
 	/**
-	 * Get the client
+	 * Initialize the client, needs to be called before any API requests are made to ensure the client is set up.
 	 *
 	 * @throws RouteException On error.
-	 * @return RegisterClient
+	 * @return true
 	 */
-	public function get_client() {
-		$client = $this->connection->get_client();
+	public function init_client() {
+		$client = $this->connection->init_client();
 
 		if( $client === null ) {
 			throw new RouteException( 'piggy_rest_invalid_api_key', __( 'Invalid API Key', 'piggy' ), 401 );

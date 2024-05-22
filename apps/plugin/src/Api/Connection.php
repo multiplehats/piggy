@@ -2,6 +2,7 @@
 namespace PiggyWP\Api;
 
 use Piggy\Api\RegisterClient;
+use Piggy\Api\ApiClient;
 
 class Connection {
 	/**
@@ -38,9 +39,17 @@ class Connection {
 	/**
 	 * Get the Piggy Register Client instance.
 	 *
-	 * @return RegisterClient
+	 * @return null|true
 	 */
-	public function get_client() {
-		return $this->client;
+	public function init_client() {
+		$api_key = $this->get_api_key();
+
+		if( $api_key ) {
+			ApiClient::configure($api_key, "https://api.piggy.eu");
+
+			return $this->client = true;
+		} else {
+			return $this->client = null;
+		}
 	}
 }

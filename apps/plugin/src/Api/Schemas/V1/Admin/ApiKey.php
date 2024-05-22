@@ -4,27 +4,27 @@ namespace PiggyWP\Api\Schemas\V1\Admin;
 use PiggyWP\Api\Schemas\V1\AbstractSchema;
 
 /**
- * Shops class.
+ * ApiKey class.
  *
  * @internal
  */
-class Shops extends AbstractSchema {
+class ApiKey extends AbstractSchema {
 	/**
 	 * The schema item name.
 	 *
 	 * @var string
 	 */
-	protected $title = 'shops';
+	protected $title = 'api-key';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'shops';
+	const IDENTIFIER = 'api-key';
 
 	/**
-	 * Shops schema properties.
+	 * Business Description schema properties.
 	 *
 	 * @return array
 	 */
@@ -33,7 +33,7 @@ class Shops extends AbstractSchema {
 	}
 
 	/**
-	 * Get the Shops response.
+	 * Get the Business Description response.
 	 *
 	 * @param array $item Item to get response for.
 	 *
@@ -41,7 +41,7 @@ class Shops extends AbstractSchema {
 	 */
 	public function get_item_response( $item ) {
 		return [
-			'shops' => $item,
+			'api_key' => true,
 		];
 	}
 }

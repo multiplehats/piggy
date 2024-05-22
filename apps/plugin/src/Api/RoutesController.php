@@ -42,6 +42,7 @@ class RoutesController {
 			'v1'      => [],
 			'private' => [
 				Routes\V1\Admin\Shops::IDENTIFIER => Routes\V1\Admin\Shops::class,
+				Routes\V1\Admin\ApiKey::IDENTIFIER => Routes\V1\Admin\ApiKey::class,
 			],
 		];
 	}

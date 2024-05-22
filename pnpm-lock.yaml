@@ -256,6 +256,9 @@ importers:
 
   packages/lib:
     dependencies:
+      '@wordpress/api-fetch':
+        specifier: ^6.40.0
+        version: 6.54.0
       clsx:
         specifier: ^2.0.0
         version: 2.0.0
@@ -266,6 +269,9 @@ importers:
         specifier: ^0.1.14
         version: 0.1.14(tailwindcss@3.3.3(ts-node@10.9.1(@types/node@18.18.6)(typescript@5.2.2)))
     devDependencies:
+      '@piggy/types':
+        specifier: workspace:^
+        version: link:../types
       '@types/qs':
         specifier: ^6.9.8
         version: 6.9.8
@@ -7623,7 +7629,7 @@ snapshots:
   '@wordpress/core-data@5.5.0(react@17.0.2)':
     dependencies:
       '@babel/runtime': 7.23.2
-      '@wordpress/api-fetch': 6.40.0
+      '@wordpress/api-fetch': 6.54.0
       '@wordpress/blocks': 11.21.0(react@17.0.2)
       '@wordpress/compose': 5.20.0(react@17.0.2)
       '@wordpress/data': 7.6.0(react@17.0.2)
@@ -7632,7 +7638,7 @@ snapshots:
       '@wordpress/html-entities': 3.57.0
       '@wordpress/i18n': 4.57.0
       '@wordpress/is-shallow-equal': 4.57.0
-      '@wordpress/url': 3.44.0
+      '@wordpress/url': 3.58.0
       change-case: 4.1.2
       equivalent-key-map: 0.2.2
       lodash: 4.17.21
