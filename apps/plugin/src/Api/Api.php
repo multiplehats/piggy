@@ -43,10 +43,18 @@ final class Api {
 		$container = new Container();
 
 		$container->register(
+			Connection::class,
+			function () {
+				return new Connection();
+			}
+		);
+
+		$container->register(
 			RoutesController::class,
 			function ( $container ) {
 				return new RoutesController(
-					$container->get( SchemaController::class )
+					$container->get( SchemaController::class ),
+					$container->get( Connection::class )
 				);
 			}
 		);

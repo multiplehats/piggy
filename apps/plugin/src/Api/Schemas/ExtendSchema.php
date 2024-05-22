@@ -1,10 +1,6 @@
 <?php
 namespace PiggyWP\Api\Schemas;
 
-use PiggyWP\Schemas\V1\CartItemSchema;
-use PiggyWP\Schemas\V1\CartSchema;
-use PiggyWP\Schemas\V1\CheckoutSchema;
-use PiggyWP\Schemas\V1\ProductSchema;
 use PiggyWP\Api\Formatters;
 
 /**

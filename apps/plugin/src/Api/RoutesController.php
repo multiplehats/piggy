@@ -2,6 +2,7 @@
 namespace PiggyWP\Api;
 
 use PiggyWP\Api\Routes\V1\AbstractRoute;
+use PiggyWP\Api\Connection;
 
 /**
  * RoutesController class.
@@ -15,6 +16,13 @@ class RoutesController {
 	protected $schema_controller;
 
 	/**
+	 * Piggy connection.
+	 *
+	 * @var Connection
+	 */
+	protected $connection;
+
+	/**
 	 * Piggy routes.
 	 *
 	 * @var array
@@ -26,8 +34,9 @@ class RoutesController {
 	 *
 	 * @param SchemaController $schema_controller Schema controller class passed to each route.
 	 */
-	public function __construct( SchemaController $schema_controller ) {
+	public function __construct( SchemaController $schema_controller, Connection $connection) {
 		$this->schema_controller = $schema_controller;
+		$this->connection = $connection;
 
 		$this->routes            = [
 			'v1'      => [],
@@ -64,7 +73,8 @@ class RoutesController {
 
 		return new $route(
 			$this->schema_controller,
-			$this->schema_controller->get( $route::SCHEMA_TYPE, $route::SCHEMA_VERSION )
+			$this->schema_controller->get( $route::SCHEMA_TYPE, $route::SCHEMA_VERSION ),
+			$this->connection
 		);
 	}
 

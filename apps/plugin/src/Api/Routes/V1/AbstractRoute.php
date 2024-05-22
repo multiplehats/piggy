@@ -5,6 +5,9 @@ use PiggyWP\Api\SchemaController;
 use PiggyWP\Api\Routes\RouteInterface;
 use PiggyWP\Api\Exceptions\RouteException;
 use PiggyWP\Api\Schemas\v1\AbstractSchema;
+use PiggyWP\Api\Connection;
+use Piggy\Api\RegisterClient;
+
 use WP_Error;
 
 /**
@@ -33,6 +36,13 @@ abstract class AbstractRoute implements RouteInterface {
 	protected $schema_controller;
 
 	/**
+	 * Piggy API Client instance.
+	 *
+	 * @var Connection
+	 */
+	protected $connection;
+
+	/**
 	 * The routes schema.
 	 *
 	 * @var string
@@ -52,9 +62,19 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param SchemaController $schema_controller Schema Controller instance.
 	 * @param AbstractSchema   $schema Schema class for this route.
 	 */
-	public function __construct( SchemaController $schema_controller, AbstractSchema $schema ) {
+	public function __construct( SchemaController $schema_controller, AbstractSchema $schema, Connection $connection ) {
 		$this->schema_controller = $schema_controller;
 		$this->schema            = $schema;
+		$this->connection      = $connection;
+	}
+
+	/**
+	 * Get the client
+	 *
+	 * @return RegisterClient
+	 */
+	public function get_client() {
+		return $this->connection->get_client();
 	}
 
 	/**
