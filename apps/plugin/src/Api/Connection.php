@@ -15,9 +15,24 @@ class Connection {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$api_key = get_option('piggy_api_key');
+		$api_key = $this->get_api_key();
 
-		$this->client = new RegisterClient($api_key);
+		if( $api_key ) {
+			$this->client = new RegisterClient($api_key);
+		} else {
+			$this->client = null;
+		}
+	}
+
+	/**
+	 * Get the Piggy API key.
+	 *
+	 * @return string|null The Piggy API key.
+	 */
+	public function get_api_key() {
+		$api_key = get_option('piggy_api_key', null);
+
+		return $api_key;
 	}
 
 	/**
