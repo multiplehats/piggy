@@ -1,7 +1,7 @@
 import OnboardingAccount from '$lib/components/onboarding/onboarding-account.svelte';
 import OnboardingConnectAccount from '$lib/components/onboarding/onboarding-connect-account.svelte';
 import type { SvelteComponent } from 'svelte';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 export const OnboardingStepId = {
 	welcome: 'welcome',
@@ -22,7 +22,7 @@ interface Step {
 	initialising: boolean;
 }
 
-export const onboardingSteps = writable<Step[]>([
+const initialSteps: Step[] = [
 	{
 		id: 'welcome',
 		title: 'Welcome',
@@ -49,134 +49,91 @@ export const onboardingSteps = writable<Step[]>([
 		status: 'upcoming',
 		initialising: false
 	}
-]);
+];
 
-export const useOnboarding = () => {
-	return {
-		goToStep: (stepId: OnboardingStepId) => {
-			let updatingStep: Step | undefined;
+export const onboardingSteps = writable<Step[]>(initialSteps);
 
-			onboardingSteps.update((steps) => {
-				return steps.map((step) => {
-					if (step.id === stepId) {
-						updatingStep = step;
+const currentStepId = writable<OnboardingStepId>('welcome');
 
-						return {
-							...step,
-							status: 'current'
-						};
-					}
-					if (step.status === 'current') {
-						return {
-							...step,
-							status: 'completed'
-						};
-					}
-					return step;
-				});
-			});
+const setStepStatus = (stepId: OnboardingStepId, status: 'completed' | 'current' | 'upcoming') => {
+	onboardingSteps.update((steps) => {
+		return steps.map((step) => (step.id === stepId ? { ...step, status } : step));
+	});
+};
 
-			if (!updatingStep) {
-				throw new Error(`Step with id ${stepId} not found`);
-			}
+const findStepHref = (stepId: OnboardingStepId): string => {
+	const step = initialSteps.find((step) => step.id === stepId);
+	if (!step) {
+		throw new Error('No href found for step: ' + stepId);
+	}
+	return step.href;
+};
 
-			const { href } = updatingStep;
+const goToStep = (stepId: OnboardingStepId) => {
+	currentStepId.set(stepId);
+	setStepStatus(stepId, 'current');
+	return { href: findStepHref(stepId) };
+};
 
-			return {
-				href
-			};
-		},
-		completeStep: (stepId: OnboardingStepId) => {
-			onboardingSteps.update((steps) => {
-				return steps.map((step) => {
-					if (step.id === stepId) {
-						return {
-							...step,
-							status: 'completed'
-						};
-					}
-					return step;
-				});
-			});
-		},
-		previousStep: () => {
-			let updatingStep: Step | undefined;
+const completeStep = (stepId: OnboardingStepId) => {
+	setStepStatus(stepId, 'completed');
+};
 
-			onboardingSteps.update((steps) => {
-				return steps.map((step) => {
-					if (step.status === 'current') {
-						updatingStep = step;
+const completeAndNavigate = (toCOmpleteStepid: OnboardingStepId, nextStepId: OnboardingStepId) => {
+	completeStep(toCOmpleteStepid);
+	return goToStep(nextStepId);
+};
 
-						return {
-							...step,
-							status: 'upcoming'
-						};
-					}
-					if (step.status === 'completed') {
-						return {
-							...step,
-							status: 'current'
-						};
-					}
-					return step;
-				});
-			});
+const updateStepStatus = (
+	steps: Step[],
+	currentIndex: number,
+	newStatus: 'completed' | 'upcoming'
+) => {
+	const newCurrentStep = steps[currentIndex + (newStatus === 'completed' ? 1 : -1)];
+	steps[currentIndex].status = newStatus;
+	newCurrentStep.status = 'current';
+	currentStepId.set(newCurrentStep.id);
+	return steps;
+};
 
-			if (!updatingStep) {
-				throw new Error('No previous step found');
-			}
+const previousStep = () => {
+	onboardingSteps.update((steps) => {
+		const currentIndex = steps.findIndex((step) => step.status === 'current');
+		return currentIndex > 0 ? updateStepStatus(steps, currentIndex, 'upcoming') : steps;
+	});
+};
 
-			const { href } = updatingStep;
-
-			return {
-				href
-			};
-		},
-		nextStep: () => {
-			let updatingStep: Step | undefined;
-
-			onboardingSteps.update((steps) => {
-				return steps.map((step) => {
-					if (step.status === 'current') {
-						updatingStep = step;
-
-						return {
-							...step,
-							status: 'completed'
-						};
-					}
-					if (step.status === 'upcoming') {
-						return {
-							...step,
-							status: 'current'
-						};
-					}
-					return step;
-				});
-			});
-
-			if (!updatingStep) {
-				throw new Error('No next step found');
-			}
-
-			const { href } = updatingStep;
-
-			return {
-				href
-			};
-		},
-		setInitialising: (stepId: OnboardingStepId, initialising: boolean) => {
-			onboardingSteps.update((steps) => {
-				return steps.map((step) => {
-					if (step.id === stepId) {
-						return {
-							...step,
-							initialising
-						};
-					}
-					return step;
-				});
-			});
+const nextStep = () => {
+	onboardingSteps.update((steps) => {
+		const currentIndex = steps.findIndex((step) => step.status === 'current');
+		if (currentIndex < steps.length - 1) {
+			steps = updateStepStatus(steps, currentIndex, 'completed');
 		}
+		return steps;
+	});
+
+	const href = findStepHref(get(currentStepId));
+
+	if (!href) {
+		throw new Error('No href found for current step');
+	}
+
+	return {
+		href
 	};
 };
+
+const setInitialising = (stepId: OnboardingStepId, initialising: boolean) => {
+	onboardingSteps.update((steps) => {
+		return steps.map((step) => (step.id === stepId ? { ...step, initialising } : step));
+	});
+};
+
+export const useOnboarding = () => ({
+	goToStep,
+	completeStep,
+	completeAndNavigate,
+	previousStep,
+	nextStep,
+	setInitialising
+});

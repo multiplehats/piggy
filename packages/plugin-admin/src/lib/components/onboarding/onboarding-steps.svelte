@@ -1,11 +1,7 @@
 <script lang="ts">
-	import { onboardingSteps, useOnboarding } from '$lib/stores/onboarding';
+	import { onboardingSteps } from '$lib/stores/onboarding';
 	import { cn } from '$lib/utils/tw';
 	import { Check } from 'lucide-svelte';
-	import { useNavigate } from 'svelte-navigator';
-
-	const onboarding = useOnboarding();
-	const navigate = useNavigate();
 
 	let className: string | undefined = undefined;
 
@@ -18,7 +14,6 @@
 		class="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0"
 	>
 		{#each $onboardingSteps as { id, title, status, href }, i}
-			{@const tag = status === 'upcoming' ? 'span' : 'button'}
 			{@const isLastSteps = i === $onboardingSteps.length - 1}
 
 			<li class="relative md:flex md:flex-1">
@@ -33,7 +28,7 @@
 										: 'border-gray-300 group-hover:border-gray-400'
 								)}
 							>
-								<span class="text-gray-500 group-hover:text-gray-900">03</span>
+								<span class="text-gray-500 group-hover:text-gray-900">{i + 1}</span>
 							</span>
 						{:else}
 							<span

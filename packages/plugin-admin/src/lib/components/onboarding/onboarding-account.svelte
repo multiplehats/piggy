@@ -2,7 +2,7 @@
 	import { __ } from '@wordpress/i18n';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { useOnboarding } from '$lib/stores/onboarding';
+	import { OnboardingStepId, useOnboarding } from '$lib/stores/onboarding';
 	import { useNavigate } from 'svelte-navigator';
 	import { outboundUrl } from '@piggy/lib';
 
@@ -11,19 +11,21 @@
 
 	const options = [
 		{
-			id: 'connect-account',
+			id: 'connect-account-option',
 			variant: 'primary',
 			title: __('Existing Piggy user?', 'piggy'),
 			description: __('Connect your account to get started.', 'piggy'),
 			cta: 'Connect account',
 			action: () => {
-				const { href } = onboarding.goToStep('connect-account');
-
+				const { href } = onboarding.completeAndNavigate(
+					OnboardingStepId.welcome,
+					OnboardingStepId.connectAccount
+				);
 				navigate(href);
 			}
 		},
 		{
-			id: 'create-account',
+			id: 'create-account-option',
 			variant: 'secondary',
 			title: __('New to Piggy?', 'piggy'),
 			description: __('Create a new account to get started.', 'piggy'),
