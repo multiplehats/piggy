@@ -1,4 +1,5 @@
 import { api } from '@piggy/lib';
+import type { PluginOptionsAdminKeyValue } from '@piggy/types';
 import type {
 	AdminGetApiKeyResponse,
 	AdminSetApiKeyParams,
@@ -23,7 +24,7 @@ export class PiggyApiError extends Error {
 
 export class PiggyAdminService {
 	async saveSettings(settings: Record<string, unknown>) {
-		const { data, error } = await api.post('/piggy/v1/settings', {
+		const { data, error } = await api.post<PluginOptionsAdminKeyValue>('/piggy/v1/settings', {
 			settings
 		});
 

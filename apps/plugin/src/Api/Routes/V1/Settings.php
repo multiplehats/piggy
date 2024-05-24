@@ -42,11 +42,6 @@ class Settings extends AbstractRoute {
 	public function get_args() {
 		return [
 			[
-				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'args'                => [],
-			],
-			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'get_response' ],
 				'permission_callback' => [ Middleware::class, 'is_authorized' ],
@@ -63,7 +58,7 @@ class Settings extends AbstractRoute {
 	}
 
 	/**
-	 * Get shops
+	 * Update settings
 	 *
 	 * @param  \WP_REST_Request $request Request object.
 	 *
@@ -71,7 +66,7 @@ class Settings extends AbstractRoute {
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$settings = $request->get_param( 'settings' );
-		error_log( print_r( $settings, true ) );
+		$returned_options = array();
 
 		$returned_options = $this->options->save_all_options( $settings );
 

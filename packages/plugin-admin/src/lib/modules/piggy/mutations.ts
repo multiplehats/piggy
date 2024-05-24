@@ -2,6 +2,7 @@ import type { CreateMutationOptions, DefaultError, QueryClient } from '@tanstack
 import { __ } from '@wordpress/i18n';
 import { MutationKeys, QueryKeys } from '$lib/utils/query-keys';
 import toast from 'svelte-french-toast';
+import type { PluginOptionsAdminKeyValue } from '@piggy/types';
 import { PiggyAdminService } from '.';
 import type { AdminSetApiKeyParams, AdminSetApiKeyResponse } from './types';
 
@@ -48,7 +49,11 @@ export function setApiKeyMutationConfig(
 	};
 }
 
-type SaveSettingsMutationConfig = CreateMutationOptions<{}, DefaultError, Record<string, unknown>>;
+type SaveSettingsMutationConfig = CreateMutationOptions<
+	PluginOptionsAdminKeyValue,
+	DefaultError,
+	Record<string, unknown>
+>;
 
 export function saveSettingsMutationConfig(
 	queryClient: QueryClient,

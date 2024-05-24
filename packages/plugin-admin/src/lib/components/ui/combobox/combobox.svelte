@@ -16,7 +16,7 @@
 	/** Needs to be a translate string, this turns into things such as "Select a `product`" */
 	export let itemName: $$Props['itemName'];
 	export let items: $$Props['items'] = [];
-	export let widthClass: $$Props['widthClass'] = 'w-[300px] justify-between';
+	export let widthClass: $$Props['widthClass'] = 'w-[300px]';
 	export let noResultsText: $$Props['noResultsText'] = __('No results found');
 
 	export let value: $$Props['value'] = undefined;
@@ -51,13 +51,13 @@
 			variant="outline"
 			role="combobox"
 			aria-expanded={open}
-			class={cn('h-8', className, widthClass)}
+			class={cn('h-8 justify-between', className, widthClass)}
 		>
 			{selectedValue}
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 		</Button>
 	</Popover.Trigger>
-	<Popover.Content class={cn('p-0', widthClass)}>
+	<Popover.Content class={cn('p-0 justify-between', widthClass)}>
 		<Command.Root>
 			<Command.Input
 				placeholder={// translators: %s: label
