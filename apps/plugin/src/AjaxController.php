@@ -78,7 +78,7 @@ final class AjaxController {
 		$returned_options = array();
 
 		try {
-			$returned_options = $this->options->save_all_options( $settings );
+			$returned_options = $this->options->save_options( $settings );
 			wp_send_json_success( $returned_options );
 		} catch ( \Throwable $th ) {
 			wp_send_json_error( $th->getMessage() );

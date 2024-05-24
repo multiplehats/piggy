@@ -2,11 +2,12 @@
 	import { __ } from '@wordpress/i18n';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { navigateToOnboardingStep, onboardingSteps } from '$lib/stores/onboarding';
+	import { useOnboarding } from '$lib/stores/onboarding';
 	import { useNavigate } from 'svelte-navigator';
 	import { outboundUrl } from '@piggy/lib';
 
 	const navigate = useNavigate();
+	const onboarding = useOnboarding();
 
 	const options = [
 		{
@@ -16,7 +17,7 @@
 			description: __('Connect your account to get started.', 'piggy'),
 			cta: 'Connect account',
 			action: () => {
-				const { href } = navigateToOnboardingStep('connect-account');
+				const { href } = onboarding.goToStep('connect-account');
 
 				navigate(href);
 			}

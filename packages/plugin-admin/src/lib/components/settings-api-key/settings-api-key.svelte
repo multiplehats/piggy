@@ -9,11 +9,18 @@
 	import SettingsCombobox from '../settings-combobox.svelte';
 	import SettingsSection from '../ui/settings-section/settings-section.svelte';
 
+	export let isLoading = false;
+
 	const client = useQueryClient();
 	const setApiKeyMutation = createMutation(setApiKeyMutationConfig(client));
 	const query = createQuery<AdminGetApiKeyResponse>(getApiKeyQueryConfig());
 	const shopQuery = createQuery(getShopsQueryConfig());
-	const testQuery = createQuery(getShopsQueryConfig());
+
+	$: if ($query.isLoading || $shopQuery.isLoading) {
+		isLoading = true;
+	} else {
+		isLoading = false;
+	}
 </script>
 
 <SettingsSection title={__('Connect to Piggy', 'piggy')}>

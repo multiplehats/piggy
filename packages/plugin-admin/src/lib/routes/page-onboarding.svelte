@@ -4,13 +4,24 @@
 	import OnboardingSteps from '$lib/components/onboarding/onboarding-steps.svelte';
 	import SettingsLogo from '$lib/components/settings-logo.svelte';
 	import { saveSettingsMutationConfig } from '$lib/modules/piggy/mutations';
-	import { onboardingSteps } from '$lib/stores/onboarding';
-	import { saveSettings, settingsState } from '$lib/stores/settings';
+	import { onboardingSteps, useOnboarding } from '$lib/stores/onboarding';
+	import { settingsState } from '$lib/stores/settings';
+	import { useNavigate } from 'svelte-navigator';
 
 	$$restProps;
 
+	const navigate = useNavigate();
+	const onboarding = useOnboarding();
 	const client = useQueryClient();
-	const saveSettingsMutation = createMutation(saveSettingsMutationConfig(client));
+	const saveSettingsMutation = createMutation(
+		saveSettingsMutationConfig(client, {
+			onSuccess: () => {
+				const { href } = onboarding.nextStep();
+
+				navigate(href);
+			}
+		})
+	);
 
 	function handleSubmit(
 		e: SubmitEvent & {
@@ -19,25 +30,7 @@
 	) {
 		e.preventDefault();
 
-		const form = e.currentTarget;
-		const formData = new FormData(form);
-
-		// Log through the form data
-		for (const [key, value] of formData.entries()) {
-			console.log(`${key}: ${value}`);
-		}
-
-		const settingsToSave = Object.entries($settingsState).reduce(
-			(acc, [key, value]) => {
-				acc[key] = value.value;
-				return acc;
-			},
-			{} as Record<string, unknown>
-		);
-
-		$saveSettingsMutation.mutate(settingsToSave);
-
-		// saveSettings();
+		$saveSettingsMutation.mutateAsync(settingsState);
 	}
 </script>
 
@@ -50,12 +43,16 @@
 		<OnboardingSteps class="mb-8" />
 
 		<form method="POST" on:submit={handleSubmit}>
-			{#each $onboardingSteps as { id, component, status, showActions } (id)}
-				{#if status === 'current' && component}
-					<svelte:component this={component} />
+			{#each $onboardingSteps as { id, component, status, showActions, initialising } (id)}
+				{#if status === 'current'}
+					{#if component}
+						<svelte:component this={component} />
+					{:else}
+						<p>Onboarding component for step {id} not found.</p>
+					{/if}
 
-					{#if showActions}
-						<OnboardingActions />
+					{#if showActions && !initialising}
+						<OnboardingActions saving={$saveSettingsMutation.isPending} />
 					{/if}
 				{/if}
 			{/each}

@@ -66,9 +66,7 @@ class Settings extends AbstractRoute {
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$settings = $request->get_param( 'settings' );
-		$returned_options = array();
-
-		$returned_options = $this->options->save_all_options( $settings );
+		$returned_options = $this->options->save_options( $settings );
 
 		return rest_ensure_response( $returned_options );
 	}

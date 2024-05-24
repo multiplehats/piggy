@@ -1,4 +1,5 @@
 import type { ButtonEventHandler, Button as ButtonPrimitive } from 'bits-ui';
+import type { SvelteComponent } from 'svelte';
 import { tv } from 'tailwind-variants';
 import type { VariantProps } from 'tailwind-variants';
 import Root from './button.svelte';
@@ -34,6 +35,10 @@ type Size = VariantProps<typeof buttonVariants>['size'];
 type Props = ButtonPrimitive.Props & {
 	variant?: Variant;
 	size?: Size;
+	loading?: boolean;
+	icon?: typeof SvelteComponent;
+	iconPlacement?: 'left' | 'right';
+	iconClasses?: string;
 };
 
 type Events = ButtonPrimitive.Events;

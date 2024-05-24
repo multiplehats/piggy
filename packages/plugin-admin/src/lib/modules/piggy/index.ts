@@ -1,3 +1,5 @@
+import type { settingsState } from '$lib/stores/settings';
+import { get } from 'svelte/store';
 import { api } from '@piggy/lib';
 import type { PluginOptionsAdminKeyValue } from '@piggy/types';
 import type {
@@ -23,7 +25,18 @@ export class PiggyApiError extends Error {
 }
 
 export class PiggyAdminService {
-	async saveSettings(settings: Record<string, unknown>) {
+	async saveSettings(_settings: typeof settingsState) {
+		/**
+		 * Creates an object with key-value pairs of settings to save.
+		 */
+		const settings = Object.entries(get(_settings)).reduce(
+			(acc, [key, value]) => {
+				acc[key] = value.value;
+				return acc;
+			},
+			{} as Record<string, unknown>
+		);
+
 		const { data, error } = await api.post<PluginOptionsAdminKeyValue>('/piggy/v1/settings', {
 			settings
 		});

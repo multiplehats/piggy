@@ -291,7 +291,7 @@ class Options {
 	 * @param array $options The options to save.
 	 * @param bool  $prefix If true, the options will be saved with the plugin's prefix.
 	 */
-	public function save_all_options( array $options, bool $prefix = true ) {
+	public function save_options( array $options, bool $prefix = true ) {
 		foreach ( $options as $name => $value ) {
 			if ( $prefix ) {
 				$name = self::$option_prefix . $name;
