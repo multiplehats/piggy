@@ -1,6 +1,6 @@
 <?php
 
-namespace Piggy;
+namespace PiggyWP;
 
 /**
  * Contains all the default options and options from the database.
@@ -74,7 +74,7 @@ class Options {
 						'default' => 'on',
 						'type'    => self::CHECKBOX,
 						'label'   => __( 'Enable plugin', 'piggy' ),
-						'tooltip' => __( 'If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable PIGGY without deactivating the entire plugin.', 'piggy' ),
+						'tooltip' => __( 'If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable Piggy without deactivating the entire plugin.', 'piggy' ),
 					),
 					array(
 						'id'      => 'plugin_reset',
@@ -86,7 +86,7 @@ class Options {
 				),
 			);
 
-			self::$default_settings['api_key'] = array(
+			self::$default_settings['connect_account'] = array(
 				'title'  => __( 'API Key', 'piggy' ),
 				'fields' => array(
 					array(
@@ -95,6 +95,13 @@ class Options {
 						'type'    => self::API_KEY,
 						'label'   => __( 'API Key', 'piggy' ),
 						'tooltip' => __( 'Enter your API key here.', 'piggy' ),
+					),
+					array(
+						'id'      => 'shop_uuid',
+						'default' => '',
+						'type'    => self::TEXT,
+						'label'   => __( 'Shop ID', 'piggy' ),
+						'tooltip' => __( 'Select the shop you want to connect to.', 'piggy' ),
 					),
 				),
 			);
@@ -265,12 +272,6 @@ class Options {
 						$options[ $name ] = $field['default'];
 					}
 
-					// If the type is an API key, we need to only return the first 5 characters.
-					if ( self::API_KEY === $field['type'] ) {
-						// Get the total length of the API key, divide by two, and hide the second half with asterisks.
-						$options[ $name ] = substr( $options[ $name ], 0, strlen( $options[ $name ] ) / 2 ) . str_repeat( '*', strlen( $options[ $name ] ) / 2 );
-					}
-
 					// If type is a number, convert to int.
 					if ( self::NUMBER === $field['type'] ) {
 						$options[ $name ] = (int) $options[ $name ];
@@ -290,7 +291,7 @@ class Options {
 	 * @param array $options The options to save.
 	 * @param bool  $prefix If true, the options will be saved with the plugin's prefix.
 	 */
-	public function save_all_options( array $options, bool $prefix = true ) {
+	public function save_options( array $options, bool $prefix = true ) {
 		foreach ( $options as $name => $value ) {
 			if ( $prefix ) {
 				$name = self::$option_prefix . $name;

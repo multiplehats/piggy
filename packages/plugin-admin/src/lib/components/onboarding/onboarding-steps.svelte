@@ -2,9 +2,6 @@
 	import { onboardingSteps } from '$lib/stores/onboarding';
 	import { cn } from '$lib/utils/tw';
 	import { Check } from 'lucide-svelte';
-	import { useNavigate } from 'svelte-navigator';
-
-	const navigate = useNavigate();
 
 	let className: string | undefined = undefined;
 
@@ -17,27 +14,11 @@
 		class="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0"
 	>
 		{#each $onboardingSteps as { id, title, status, href }, i}
-			{@const tag = status === 'completed' ? 'span' : 'button'}
-			{@const tagProps = status === 'completed' ? {} : {}}
 			{@const isLastSteps = i === $onboardingSteps.length - 1}
 
 			<li class="relative md:flex md:flex-1">
-				<svelte:element
-					this={tag}
-					role="button"
-					tabindex="0"
-					class={cn(
-						'group flex items-center',
-						status === 'upcoming' ? 'cursor-default' : 'cursor-pointer'
-					)}
-					{...tagProps}
-					on:click={() => {
-						if (tag === 'button' && status !== 'upcoming') {
-							navigate(href);
-						}
-					}}
-				>
-					<span class="flex items-center px-6 py-4 text-sm font-medium">
+				<div class={cn('group flex items-center')}>
+					<span class="flex items-center px-6 py-4 text-sm select-none font-medium">
 						{#if status !== 'completed'}
 							<span
 								class={cn(
@@ -47,7 +28,7 @@
 										: 'border-gray-300 group-hover:border-gray-400'
 								)}
 							>
-								<span class="text-gray-500 group-hover:text-gray-900">03</span>
+								<span class="text-gray-500 group-hover:text-gray-900">{i + 1}</span>
 							</span>
 						{:else}
 							<span
@@ -61,7 +42,7 @@
 							{title}
 						</span>
 					</span>
-				</svelte:element>
+				</div>
 
 				<!-- Arrow separator for lg screens and up -->
 				{#if !isLastSteps}

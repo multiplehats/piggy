@@ -10,12 +10,14 @@
 		"format": "prettier --write --ignore-path=../../.prettierignore ."
 	},
 	"devDependencies": {
+		"@piggy/types": "workspace:^",
 		"@types/qs": "^6.9.8",
 		"qs": "^6.11.2",
 		"svelte": "^4.2.1",
 		"zod": "^3.23.7"
 	},
 	"dependencies": {
+		"@wordpress/api-fetch": "^6.40.0",
 		"clsx": "^2.0.0",
 		"tailwind-merge": "^1.14.0",
 		"tailwind-variants": "^0.1.14"

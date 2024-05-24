@@ -1,7 +1,7 @@
 <?php
-namespace Piggy\Domain\Services;
+namespace PiggyWP\Domain\Services;
 
-use Piggy\Domain\Package;
+use PiggyWP\Domain\Package;
 use WP_REST_Request;
 use WP_REST_Server;
 use WC_Order;

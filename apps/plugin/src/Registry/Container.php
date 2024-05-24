@@ -1,5 +1,5 @@
 <?php
-namespace Piggy\Registry;
+namespace PiggyWP\Registry;
 
 use Closure;
 use Exception;

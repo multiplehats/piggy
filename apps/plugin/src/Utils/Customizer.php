@@ -4,7 +4,7 @@
  * Credit goes to https://github.com/Horttcore/wp-customizer for the inspiration.
  */
 
-namespace Piggy\Utils;
+namespace PiggyWP\Utils;
 
 /**
  * Customizer settings.

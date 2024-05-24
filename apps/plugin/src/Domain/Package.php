@@ -1,8 +1,8 @@
 <?php
 
-namespace Piggy\Domain;
+namespace PiggyWP\Domain;
 
-use Piggy\Options;
+use PiggyWP\Options;
 use Automattic\WooCommerce\Blocks\Domain\Services\FeatureGating;
 
 /**

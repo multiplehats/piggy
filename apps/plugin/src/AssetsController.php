@@ -1,8 +1,8 @@
 <?php
-namespace Piggy;
+namespace PiggyWP;
 
-use Piggy\Options;
-use Piggy\Assets\Api as AssetApi;
+use PiggyWP\Options;
+use PiggyWP\Assets\Api as AssetApi;
 use Kucrut\Vite;
 
 /**
@@ -78,6 +78,16 @@ final class AssetsController {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ), 100 );
 	}
 
+
+	protected function get_middleware_config() {
+		return "
+			window.piggyMiddlewareConfig = {
+				storeApiNonce: '" . esc_js( wp_create_nonce( 'wc_store_api' ) ) . "',
+				wcStoreApiNonceTimestamp: '" . esc_js( time() ) . "'
+			};
+		";
+	}
+
 	/**
 	 * Register assets.
 	 */
@@ -115,12 +125,7 @@ final class AssetsController {
 		if ( wp_script_is( self::APP_HANDLE, 'enqueued' ) ) {
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
-				"
-				window.piggyMiddlewareConfig = {
-					storeApiNonce: '" . esc_js( wp_create_nonce( 'wc_store_api' ) ) . "',
-					wcStoreApiNonceTimestamp: '" . esc_js( time() ) . "'
-				};
-				",
+				$this->get_middleware_config(),
 				'before'
 			);
 		}
@@ -132,6 +137,7 @@ final class AssetsController {
 			);
 		// }
 	}
+
 
 	/**
 	 * Enqueue custom CSS.
@@ -208,14 +214,7 @@ final class AssetsController {
 		if ( wp_script_is( self::ADMIN_APP_HANDLE, 'enqueued' ) ) {
 			$this->assets_api->add_inline_script(
 				self::ADMIN_APP_HANDLE,
-				"
-				window.piggyAdminConfig = {
-					nonce: '" . esc_js( wp_create_nonce( 'piggy_admin' ) ) . "',
-					nonceTimestamp: '" . esc_js( time() ) . "',
-					ajaxUrl: '" . esc_js( admin_url( 'admin-ajax.php' ) ) . "',
-					siteName: '" . esc_js( get_bloginfo( 'name' ) ) . "',
-				};
-				",
+				$this->get_middleware_config(),
 				'before'
 			);
 		}

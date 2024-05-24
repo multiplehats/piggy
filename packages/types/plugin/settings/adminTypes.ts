@@ -8,7 +8,6 @@ export const zFieldTypes = z.enum([
 	'multiselect',
 	'text',
 	'textarea',
-	'object',
 	'api_key'
 ]);
 export const zCheckboxValue = z.enum(['on', 'off']);
@@ -75,9 +74,15 @@ export type Text = z.infer<typeof zText>;
 
 export const zApiKey = zSettingsBaseField.extend({
 	type: z.literal('api_key'),
-	value: z.string()
+	value: z.string().min(40).max(40)
 });
 export type ApiKey = z.infer<typeof zApiKey>;
+
+export const zShopUuid = zSettingsBaseField.extend({
+	type: z.literal('text'),
+	value: z.string().min(36).max(36)
+});
+export type ShopUuid = z.infer<typeof zShopUuid>;
 
 export const zTextarea = zSettingsBaseField.extend({
 	type: z.literal('textarea'),

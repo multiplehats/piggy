@@ -1,7 +1,7 @@
 <?php
-namespace Piggy\Assets;
+namespace PiggyWP\Assets;
 
-use Piggy\Package;
+use PiggyWP\Package;
 
 use Exception;
 use InvalidArgumentException;

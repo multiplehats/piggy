@@ -1,7 +1,7 @@
 <?php
-namespace Piggy\Shortcodes;
+namespace PiggyWP\Shortcodes;
 
-use Piggy\Assets\Api as AssetApi;
+use PiggyWP\Assets\Api as AssetApi;
 
 /**
  * AbstractShortcode class.

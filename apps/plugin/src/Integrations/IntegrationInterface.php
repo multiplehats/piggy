@@ -1,5 +1,5 @@
 <?php
-namespace Piggy\Integrations;
+namespace PiggyWP\Integrations;
 
 /**
  * Integration.Interface

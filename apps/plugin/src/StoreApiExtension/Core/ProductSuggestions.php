@@ -1,9 +1,9 @@
 <?php
-namespace Piggy\StoreApiExtension\Core;
+namespace PiggyWP\StoreApiExtension\Core;
 
-use Piggy\StoreApiExtension\AbstractStoreApiExtensionType;
+use PiggyWP\StoreApiExtension\AbstractStoreApiExtensionType;
 use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
-use Piggy\Utils\Common as Utils;
+use PiggyWP\Utils\Common as Utils;
 use WC_Product;
 
 /**

@@ -20,7 +20,7 @@ declare global {
 			wcStoreApiNonceTimestamp: string;
 		};
 		// Admin config
-		piggyAdminConfig: PluginAdminConfig;
+		// piggyAdminConfig: PluginAdminConfig;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		wp: {
 			hooks: Hooks;

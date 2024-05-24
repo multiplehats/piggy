@@ -1,8 +1,8 @@
 <?php
-namespace Piggy;
+namespace PiggyWP;
 
-use Piggy\Options;
-use Piggy\Utils\AdminUtils;
+use PiggyWP\Options;
+use PiggyWP\Utils\AdminUtils;
 use WC_Data_Store;
 
 /**
@@ -75,21 +75,10 @@ final class AjaxController {
 			wp_send_json_error( 'Invalid settings, must be an array.' );
 		}
 
-		$settings = array_map(
-			function( $setting ) {
-				if ( isset( $setting['value'] ) ) {
-					return $setting['value'];
-				}
-
-				return $setting;
-			},
-			$settings
-		);
-
 		$returned_options = array();
 
 		try {
-			$returned_options = $this->options->save_all_options( $settings );
+			$returned_options = $this->options->save_options( $settings );
 			wp_send_json_success( $returned_options );
 		} catch ( \Throwable $th ) {
 			wp_send_json_error( $th->getMessage() );

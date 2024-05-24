@@ -1,5 +1,4 @@
 <script lang="ts">
-	import logo from '$lib/images/logo-test.png';
 	import { cn } from '$lib/utils/tw.js';
 
 	let className: string | undefined = undefined;

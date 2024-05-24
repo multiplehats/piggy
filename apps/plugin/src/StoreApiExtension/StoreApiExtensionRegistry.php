@@ -1,7 +1,7 @@
 <?php
-namespace Piggy\StoreApiExtension;
+namespace PiggyWP\StoreApiExtension;
 
-use Piggy\Integrations\IntegrationRegistry;
+use PiggyWP\Integrations\IntegrationRegistry;
 
 /**
  * Class used for interacting with StoreApi Extension types.

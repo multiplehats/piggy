@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Countries } from '../../countries';
+import type { Countries } from '../../countries';
 import type { SymbolPosition } from '../../wc-types';
 import * as adminFields from './adminTypes';
 
@@ -60,10 +60,14 @@ export const zBasePluginOptions = z.object({
  * This schema extends the base schema and adds admin-specific fields.
  */
 export const zPluginOptionsAdmin = zBasePluginOptions.extend({
-	api_key: adminFields.zApiKey
+	api_key: adminFields.zApiKey,
+	shop_uuid: adminFields.zShopUuid
 });
 export type PluginOptionsAdmin = z.infer<typeof zPluginOptionsAdmin>;
 export type PluginOptionsAdminKeys = keyof PluginOptionsAdmin;
+
+export const ZPluginOptionsAdminKeyValue = transformSchema(zPluginOptionsAdmin);
+export type PluginOptionsAdminKeyValue = z.infer<typeof ZPluginOptionsAdminKeyValue>;
 
 /**
  * Frontend options interface.
@@ -74,7 +78,11 @@ export type PluginOptionsAdminKeys = keyof PluginOptionsAdmin;
 export const zPluginOptionsFrontend = transformSchema(zBasePluginOptions);
 export type PluginOptionsFrontend = z.infer<typeof zPluginOptionsFrontend>;
 
-// Window object: PluginAdminConfig
+/**
+ * Window object: PluginAdminConfig
+ *
+ * @deprecated This is deprecated and should not be used.
+ */
 export interface PluginAdminConfig {
 	nonce: string;
 	nonceTimestamp: string;

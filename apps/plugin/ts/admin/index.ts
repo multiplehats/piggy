@@ -2,7 +2,6 @@ import { Admin } from '@piggy/plugin-admin';
 
 const piggySettingsConfig = window.piggySettingsConfig;
 const piggyWcSettingsConfig = window.piggyWcSettings;
-const piggyAdminConfig = window.piggyAdminConfig;
 const adminMount = document.getElementById('piggy-admin-mount');
 
 const mountFrontend = () => {
@@ -21,17 +20,10 @@ const mountFrontend = () => {
 			return;
 		}
 
-		if (!piggyAdminConfig) {
-			console.warn('[piggy] window.piggyAdminConfig is not defined. This is needed to run the app.');
-			return;
-		}
-
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		new Admin({
 			target: adminMount,
 			props: {
-				pluginSettings: piggySettingsConfig,
-				adminConfig: piggyAdminConfig
+				pluginSettings: piggySettingsConfig
 			}
 		});
 	} else {

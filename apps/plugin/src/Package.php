@@ -1,11 +1,11 @@
 <?php
 
-namespace Piggy;
+namespace PiggyWP;
 
-use Piggy\Domain\Package as NewPackage;
-use Piggy\Domain\Bootstrap;
-use Piggy\Registry\Container;
-use Piggy\Domain\Services\FeatureGating;
+use PiggyWP\Domain\Package as NewPackage;
+use PiggyWP\Domain\Bootstrap;
+use PiggyWP\Registry\Container;
+use PiggyWP\Domain\Services\FeatureGating;
 
 /**
  * Main package class.

@@ -1,7 +1,7 @@
 <?php
-namespace Piggy\Assets;
+namespace PiggyWP\Assets;
 
-use Piggy\Domain\Package;
+use PiggyWP\Domain\Package;
 use Exception;
 use Kucrut\Vite;
 

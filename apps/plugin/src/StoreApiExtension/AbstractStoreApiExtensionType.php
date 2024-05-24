@@ -1,8 +1,8 @@
 <?php
-namespace Piggy\StoreApiExtension;
+namespace PiggyWP\StoreApiExtension;
 
-use Piggy\Options;
-use Piggy\StoreApiExtension\StoreApiExtensionTypeInterface;
+use PiggyWP\Options;
+use PiggyWP\StoreApiExtension\StoreApiExtensionTypeInterface;
 use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 use Automattic\WooCommerce\StoreApi\SchemaController;
 use Automattic\WooCommerce\StoreApi\Schemas\V1\CartItemSchema;
