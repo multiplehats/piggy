@@ -5,6 +5,7 @@
 
 	const onboarding = useOnboarding();
 
+	export let disabled = false;
 	export let saving = false;
 
 	function handlePreviousStep(e: ButtonEventHandler<MouseEvent>) {
@@ -15,10 +16,11 @@
 </script>
 
 <div class="flex items-center justify-end w-full mt-8 gap-4">
-	<Button size="sm" variant="secondary" disabled={saving} on:click={handlePreviousStep}
-		>{__('Back', 'piggy')}</Button
-	>
-	<Button size="sm" variant="default" loading={saving} type="submit"
-		>{__('Save and continue', 'piggy')}</Button
-	>
+	<Button size="sm" variant="secondary" disabled={saving || disabled} on:click={handlePreviousStep}>
+		{__('Back', 'piggy')}
+	</Button>
+
+	<Button size="sm" variant="default" loading={saving} {disabled} type="submit">
+		{__('Save and continue', 'piggy')}
+	</Button>
 </div>

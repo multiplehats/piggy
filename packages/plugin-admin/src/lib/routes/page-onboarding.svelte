@@ -51,8 +51,8 @@
 						<p>Onboarding component for step {id} not found.</p>
 					{/if}
 
-					{#if showActions && !initialising}
-						<OnboardingActions saving={$saveSettingsMutation.isPending} />
+					{#if showActions}
+						<OnboardingActions saving={$saveSettingsMutation.isPending} disabled={initialising} />
 					{/if}
 				{/if}
 			{/each}

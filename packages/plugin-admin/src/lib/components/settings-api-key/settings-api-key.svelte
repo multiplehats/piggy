@@ -16,10 +16,8 @@
 	const query = createQuery<AdminGetApiKeyResponse>(getApiKeyQueryConfig());
 	const shopQuery = createQuery(getShopsQueryConfig());
 
-	$: if ($query.isLoading || $shopQuery.isLoading) {
-		isLoading = true;
-	} else {
-		isLoading = false;
+	$: {
+		isLoading = $query.isLoading || $shopQuery.isLoading;
 	}
 </script>
 
