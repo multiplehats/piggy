@@ -8,7 +8,7 @@ use PiggyWP\Api\Schemas\V1\AbstractSchema;
  *
  * @internal
  */
-class Shops extends AbstractSchema {
+class ShopsSchema extends AbstractSchema {
 	/**
 	 * The schema item name.
 	 *
@@ -29,7 +29,18 @@ class Shops extends AbstractSchema {
 	 * @return array
 	 */
 	public function get_properties() {
-		return [];
+		return [
+			'uuid'          => [
+				'description' => __( 'The shops\'s unique id.', 'piggy' ),
+				'type'        => 'string',
+				'context'     => [ 'view', 'edit' ],
+			],
+			'name'          => [
+				'description' => __( 'The shops\'s name.', 'piggy' ),
+				'type'        => 'string',
+				'context'     => [ 'view', 'edit' ],
+			],
+		];
 	}
 
 	/**
@@ -39,9 +50,10 @@ class Shops extends AbstractSchema {
 	 *
 	 * @return array
 	 */
-	public function get_item_response( $item ) {
+	public function get_item_response( $shop ) {
 		return [
-			'shops' => $item,
+			'uuid' => $shop->getUuid(),
+			'name' => $shop->getName(),
 		];
 	}
 }

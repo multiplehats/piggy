@@ -21,7 +21,23 @@ export class PiggyApiError extends Error {
 	}
 }
 
-export class PiggyService {
+export class PiggyAdminService {
+	async saveSettings(settings: Record<string, unknown>) {
+		const { data, error } = await api.post('/piggy/v1/settings', {
+			settings
+		});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new PiggyApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new Error('No data returned');
+		}
+
+		return data;
+	}
+
 	async getApiKey() {
 		const { data, error } = await api.get<AdminGetApiKeyResponse>('/piggy/private/api-key', {
 			cache: 'no-store'

@@ -9,13 +9,14 @@ export const OnboardingStepId = {
 	generalSettings: 'general-settings'
 } as const;
 
-export type OnboardingStepId = typeof OnboardingStepId[keyof typeof OnboardingStepId];
+export type OnboardingStepId = (typeof OnboardingStepId)[keyof typeof OnboardingStepId];
 
 export interface Step {
 	id: OnboardingStepId;
 	title: string;
 	href: string;
 	status: 'completed' | 'current' | 'upcoming';
+	showActions: boolean;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	component?: typeof SvelteComponent<any>;
 }
@@ -26,6 +27,7 @@ export const initialOnboardingSteps = [
 		title: 'Welcome',
 		href: '/onboarding?step=welcome',
 		status: 'current',
+		showActions: false,
 		component: OnboardingAccount
 	},
 	{
@@ -33,12 +35,14 @@ export const initialOnboardingSteps = [
 		title: 'Connect account',
 		href: '/onboarding?step=connect-account',
 		status: 'upcoming',
+		showActions: true,
 		component: OnboardingConnectAccount
 	},
 	{
 		id: 'general-settings',
 		title: 'General settings',
 		href: '/onboarding?step=general-settings',
+		showActions: true,
 		status: 'upcoming'
 	}
 ] satisfies Step[];
@@ -55,7 +59,7 @@ export const navigateToOnboardingStep = (stepId: OnboardingStepId) => {
 	onboardingSteps.update((steps) => {
 		return steps.map((step) => {
 			if (step.id === stepId) {
-				updatingStep =  step
+				updatingStep = step;
 
 				return {
 					...step,
@@ -72,7 +76,7 @@ export const navigateToOnboardingStep = (stepId: OnboardingStepId) => {
 		});
 	});
 
-	if(!updatingStep) {
+	if (!updatingStep) {
 		throw new Error(`Step with id ${stepId} not found`);
 	}
 
@@ -80,5 +84,54 @@ export const navigateToOnboardingStep = (stepId: OnboardingStepId) => {
 
 	return {
 		href
+	};
+};
+
+export const completeOnboardingStep = (stepId: OnboardingStepId) => {
+	onboardingSteps.update((steps) => {
+		return steps.map((step) => {
+			if (step.id === stepId) {
+				return {
+					...step,
+					status: 'completed'
+				};
+			}
+			return step;
+		});
+	});
+};
+
+// Return to previous step
+export const returnToPreviousStep = () => {
+	let updatingStep: Step | undefined;
+
+	onboardingSteps.update((steps) => {
+		return steps.map((step) => {
+			if (step.status === 'current') {
+				updatingStep = step;
+
+				return {
+					...step,
+					status: 'upcoming'
+				};
+			}
+			if (step.status === 'completed') {
+				return {
+					...step,
+					status: 'current'
+				};
+			}
+			return step;
+		});
+	});
+
+	if (!updatingStep) {
+		throw new Error('No previous step found');
 	}
+
+	const { href } = updatingStep;
+
+	return {
+		href
+	};
 };

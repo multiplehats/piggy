@@ -6,6 +6,7 @@ use PiggyWP\Api\Formatters;
 use PiggyWP\Api\RoutesController;
 use PiggyWP\Api\SchemaController;
 use PiggyWP\Api\Schemas\ExtendSchema;
+use PiggyWP\Options;
 
 /**
  * Api Main Class.
@@ -43,6 +44,13 @@ final class Api {
 		$container = new Container();
 
 		$container->register(
+			Options::class,
+			function () {
+				return new Options();
+			}
+		);
+
+		$container->register(
 			Connection::class,
 			function () {
 				return new Connection();
@@ -54,10 +62,12 @@ final class Api {
 			function ( $container ) {
 				return new RoutesController(
 					$container->get( SchemaController::class ),
-					$container->get( Connection::class )
+					$container->get( Connection::class ),
+					$container->get( Options::class )
 				);
 			}
 		);
+
 		$container->register(
 			SchemaController::class,
 			function ( $container ) {

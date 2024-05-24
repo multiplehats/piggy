@@ -60,7 +60,8 @@ export const zBasePluginOptions = z.object({
  * This schema extends the base schema and adds admin-specific fields.
  */
 export const zPluginOptionsAdmin = zBasePluginOptions.extend({
-	api_key: adminFields.zApiKey
+	api_key: adminFields.zApiKey,
+	shop_uuid: adminFields.zShopUuid
 });
 export type PluginOptionsAdmin = z.infer<typeof zPluginOptionsAdmin>;
 export type PluginOptionsAdminKeys = keyof PluginOptionsAdmin;

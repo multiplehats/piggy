@@ -17,6 +17,7 @@
 	export let id: $$Props['id'];
 	export let items: $$Props['items'];
 	export let itemName: $$Props['itemName'];
+	export let value: $$Props['value'];
 </script>
 
 <div class="flex flex-col justify-between">
@@ -35,8 +36,11 @@
 	<Combobox
 		{items}
 		{itemName}
-		{id}
 		{widthClass}
-		class={cn('max-w-xl', label && '!mt-2', $$props.class)}
+		bind:value
+		class={cn('max-w-xl', label && '!mt-1', $$props.class)}
 	/>
+
+	<!-- Compatiblity for <form> -->
+	<input type="hidden" name={id} bind:value {id} />
 </div>

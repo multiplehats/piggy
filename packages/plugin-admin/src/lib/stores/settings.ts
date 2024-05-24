@@ -49,8 +49,11 @@ export const updateSettings = ({
 /**
  * Saves the settings by calling the API.
  */
-export const saveSettings = async () => {
+export const saveSettings = () => {
 	const settings = get(settingsState);
+
+	console.log('settings', settings);
+
 	const validation = zPluginOptionsAdmin.safeParse(settings);
 
 	if (!validation.success) {
@@ -61,5 +64,14 @@ export const saveSettings = async () => {
 		return;
 	}
 
-	console.log('save settings');
+	// From the settings object, create an array of settings to save.
+	const settingsToSave = Object.entries(settings).reduce(
+		(acc, [key, value]) => {
+			acc[key] = value.value;
+			return acc;
+		},
+		{} as Record<string, unknown>
+	);
+
+	console.log('settingsToSave', settingsToSave);
 };

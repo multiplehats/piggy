@@ -44,6 +44,7 @@
 		on:paste
 		on:input
 		{id}
+		name={id}
 		class={cn('max-w-xl', label && '!mt-2', className)}
 		{...$$restProps}
 	/>

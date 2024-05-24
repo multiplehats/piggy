@@ -1,39 +1,45 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1\Admin;
+namespace PiggyWP\Api\Schemas\V1;
 
 use PiggyWP\Api\Schemas\V1\AbstractSchema;
 
 /**
- * ApiKey class.
+ * Settings class.
  *
  * @internal
  */
-class ApiKey extends AbstractSchema {
+class SettingsSchema extends AbstractSchema {
 	/**
 	 * The schema item name.
 	 *
 	 * @var string
 	 */
-	protected $title = 'api-key';
+	protected $title = 'settings';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'api-key';
+	const IDENTIFIER = 'settings';
 
 	/**
-	 * Business Description schema properties.
+	 * API key schema properties.
 	 *
 	 * @return array
 	 */
 	public function get_properties() {
-		return [];
+		return [
+			'api_key' => [
+				'description' => __( 'Settings.', 'piggy' ),
+				'type'        => 'string',
+				'context'     => [ 'view', 'edit' ],
+			],
+		];
 	}
 
 	/**
-	 * Get the Business Description response.
+	 * Get Settings response.
 	 *
 	 * @param array $item Item to get response for.
 	 *

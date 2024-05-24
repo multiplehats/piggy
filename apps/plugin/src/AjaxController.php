@@ -75,17 +75,6 @@ final class AjaxController {
 			wp_send_json_error( 'Invalid settings, must be an array.' );
 		}
 
-		$settings = array_map(
-			function( $setting ) {
-				if ( isset( $setting['value'] ) ) {
-					return $setting['value'];
-				}
-
-				return $setting;
-			},
-			$settings
-		);
-
 		$returned_options = array();
 
 		try {

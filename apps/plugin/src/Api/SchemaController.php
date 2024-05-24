@@ -31,8 +31,9 @@ class SchemaController {
 		$this->extend  = $extend;
 		$this->schemas = [
 			'v1' => [
-				Schemas\V1\Admin\Shops::IDENTIFIER => Schemas\V1\Admin\Shops::class,
-				Schemas\V1\Admin\ApiKey::IDENTIFIER => Schemas\V1\Admin\ApiKey::class,
+				Schemas\V1\Admin\ShopsSchema::IDENTIFIER => Schemas\V1\Admin\ShopsSchema::class,
+				Schemas\V1\Admin\ApiKeySchema::IDENTIFIER => Schemas\V1\Admin\ApiKeySchema::class,
+				Schemas\V1\SettingsSchema::IDENTIFIER => Schemas\V1\SettingsSchema::class,
 			],
 		];
 	}

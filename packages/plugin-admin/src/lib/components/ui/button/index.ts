@@ -1,4 +1,4 @@
-import type { Button as ButtonPrimitive } from 'bits-ui';
+import type { ButtonEventHandler, Button as ButtonPrimitive } from 'bits-ui';
 import { tv } from 'tailwind-variants';
 import type { VariantProps } from 'tailwind-variants';
 import Root from './button.svelte';
@@ -46,5 +46,6 @@ export {
 	Root as Button,
 	type Props as ButtonProps,
 	type Events as ButtonEvents,
+	type ButtonEventHandler,
 	buttonVariants
 };

@@ -3,34 +3,44 @@
 	import { __ } from '@wordpress/i18n';
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import { setApiKeyMutationConfig } from '$lib/modules/piggy/mutations';
-	import { getApiKeyQueryConfig } from '$lib/modules/piggy/queries';
+	import { getApiKeyQueryConfig, getShopsQueryConfig } from '$lib/modules/piggy/queries';
 	import type { AdminGetApiKeyResponse } from '$lib/modules/piggy/types';
-	import ComboboxPiggyShop from '../combobox-piggy-shop.svelte';
+	import { settingsState } from '$lib/stores/settings';
+	import SettingsCombobox from '../settings-combobox.svelte';
 	import SettingsSection from '../ui/settings-section/settings-section.svelte';
 
 	const client = useQueryClient();
 	const setApiKeyMutation = createMutation(setApiKeyMutationConfig(client));
 	const query = createQuery<AdminGetApiKeyResponse>(getApiKeyQueryConfig());
+	const shopQuery = createQuery(getShopsQueryConfig());
+	const testQuery = createQuery(getShopsQueryConfig());
 </script>
 
 <SettingsSection title={__('Connect to Piggy', 'piggy')}>
-	<form class="grid grid-cols-2 gap-4">
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 		<SettingsInput
-			id="api-key"
-			label={__('API Key', 'piggy')}
+			label={$settingsState.api_key.label}
+			description={$settingsState.api_key.description}
+			id={$settingsState.api_key.id}
+			bind:value={$settingsState.api_key.value}
 			class="font-mono"
-			value={$query.data?.api_key ?? undefined}
-			on:change={(e) => {
-				const value = e.currentTarget.value;
-
-				$setApiKeyMutation.mutate({
-					api_key: value
-				});
-			}}
+			on:change={({ currentTarget }) => $setApiKeyMutation.mutate({ api_key: currentTarget.value })}
 		/>
 
 		{#if $query.data?.api_key}
-			<ComboboxPiggyShop />
+			<SettingsCombobox
+				items={$shopQuery?.data
+					? $shopQuery.data.map((shop) => ({
+							label: shop.name,
+							value: shop.uuid
+					  }))
+					: []}
+				itemName="shop"
+				label={$settingsState.shop_uuid.label}
+				description={$settingsState.shop_uuid.description}
+				id={$settingsState.shop_uuid.id}
+				bind:value={$settingsState.shop_uuid.value}
+			/>
 		{/if}
-	</form>
+	</div>
 </SettingsSection>

@@ -18,6 +18,10 @@
       "persistent": true,
       "cache": false
     },
+    "dev:admin": {
+      "persistent": true,
+      "cache": false
+    },
     "analyze": {
       "dependsOn": [
         "^build"

@@ -2,10 +2,10 @@ import type { CreateMutationOptions, DefaultError, QueryClient } from '@tanstack
 import { __ } from '@wordpress/i18n';
 import { MutationKeys, QueryKeys } from '$lib/utils/query-keys';
 import toast from 'svelte-french-toast';
-import { PiggyService } from '.';
-import type { AdminGetApiKeyResponse, AdminSetApiKeyParams, AdminSetApiKeyResponse } from './types';
+import { PiggyAdminService } from '.';
+import type { AdminSetApiKeyParams, AdminSetApiKeyResponse } from './types';
 
-const service = new PiggyService();
+const service = new PiggyAdminService();
 
 interface SetApiKeyOptions {
 	onSuccessCb?: (newApiKey: AdminSetApiKeyResponse) => void;
@@ -29,23 +29,13 @@ export function setApiKeyMutationConfig(
 		mutationKey: [MutationKeys.setApiKey],
 		mutationFn: (params) => service.setApiKey(params),
 		retry: true,
-		onMutate: async () => {
-			await queryClient.cancelQueries({
-				queryKey: [QueryKeys.apiKey]
-			});
-
-			const previousApiKey = queryClient.getQueryData<AdminGetApiKeyResponse>([QueryKeys.apiKey]);
-
+		onMutate: () => {
 			if (opts.onMutateCb) {
 				opts.onMutateCb();
 			}
-
-			return {
-				previousApiKey: previousApiKey ?? null
-			};
 		},
 		onSuccess: async (newApiKey) => {
-			queryClient.setQueryData<AdminGetApiKeyResponse>([QueryKeys.apiKey], newApiKey);
+			// queryClient.setQueryData<AdminGetApiKeyResponse>([QueryKeys.apiKey], newApiKey);
 			await queryClient.invalidateQueries({ queryKey: [QueryKeys.shops] });
 
 			toast.success(__('API key updated', 'piggy'));
@@ -54,6 +44,23 @@ export function setApiKeyMutationConfig(
 				opts.onSuccessCb(newApiKey);
 			}
 		},
+		...mutationOpts
+	};
+}
+
+type SaveSettingsMutationConfig = CreateMutationOptions<{}, DefaultError, Record<string, unknown>>;
+
+export function saveSettingsMutationConfig(
+	queryClient: QueryClient,
+	mutationOpts: Partial<
+		Omit<SaveSettingsMutationConfig, 'mutationKey' | 'mutationFn' | 'onSuccess' | 'onMutate'>
+	> = {}
+): SaveSettingsMutationConfig {
+	return {
+		mutationKey: [MutationKeys.saveSettings],
+		mutationFn: (params) => service.saveSettings(params),
+		retry: true,
+
 		...mutationOpts
 	};
 }

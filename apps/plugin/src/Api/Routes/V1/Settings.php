@@ -1,31 +1,29 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1\Admin;
+namespace PiggyWP\Api\Routes\V1;
 
 use PiggyWP\Api\Routes\V1\AbstractRoute;
 use PiggyWP\Api\Routes\V1\Admin\Middleware;
-use Piggy\Api\ApiClient;
-use Piggy\Api\Models\Shops\Shop;
 
 /**
  * Shops class.
  *
  * @internal
  */
-class Shops extends AbstractRoute {
+class Settings extends AbstractRoute {
 	/**
 	 * The route identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'shops';
+	const IDENTIFIER = 'settings';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const SCHEMA_TYPE = 'shops';
+	const SCHEMA_TYPE = 'settings';
 
 	/**
 	 * Get the path of this REST route.
@@ -33,7 +31,7 @@ class Shops extends AbstractRoute {
 	 * @return string
 	 */
 	public function get_path() {
-		return '/shops';
+		return '/settings';
 	}
 
 	/**
@@ -46,8 +44,18 @@ class Shops extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [],
+			],
+			[
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'get_response' ],
+				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'args'                => [
+					'settings' => [
+						'description' => __( 'Settings', 'piggy' ),
+						'type'        => 'object',
+					],
+				],
 			],
 			'schema'      => [ $this->schema, 'get_public_item_schema' ],
 			'allow_batch' => [ 'v1' => true ],
@@ -61,16 +69,12 @@ class Shops extends AbstractRoute {
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
-	protected function get_route_response( \WP_REST_Request $request ) {
-		$this->init_client();
-		$results = Shop::list();
-		$shops = array();
+	protected function get_route_post_response( \WP_REST_Request $request ) {
+		$settings = $request->get_param( 'settings' );
+		error_log( print_r( $settings, true ) );
 
-		foreach ($results as $shop) {
-			$shops[] = $this->schema->get_item_response( $shop );
-		}
+		$returned_options = $this->options->save_all_options( $settings );
 
-		return rest_ensure_response( $shops );
+		return rest_ensure_response( $returned_options );
 	}
-
 }

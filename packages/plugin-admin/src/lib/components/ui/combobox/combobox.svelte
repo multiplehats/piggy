@@ -17,11 +17,12 @@
 	export let itemName: $$Props['itemName'];
 	export let items: $$Props['items'] = [];
 	export let widthClass: $$Props['widthClass'] = 'w-[300px] justify-between';
-	export let id: $$Props['id'] = undefined;
+	export let noResultsText: $$Props['noResultsText'] = __('No results found');
+
+	export let value: $$Props['value'] = undefined;
 	export { className as class };
 
 	let open = false;
-	let value = '';
 
 	$: selectedValue =
 		// translators: %s: itemName
@@ -42,6 +43,11 @@
 	<Popover.Trigger asChild let:builder>
 		<Button
 			builders={[builder]}
+			on:click={(e) => {
+				// THis is important, because WordPress thinks the button
+				//  is a form submit button (or something like that)
+				e.preventDefault();
+			}}
 			variant="outline"
 			role="combobox"
 			aria-expanded={open}
@@ -50,8 +56,6 @@
 			{selectedValue}
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 		</Button>
-
-		<input type="hidden" name={id} {value} {id} />
 	</Popover.Trigger>
 	<Popover.Content class={cn('p-0', widthClass)}>
 		<Command.Root>
@@ -60,13 +64,7 @@
 				sprintf(__('Search a %s'), itemName)}
 			/>
 
-			<Command.Empty>
-				{sprintf(
-					// translators: %s: search term
-					__('No results found for "%s"'),
-					selectedValue
-				)}
-			</Command.Empty>
+			<Command.Empty>{noResultsText}</Command.Empty>
 
 			<Command.Group>
 				{#each items as item}

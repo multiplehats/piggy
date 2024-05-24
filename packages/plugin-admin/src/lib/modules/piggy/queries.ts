@@ -1,9 +1,9 @@
 import type { DefaultError, QueryKey, UndefinedInitialDataOptions } from '@tanstack/svelte-query';
 import { QueryKeys } from '$lib/utils/query-keys';
-import { PiggyService } from '.';
+import { PiggyAdminService } from '.';
 import type { AdminGetApiKeyResponse, GetShopsResponse } from './types';
 
-const service = new PiggyService();
+const service = new PiggyAdminService();
 
 export function getApiKeyQueryConfig(): UndefinedInitialDataOptions<
 	AdminGetApiKeyResponse,

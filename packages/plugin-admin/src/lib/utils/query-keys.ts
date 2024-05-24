@@ -1,8 +1,9 @@
 export const QueryKeys = {
-	apiKey: 'apiKey'
+	apiKey: 'apiKey',
 	shops: 'shops'
 } as const;
 
 export const MutationKeys = {
-	setApiKey: 'setApiKey'
+	setApiKey: 'setApiKey',
+	saveSettings: 'saveSettings'
 } as const;
