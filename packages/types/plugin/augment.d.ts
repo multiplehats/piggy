@@ -16,6 +16,8 @@ declare global {
 		piggyWcSettings: IWooSettings;
 		// WP Fetch middleware config
 		piggyMiddlewareConfig: {
+			languages: string[];
+			currentLanguage: string;
 			storeApiNonce: string;
 			wcStoreApiNonceTimestamp: string;
 		};

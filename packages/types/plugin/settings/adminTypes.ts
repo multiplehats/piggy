@@ -2,15 +2,18 @@ import { z } from 'zod';
 
 export const zFieldTypes = z.enum([
 	'checkbox',
+	'checkboxes',
 	'color',
 	'number',
 	'select',
 	'multiselect',
 	'text',
 	'textarea',
-	'api_key'
+	'api_key',
+	'translatable_text',
+	'switch'
 ]);
-export const zCheckboxValue = z.enum(['on', 'off']);
+
 export const zSelectOptionsItem = z.object({ label: z.string() });
 export const zSelectOptions = z.record(zSelectOptionsItem);
 
@@ -27,6 +30,14 @@ export const zSettingsBaseField = z.object({
 export type SettingsBaseField = z.infer<typeof zSettingsBaseField>;
 
 // Extended fields with specific constraints based on the field type
+export const zCheckboxValue = z.enum(['on', 'off']);
+export type CheckboxValue = z.infer<typeof zCheckboxValue>;
+export const zCheckbox = zSettingsBaseField.extend({
+	type: z.literal('checkbox'),
+	default: zCheckboxValue,
+	value: zCheckboxValue
+});
+export type Chdckbox = z.infer<typeof zCheckbox>;
 
 export const zToggle = zSettingsBaseField.extend({
 	type: z.literal('checkbox'),
@@ -48,6 +59,20 @@ export const zMultiSelect = zSettingsBaseField.extend({
 	value: z.array(z.string())
 });
 export type MultiSelect = z.infer<typeof zMultiSelect>;
+
+export const zCheckboxesOptionsItem = z.object({
+	label: z.string(),
+	tooltip: z.string().optional()
+});
+export const zCheckboxesOptions = z.record(zCheckboxesOptionsItem);
+export type CheckboxesOptions = z.infer<typeof zCheckboxesOptions>;
+export type CheckboxesOptionsItem = z.infer<typeof zCheckboxesOptionsItem>;
+export const zCheckboxes = zSettingsBaseField.extend({
+	type: z.literal('checkboxes'),
+	options: z.array(zCheckboxesOptions),
+	value: z.record(zCheckboxValue)
+});
+export type Checkboxes = z.infer<typeof zCheckboxes>;
 
 export const zColor = zSettingsBaseField.extend({
 	type: z.literal('color'),
@@ -89,3 +114,9 @@ export const zTextarea = zSettingsBaseField.extend({
 	value: z.string()
 });
 export type Textarea = z.infer<typeof zTextarea>;
+
+export const zTranslatableText = zSettingsBaseField.extend({
+	type: z.literal('translatable_text'),
+	value: z.record(z.string())
+});
+export type TranslatableText = z.infer<typeof zTranslatableText>;

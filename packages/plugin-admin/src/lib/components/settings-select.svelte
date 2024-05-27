@@ -4,7 +4,6 @@
 	import * as Select from '$lib/components/ui/select';
 	import { updateSettings } from '$lib/stores/settings';
 	import { cn } from '$lib/utils/tw.js';
-	import type { Select as SelectPrimitive } from 'bits-ui';
 
 	interface Item {
 		name: string;
@@ -18,7 +17,11 @@
 	export let id: string;
 	export let initialValue: string | undefined = undefined;
 
-	function onSelectedChange(selectedOption: SelectPrimitive.Props['selected']) {
+	function onSelectedChange(
+		selectedOption: {
+			value: string;
+		} | null
+	) {
 		if (!selectedOption?.value) return selectedOption;
 
 		return updateSettings({

@@ -66,8 +66,7 @@ export function saveSettingsMutationConfig(
 	return {
 		mutationKey: [MutationKeys.saveSettings],
 		mutationFn: (params) => service.saveSettings(params),
-		retry: true,
-
+		retry: false,
 		...mutationOpts
 	};
 }

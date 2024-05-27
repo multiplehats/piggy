@@ -4,6 +4,7 @@ namespace PiggyWP;
 use PiggyWP\Options;
 use PiggyWP\Assets\Api as AssetApi;
 use Kucrut\Vite;
+use PiggyWP\Utils\Common;
 
 /**
  * AssetsController class.
@@ -80,8 +81,13 @@ final class AssetsController {
 
 
 	protected function get_middleware_config() {
+		$all_languages = Common::get_languages();
+		$current_language = Common::get_current_language();
+
 		return "
 			window.piggyMiddlewareConfig = {
+				currentLanguage: '" . esc_js( $current_language ) . "',
+				languages: " . wp_json_encode( $all_languages ) . ",
 				storeApiNonce: '" . esc_js( wp_create_nonce( 'wc_store_api' ) ) . "',
 				wcStoreApiNonceTimestamp: '" . esc_js( time() ) . "'
 			};
@@ -197,9 +203,7 @@ final class AssetsController {
 				"window.piggySettingsConfig = JSON.parse( decodeURIComponent( '" . esc_js( $settings ) . "' ) );",
 				'before'
 			);
-		}
 
-		if ( wp_script_is( self::ADMIN_APP_HANDLE, 'enqueued' ) ) {
 			$this->initialize_core_data();
 
 			$wc_settings = rawurlencode( wp_json_encode( $this->wc_settings_data ) );
@@ -209,9 +213,7 @@ final class AssetsController {
 				"window.piggyWcSettings = JSON.parse( decodeURIComponent( '" . esc_js( $wc_settings ) . "' ) );",
 				'before'
 			);
-		}
 
-		if ( wp_script_is( self::ADMIN_APP_HANDLE, 'enqueued' ) ) {
 			$this->assets_api->add_inline_script(
 				self::ADMIN_APP_HANDLE,
 				$this->get_middleware_config(),

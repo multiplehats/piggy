@@ -52,7 +52,12 @@ type ExtractValue<S> = S extends z.ZodObject<infer U>
  */
 export const zBasePluginOptions = z.object({
 	plugin_enable: adminFields.zToggle,
-	plugin_reset: adminFields.zToggle
+	plugin_reset: adminFields.zToggle,
+	credits_name: adminFields.zTranslatableText,
+	include_guests: adminFields.zToggle,
+	reward_order_statuses: adminFields.zCheckboxes,
+	withdraw_order_statuses: adminFields.zCheckboxes,
+	reward_order_parts: adminFields.zCheckboxes
 });
 
 /**
