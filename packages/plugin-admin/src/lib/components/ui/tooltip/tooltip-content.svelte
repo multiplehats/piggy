@@ -19,7 +19,7 @@
 	{transition}
 	{transitionConfig}
 	class={cn(
-		'z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground',
+		'z-[99999] overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground',
 		className
 	)}
 	{...$$restProps}

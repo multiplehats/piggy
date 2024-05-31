@@ -5,23 +5,28 @@
 
 	type $$Props = SettingsLabelProps;
 
+	let className: string | undefined = undefined;
+
 	export let id: $$Props['id'];
-	export let tooltip: $$Props['tooltip'];
-	export let description: $$Props['description'];
-	export let hideLabel: $$Props['hideLabel'];
+	export let tooltip: $$Props['tooltip'] = undefined;
+	export let description: $$Props['description'] = undefined;
+	export let hideLabel: $$Props['hideLabel'] = false;
 	export let label: $$Props['label'];
+	export { className as class };
 
 	$: hideLabel = !!tooltip;
 </script>
 
-{#if label}
-	<Label class={cn(hideLabel && 'sr-only')} for={id}>
-		{label}
-	</Label>
-{/if}
+<div class={cn('mb-3', className)}>
+	{#if label}
+		<Label class={cn(hideLabel && 'sr-only')} for={id}>
+			{label}
+		</Label>
+	{/if}
 
-{#if description}
-	<p class="mt-0.5 text-xs">
-		{description}
-	</p>
-{/if}
+	{#if description}
+		<p class="mt-0.5 text-xs">
+			{description}
+		</p>
+	{/if}
+</div>

@@ -5,7 +5,6 @@
 	import type { FormInputEvent } from '$lib/components/ui/input';
 	import { getApiKeyQueryConfig } from '$lib/modules/piggy/queries';
 	import type { AdminGetApiKeyResponse } from '$lib/modules/piggy/types';
-	import ComboboxPiggyShop from '../combobox-piggy-shop.svelte';
 
 	const handleOnChange = (e: FormInputEvent<Event>) => {
 		e.preventDefault();
@@ -14,7 +13,6 @@
 	};
 
 	const query = createQuery<AdminGetApiKeyResponse>(getApiKeyQueryConfig());
-	$: console.log($query);
 </script>
 
 <SettingsInput

@@ -52,8 +52,6 @@ export const updateSettings = ({
 export const saveSettings = () => {
 	const settings = get(settingsState);
 
-	console.log('settings', settings);
-
 	const validation = zPluginOptionsAdmin.safeParse(settings);
 
 	if (!validation.success) {
@@ -72,6 +70,4 @@ export const saveSettings = () => {
 		},
 		{} as Record<string, unknown>
 	);
-
-	console.log('settingsToSave', settingsToSave);
 };

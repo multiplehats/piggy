@@ -15,10 +15,7 @@
 	{/if}
 
 	<div
-		class={cn(
-			'app-container content-container relative mt-8',
-			isOnboarding ? 'mt-0 mx-auto' : 'mt-16'
-		)}
+		class={cn('app-container content-container relative', isOnboarding ? 'mt-0 mx-auto' : 'mt-8')}
 	>
 		<Toaster />
 		<slot />

@@ -131,11 +131,18 @@ const setInitialising = (stepId: OnboardingStepId, initialising: boolean) => {
 	});
 };
 
+const isLastStep = () => {
+	const steps = get(onboardingSteps);
+	const currentIndex = steps.findIndex((step) => step.status === 'current');
+	return currentIndex === steps.length - 1;
+};
+
 export const useOnboarding = () => ({
 	goToStep,
 	completeStep,
 	completeAndNavigate,
 	previousStep,
 	nextStep,
-	setInitialising
+	setInitialising,
+	isLastStep
 });

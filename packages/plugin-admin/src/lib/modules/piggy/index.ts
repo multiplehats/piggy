@@ -79,8 +79,6 @@ export class PiggyAdminService {
 			params
 		);
 
-		console.log(data, error);
-
 		if (error ?? !data) {
 			if (error) {
 				throw new PiggyApiError(error.status, error.statusText, error.data);

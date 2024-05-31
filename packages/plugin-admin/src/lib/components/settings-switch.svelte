@@ -27,7 +27,7 @@
 		{id}
 	/>
 
-	<div class={cn('relative inline-flex mt-3 items-center w-full')}>
+	<div class={cn('relative inline-flex items-center w-full')}>
 		<div class="flex items-center space-x-2">
 			<Switch
 				{checked}

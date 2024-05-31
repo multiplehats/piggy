@@ -16,6 +16,17 @@
 	const saveSettingsMutation = createMutation(
 		saveSettingsMutationConfig(client, {
 			onSuccess: () => {
+				const isLastStep = onboarding.isLastStep();
+
+				if (isLastStep) {
+					navigate('/', {
+						state: {
+							onboarding: 'complete'
+						}
+					});
+					return;
+				}
+
 				const { href } = onboarding.nextStep();
 
 				navigate(href);

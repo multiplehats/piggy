@@ -209,6 +209,23 @@ class Options {
 							),
 						),
 					),
+					array(
+						'id'      => 'marketing_consent_subscription',
+						'type'    => self::SELECT,
+						'label'   => __( 'Marketing consent subscription', 'piggy' ),
+						'description' => __( 'Select the Piggy subscription that will be used for marketing consent.', 'piggy' ),
+						'default' => 'functional',
+						'options'     => array(
+							'functional'      => array(
+								'label' => __( 'Functional email', 'piggy' ),
+								'tooltip' => __( 'Functional emails are emails that are necessary for the functioning of the service. These include emails for password resets, order confirmations, and account creation.', 'piggy' )
+							),
+							'marketing'      => array(
+								'label' => __( 'Marketing email', 'piggy' ),
+								'tooltip' => __( 'Marketing emails are emails that are used for marketing purposes. These include newsletters, promotions, and other marketing emails.', 'piggy' )
+							),
+						),
+					),
 				),
 			);
 		}

@@ -6,6 +6,7 @@
 	import { settingsState } from '$lib/stores/settings';
 	import { noCheckboxSelected } from '$lib/utils/settings-utils';
 	import SettingsCheckboxes from './settings-checkboxes.svelte';
+	import SettingsSelect from './settings-select.svelte';
 	import SettingsSwitch from './settings-switch.svelte';
 </script>
 
@@ -25,10 +26,14 @@
 
 			{#if $settingsState.include_guests.value === 'off'}
 				<div class="mt-2 text-sm">
-					{__(
-						'Only customers who have an account on your store will be included in the loyalty program.',
-						'piggy'
-					)}
+					<Alert
+						description={__(
+							'Only customers who have an account on your store will be included in the loyalty program.',
+							'piggy'
+						)}
+						type="warning"
+						class="mt-4"
+					></Alert>
 				</div>
 			{/if}
 		</div>
@@ -61,6 +66,20 @@
 			class="py-4"
 			{...$settingsState.reward_order_parts}
 			bind:value={$settingsState.reward_order_parts.value}
+		/>
+
+		<SettingsSelect
+			class="py-4"
+			{...$settingsState.marketing_consent_subscription}
+			bind:value={$settingsState.marketing_consent_subscription.value}
+			items={Object.entries($settingsState.marketing_consent_subscription.options).map(
+				([value, { label: name }]) => {
+					return {
+						value,
+						name
+					};
+				}
+			)}
 		/>
 	</div>
 </SettingsSection>

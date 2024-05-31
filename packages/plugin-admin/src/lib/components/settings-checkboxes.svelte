@@ -6,11 +6,12 @@
 	import { cn } from '$lib/utils/tw';
 	import { Info } from 'lucide-svelte';
 	import type { CheckboxesOptions, CheckboxValue } from '@piggy/types/plugin/settings/adminTypes';
+	import SettingsFieldErrors from './settings-field-errors.svelte';
 
 	let className: string | undefined = undefined;
 
 	type $$Props = SettingsLabelProps & {
-		options: CheckboxesOptions[];
+		options: CheckboxesOptions;
 		value: Record<string, CheckboxValue>;
 		class?: string | undefined;
 	};
@@ -30,7 +31,7 @@
 		{id}
 	/>
 
-	<div class="space-y-4 mt-3">
+	<div class="space-y-4">
 		{#each Object.entries(options) as [optionId, { label, tooltip }], i}
 			<div class="flex flex-row items-center">
 				<div class="flex flex-row items-center space-x-2">
@@ -53,12 +54,12 @@
 				</div>
 
 				{#if tooltip}
-					<Tooltip.Root>
+					<Tooltip.Root openDelay={100}>
 						<Tooltip.Trigger>
 							<Info class="w-4 h-4 ml-2" />
 						</Tooltip.Trigger>
 
-						<Tooltip.Content class="max-w-xs">
+						<Tooltip.Content class="max-w-xs" side="right">
 							{tooltip}
 						</Tooltip.Content>
 					</Tooltip.Root>
@@ -66,4 +67,6 @@
 			</div>
 		{/each}
 	</div>
+
+	<SettingsFieldErrors {...$$props} />
 </div>

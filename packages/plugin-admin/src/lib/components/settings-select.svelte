@@ -1,50 +1,49 @@
 <script lang="ts">
 	import { __ } from '@wordpress/i18n';
-	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
-	import { updateSettings } from '$lib/stores/settings';
 	import { cn } from '$lib/utils/tw.js';
+	import SettingsFieldErrors from './settings-field-errors.svelte';
+	import { SettingsLabel, type SettingsLabelProps } from './settings-label';
 
 	interface Item {
 		name: string;
 		value: string;
 	}
 
-	export let items: Item[] = [];
-	export let description: string | undefined = undefined;
-	export let hideLabel = false;
-	export let label: string;
-	export let id: string;
-	export let initialValue: string | undefined = undefined;
+	let className: string | undefined = undefined;
 
-	function onSelectedChange(
-		selectedOption: {
-			value: string;
-		} | null
-	) {
-		if (!selectedOption?.value) return selectedOption;
+	type $$Props = SettingsLabelProps & {
+		class: string | undefined;
+		items: Item[];
+		value?: string | undefined;
+	};
 
-		return updateSettings({
-			id: id,
-			value: selectedOption.value as string
-		});
-	}
+	export { className as class };
+	export let items: $$Props['items'] = [];
+	export let id: $$Props['id'];
+	export let value: $$Props['value'] = undefined;
 
-	$: selected = items.find((item) => item.value === initialValue);
+	$: selected = items.find((item) => item.value === value);
 </script>
 
-<Label class={cn(hideLabel && 'sr-only')} for={id}>
-	{label}
-</Label>
+<div class={className}>
+	<SettingsLabel
+		label={$$props.label}
+		description={$$props.description}
+		hideLabel={$$props.hideLabel}
+		tooltip={$$props.tooltip}
+		{id}
+	/>
 
-{#if description}
-	<p class="mb-2 text-sm">
-		{description}
-	</p>
-{/if}
-
-<div class={cn(!description && 'mt-2')}>
-	<Select.Root {selected} {onSelectedChange} {...$$restProps}>
+	<Select.Root
+		{selected}
+		onSelectedChange={(selected) => {
+			if (selected?.value) {
+				value = selected.value;
+			}
+		}}
+		{items}
+	>
 		<Select.Trigger class="max-w-xl">
 			<Select.Value asChild>
 				{#if selected}
@@ -61,4 +60,6 @@
 			{/each}
 		</Select.Content>
 	</Select.Root>
+
+	<SettingsFieldErrors {...$$props} />
 </div>

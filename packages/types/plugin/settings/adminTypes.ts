@@ -69,7 +69,8 @@ export type CheckboxesOptions = z.infer<typeof zCheckboxesOptions>;
 export type CheckboxesOptionsItem = z.infer<typeof zCheckboxesOptionsItem>;
 export const zCheckboxes = zSettingsBaseField.extend({
 	type: z.literal('checkboxes'),
-	options: z.array(zCheckboxesOptions),
+	options: zCheckboxesOptions,
+	default: z.record(zCheckboxValue),
 	value: z.record(zCheckboxValue)
 });
 export type Checkboxes = z.infer<typeof zCheckboxes>;
