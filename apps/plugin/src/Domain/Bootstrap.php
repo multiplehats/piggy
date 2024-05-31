@@ -22,6 +22,7 @@ use PiggyWP\Api\Api;
 use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 use Automattic\WooCommerce\StoreApi\SchemaController;
 use Automattic\WooCommerce\StoreApi\StoreApi;
+use PiggyWP\PostTypeController;
 use PiggyWP\StoreApiExtension\Compat\CompatRegistry;
 
 /**
@@ -116,6 +117,7 @@ class Bootstrap {
 			$this->container->get( AssetDataRegistry::class );
 			$this->container->get( Installer::class );
 			$this->container->get( AssetsController::class );
+			$this->container->get (PostTypeController::class);
 			$this->container->get( AjaxController::class );
 		}
 		$this->container->get( OrderContext::class )->init();
@@ -232,8 +234,14 @@ class Bootstrap {
 	 */
 	protected function register_dependencies() {
 		$this->container->register(
+			PostTypeController::class,
+			function( Container $container ) {
+				return new PostTypeController();
+			}
+		);
+		$this->container->register(
 			Options::class,
-			function( $c ) {
+			function ( Container $container ) {
 				return new Options();
 			}
 		);

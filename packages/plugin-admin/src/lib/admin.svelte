@@ -11,6 +11,7 @@
 	import '@piggy/tailwind-config/global.postcss';
 	import { __ } from '@wordpress/i18n';
 	import toast from 'svelte-french-toast';
+	import PageLoyaltyProgram from './routes/page-loyalty-program.svelte';
 	import PageOnboarding from './routes/page-onboarding.svelte';
 
 	export let pluginSettings: PluginOptionsAdmin;
@@ -18,6 +19,7 @@
 	const routes = window.wp.hooks.applyFilters('piggy.adminRoutes', [
 		{ path: '/', component: PageHome, primary: true },
 		{ path: 'general', component: PageGeneralSettings, primary: true },
+		{ path: 'loyalty-program', component: PageLoyaltyProgram, primary: true },
 		{ path: 'onboarding', component: PageOnboarding, primary: false }
 	]) as { path: string; component: typeof SvelteComponent; primary: boolean }[];
 

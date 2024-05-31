@@ -8,6 +8,11 @@ export const headerLinks = [
 		type: 'link'
 	},
 	{
+		href: '/loyalty-program',
+		label: __('Loyalty Program', 'piggy'),
+		type: 'link'
+	},
+	{
 		href: '/general',
 		label: __('General', 'piggy'),
 		type: 'link'

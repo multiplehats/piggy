@@ -2,9 +2,6 @@
 
 namespace PiggyWP\Domain;
 
-use PiggyWP\Options;
-use Automattic\WooCommerce\Blocks\Domain\Services\FeatureGating;
-
 /**
  * Main package class.
  *
@@ -60,7 +57,7 @@ class Package {
 	 * @return string
 	 */
 	public function get_version_stored_on_db() {
-		return Options::get( Options::PIGGY_VERSION );
+		return get_option( 'piggy_version' );
 	}
 
 	/**
@@ -68,7 +65,7 @@ class Package {
 	 * This is useful during the first installation or after the upgrade process.
 	 */
 	public function set_version_stored_on_db() {
-		update_option( Options::PIGGY_VERSION, $this->get_version() );
+		update_option( 'piggy_version', $this->get_version() );
 	}
 
 	/**
