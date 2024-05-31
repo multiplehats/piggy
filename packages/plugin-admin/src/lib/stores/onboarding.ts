@@ -1,5 +1,6 @@
 import OnboardingAccount from '$lib/components/onboarding/onboarding-account.svelte';
 import OnboardingConnectAccount from '$lib/components/onboarding/onboarding-connect-account.svelte';
+import OnboardingGeneralSettings from '$lib/components/onboarding/onboarding-general-settings.svelte';
 import type { SvelteComponent } from 'svelte';
 import { get, writable } from 'svelte/store';
 
@@ -27,7 +28,7 @@ const initialSteps: Step[] = [
 		id: 'welcome',
 		title: 'Welcome',
 		href: '/onboarding?step=welcome',
-		status: 'current',
+		status: 'completed',
 		showActions: false,
 		component: OnboardingAccount,
 		initialising: false
@@ -36,7 +37,7 @@ const initialSteps: Step[] = [
 		id: 'connect-account',
 		title: 'Connect account',
 		href: '/onboarding?step=connect-account',
-		status: 'upcoming',
+		status: 'completed',
 		showActions: true,
 		component: OnboardingConnectAccount,
 		initialising: false
@@ -45,8 +46,9 @@ const initialSteps: Step[] = [
 		id: 'general-settings',
 		title: 'General settings',
 		href: '/onboarding?step=general-settings',
+		status: 'current',
 		showActions: true,
-		status: 'upcoming',
+		component: OnboardingGeneralSettings,
 		initialising: false
 	}
 ];
@@ -129,11 +131,18 @@ const setInitialising = (stepId: OnboardingStepId, initialising: boolean) => {
 	});
 };
 
+const isLastStep = () => {
+	const steps = get(onboardingSteps);
+	const currentIndex = steps.findIndex((step) => step.status === 'current');
+	return currentIndex === steps.length - 1;
+};
+
 export const useOnboarding = () => ({
 	goToStep,
 	completeStep,
 	completeAndNavigate,
 	previousStep,
 	nextStep,
-	setInitialising
+	setInitialising,
+	isLastStep
 });

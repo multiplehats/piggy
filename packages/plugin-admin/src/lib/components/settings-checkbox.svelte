@@ -1,14 +1,15 @@
 <script lang="ts">
-	import { SettingsLabel, type SettingsLabelProps } from '$lib/components/settings-label/index.js';
-	import { Switch } from '$lib/components/ui/switch';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { cn } from '$lib/utils/tw';
 	import type { CheckboxValue } from '@piggy/types/plugin/settings/adminTypes';
+	import type { SettingsLabelProps } from './settings-label';
+	import SettingsLabel from './settings-label/settings-label.svelte';
 
 	let className: string | undefined = undefined;
 
 	type $$Props = SettingsLabelProps & {
 		value: CheckboxValue;
-		class?: string | undefined;
+		class: string | undefined;
 	};
 
 	export let id: string;
@@ -27,9 +28,9 @@
 		{id}
 	/>
 
-	<div class={cn('relative inline-flex items-center w-full')}>
+	<div class={cn('relative inline-flex mt-3 items-center w-full')}>
 		<div class="flex items-center space-x-2">
-			<Switch
+			<Checkbox
 				{checked}
 				onCheckedChange={(boolean) => {
 					value = boolean ? 'on' : 'off';

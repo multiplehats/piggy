@@ -2,6 +2,8 @@
 
 namespace PiggyWP;
 
+use PiggyWP\Utils\Common;
+
 /**
  * Contains all the default options and options from the database.
  */
@@ -10,6 +12,8 @@ class Options {
 
 	// Fields.
 	const CHECKBOX    = 'checkbox';
+	const CHECKBOXES  = 'checkboxes';
+	const SWITCH	  = 'switch';
 	const TEXT        = 'text';
 	const SELECT      = 'select';
 	const TEXTAREA    = 'textarea';
@@ -18,6 +22,7 @@ class Options {
 	const NUMBER      = 'number';
 	const OBJECT      = 'object';
 	const API_KEY     = 'api_key';
+	const TRANSLATABLE_TEXT = 'translatable_text';
 
 	/**
 	 * Prefix for each option
@@ -72,14 +77,14 @@ class Options {
 					array(
 						'id'      => 'plugin_enable',
 						'default' => 'on',
-						'type'    => self::CHECKBOX,
+						'type'    => self::SWITCH,
 						'label'   => __( 'Enable plugin', 'piggy' ),
 						'tooltip' => __( 'If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable Piggy without deactivating the entire plugin.', 'piggy' ),
 					),
 					array(
 						'id'      => 'plugin_reset',
 						'default' => 'off',
-						'type'    => self::CHECKBOX,
+						'type'    => self::SWITCH,
 						'label'   => __( 'Delete plugin settings upon deactivation', 'piggy' ),
 						'tooltip' => __( 'This wlll delete all plugins settings upon deactivation. Use with caution!', 'piggy' ),
 					),
@@ -102,6 +107,124 @@ class Options {
 						'type'    => self::TEXT,
 						'label'   => __( 'Shop ID', 'piggy' ),
 						'tooltip' => __( 'Select the shop you want to connect to.', 'piggy' ),
+					),
+				),
+			);
+
+			self::$default_settings['general_settings'] = array(
+				'title'  => __( 'General Settings', 'piggy' ),
+				'fields' => array(
+					array(
+						'id'      => 'credits_name',
+						'default' => array(),
+						'type'    => self::TRANSLATABLE_TEXT,
+						'label'   => __( 'Credits name', 'piggy' ),
+						'description' => __( 'The name of the credits in your shop.', 'piggy' ),
+					),
+					array(
+						'id'      => 'include_guests',
+						'default' => 'off',
+						'type'    => self::SWITCH,
+						'label'   => __( 'Include guests', 'piggy' ),
+						'description' => __( 'Include customers without an account (guests) in your loyalty program.', 'piggy' ),
+					),
+					array(
+						'id'      => 'reward_order_statuses',
+						'type'    => self::CHECKBOXES,
+						'label'   => __( 'Reward order statuses', 'piggy' ),
+						'description' => __( 'Reward customers when the financial status of the order is one of the following', 'piggy' ),
+						'default' => array(
+							'paid' => 'on',
+						),
+						'options'     => array(
+							'paid'      => array(
+								'label' => __( 'Pending payment', 'piggy' ),
+								'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'piggy' )
+							),
+							'pending'      => array(
+								'label' => __( 'On hold', 'cartpops' ),
+								'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'cartpops' )
+							),
+							'processing'      => array(
+								'label' => __( 'Processing', 'cartpops' ),
+								'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'cartpops' )
+							),
+							'completed'      => array(
+								'label' => __( 'Completed', 'cartpops' ),
+								'tooltip' => __( 'Order fulfilled and complete.', 'cartpops' )
+							),
+						),
+					),
+					array(
+						'id'      => 'withdraw_order_statuses',
+						'type'    => self::CHECKBOXES,
+						'label'   => __( 'Withdraw points order statuses', 'piggy' ),
+						'description' => __( 'Withdraw credits from customers when the order financial status is one of the following', 'piggy'),
+						'default' => array(
+							'paid' => 'on',
+						),
+						'options'     => array(
+							'paid'      => array(
+								'label' => __( 'Pending payment', 'piggy' ),
+								'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'piggy' )
+							),
+							'pending'      => array(
+								'label' => __( 'On hold', 'cartpops' ),
+								'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'cartpops' )
+							),
+							'processing'      => array(
+								'label' => __( 'Processing', 'cartpops' ),
+								'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'cartpops' )
+							),
+							'completed'      => array(
+								'label' => __( 'Completed', 'cartpops' ),
+								'tooltip' => __( 'Order fulfilled and complete.', 'cartpops' )
+							),
+						),
+					),
+					array(
+						'id'      => 'reward_order_parts',
+						'type'    => self::CHECKBOXES,
+						'label'   => __( 'Reward order parts', 'piggy' ),
+						'description' => __( 'Reward customers for the following parts of an order', 'piggy' ),
+						'default' => array(
+							'subtotal' => 'on',
+						),
+						'options'     => array(
+							'subtotal'      => array(
+								'label' => __( 'Subtotal', 'piggy' ),
+								'tooltip' => __( 'The total amount of the order before taxes and shipping.', 'piggy' )
+							),
+							'shipping'      => array(
+								'label' => __( 'Shipping', 'piggy' ),
+								'tooltip' => __( 'The cost of shipping the order.', 'piggy' )
+							),
+							'tax'      => array(
+								'label' => __( 'Tax', 'piggy' ),
+								'tooltip' => __( 'The amount of tax on the order.', 'piggy' )
+							),
+							'discount'      => array(
+								'label' => __( 'Discount', 'piggy' ),
+								'tooltip' => __( 'The amount of discount on the order.', 'piggy' )
+							),
+						),
+					),
+					array(
+						'id'      => 'marketing_consent_subscription',
+						'type'    => self::SELECT,
+						'label'   => __( 'Marketing consent subscription', 'piggy' ),
+						'description' => __( 'Select the Piggy subscription that will be used for marketing consent.', 'piggy' ),
+						'default' => 'functional',
+						'options'     => array(
+							'functional'      => array(
+								'label' => __( 'Functional email', 'piggy' ),
+								'tooltip' => __( 'Functional emails are emails that are necessary for the functioning of the service. These include emails for password resets, order confirmations, and account creation.', 'piggy' )
+							),
+							'marketing'      => array(
+								'label' => __( 'Marketing email', 'piggy' ),
+								'tooltip' => __( 'Marketing emails are emails that are used for marketing purposes. These include newsletters, promotions, and other marketing emails.', 'piggy' )
+							),
+						),
 					),
 				),
 			);
@@ -141,16 +264,24 @@ class Options {
 	 * @param string $id The option name.
 	 * @param bool   $prefix If true, returns the default value for the option.
 	 */
-	public static function get( $id, $prefix = true ) {
-		if ( ! self::has( $id, true ) ) {
-			return self::get_default( $id );
-		}
-
-		if ( $prefix ) {
+	public static function get($id, $prefix = true) {
+		if ($prefix) {
 			$id = self::$option_prefix . $id;
 		}
 
-		return get_option( $id );
+		$current_language = Common::get_current_language();
+		$translatable_id = $id . '_' . $current_language;
+		$option_value = get_option($translatable_id, false);
+
+		if ($option_value === false) {
+			$option_value = self::get_default($id);
+		}
+
+		if (self::is_translatable_text_option($id) && is_string($option_value)) {
+			$option_value = json_decode($option_value, true);
+		}
+
+		return $option_value;
 	}
 
 	/**
@@ -179,6 +310,10 @@ class Options {
 	public static function save( $name, $value, $prefix = true ) {
 		if ( $prefix ) {
 			$name = self::$option_prefix . $name;
+		}
+
+		if (self::is_translatable_text_option($name) && is_array($value)) {
+			$value = json_encode($value);
 		}
 
 		update_option( $name, $value );
@@ -258,23 +393,33 @@ class Options {
 			$options = array();
 
 			foreach ( $results as $result ) {
-				$options[ $result['option_name'] ] = $result['option_value'];
+				$options[ $result['option_name'] ] = maybe_unserialize( $result['option_value'] );
 			}
 
 			$default_options = self::default_settings();
+			$languages = Common::get_languages();
 
 			foreach ( $default_options as $section ) {
 				foreach ( $section['fields'] as $field ) {
 					$name = self::$option_prefix . $field['id'];
 
-					// If we're missing any options, fall back to the default.
-					if ( ! isset( $options[ $name ] ) ) {
-						$options[ $name ] = $field['default'];
-					}
+					// Handle translatable text fields
+					if ( $field['type'] === self::TRANSLATABLE_TEXT ) {
+						if ( isset( $options[ $name ] ) && is_string( $options[ $name ] ) ) {
+							$options[ $name ] = json_decode( $options[ $name ], true );
+						} else {
+							$options[ $name ] = $field['default'];
+						}
+					} else {
+						// If we're missing any options, fall back to the default.
+						if ( ! isset( $options[ $name ] ) ) {
+							$options[ $name ] = $field['default'];
+						}
 
-					// If type is a number, convert to int.
-					if ( self::NUMBER === $field['type'] ) {
-						$options[ $name ] = (int) $options[ $name ];
+						// If type is a number, convert to int.
+						if ( self::NUMBER === $field['type'] ) {
+							$options[ $name ] = (int) $options[ $name ];
+						}
 					}
 				}
 			}
@@ -285,22 +430,32 @@ class Options {
 		return self::$all_option_values;
 	}
 
+
 	/**
 	 * Save all of the options to the database.
 	 *
 	 * @param array $options The options to save.
 	 * @param bool  $prefix If true, the options will be saved with the plugin's prefix.
 	 */
-	public function save_options( array $options, bool $prefix = true ) {
-		foreach ( $options as $name => $value ) {
-			if ( $prefix ) {
+	public function save_options(array $options, bool $prefix = true) {
+		$languages = Common::get_languages();
+
+		foreach ($options as $name => $value) {
+			if ($prefix) {
 				$name = self::$option_prefix . $name;
 			}
 
-			update_option( $name, $value );
+			// Handle translatable text fields
+			if (is_array($value) && isset($value['type']) && $value['type'] === self::TRANSLATABLE_TEXT) {
+				$translatable_values = $value['value'];
+				$json_value = json_encode($translatable_values);
+				update_option($name, $json_value);
+			} else {
+				update_option($name, $value['value']);
+			}
 		}
 
-		return $this->get_options_for_client( 'admin', true );
+		return $this->get_options_for_client('admin', true);
 	}
 
 	/**
@@ -429,5 +584,26 @@ class Options {
 				delete_option( self::$option_prefix . $field['id'] );
 			}
 		}
+	}
+
+	/**
+	 * Checks if the option is a translatable text option.
+	 *
+	 * @param string $name The option name.
+	 *
+	 * @return bool
+	 */
+	private static function is_translatable_text_option($name) {
+		$default_settings = self::default_settings();
+
+		foreach ($default_settings as $section) {
+			foreach ($section['fields'] as $field) {
+				if (self::$option_prefix . $field['id'] === $name && $field['type'] === self::TRANSLATABLE_TEXT) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

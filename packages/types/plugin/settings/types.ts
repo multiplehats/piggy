@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { z } from 'zod';
 import type { Countries } from '../../countries';
 import type { SymbolPosition } from '../../wc-types';
@@ -16,16 +17,27 @@ function transformSchema<T extends z.ZodRawShape>(
 	for (const key in schema.shape) {
 		if (schema.shape.hasOwnProperty(key)) {
 			const originalField = schema.shape[key as keyof T];
-			// Safely checking if 'value' exists in 'originalField.shape'
+
+			// Check if the field is a refinement and extract the inner type
+			const getInnerType = (field: any): any => {
+				if (field._def.typeName === 'ZodEffects') {
+					return getInnerType(field._def.schema);
+				}
+				return field;
+			};
+
+			const refinedField = getInnerType(originalField);
+
+			// Safely checking if 'value' exists in 'refinedField.shape'
 			if (
-				originalField &&
-				typeof originalField === 'object' &&
-				'shape' in originalField &&
-				typeof originalField.shape === 'object' &&
-				originalField?.shape &&
-				'value' in originalField.shape
+				refinedField &&
+				typeof refinedField === 'object' &&
+				'shape' in refinedField &&
+				typeof refinedField.shape === 'object' &&
+				refinedField?.shape &&
+				'value' in refinedField.shape
 			) {
-				newShape[key as keyof T] = originalField.shape.value as ExtractValue<T[keyof T]>;
+				newShape[key as keyof T] = refinedField.shape.value as ExtractValue<T[keyof T]>;
 			} else {
 				// Optionally handle cases where 'value' does not exist or the shape is different
 				throw new Error(`The field at key '${key}' does not match the expected structure.`);
@@ -52,7 +64,19 @@ type ExtractValue<S> = S extends z.ZodObject<infer U>
  */
 export const zBasePluginOptions = z.object({
 	plugin_enable: adminFields.zToggle,
-	plugin_reset: adminFields.zToggle
+	plugin_reset: adminFields.zToggle,
+	credits_name: adminFields.zTranslatableText,
+	include_guests: adminFields.zToggle,
+	reward_order_statuses: adminFields.zCheckboxes.refine(
+		({ value }) => Object.entries(value).some(([key, value]) => value === 'on'),
+		__('At least one must be selected.', 'mycred')
+	),
+	withdraw_order_statuses: adminFields.zCheckboxes.refine(
+		({ value }) => Object.entries(value).some(([key, value]) => value === 'on'),
+		__('At least one must be selected.', 'mycred')
+	),
+	reward_order_parts: adminFields.zCheckboxes,
+	marketing_consent_subscription: adminFields.zSelect
 });
 
 /**

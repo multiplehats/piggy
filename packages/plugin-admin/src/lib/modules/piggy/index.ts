@@ -25,20 +25,25 @@ export class PiggyApiError extends Error {
 }
 
 export class PiggyAdminService {
-	async saveSettings(_settings: typeof settingsState) {
-		/**
-		 * Creates an object with key-value pairs of settings to save.
-		 */
-		const settings = Object.entries(get(_settings)).reduce(
-			(acc, [key, value]) => {
-				acc[key] = value.value;
-				return acc;
-			},
-			{} as Record<string, unknown>
-		);
-
+	async saveSettings(settingsStore: typeof settingsState) {
 		const { data, error } = await api.post<PluginOptionsAdminKeyValue>('/piggy/v1/settings', {
-			settings
+			settings: Object.entries(get(settingsStore)).reduce(
+				(acc, [key, setting]) => {
+					acc[key] = {
+						type: setting.type,
+						value: setting.value
+					};
+					settingsStore;
+					return acc;
+				},
+				{} as Record<
+					string,
+					{
+						type: string;
+						value: unknown;
+					}
+				>
+			)
 		});
 
 		if (error ?? !data) {
@@ -73,8 +78,6 @@ export class PiggyAdminService {
 			'/piggy/private/api-key',
 			params
 		);
-
-		console.log(data, error);
 
 		if (error ?? !data) {
 			if (error) {

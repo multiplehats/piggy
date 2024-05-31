@@ -1,31 +1,30 @@
 <script lang="ts">
+	import { SettingsLabel, type SettingsLabelProps } from '$lib/components/settings-label/index.js';
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
 	import { cn } from '$lib/utils/tw.js';
 
+	type $$Props = SettingsLabelProps & {
+		value: string | undefined;
+		class: string | undefined;
+	};
+
 	let className: string | undefined = undefined;
+
 	export let el: HTMLInputElement | undefined = undefined;
-	export let label: string | undefined = undefined;
-	export let hideLabel = false;
+	export let value: $$Props['value'];
 	export let placeholder: string | undefined = undefined;
-	export let description: string | undefined = undefined;
-	export let value: string | number | undefined = undefined;
 	export let id: string;
 	export { className as class };
 </script>
 
-<div>
-	{#if label}
-		<Label class={cn(hideLabel && 'sr-only')} for={id}>
-			{label}
-		</Label>
-	{/if}
-
-	{#if description}
-		<p class="mb-2 mt-0.5 text-sm">
-			{description}
-		</p>
-	{/if}
+<div class={cn(className)}>
+	<SettingsLabel
+		label={$$props.label}
+		description={$$props.description}
+		hideLabel={$$props.hideLabel}
+		tooltip={$$props.tooltip}
+		{id}
+	/>
 
 	<Input
 		{placeholder}
@@ -45,7 +44,7 @@
 		on:input
 		{id}
 		name={id}
-		class={cn('max-w-xl', label && '!mt-2', className)}
+		class="max-w-xl"
 		{...$$restProps}
 	/>
 </div>

@@ -151,8 +151,6 @@ const request = async <T = unknown>(
 	data: T | null;
 	error: ApiError | null;
 }> => {
-	console.log('request', method, path, data, options);
-
 	return apiFetch<T>({ path, method, data, ...options })
 		.then((data) => {
 			return {
