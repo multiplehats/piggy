@@ -1,20 +1,21 @@
 <script lang="ts">
-	import { SettingsLabel, type SettingsLabelProps } from '$lib/components/settings-label/index.js';
-	import { Input } from '$lib/components/ui/input';
+	import { Input, type InputProps } from '$lib/components/ui/input/index.js';
 	import { cn } from '$lib/utils/tw.js';
-
-	type $$Props = SettingsLabelProps & {
-		value: string | undefined;
-		class: string | undefined;
-	};
+	import { SettingsLabel, type SettingsLabelProps } from './settings-label';
 
 	let className: string | undefined = undefined;
 
-	export let el: HTMLInputElement | undefined = undefined;
-	export let value: $$Props['value'];
-	export let placeholder: string | undefined = undefined;
-	export let id: string;
+	type $$Props = SettingsLabelProps &
+		InputProps & {
+			class?: string | undefined;
+			el?: HTMLInputElement | undefined;
+		};
+
 	export { className as class };
+	export let el: $$Props['el'] = undefined;
+	export let placeholder: $$Props['placeholder'] = undefined;
+	export let value: $$Props['value'] = undefined;
+	export let id: string;
 </script>
 
 <div class={cn(className)}>
@@ -43,7 +44,6 @@
 		on:paste
 		on:input
 		{id}
-		name={id}
 		class="max-w-xl"
 		{...$$restProps}
 	/>

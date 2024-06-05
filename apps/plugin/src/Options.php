@@ -263,21 +263,23 @@ class Options {
 	 * @param string $id The option name.
 	 * @param bool   $prefix If true, returns the default value for the option.
 	 */
-	public function get($id, $prefix = true) {
+	public function get($id, $prefix = false) {
 		if ($prefix) {
 			$id = $this->option_prefix . $id;
 		}
 
-		$current_language = Common::get_current_language();
-		$translatable_id = $id . '_' . $current_language;
-		$option_value = get_option($translatable_id, false);
+		$option_value = get_option($id, null);
 
-		if ($option_value === false) {
-			$option_value = $this->get_default($id);
+		if ( $this->is_translatable_text_option($id) ) {
+			$option_value = json_decode($option_value, true);
 		}
 
-		if ($this->is_translatable_text_option($id) && is_string($option_value)) {
-			$option_value = json_decode($option_value, true);
+		if ( $this->is_earn_rules_option($id) ) {
+			$option_value = $this->get_earn_rules_values();
+		}
+
+		if ($option_value === null) {
+			$option_value = $this->get_default($id);
 		}
 
 		return $option_value;
@@ -369,6 +371,22 @@ class Options {
 		return null;
 	}
 
+	public function get_field($id) {
+		$settings = $this->default_settings();
+
+		foreach ($settings as $section) {
+			foreach ($section['fields'] as $field) {
+				if ($field['id'] === $id) {
+					$value = $this->get($id, true);
+
+					return array_merge($field, array('value' => $value));
+				}
+			}
+		}
+
+		return null;
+	}
+
 	/**
 	 * Get all of the saved options from the database.
 	 *
@@ -406,20 +424,27 @@ class Options {
 						if ( isset( $options[ $name ] ) && is_string( $options[ $name ] ) ) {
 							$options[ $name ] = json_decode( $options[ $name ], true );
 						} else {
-							$options[ $name ] = null;
+							$options[ $name ] = $field['default'];
 						}
-					} else if ( $field['type'] === self::EARN_RULES ) {
-						$options[ $name ] = $this->get_earn_rules_values();
+					} else if ( $field['type'] === self::MULTISELECT ) {
+						if ( isset( $options[ $name ] ) && is_string( $options[ $name ] ) ) {
+							$options[ $name ] = explode( ',', $options[ $name ] );
+						} else {
+							$options[ $name ] = $field['default'];
+						}
+					} else if ( $field['type'] === self::NUMBER ) {
+						if ( isset( $options[ $name ] ) && is_string( $options[ $name ] ) ) {
+							$options[ $name ] = intval( $options[ $name ] );
+						} else {
+							$options[ $name ] = $field['default'];
+						}
 					} else {
 						// If we're missing any options, fall back to the default.
 						if ( ! isset( $options[ $name ] ) ) {
 							$options[ $name ] = $field['default'];
 						}
 
-						// If type is a number, convert to int.
-						if ( self::NUMBER === $field['type'] ) {
-							$options[ $name ] = (int) $options[ $name ];
-						}
+
 					}
 				}
 			}
@@ -429,7 +454,6 @@ class Options {
 
 		return $this->all_option_values;
 	}
-
 
 	/**
 	 * Save all of the options to the database.
@@ -607,6 +631,23 @@ class Options {
 		return false;
 	}
 
+	/**
+	 * Check if the option is earn rules.
+	 */
+	private function is_earn_rules_option($name) {
+		$default_settings = $this->default_settings();
+
+		foreach ($default_settings as $section) {
+			foreach ($section['fields'] as $field) {
+				if ($this->option_prefix . $field['id'] === $name && $field['type'] === self::EARN_RULES) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	private function get_post_meta_data($post_id, $key, $fallback_value = null) {
 		$value = get_post_meta($post_id, $key, true);
 
@@ -619,7 +660,8 @@ class Options {
 	public function get_earn_rules_values() {
 		$args = array(
 			'post_type' => 'piggy_earn_rule',
-			'posts_per_page' => -1
+			'posts_per_page' => -1,
+			'post_status' => array('publish', 'draft'),
 		);
 
 		$query = new \WP_Query($args);

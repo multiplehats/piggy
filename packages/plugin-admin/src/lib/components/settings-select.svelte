@@ -13,7 +13,7 @@
 	let className: string | undefined = undefined;
 
 	type $$Props = SettingsLabelProps & {
-		class: string | undefined;
+		class?: string | undefined;
 		items: Item[];
 		value?: string | undefined;
 	};

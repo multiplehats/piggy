@@ -1,7 +1,12 @@
+import type { HTMLInputAttributes } from 'svelte/elements';
 import Root from './input.svelte';
 
 export type FormInputEvent<T extends Event = Event> = T & {
 	currentTarget: EventTarget & HTMLInputElement;
+};
+
+export type InputProps = HTMLInputAttributes & {
+	el?: HTMLInputElement | undefined;
 };
 
 export interface InputEvents {

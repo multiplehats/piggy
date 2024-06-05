@@ -11,17 +11,11 @@
 	import '@piggy/tailwind-config/global.postcss';
 	import { __ } from '@wordpress/i18n';
 	import toast from 'svelte-french-toast';
+	import PageEarnRulesId from './routes/page-earn-rules-id.svelte';
 	import PageLoyaltyProgram from './routes/page-loyalty-program.svelte';
 	import PageOnboarding from './routes/page-onboarding.svelte';
 
 	export let pluginSettings: PluginOptionsAdmin;
-
-	const routes = window.wp.hooks.applyFilters('piggy.adminRoutes', [
-		{ path: '/', component: PageHome, primary: true },
-		{ path: 'general', component: PageGeneralSettings, primary: true },
-		{ path: 'loyalty-program', component: PageLoyaltyProgram, primary: true },
-		{ path: 'onboarding', component: PageOnboarding, primary: false }
-	]) as { path: string; component: typeof SvelteComponent; primary: boolean }[];
 
 	settingsState.update((current) => {
 		const updated = { ...current };
@@ -59,11 +53,23 @@
 <QueryClientProvider client={queryClient}>
 	<Router {history}>
 		<Layout>
-			{#each Object.entries(routes) as [key, { path, component, primary }] (key)}
-				<Route {path} let:params {primary}>
-					<svelte:component this={component} {params} />
-				</Route>
-			{/each}
+			<!-- Render the Home component at / -->
+			<Route path="/" component={PageHome} />
+
+			<!-- Render the General Settings component at /general -->
+			<Route path="general" component={PageGeneralSettings} />
+
+			<!-- Render the Onboarding component at /onboarding -->
+			<Route path="onboarding" component={PageOnboarding} />
+
+			<!-- Render the Loyalty Program component at / -->
+			<Route path="loyalty-program/*">
+				<!-- Render specific earn-rules with id "123" at /loyalty-program/earn-rules/123 -->
+				<Route path="earn-rules/:id" component={PageEarnRulesId} />
+
+				<!-- Index Route for /loyalty-program -->
+				<Route path="/" component={PageLoyaltyProgram} />
+			</Route>
 		</Layout>
 	</Router>
 </QueryClientProvider>

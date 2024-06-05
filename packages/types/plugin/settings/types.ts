@@ -95,6 +95,8 @@ export type PluginOptionsAdminKeys = keyof PluginOptionsAdmin;
 export const ZPluginOptionsAdminKeyValue = transformSchema(zPluginOptionsAdmin);
 export type PluginOptionsAdminKeyValue = z.infer<typeof ZPluginOptionsAdminKeyValue>;
 
+export type PluginOptionType<K extends PluginOptionsAdminKeys> = PluginOptionsAdmin[K];
+
 /**
  * Frontend options interface.
  * This schema extracts the `value` field from each property of the base schema.

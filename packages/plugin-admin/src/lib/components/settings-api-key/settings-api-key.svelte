@@ -3,8 +3,8 @@
 	import { __ } from '@wordpress/i18n';
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import { setApiKeyMutationConfig } from '$lib/modules/piggy/mutations';
-	import { getApiKeyQueryConfig, getShopsQueryConfig } from '$lib/modules/piggy/queries';
-	import type { AdminGetApiKeyResponse } from '$lib/modules/piggy/types';
+	import { getShopsQueryConfig } from '$lib/modules/piggy/queries';
+	import { getSettingByIdQueryConfig } from '$lib/modules/settings/queries';
 	import { settingsState } from '$lib/stores/settings';
 	import SettingsCombobox from '../settings-combobox.svelte';
 	import SettingsSection from '../ui/settings-section/settings-section.svelte';
@@ -13,7 +13,7 @@
 
 	const client = useQueryClient();
 	const setApiKeyMutation = createMutation(setApiKeyMutationConfig(client));
-	const query = createQuery<AdminGetApiKeyResponse>(getApiKeyQueryConfig());
+	const query = createQuery(getSettingByIdQueryConfig('api_key'));
 	const shopQuery = createQuery(getShopsQueryConfig());
 
 	$: {
@@ -32,7 +32,7 @@
 			on:change={({ currentTarget }) => $setApiKeyMutation.mutate({ api_key: currentTarget.value })}
 		/>
 
-		{#if $query.data?.api_key}
+		{#if $query.data?.value}
 			<SettingsCombobox
 				items={$shopQuery?.data
 					? $shopQuery.data.map((shop) => ({

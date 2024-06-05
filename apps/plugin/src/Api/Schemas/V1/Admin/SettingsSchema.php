@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1;
+namespace PiggyWP\Api\Schemas\V1\Admin;
 
 use PiggyWP\Api\Schemas\V1\AbstractSchema;
 
@@ -31,23 +31,10 @@ class SettingsSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'api_key' => [
-				'description' => __( 'Public Settings.', 'piggy' ),
+				'description' => __( 'Admin settings.', 'piggy' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
-		];
-	}
-
-	/**
-	 * Get Settings response.
-	 *
-	 * @param array $item Item to get response for.
-	 *
-	 * @return array
-	 */
-	public function get_item_response( $item ) {
-		return [
-			'api_key' => true,
 		];
 	}
 }

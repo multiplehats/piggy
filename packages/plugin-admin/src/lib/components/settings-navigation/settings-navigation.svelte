@@ -19,7 +19,7 @@
 	});
 </script>
 
-<header class="border-b border-gray-200 bg-gray-50">
+<header class="border-b border-gray-200 bg-desert">
 	<div class="app-container">
 		<div class="flex justify-between h-16">
 			<div class="flex px-2 xl:px-0">
@@ -65,30 +65,8 @@
 				</button>
 			</div>
 
-			<!-- Mobile menu, show/hide based on mobile menu state. -->
 			<div class={cn('xl:hidden', mobileMenuOpen && 'block', !mobileMenuOpen && 'hidden')}>
-				<!--
-            Mobile menu overlay, show/hide based on mobile menu state.
-
-            Entering: "duration-150 ease-out"
-              From: "opacity-0"
-              To: "opacity-100"
-            Leaving: "duration-150 ease-in"
-              From: "opacity-100"
-              To: "opacity-0"
-          -->
 				<div class="fixed inset-0 z-20 bg-black bg-opacity-25" aria-hidden="true" />
-
-				<!--
-            Mobile menu, show/hide based on mobile menu state.
-
-            Entering: "duration-150 ease-out"
-              From: "opacity-0 scale-95"
-              To: "opacity-100 scale-100"
-            Leaving: "duration-150 ease-in"
-              From: "opacity-100 scale-100"
-              To: "opacity-0 scale-95"
-          -->
 				<div
 					class="absolute top-0 right-0 z-30 w-full p-2 transition origin-top transform max-w-none"
 				>
@@ -128,9 +106,9 @@
 							</div>
 							<div class="px-2 mt-3 space-y-1">
 								{#each headerLinks as { href, label, target, type }, index (index)}
-									<NavigationLinkMobile {href} {target} {type} active={$location.pathname === href}
-										>{label}</NavigationLinkMobile
-									>
+									<NavigationLinkMobile {href} {target} {type} active={$location.pathname === href}>
+										{label}
+									</NavigationLinkMobile>
 								{/each}
 							</div>
 						</div>

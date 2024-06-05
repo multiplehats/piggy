@@ -1,6 +1,6 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1;
+namespace PiggyWP\Api\Routes\V1\Admin;
 
 use PiggyWP\Api\Routes\V1\AbstractRoute;
 use PiggyWP\Api\Routes\V1\Admin\Middleware;
@@ -52,6 +52,17 @@ class Settings extends AbstractRoute {
 					],
 				],
 			],
+			[
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'get_response' ],
+				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'args'                => [
+					'id' => [
+						'description' => __( 'Setting ID', 'piggy' ),
+						'type'        => 'string',
+					],
+				],
+			],
 			'schema'      => [ $this->schema, 'get_public_item_schema' ],
 			'allow_batch' => [ 'v1' => true ],
 		];
@@ -72,16 +83,22 @@ class Settings extends AbstractRoute {
 	}
 
 	/**
-	 * Get settings or a specific setting
+	 * Get a specific setting
 	 *
 	 * @param  \WP_REST_Request $request Request object.
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
-		$arg = $request->get_param( 'id' );
+		$id = $request->get_param( 'id' );
 
-		$settings = $this->options->get_frontend_options_payload( $arg );
+		if($id) {
+			$settings = $this->options->get_field( $id );
+
+			return rest_ensure_response( $settings );
+		}
+
+		$settings = $this->options->get_all_options();
 
 		return rest_ensure_response( $settings );
 	}

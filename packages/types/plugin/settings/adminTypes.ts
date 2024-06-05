@@ -40,6 +40,8 @@ export const zCheckbox = zSettingsBaseField.extend({
 });
 export type Chdckbox = z.infer<typeof zCheckbox>;
 
+export const zSwitchValue = z.enum(['on', 'off']);
+export type SwitchValue = z.infer<typeof zSwitchValue>;
 export const zSwitch = zSettingsBaseField.extend({
 	type: z.literal('switch'),
 	default: zCheckboxValue,
@@ -133,8 +135,8 @@ export type TranslatableText = z.infer<typeof zTranslatableText>;
 export const zEarnRuleValueItem = z.object({
 	id: z.number(),
 	title: z.string(),
-	description: z.string(),
-	status: z.string(),
+	description: z.string().nullable(),
+	status: z.literal('publish').or(z.literal('draft')),
 	type: z.string(),
 	piggyTierUuids: z.array(z.string()).or(z.tuple([])),
 	createdAt: z.string(),
@@ -149,6 +151,7 @@ export const zEarnRuleValueItem = z.object({
 	excludedProductIds: z.array(z.string()).nullable().optional(),
 	minOrderSubtotalCents: z.number().nullable().optional()
 });
+export type EarnRuleValueItem = z.infer<typeof zEarnRuleValueItem>;
 
 export const zEarnRules = zSettingsBaseField.extend({
 	type: z.literal('earn_rules'),
