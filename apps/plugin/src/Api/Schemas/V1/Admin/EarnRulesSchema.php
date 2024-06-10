@@ -189,8 +189,24 @@ class EarnRulesSchema extends AbstractSchema {
 				'description' => __( 'The type of earn rule.', 'piggy' ),
 			),
 			'piggyTierUuids' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_piggy_tier_uuids', null ),
-			'startsAt' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_starts_at', null ),
-			'expiresAt' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_expires_at', null ),
+			'startsAt' => array(
+				'id' => 'startsAt',
+				'label' => __( 'Starts at', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_starts_at', null ),
+				'type' => 'date',
+				'placeholder' => null,
+				'description' => __( 'Optional dae for when the rule starts.', 'piggy' ),
+			),
+			'expiresAt' => array(
+				'id' => 'expiresAt',
+				'label' => __( 'Expires at', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_expires_at', null ),
+				'type' => 'date',
+				'placeholder' => null,
+				'description' => __( 'Optional date for when the rule expires.', 'piggy' ),
+			),
 			'completed' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_completed', null ),
 		];
 

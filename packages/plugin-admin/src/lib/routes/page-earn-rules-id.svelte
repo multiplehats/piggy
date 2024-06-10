@@ -2,6 +2,7 @@
 	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
 	import { __ } from '@wordpress/i18n';
 	import EarnRulePlaceOrder from '$lib/components/earn-rules/earn-rule-place-order.svelte';
+	import SettingsCalendar from '$lib/components/settings-calendar.svelte';
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import SettingsSelect from '$lib/components/settings-select.svelte';
 	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
@@ -153,6 +154,19 @@
 									};
 								})}
 							/>
+						</div>
+					</Card.Content>
+				</Card.Root>
+
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>{__('Schedule', 'piggy')}</Card.Title>
+					</Card.Header>
+					<Card.Content>
+						<div class="grid gap-6">
+							<SettingsCalendar {...$rule.startsAt} bind:value={$rule.startsAt.value} />
+
+							<SettingsCalendar {...$rule.expiresAt} bind:value={$rule.expiresAt.value} />
 						</div>
 					</Card.Content>
 				</Card.Root>

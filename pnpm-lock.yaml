@@ -287,6 +287,9 @@ importers:
 
   packages/plugin-admin:
     dependencies:
+      '@internationalized/date':
+        specifier: ^3.5.4
+        version: 3.5.4
       '@piggy/eslint-config':
         specifier: workspace:^
         version: link:../../tooling/eslint

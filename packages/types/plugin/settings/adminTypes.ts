@@ -12,7 +12,8 @@ export const zFieldTypes = z.enum([
 	'api_key',
 	'translatable_text',
 	'switch',
-	'earn_rules'
+	'earn_rules',
+	'date'
 ]);
 
 export const zSelectOptionsItem = z.object({ label: z.string() });
@@ -105,6 +106,13 @@ export const zText = zSettingsBaseField.extend({
 });
 export type Text = z.infer<typeof zText>;
 
+export const zDate = zSettingsBaseField.extend({
+	type: z.literal('date'),
+	value: z.string(),
+	default: z.string()
+});
+export type Date = z.infer<typeof zDate>;
+
 export const zApiKey = zSettingsBaseField.extend({
 	type: z.literal('api_key'),
 	value: z.string().min(40).max(40)
@@ -152,9 +160,9 @@ export const zEarnRuleValueItem = z.object({
 	piggyTierUuids: z.array(z.string()).or(z.tuple([])),
 	createdAt: z.string(),
 	updatedAt: z.string(),
-	startsAt: z.string().nullable(),
-	expiresAt: z.string().nullable(),
-	completed: z.string().nullable(),
+	startsAt: zDate,
+	expiresAt: zDate,
+	completed: z.boolean().nullable().optional(),
 	points: z.number().nullable().optional(),
 	socialNetworkUrl: z.string().nullable().optional(),
 	socialMessage: z.string().nullable().optional(),

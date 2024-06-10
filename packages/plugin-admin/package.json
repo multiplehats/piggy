@@ -99,6 +99,7 @@
 		"vite-plugin-banner": "^0.7.1"
 	},
 	"dependencies": {
+		"@internationalized/date": "^3.5.4",
 		"@piggy/eslint-config": "workspace:^",
 		"@piggy/prettier-config": "workspace:^",
 		"@splidejs/svelte-splide": "^0.2.9",
