@@ -1,22 +1,21 @@
 <script lang="ts">
 	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
 	import { __ } from '@wordpress/i18n';
+	import EarnRulePlaceOrder from '$lib/components/earn-rules/earn-rule-place-order.svelte';
+	import SettingsInput from '$lib/components/settings-input.svelte';
+	import SettingsSelect from '$lib/components/settings-select.svelte';
+	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
-	import * as Table from '$lib/components/ui/table/index.js';
 	import { SettingsAdminService } from '$lib/modules/settings';
 	import { upsertEarnRuleMutationConfig } from '$lib/modules/settings/mutations';
+	import type { GetEarnRuleByIdResponse } from '$lib/modules/settings/types';
 	import { QueryKeys } from '$lib/utils/query-keys';
 	import { getStatusText } from '$lib/utils/status-text';
-	import { ChevronLeft, CirclePlus, Upload } from 'lucide-svelte';
-	import { onMount } from 'svelte';
+	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import { useNavigate, useParams } from 'svelte-navigator';
-	import { derived } from 'svelte/store';
+	import { derived, writable } from 'svelte/store';
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
@@ -35,29 +34,46 @@
 
 				return data[0];
 			},
-
 			refetchOnWindowFocus: true,
 			enabled: !!$params.id
 		}))
 	);
-	const mutate = createMutation(upsertEarnRuleMutationConfig(client));
-
-	let title: string;
+	const mutate = createMutation(
+		upsertEarnRuleMutationConfig(
+			client,
+			{},
+			{
+				// onSuccessCb: () => navigate('/loyalty-program')
+			}
+		)
+	);
+	const rule = writable<GetEarnRuleByIdResponse[0] | null>(null);
 
 	function handleSave() {
-		if (!$query?.data) {
+		if (!$rule) {
 			return;
 		}
 
 		$mutate.mutate({
-			id: $query.data.id,
-			title: title,
-			piggyTierUuids: []
+			id: $rule.id,
+			type: $rule.type.value,
+			label: $rule.label.value,
+			status: $rule.status.value,
+			title: $rule.title.value
 		});
+	}
+
+	$: if ($query.data && $query.isSuccess) {
+		rule.set($query.data);
+
+		// Set a default in case this isn't set.
+		if ($rule && !$rule.type?.value) {
+			$rule.type.value = 'PLACE_ORDER';
+		}
 	}
 </script>
 
-{#if $query.data && $query?.data}
+{#if $rule && $query.isSuccess && $query.data}
 	<div class="grid max-w-[59rem] flex-1 auto-rows-max gap-4">
 		<div class="flex items-center gap-4">
 			<Button
@@ -71,16 +87,17 @@
 			</Button>
 
 			<h1 class="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold sm:grow-0">
-				{@html $query.data.title}
+				{@html $rule.title.value}
 			</h1>
 
 			<Badge variant="outline" class="ml-auto sm:ml-0">
-				{getStatusText($query.data.status)}
+				{getStatusText($rule.status.value)}
 			</Badge>
 
 			<div class="hidden items-center gap-2 md:ml-auto md:flex">
-				<Button variant="outline" size="sm">Discard</Button>
-				<Button size="sm" on:click={handleSave}>Save Product</Button>
+				<Button size="sm" on:click={handleSave}>
+					{__('Save rule', 'piggy')}
+				</Button>
 			</div>
 		</div>
 
@@ -88,208 +105,64 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__('Details', 'piggy')}</Card.Title>
+						<Card.Title>{__('General', 'piggy')}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
 						<div class="grid gap-6">
 							<div class="grid gap-3">
-								<Label for="title">{__('Title (Only visible to you)', 'piggy')}</Label>
-								<Input id="title" bind:value={title} type="text" class="w-full" />
+								<SettingsInput {...$rule.title} bind:value={$rule.title.value} />
 							</div>
 
-							<!-- <div class="grid gap-3">
-								<Label for="description">{__('Description ( Only visible to you )', 'piggy')}</Label
-								>
-
-								<Textarea
-									id="description"
-									value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc."
-									class="min-h-32"
-								/>
-							</div> -->
+							<SettingsTranslateableInput {...$rule.label} bind:value={$rule.label.value} />
 						</div>
 					</Card.Content>
 				</Card.Root>
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>Stock</Card.Title>
-						<Card.Description>Lipsum dolor sit amet, consectetur adipiscing elit</Card.Description>
-					</Card.Header>
-					<Card.Content>
-						<Table.Root>
-							<Table.Header>
-								<Table.Row>
-									<Table.Head class="w-[100px]">SKU</Table.Head>
-									<Table.Head>Stock</Table.Head>
-									<Table.Head>Price</Table.Head>
-									<Table.Head class="w-[100px]">Size</Table.Head>
-								</Table.Row>
-							</Table.Header>
-							<Table.Body>
-								<Table.Row>
-									<Table.Cell class="font-semibold">GGPC-001</Table.Cell>
-									<Table.Cell>
-										<Label for="stock-1" class="sr-only">Stock</Label>
-										<Input id="stock-1" type="number" value="100" />
-									</Table.Cell>
-									<Table.Cell>
-										<Label for="price-1" class="sr-only">Price</Label>
-										<Input id="price-1" type="number" value="99.99" />
-									</Table.Cell>
-									<Table.Cell>Nothing</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell class="font-semibold">GGPC-002</Table.Cell>
-									<Table.Cell>
-										<Label for="stock-2" class="sr-only">Stock</Label>
-										<Input id="stock-2" type="number" value="143" />
-									</Table.Cell>
-									<Table.Cell>
-										<Label for="price-2" class="sr-only">Price</Label>
-										<Input id="price-2" type="number" value="99.99" />
-									</Table.Cell>
-									<Table.Cell>Nothing</Table.Cell>
-								</Table.Row>
-								<Table.Row>
-									<Table.Cell class="font-semibold">GGPC-003</Table.Cell>
-									<Table.Cell>
-										<Label for="stock-3" class="sr-only">Stock</Label>
-										<Input id="stock-3" type="number" value="32" />
-									</Table.Cell>
-									<Table.Cell>
-										<Label for="price-3" class="sr-only">Stock</Label>
-										<Input id="price-3" type="number" value="99.99" />
-									</Table.Cell>
-									<Table.Cell>Nothing</Table.Cell>
-								</Table.Row>
-							</Table.Body>
-						</Table.Root>
-					</Card.Content>
-					<Card.Footer class="justify-center border-t p-4">
-						<Button size="sm" variant="ghost" class="gap-1">
-							<CirclePlus class="h-3.5 w-3.5" />
-							Add Variant
-						</Button>
-					</Card.Footer>
-				</Card.Root>
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>Product Category</Card.Title>
-					</Card.Header>
-					<Card.Content>
-						<div class="grid gap-6 sm:grid-cols-3">
-							<div class="grid gap-3">
-								<Label for="category">Category</Label>
-								<Select.Root>
-									<Select.Trigger id="category" aria-label="Select category">
-										<Select.Value placeholder="Select category" />
-									</Select.Trigger>
-									<Select.Content>
-										<Select.Item value="clothing" label="Clothing">Clothing</Select.Item>
-										<Select.Item value="electronics" label="Electronics">Electronics</Select.Item>
-										<Select.Item value="accessories" label="Accessories">Accessories</Select.Item>
-									</Select.Content>
-								</Select.Root>
-							</div>
-							<div class="grid gap-3">
-								<Label for="subcategory">Subcategory (optional)</Label>
-								<Select.Root>
-									<Select.Trigger id="subcategory" aria-label="Select subcategory">
-										<Select.Value placeholder="Select subcategory" />
-									</Select.Trigger>
-									<Select.Content>
-										<Select.Item value="t-shirts" label="T-Shirts">T-Shirts</Select.Item>
-										<Select.Item value="hoodies" label="Hoodies">Hoodies</Select.Item>
-										<Select.Item value="sweatshirts" label="Sweatshirts">Sweatshirts</Select.Item>
-									</Select.Content>
-								</Select.Root>
-							</div>
-						</div>
-					</Card.Content>
-				</Card.Root>
+
+				{#if $rule.type.value === 'PLACE_ORDER'}
+					<!-- <EarnRulePlaceOrder /> -->
+				{/if}
 			</div>
+
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>Product Status</Card.Title>
+						<Card.Title>{__('Details', 'piggy')}</Card.Title>
 					</Card.Header>
 					<Card.Content>
 						<div class="grid gap-6">
-							<div class="grid gap-3">
-								<Label for="status">Status</Label>
-								<Select.Root>
-									<Select.Trigger id="status" aria-label="Select status">
-										<Select.Value placeholder="Select status" />
-									</Select.Trigger>
-									<Select.Content>
-										<Select.Item value="draft" label="Draft">Draft</Select.Item>
-										<Select.Item value="published" label="Active">Active</Select.Item>
-										<Select.Item value="archived" label="Archived">Archived</Select.Item>
-									</Select.Content>
-								</Select.Root>
-							</div>
-						</div>
-					</Card.Content>
-				</Card.Root>
-				<Card.Root class="overflow-hidden">
-					<Card.Header>
-						<Card.Title>Product Images</Card.Title>
-						<Card.Description>Lipsum dolor sit amet, consectetur adipiscing elit</Card.Description>
-					</Card.Header>
-					<Card.Content>
-						<div class="grid gap-2">
-							<img
-								alt="Product"
-								class="aspect-square w-full rounded-md object-cover"
-								height="300"
-								src="/images/placeholder.svg"
-								width="300"
+							<SettingsSelect
+								{...$rule.status}
+								bind:value={$rule.status.value}
+								items={Object.entries($rule.status.options).map(([value, { label: name }]) => {
+									return {
+										value,
+										name
+									};
+								})}
 							/>
-							<div class="grid grid-cols-3 gap-2">
-								<button>
-									<img
-										alt="Product"
-										class="aspect-square w-full rounded-md object-cover"
-										height="84"
-										src="/images/placeholder.svg"
-										width="84"
-									/>
-								</button>
-								<button>
-									<img
-										alt="Product"
-										class="aspect-square w-full rounded-md object-cover"
-										height="84"
-										src="/images/placeholder.svg"
-										width="84"
-									/>
-								</button>
-								<button
-									class="flex aspect-square w-full items-center justify-center rounded-md border border-dashed"
-								>
-									<Upload class="h-4 w-4 text-muted-foreground" />
-									<span class="sr-only">Upload</span>
-								</button>
-							</div>
+
+							<SettingsSelect
+								hidden={true}
+								{...$rule.type}
+								bind:value={$rule.type.value}
+								items={Object.entries($rule.type.options).map(([value, { label: name }]) => {
+									return {
+										value,
+										name
+									};
+								})}
+							/>
 						</div>
-					</Card.Content>
-				</Card.Root>
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>Archive Product</Card.Title>
-						<Card.Description>Lipsum dolor sit amet, consectetur adipiscing elit.</Card.Description>
-					</Card.Header>
-					<Card.Content>
-						<div></div>
-						<Button size="sm" variant="secondary">Archive Product</Button>
 					</Card.Content>
 				</Card.Root>
 			</div>
 		</div>
+
 		<div class="flex items-center justify-center gap-2 md:hidden">
-			<Button variant="outline" size="sm">Discard</Button>
-			<Button size="sm">Save Product</Button>
+			<Button size="sm">
+				{__('Save rule', 'piggy')}
+			</Button>
 		</div>
 	</div>
 {/if}

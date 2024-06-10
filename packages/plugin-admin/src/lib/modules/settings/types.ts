@@ -1,5 +1,6 @@
 import type { settingsState } from '$lib/stores/settings';
 import type {
+	PluginEarnRuleItemValues,
 	PluginOptionsAdmin,
 	PluginOptionsAdminKeys,
 	PluginOptionsAdminKeyValue,
@@ -27,5 +28,5 @@ export interface GetEarnRuleByIdParams {
 }
 export type GetEarnRuleByIdResponse = [EarnRuleValueItem];
 
-export type UpsertEarnRuleParams = Omit<EarnRuleValueItem, 'updatedAt' | 'createdAt'>;
-export type UpsertEarnRuleResponse = EarnRuleValueItem;
+export type UpsertEarnRuleParams = PluginEarnRuleItemValues & { id: string | number };
+export type UpsertEarnRuleResponse = PluginEarnRuleItemValues;

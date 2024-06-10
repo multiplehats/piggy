@@ -2,16 +2,13 @@
 	import { __ } from '@wordpress/i18n';
 	import { SettingsLabel, type SettingsLabelProps } from '$lib/components/settings-label/index.js';
 	import { Input, type FormInputEvent } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import { cn } from '$lib/utils/tw.js';
 	import type { Selected } from 'bits-ui';
 
-	type OnChangeFn<T> = (value: T) => void;
-
 	type $$Props = SettingsLabelProps & {
 		placeholder?: string | undefined;
-		value?: Record<string, string> | undefined;
+		value?: Record<string, string> | undefined | null;
 		class?: string | undefined;
 	};
 
@@ -31,6 +28,7 @@
 
 	let selected = items.find((item) => item.value === currentLanguage);
 	let inputValue: string | undefined = undefined;
+	let isFocused = false;
 
 	const updateInputValue = () => {
 		if (selected && value) {
@@ -45,7 +43,8 @@
 	function handleInputChange(event: FormInputEvent<FocusEvent | Event>) {
 		const target = event?.target as HTMLInputElement;
 		const inputVal = target.value as string;
-		if (selected && value && inputVal) {
+
+		if (selected && inputVal) {
 			value = {
 				...value,
 				[selected.value]: inputVal
@@ -70,20 +69,36 @@
 		{id}
 	/>
 
-	<div class="flex relative max-w-xl mt-3 shadow-sm items-center justify-center">
+	<div
+		class={cn(
+			'flex relative max-w-xl shadow-sm items-center justify-center group rounded-md',
+			isFocused && 'ring-2 ring-ring ring-offset-2'
+		)}
+	>
 		<Input
 			{placeholder}
 			on:blur={handleInputChange}
 			on:change={handleInputChange}
 			on:input={handleInputChange}
+			on:focus={() => (isFocused = true)}
+			on:blur={() => (isFocused = false)}
 			{id}
 			name={id}
 			bind:value={inputValue}
-			class={cn('rounded-r-none shadow-none border-r-0 h-8')}
+			class={cn(
+				'rounded-r-none shadow-none border-r-0 h-8 focus-visible:ring-0 focus-visible:ring-offset-0'
+			)}
 		/>
 
-		<Select.Root {selected} {items} onSelectedChange={handleLanguageChange}>
-			<Select.Trigger class="w-[120px] rounded-l-none h-8 flex-shrink-0 z-10 border-l-0">
+		<Select.Root
+			{selected}
+			{items}
+			onSelectedChange={handleLanguageChange}
+			onOpenChange={(isOpen) => (isFocused = isOpen)}
+		>
+			<Select.Trigger
+				class="w-[120px] rounded-l-none focus:ring-offset-0 shadow-none h-8 flex-shrink-0 z-10 border-l-0 focus:ring-0"
+			>
 				<Select.Value placeholder={__('Select a language', 'piggy')} />
 			</Select.Trigger>
 

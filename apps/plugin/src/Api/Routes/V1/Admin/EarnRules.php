@@ -78,8 +78,9 @@ class EarnRules extends AbstractRoute {
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$data = array(
 			'id' => $request->get_param( 'id' ),
+			'status' => $request->get_param( 'status' ),
+			'label' => $request->get_param( 'label' ),
 			'title' => $request->get_param( 'title' ),
-			'description' => $request->get_param( 'description' ),
 			'type' => $request->get_param( 'type' ),
 			'piggyTierUuids' => $request->get_param( 'piggyTierUuids' ),
 			'startsAt' => $request->get_param( 'startsAt' ),
@@ -96,10 +97,9 @@ class EarnRules extends AbstractRoute {
 		$post_data = array(
 			'post_type' => 'piggy_earn_rule',
 			'post_title' => $data['title'],
-			'post_content' => $data['description'],
-			'post_status' => 'publish',
+			'post_status' => $data['status'],
 			'meta_input' => array(
-				'_piggy_earn_rule_description' => $data['description'],
+				'_piggy_earn_rule_label' => $data['label'],
 				'_piggy_earn_rule_type' => $data['type'],
 				'_piggy_earn_rule_piggy_tier_uuids' => $data['piggyTierUuids'],
 				'_piggy_earn_rule_starts_at' => $data['startsAt'],

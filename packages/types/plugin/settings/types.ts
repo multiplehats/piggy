@@ -97,6 +97,16 @@ export type PluginOptionsAdminKeyValue = z.infer<typeof ZPluginOptionsAdminKeyVa
 
 export type PluginOptionType<K extends PluginOptionsAdminKeys> = PluginOptionsAdmin[K];
 
+export const zPluginEarnRuleItemValues = transformSchema(
+	adminFields.zEarnRuleValueItem.pick({
+		label: true,
+		status: true,
+		type: true,
+		title: true
+	})
+);
+export type PluginEarnRuleItemValues = z.infer<typeof zPluginEarnRuleItemValues>;
+
 /**
  * Frontend options interface.
  * This schema extracts the `value` field from each property of the base schema.

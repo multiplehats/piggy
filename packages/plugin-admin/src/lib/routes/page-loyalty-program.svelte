@@ -3,10 +3,7 @@
 	import { __ } from '@wordpress/i18n';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import {
-		getEarnRulesQueryConfig,
-		getSettingByIdQueryConfig
-	} from '$lib/modules/settings/queries';
+	import { getEarnRulesQueryConfig } from '$lib/modules/settings/queries';
 	import { useNavigate } from 'svelte-navigator';
 	import { api } from '@piggy/lib';
 
@@ -37,7 +34,7 @@
 					{#each $query.data as rule}
 						<Table.Row class="cursor-pointer" on:click={() => navigate(`earn-rules/${rule.id}`)}>
 							<Table.Cell>
-								<div class="font-medium">{@html rule.title}</div>
+								<div class="font-medium">{@html rule.title.value}</div>
 							</Table.Cell>
 
 							<Table.Cell>
@@ -47,6 +44,7 @@
 									day: 'numeric'
 								})}
 							</Table.Cell>
+
 							<Table.Cell class="text-right">{rule.points ?? 'N/A'}</Table.Cell>
 						</Table.Row>
 					{/each}

@@ -78,31 +78,31 @@ export function upsertEarnRuleMutationConfig(
 			});
 
 			// Take a snapshot of the previous value
-			const previousRule = queryClient.getQueryData<GetEarnRuleByIdResponse[0]>([
-				QueryKeys.earnRuleById,
-				newRule.id.toString()
-			]);
+			// const previousRule = queryClient.getQueryData<GetEarnRuleByIdResponse[0]>([
+			// 	QueryKeys.earnRuleById,
+			// 	newRule.id.toString()
+			// ]);
 
-			// Optimistically update to the new value
-			if (previousRule) {
-				queryClient.setQueryData<GetEarnRuleByIdResponse[0]>(
-					[QueryKeys.earnRuleById, newRule.id.toString()],
-					{
-						...previousRule,
-						...newRule
-					}
-				);
-			}
+			// // // Optimistically update to the new value
+			// if (previousRule) {
+			// 	queryClient.setQueryData<GetEarnRuleByIdResponse[0]>(
+			// 		[QueryKeys.earnRuleById, newRule.id.toString()],
+			// 		{
+			// 			...previousRule,
+			// 			...newRule
+			// 		}
+			// 	);
+			// }
 
 			if (opts.onMutateCb) {
 				opts.onMutateCb();
 			}
 		},
 		onSuccess: (newRule) => {
-			queryClient.setQueryData<GetEarnRuleByIdResponse[0]>(
-				[QueryKeys.earnRuleById, newRule.id.toString()],
-				newRule
-			);
+			// queryClient.setQueryData<GetEarnRuleByIdResponse[0]>(
+			// 	[QueryKeys.earnRuleById, newRule.id.toString()],
+			// 	newRule
+			// );
 
 			toast.success(__('Earn rule saved', 'piggy'));
 

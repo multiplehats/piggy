@@ -120,12 +120,74 @@ class EarnRulesSchema extends AbstractSchema {
 	public function get_item_response( $post ) {
 		$earn_rule = [
 			'id'  => (int) $post->ID,
-			'status' => $post->post_status,
-			'title' => $post->post_title,
 			'createdAt' => $post->post_date,
 			'updatedAt' => $post->post_modified,
-			'description' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_description', null ),
-			'type' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_type', null ),
+			'status' => array(
+				'id' => 'status',
+				'label' => __( 'Status', 'piggy' ),
+				'default' => 'publish',
+				'value' => $post->post_status,
+				'options' => array(
+					'publish' => array(
+						'label' => __( 'Active', 'piggy' ),
+					),
+					'draft' => array(
+						'label' => __( 'Inactive', 'piggy' ),
+					),
+				),
+				'type' => 'select',
+				'tooltip' => null,
+				'placeholder' => null,
+				'description' => __( 'Set the status of the earn rule. Inactive earn rules will not be displayed to users.', 'piggy' ),
+			),
+			'title' => array(
+				'id' => 'title',
+				'label' => __( 'Title', 'piggy' ),
+				'default' => null,
+				'value' => $post->post_title,
+				'type' => 'text',
+				'placeholder' => null,
+				'description' => __( 'This is not displayed to the user and is only used for internal reference.', 'piggy' ),
+			),
+			'label' => array(
+				'id' => 'label',
+				'label' => __( 'Label', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_label', null ),
+				'type' => 'translatable_text',
+				'placeholder' => null,
+				'description' => __( 'The label of the earn rule, shown in the account and widgets.', 'piggy' ),
+			),
+			'type' => array(
+				'id' => 'type',
+				'label' => __( 'Type', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_type', null ),
+				'type' => 'select',
+				'options' => array(
+					'LIKE_ON_FACEBOOK' => array(
+						'label' => __( 'Like on Facebook', 'piggy' ),
+					),
+					'FOLLOW_ON_TIKTOK' => array(
+						'label' => __( 'Follow on TikTok', 'piggy' ),
+					),
+					'FOLLOW_ON_INSTAGRAM' => array(
+						'label' => __( 'Follow on Instagram', 'piggy' ),
+					),
+					'PLACE_ORDER' => array(
+						'label' => __( 'Place an order', 'piggy' ),
+					),
+					'CELEBRATE_BIRTHDAY' => array(
+						'label' => __( 'Celebrate your birthday', 'piggy' ),
+					),
+					'CREATE_ACCOUNT' => array(
+						'label' => __( 'Create an account', 'piggy' ),
+					),
+				),
+				'tooltip' => null,
+				'placeholder' => null,
+				'description' => __( 'The type of earn rule.', 'piggy' ),
+			),
 			'piggyTierUuids' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_piggy_tier_uuids', null ),
 			'startsAt' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_starts_at', null ),
 			'expiresAt' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_expires_at', null ),

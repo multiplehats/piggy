@@ -134,10 +134,21 @@ export type TranslatableText = z.infer<typeof zTranslatableText>;
 
 export const zEarnRuleValueItem = z.object({
 	id: z.number(),
-	title: z.string(),
-	description: z.string().nullable(),
-	status: z.literal('publish').or(z.literal('draft')),
-	type: z.string(),
+	title: zText,
+	label: zTranslatableText,
+	status: zSelect.extend({
+		default: z.literal('publish').or(z.literal('draft')),
+		value: z.literal('publish').or(z.literal('draft'))
+	}),
+	type: zSelect.extend({
+		value: z
+			.literal('LIKE_ON_FACEBOOK')
+			.or(z.literal('FOLLOW_ON_TIKTOK'))
+			.or(z.literal('PLACE_ORDER'))
+			.or(z.literal('CELEBRATE_BIRTHDAY'))
+			.or(z.literal('FOLLOW_ON_INSTAGRAM'))
+			.or(z.literal('CREATE_ACCOUNT'))
+	}),
 	piggyTierUuids: z.array(z.string()).or(z.tuple([])),
 	createdAt: z.string(),
 	updatedAt: z.string(),
