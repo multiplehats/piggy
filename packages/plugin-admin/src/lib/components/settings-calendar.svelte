@@ -1,29 +1,46 @@
 <script lang="ts">
-	import { DateFormatter, getLocalTimeZone, today, type DateValue } from '@internationalized/date';
+	import {
+		DateFormatter,
+		getLocalTimeZone,
+		parseAbsoluteToLocal,
+		type DateValue
+	} from '@internationalized/date';
+	import { __ } from '@wordpress/i18n';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Calendar } from '$lib/components/ui/calendar/index.js';
-	import { Input, type InputProps } from '$lib/components/ui/input/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { cn } from '$lib/utils/tw.js';
 	import CalendarIcon from 'lucide-svelte/icons/calendar';
+	import { onMount } from 'svelte';
 	import { SettingsLabel, type SettingsLabelProps } from './settings-label';
 	import CalendarYearTime from './ui/calendar-year-time/calendar-year-time.svelte';
 
 	let className: string | undefined = undefined;
 
 	type $$Props = SettingsLabelProps & {
-		value?: DateValue | undefined;
+		placeholder?: string | undefined;
+		value?: string | undefined;
 		class?: string | undefined;
 	};
 
 	export { className as class };
 
+	export let placeholder: $$Props['placeholder'] = undefined;
 	export let value: $$Props['value'] = undefined;
 	export let id: string;
+
+	let rawValue: DateValue | undefined = undefined;
+
+	onMount(() => {
+		console.log('bindded value', value);
+
+		rawValue = value ? parseAbsoluteToLocal(value) : undefined;
+	});
 
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
 	});
+
+	$: console.log('settings cal value', { value, localTz: getLocalTimeZone() });
 </script>
 
 <div class={cn(className)}>
@@ -46,13 +63,16 @@
 				builders={[builder]}
 			>
 				<CalendarIcon class="mr-2 h-4 w-4" />
-				{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
+				{rawValue ? rawValue : __('Select date', 'piggy')}
 			</Button>
 		</Popover.Trigger>
 		<Popover.Content class="w-auto p-0" align="start">
-			<!-- <Calendar bind:value /> -->
-			{value?.toDate(getLocalTimeZone()).toISOString()}
-			<CalendarYearTime bind:value />
+			<CalendarYearTime
+				onChange={(dates) => {
+					rawValue = Array.isArray(dates) ? dates[0] : dates;
+				}}
+				placeholder={placeholder ? parseAbsoluteToLocal(placeholder) : undefined}
+			/>
 		</Popover.Content>
 	</Popover.Root>
 </div>

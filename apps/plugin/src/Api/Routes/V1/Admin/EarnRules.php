@@ -126,6 +126,7 @@ class EarnRules extends AbstractRoute {
 		}
 
 		$response = $this->prepare_item_for_response( get_post( $post_id ), $request );
+
 		return rest_ensure_response( $response );
 	}
 
@@ -156,6 +157,7 @@ class EarnRules extends AbstractRoute {
 
 		foreach ( $query_result as $post ) {
 			$data               = $this->prepare_item_for_response( $post, $request );
+			error_log( print_r( $data, true ) );
 			$response_objects[] = $this->prepare_response_for_collection( $data );
 		}
 

@@ -4,7 +4,6 @@ import { MutationKeys, QueryKeys } from '$lib/utils/query-keys';
 import toast from 'svelte-french-toast';
 import { SettingsAdminService } from '.';
 import type {
-	GetEarnRuleByIdResponse,
 	SaveSettingsParams,
 	SaveSettingsResponse,
 	UpsertEarnRuleParams,
@@ -52,7 +51,7 @@ export function saveSettingsMutationConfig(
 }
 
 type UpsertEarnRuleMutationConfig = CreateMutationOptions<
-	UpsertEarnRuleResponse,
+	UpsertEarnRuleResponse[0],
 	DefaultError,
 	UpsertEarnRuleParams
 >;
@@ -69,45 +68,22 @@ export function upsertEarnRuleMutationConfig(
 ): UpsertEarnRuleMutationConfig {
 	return {
 		mutationKey: [MutationKeys.upsertEarnRule],
-		mutationFn: (params) => service.upsertEarnRule(params),
+		mutationFn: async (params) => {
+			const data = await service.upsertEarnRule(params);
+
+			return data[0];
+		},
 		retry: true,
-		onMutate: async (newRule) => {
-			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-			await queryClient.cancelQueries({
-				queryKey: [QueryKeys.earnRuleById]
-			});
-
-			// Take a snapshot of the previous value
-			// const previousRule = queryClient.getQueryData<GetEarnRuleByIdResponse[0]>([
-			// 	QueryKeys.earnRuleById,
-			// 	newRule.id.toString()
-			// ]);
-
-			// // // Optimistically update to the new value
-			// if (previousRule) {
-			// 	queryClient.setQueryData<GetEarnRuleByIdResponse[0]>(
-			// 		[QueryKeys.earnRuleById, newRule.id.toString()],
-			// 		{
-			// 			...previousRule,
-			// 			...newRule
-			// 		}
-			// 	);
-			// }
-
+		onMutate: () => {
 			if (opts.onMutateCb) {
 				opts.onMutateCb();
 			}
 		},
 		onSuccess: (newRule) => {
-			// queryClient.setQueryData<GetEarnRuleByIdResponse[0]>(
-			// 	[QueryKeys.earnRuleById, newRule.id.toString()],
-			// 	newRule
-			// );
-
 			toast.success(__('Earn rule saved', 'piggy'));
 
 			if (opts.onSuccessCb) {
-				opts.onSuccessCb(newRule);
+				opts.onSuccessCb([newRule]);
 			}
 		},
 		...mutationOpts

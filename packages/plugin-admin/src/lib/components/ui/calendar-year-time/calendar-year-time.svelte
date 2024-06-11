@@ -1,17 +1,27 @@
 <script lang="ts">
-	import { DateFormatter, getLocalTimeZone, parseTime, Time, today } from '@internationalized/date';
+	import {
+		DateFormatter,
+		getLocalTimeZone,
+		parseTime,
+		Time,
+		today,
+		type DateValue
+	} from '@internationalized/date';
 	import { __ } from '@wordpress/i18n';
 	import * as Calendar from '$lib/components/ui/calendar/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { cn } from '$lib/utils/tw';
 	import { Calendar as CalendarPrimitive } from 'bits-ui';
 
-	type $$Props = CalendarPrimitive.Props;
+	type $$Props = CalendarPrimitive.Props & {
+		onChange?: (value: DateValue | DateValue[] | undefined) => void;
+	};
 	type $$Events = CalendarPrimitive.Events;
 
-	export let value: $$Props['value'] = undefined;
+	export let value: $$Props['value'] = today(getLocalTimeZone());
 	export let placeholder: $$Props['placeholder'] = today(getLocalTimeZone());
 	export let weekdayFormat: $$Props['weekdayFormat'] = 'short';
+	export let onChange: $$Props['onChange'] = undefined;
 
 	const monthOptions = [
 		__('January', 'piggy'),
@@ -76,6 +86,7 @@
 <CalendarPrimitive.Root
 	bind:value
 	bind:placeholder
+	onValueChange={(date) => onChange && onChange(date)}
 	{weekdayFormat}
 	class={cn('rounded-md border p-3', className)}
 	{...$$restProps}
@@ -129,14 +140,9 @@
 				items={timeOptions}
 				onSelectedChange={(v) => {
 					if (!v) return;
-					const [hours, minutes] = v.value.split(':').map(Number);
-
 					if (!placeholder) return;
 
-					const anotherTime = parseTime(v.value);
-					const time = new Time(hours, minutes);
-
-					console.log(time.toString(), anotherTime.toString());
+					const time = parseTime(v.value);
 
 					placeholder = placeholder.set({
 						hour: time.hour,

@@ -161,7 +161,7 @@ class EarnRulesSchema extends AbstractSchema {
 			'type' => array(
 				'id' => 'type',
 				'label' => __( 'Type', 'piggy' ),
-				'default' => null,
+				'default' => 'PLACE_ORDER',
 				'value' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_type', null ),
 				'type' => 'select',
 				'options' => array(
@@ -230,6 +230,8 @@ class EarnRulesSchema extends AbstractSchema {
 				$earn_rule['points'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_points', null);
 				break;
 		}
+
+		error_log(print_r($earn_rule, true));
 
 		return $earn_rule;
 	}

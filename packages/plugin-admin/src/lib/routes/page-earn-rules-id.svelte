@@ -55,22 +55,23 @@
 			return;
 		}
 
+		console.log($rule);
+
 		$mutate.mutate({
 			id: $rule.id,
 			type: $rule.type.value,
 			label: $rule.label.value,
 			status: $rule.status.value,
-			title: $rule.title.value
+			title: $rule.title.value,
+			startsAt: $rule.startsAt.value,
+			expiresAt: $rule.expiresAt.value
 		});
 	}
 
 	$: if ($query.data && $query.isSuccess) {
-		rule.set($query.data);
+		console.log('Incoming data: ', $query.data);
 
-		// Set a default in case this isn't set.
-		if ($rule && !$rule.type?.value) {
-			$rule.type.value = 'PLACE_ORDER';
-		}
+		rule.set($query.data);
 	}
 </script>
 
@@ -120,8 +121,8 @@
 					</Card.Content>
 				</Card.Root>
 
-				{#if $rule.type.value === 'PLACE_ORDER'}
-					<!-- <EarnRulePlaceOrder /> -->
+				{#if $rule?.type?.value === 'PLACE_ORDER'}
+					<EarnRulePlaceOrder />
 				{/if}
 			</div>
 
@@ -164,9 +165,17 @@
 					</Card.Header>
 					<Card.Content>
 						<div class="grid gap-6">
-							<SettingsCalendar {...$rule.startsAt} bind:value={$rule.startsAt.value} />
-
-							<SettingsCalendar {...$rule.expiresAt} bind:value={$rule.expiresAt.value} />
+							<SettingsCalendar
+								{...$rule.startsAt}
+								bind:value={$rule.startsAt.value}
+								placeholder={$rule.startsAt.value}
+							/>
+							{$rule.expiresAt.value}
+							<SettingsCalendar
+								{...$rule.expiresAt}
+								bind:value={$rule.expiresAt.value}
+								placeholder={$rule.expiresAt.value}
+							/>
 						</div>
 					</Card.Content>
 				</Card.Root>
