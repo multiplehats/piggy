@@ -1,8 +1,6 @@
 <?php
 namespace PiggyWP;
 
-use PiggyWP\Options;
-
 /**
  * Takes care of the migrations.
  *
@@ -31,7 +29,7 @@ class Migration {
 	 * @var array
 	 */
 	public function run_migrations() {
-		$current_db_version = Options::get( 'piggy_version' );
+		$current_db_version = get_option( 'piggy_version' );
 
 		if ( empty( $current_db_version ) ) {
 			return;

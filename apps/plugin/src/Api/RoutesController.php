@@ -53,8 +53,10 @@ class RoutesController {
 				Routes\V1\Settings::IDENTIFIER => Routes\V1\Settings::class,
 			],
 			'private' => [
+				Routes\V1\Admin\EarnRules::IDENTIFIER => Routes\V1\Admin\EarnRules::class,
 				Routes\V1\Admin\Shops::IDENTIFIER => Routes\V1\Admin\Shops::class,
 				Routes\V1\Admin\ApiKey::IDENTIFIER => Routes\V1\Admin\ApiKey::class,
+				Routes\V1\Admin\Settings::IDENTIFIER => Routes\V1\Admin\Settings::class,
 			],
 		];
 	}

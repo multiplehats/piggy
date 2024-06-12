@@ -63,10 +63,10 @@ type ExtractValue<S> = S extends z.ZodObject<infer U>
  * @note Do not specify fields here that are only used in the admin!
  */
 export const zBasePluginOptions = z.object({
-	plugin_enable: adminFields.zToggle,
-	plugin_reset: adminFields.zToggle,
+	plugin_enable: adminFields.zSwitch,
+	plugin_reset: adminFields.zSwitch,
 	credits_name: adminFields.zTranslatableText,
-	include_guests: adminFields.zToggle,
+	include_guests: adminFields.zSwitch,
 	reward_order_statuses: adminFields.zCheckboxes.refine(
 		({ value }) => Object.entries(value).some(([key, value]) => value === 'on'),
 		__('At least one must be selected.', 'mycred')
@@ -76,7 +76,8 @@ export const zBasePluginOptions = z.object({
 		__('At least one must be selected.', 'mycred')
 	),
 	reward_order_parts: adminFields.zCheckboxes,
-	marketing_consent_subscription: adminFields.zSelect
+	marketing_consent_subscription: adminFields.zSelect,
+	earn_rules: adminFields.zEarnRules
 });
 
 /**
@@ -87,11 +88,27 @@ export const zPluginOptionsAdmin = zBasePluginOptions.extend({
 	api_key: adminFields.zApiKey,
 	shop_uuid: adminFields.zShopUuid
 });
+
 export type PluginOptionsAdmin = z.infer<typeof zPluginOptionsAdmin>;
 export type PluginOptionsAdminKeys = keyof PluginOptionsAdmin;
 
 export const ZPluginOptionsAdminKeyValue = transformSchema(zPluginOptionsAdmin);
 export type PluginOptionsAdminKeyValue = z.infer<typeof ZPluginOptionsAdminKeyValue>;
+
+export type PluginOptionType<K extends PluginOptionsAdminKeys> = PluginOptionsAdmin[K];
+
+export const zPluginEarnRuleItemValues = transformSchema(
+	adminFields.zEarnRuleValueItem.pick({
+		label: true,
+		status: true,
+		type: true,
+		title: true,
+		startsAt: true,
+		expiresAt: true,
+		minimumOrderAmount: true
+	})
+);
+export type PluginEarnRuleItemValues = z.infer<typeof zPluginEarnRuleItemValues>;
 
 /**
  * Frontend options interface.

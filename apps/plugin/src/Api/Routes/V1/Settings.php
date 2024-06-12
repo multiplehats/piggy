@@ -70,4 +70,19 @@ class Settings extends AbstractRoute {
 
 		return rest_ensure_response( $returned_options );
 	}
+
+	/**
+	 * Get settings or a specific setting
+	 *
+	 * @param  \WP_REST_Request $request Request object.
+	 *
+	 * @return bool|string|\WP_Error|\WP_REST_Response
+	 */
+	protected function get_route_response( \WP_REST_Request $request ) {
+		$arg = $request->get_param( 'id' );
+
+		$settings = $this->options->get_frontend_options_payload( $arg );
+
+		return rest_ensure_response( $settings );
+	}
 }

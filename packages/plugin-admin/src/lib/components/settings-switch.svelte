@@ -2,12 +2,13 @@
 	import { SettingsLabel, type SettingsLabelProps } from '$lib/components/settings-label/index.js';
 	import { Switch } from '$lib/components/ui/switch';
 	import { cn } from '$lib/utils/tw';
-	import type { CheckboxValue } from '@piggy/types/plugin/settings/adminTypes';
+	import type { SwitchValue } from '@piggy/types/plugin/settings/adminTypes';
+	import SettingsFieldErrors from './settings-field-errors.svelte';
 
 	let className: string | undefined = undefined;
 
 	type $$Props = SettingsLabelProps & {
-		value: CheckboxValue;
+		value: SwitchValue;
 		class?: string | undefined;
 	};
 
@@ -38,4 +39,6 @@
 			/>
 		</div>
 	</div>
+
+	<SettingsFieldErrors {...$$props} />
 </div>

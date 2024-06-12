@@ -13,20 +13,22 @@
 	let className: string | undefined = undefined;
 
 	type $$Props = SettingsLabelProps & {
-		class: string | undefined;
+		class?: string | undefined;
 		items: Item[];
 		value?: string | undefined;
+		hidden?: boolean | undefined;
 	};
 
 	export { className as class };
 	export let items: $$Props['items'] = [];
 	export let id: $$Props['id'];
 	export let value: $$Props['value'] = undefined;
+	export let hidden: $$Props['hidden'] = false;
 
 	$: selected = items.find((item) => item.value === value);
 </script>
 
-<div class={className}>
+<div class={cn(hidden && 'hidden', className)}>
 	<SettingsLabel
 		label={$$props.label}
 		description={$$props.description}
@@ -61,5 +63,5 @@
 		</Select.Content>
 	</Select.Root>
 
-	<SettingsFieldErrors {...$$props} />
+	<!-- <SettingsFieldErrors {...$$props} /> -->
 </div>

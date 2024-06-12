@@ -3,7 +3,7 @@
 	import OnboardingActions from '$lib/components/onboarding/onboarding-actions.svelte';
 	import OnboardingSteps from '$lib/components/onboarding/onboarding-steps.svelte';
 	import SettingsLogo from '$lib/components/settings-logo.svelte';
-	import { saveSettingsMutationConfig } from '$lib/modules/piggy/mutations';
+	import { saveSettingsMutationConfig } from '$lib/modules/settings/mutations';
 	import { onboardingSteps, useOnboarding } from '$lib/stores/onboarding';
 	import { settingsState } from '$lib/stores/settings';
 	import { useNavigate } from 'svelte-navigator';

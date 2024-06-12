@@ -31,7 +31,7 @@ class SettingsSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'api_key' => [
-				'description' => __( 'Settings.', 'piggy' ),
+				'description' => __( 'Public Settings.', 'piggy' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
