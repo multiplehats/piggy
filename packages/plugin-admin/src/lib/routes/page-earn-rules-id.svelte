@@ -64,7 +64,8 @@
 			status: $rule.status.value,
 			title: $rule.title.value,
 			startsAt: $rule.startsAt.value,
-			expiresAt: $rule.expiresAt.value
+			expiresAt: $rule.expiresAt.value,
+			minimumOrderAmount: $rule.minimumOrderAmount.value
 		});
 	}
 
@@ -122,7 +123,7 @@
 				</Card.Root>
 
 				{#if $rule?.type?.value === 'PLACE_ORDER'}
-					<EarnRulePlaceOrder />
+					<EarnRulePlaceOrder bind:minimumOrderAmount={$rule.minimumOrderAmount} />
 				{/if}
 			</div>
 
@@ -131,6 +132,7 @@
 					<Card.Header>
 						<Card.Title>{__('Details', 'piggy')}</Card.Title>
 					</Card.Header>
+
 					<Card.Content>
 						<div class="grid gap-6">
 							<SettingsSelect
@@ -163,6 +165,7 @@
 					<Card.Header>
 						<Card.Title>{__('Schedule', 'piggy')}</Card.Title>
 					</Card.Header>
+
 					<Card.Content>
 						<div class="grid gap-6">
 							<SettingsCalendar

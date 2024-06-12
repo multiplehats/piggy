@@ -104,7 +104,8 @@ export const zPluginEarnRuleItemValues = transformSchema(
 		type: true,
 		title: true,
 		startsAt: true,
-		expiresAt: true
+		expiresAt: true,
+		minimumOrderAmount: true
 	})
 );
 export type PluginEarnRuleItemValues = z.infer<typeof zPluginEarnRuleItemValues>;

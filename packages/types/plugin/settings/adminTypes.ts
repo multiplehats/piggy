@@ -89,7 +89,7 @@ export type Color = z.infer<typeof zColor>;
 
 export const zNumber = zSettingsBaseField.extend({
 	type: z.literal('number'),
-	value: z.number(),
+	value: z.number().nullable(),
 	default: z.number(),
 	attributes: z.object({
 		min: z.number().optional(),
@@ -101,7 +101,7 @@ export type Number = z.infer<typeof zNumber>;
 
 export const zText = zSettingsBaseField.extend({
 	type: z.literal('text'),
-	value: z.string(),
+	value: z.string().nullable(),
 	default: z.string()
 });
 export type Text = z.infer<typeof zText>;
@@ -139,6 +139,15 @@ export const zTranslatableText = zSettingsBaseField.extend({
 export type TranslatableText = z.infer<typeof zTranslatableText>;
 
 // Earn rules
+export const zEarnRuleType = z
+	.literal('LIKE_ON_FACEBOOK')
+	.or(z.literal('FOLLOW_ON_TIKTOK'))
+	.or(z.literal('PLACE_ORDER'))
+	.or(z.literal('CELEBRATE_BIRTHDAY'))
+	.or(z.literal('FOLLOW_ON_INSTAGRAM'))
+	.or(z.literal('CREATE_ACCOUNT'));
+
+export type EarnRuleType = z.infer<typeof zEarnRuleType>;
 
 export const zEarnRuleValueItem = z.object({
 	id: z.number(),
@@ -149,13 +158,7 @@ export const zEarnRuleValueItem = z.object({
 		value: z.literal('publish').or(z.literal('draft'))
 	}),
 	type: zSelect.extend({
-		value: z
-			.literal('LIKE_ON_FACEBOOK')
-			.or(z.literal('FOLLOW_ON_TIKTOK'))
-			.or(z.literal('PLACE_ORDER'))
-			.or(z.literal('CELEBRATE_BIRTHDAY'))
-			.or(z.literal('FOLLOW_ON_INSTAGRAM'))
-			.or(z.literal('CREATE_ACCOUNT'))
+		value: zEarnRuleType
 	}),
 	piggyTierUuids: z.array(z.string()).or(z.tuple([])),
 	createdAt: z.string(),
@@ -168,7 +171,7 @@ export const zEarnRuleValueItem = z.object({
 	socialMessage: z.string().nullable().optional(),
 	excludedCollectionIds: z.array(z.string()).nullable().optional(),
 	excludedProductIds: z.array(z.string()).nullable().optional(),
-	minOrderSubtotalCents: z.number().nullable().optional()
+	minimumOrderAmount: zNumber
 });
 export type EarnRuleValueItem = z.infer<typeof zEarnRuleValueItem>;
 

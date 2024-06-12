@@ -136,7 +136,7 @@ final class PostTypeController {
 			'LIKE_ON_FACEBOOK' => array('points', 'socialNetworkUrl', 'socialMessage'),
 			'FOLLOW_ON_TIKTOK' => array('points', 'socialNetworkUrl', 'socialMessage'),
 			'FOLLOW_ON_INSTAGRAM' => array('points', 'socialNetworkUrl', 'socialMessage'),
-			'PLACE_ORDER' => array('excludedCollectionIds', 'excludedProductIds', 'minOrderSubtotalCents'),
+			'PLACE_ORDER' => array('excludedCollectionIds', 'excludedProductIds', 'minimumOrderAmount'),
 			'CELEBRATE_BIRTHDAY' => array('points'),
 			'CREATE_ACCOUNT' => array('points')
 		);
@@ -150,7 +150,7 @@ final class PostTypeController {
 				if ($field === 'excludedCollectionIds' || $field === 'excludedProductIds') {
 					echo '<textarea name="piggy_earn_rule_' . $field . '[]" id="piggy_earn_rule_' . $field . '" rows="4" cols="50">' . esc_textarea(is_array($value) ? implode(', ', $value) : $value) . '</textarea>';
 				} else {
-					echo '<input type="' . ($field === 'points' || $field === 'minOrderSubtotalCents' ? 'number' : 'text') . '" name="piggy_earn_rule_' . $field . '" id="piggy_earn_rule_' . $field . '" value="' . esc_attr($value) . '"></p>';
+					echo '<input type="' . ($field === 'points' || $field === 'minimumOrderAmount' ? 'number' : 'text') . '" name="piggy_earn_rule_' . $field . '" id="piggy_earn_rule_' . $field . '" value="' . esc_attr($value) . '"></p>';
 				}
 			}
 			echo '</div>';
@@ -202,7 +202,7 @@ final class PostTypeController {
 			'LIKE_ON_FACEBOOK' => array('points', 'socialNetworkUrl', 'socialMessage'),
 			'FOLLOW_ON_TIKTOK' => array('points', 'socialNetworkUrl', 'socialMessage'),
 			'FOLLOW_ON_INSTAGRAM' => array('points', 'socialNetworkUrl', 'socialMessage'),
-			'PLACE_ORDER' => array('excludedCollectionIds', 'excludedProductIds', 'minOrderSubtotalCents'),
+			'PLACE_ORDER' => array('excludedCollectionIds', 'excludedProductIds', 'minimumOrderAmount'),
 			'CELEBRATE_BIRTHDAY' => array('points'),
 			'CREATE_ACCOUNT' => array('points')
 		);

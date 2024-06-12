@@ -94,7 +94,7 @@ class EarnRulesSchema extends AbstractSchema {
 				'description' => __( 'Product IDs that are excluded from the earn rule.', 'piggy' ),
 				'type'        => 'array',
 			],
-			'minOrderSubtotalCents' => [
+			'minimumOrderAmount' => [
 				'description' => __( 'Minimum order subtotal in cents.', 'piggy' ),
 				'type'        => 'integer',
 			],
@@ -208,9 +208,22 @@ class EarnRulesSchema extends AbstractSchema {
 				'description' => __( 'Optional date for when the rule expires.', 'piggy' ),
 			),
 			'completed' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_completed', null ),
+			'minimumOrderAmount' => array(
+				'id' => 'minimumOrderAmount',
+				'label' => __( 'Minimum order amount', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data( $post->ID, '_piggy_earn_rule_min_order_subtotal_cents', null ),
+				'type' => 'number',
+				'placeholder' => null,
+				'description' => __( 'The minimum order amount required to satisfy the earn rule.', 'piggy' ),
+				'attributes' => array(
+					'min' => 0,
+					'step' => 1,
+				),
+			),
 		];
 
-		switch ($earn_rule['type']) {
+		switch ($earn_rule['type']['value']) {
 			case 'LIKE_ON_FACEBOOK':
 			case 'FOLLOW_ON_TIKTOK':
 			case 'FOLLOW_ON_INSTAGRAM':
@@ -221,7 +234,6 @@ class EarnRulesSchema extends AbstractSchema {
 			case 'PLACE_ORDER':
 				$earn_rule['excludedCollectionIds'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_excluded_collection_ids', array());
 				$earn_rule['excludedProductIds'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_excluded_product_ids', array());
-				$earn_rule['minOrderSubtotalCents'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_min_order_subtotal_cents', null);
 				break;
 			case 'CELEBRATE_BIRTHDAY':
 				$earn_rule['points'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_points', null);

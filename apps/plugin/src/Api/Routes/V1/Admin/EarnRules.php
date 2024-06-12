@@ -91,7 +91,7 @@ class EarnRules extends AbstractRoute {
 			'socialMessage' => $request->get_param( 'socialMessage' ),
 			'excludedCollectionIds' => $request->get_param( 'excludedCollectionIds' ),
 			'excludedProductIds' => $request->get_param( 'excludedProductIds' ),
-			'minOrderSubtotalCents' => $request->get_param( 'minOrderSubtotalCents' ),
+			'minimumOrderAmount' => $request->get_param( 'minimumOrderAmount' ),
 		);
 
 		$post_data = array(
@@ -110,7 +110,7 @@ class EarnRules extends AbstractRoute {
 				'_piggy_earn_rule_social_message' => $data['socialMessage'],
 				'_piggy_earn_rule_excluded_collection_ids' => $data['excludedCollectionIds'],
 				'_piggy_earn_rule_excluded_product_ids' => $data['excludedProductIds'],
-				'_piggy_earn_rule_min_order_subtotal_cents' => $data['minOrderSubtotalCents'],
+				'_piggy_earn_rule_min_order_subtotal_cents' => $data['minimumOrderAmount'],
 			)
 		);
 

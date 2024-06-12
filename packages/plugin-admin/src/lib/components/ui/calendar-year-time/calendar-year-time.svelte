@@ -3,7 +3,6 @@
 		DateFormatter,
 		getLocalTimeZone,
 		parseTime,
-		Time,
 		today,
 		type DateValue
 	} from '@internationalized/date';

@@ -698,7 +698,7 @@ class Options {
 					case 'PLACE_ORDER':
 						$earn_rule['excludedCollectionIds'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_excluded_collection_ids', array());
 						$earn_rule['excludedProductIds'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_excluded_product_ids', array());
-						$earn_rule['minOrderSubtotalCents'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_min_order_subtotal_cents', null);
+						$earn_rule['minimumOrderAmount'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_min_order_subtotal_cents', null);
 						break;
 					case 'CELEBRATE_BIRTHDAY':
 						$earn_rule['points'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_points', null);
@@ -817,7 +817,7 @@ class Options {
 						'default' => array(),
 					),
 					array(
-						'id' => 'minOrderSubtotalCents',
+						'id' => 'minimumOrderAmount',
 						'type' => self::NUMBER,
 						'label' => __( 'Min Order Subtotal Cents', 'piggy' ),
 						'default' => 0,

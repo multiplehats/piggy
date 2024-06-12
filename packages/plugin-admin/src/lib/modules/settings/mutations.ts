@@ -51,7 +51,7 @@ export function saveSettingsMutationConfig(
 }
 
 type UpsertEarnRuleMutationConfig = CreateMutationOptions<
-	UpsertEarnRuleResponse[0],
+	UpsertEarnRuleResponse,
 	DefaultError,
 	UpsertEarnRuleParams
 >;
@@ -63,7 +63,7 @@ export function upsertEarnRuleMutationConfig(
 	> = {},
 	opts: {
 		onSuccessCb?: (newRule: UpsertEarnRuleResponse) => void;
-		onMutateCb?: () => void;
+		onMutateCb?: (earnRule: UpsertEarnRuleParams) => void;
 	} = {}
 ): UpsertEarnRuleMutationConfig {
 	return {
@@ -71,19 +71,21 @@ export function upsertEarnRuleMutationConfig(
 		mutationFn: async (params) => {
 			const data = await service.upsertEarnRule(params);
 
-			return data[0];
+			return data;
 		},
 		retry: true,
-		onMutate: () => {
+		onMutate: async (earnRule) => {
+			await queryClient.invalidateQueries({ queryKey: [QueryKeys.earnRules] });
+
 			if (opts.onMutateCb) {
-				opts.onMutateCb();
+				opts.onMutateCb(earnRule);
 			}
 		},
 		onSuccess: (newRule) => {
 			toast.success(__('Earn rule saved', 'piggy'));
 
 			if (opts.onSuccessCb) {
-				opts.onSuccessCb([newRule]);
+				opts.onSuccessCb(newRule);
 			}
 		},
 		...mutationOpts

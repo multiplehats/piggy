@@ -22,7 +22,7 @@
 	"types": "./dist/index.d.ts",
 	"scripts": {
 		"clean": "rm -rf .turbo node_modules",
-		"dev:admin": "NODE_ENV=development pnpm sync && svelte-package --watch",
+		"dev:admin": "NODE_ENV=development svelte-package --watch",
 		"build": "NODE_ENV=production pnpm sync && svelte-package",
 		"sync": "svelte-kit sync",
 		"analyze": "ANALYZE=true pnpm build",
