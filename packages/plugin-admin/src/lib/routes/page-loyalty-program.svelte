@@ -35,16 +35,30 @@
 		{ label: 'Create an account', value: 'CREATE_ACCOUNT' }
 	] satisfies { label: string; value: EarnRuleType }[];
 
-	let title = '';
-	let selected = ruleTypes[0];
+	let title: string | undefined = undefined;
+	let selected: (typeof ruleTypes)[number] | undefined = undefined;
+	let titleError = '';
+	let ruleTypeError = '';
+
+	function validateForm() {
+		titleError = title ? '' : __('Title is required.');
+		ruleTypeError = selected ? '' : __('Rule type is required.');
+	}
 
 	function handleCreateRule(event: Event) {
 		event.preventDefault();
+		validateForm();
 
-		$mutate.mutate({
-			title,
-			type: selected.value
-		});
+		if (!title || !selected) {
+			return;
+		}
+
+		if (!titleError && !ruleTypeError) {
+			$mutate.mutate({
+				title,
+				type: selected.value
+			});
+		}
 	}
 </script>
 
@@ -71,44 +85,56 @@
 						</Dialog.Title>
 					</Dialog.Header>
 
-					<div class="grid gap-4 py-4">
-						<div class="grid gap-3">
-							<Label for="title">
-								{__('Title (Only visible to you)')}
-							</Label>
+					<form on:submit={handleCreateRule}>
+						<div class="grid gap-4 py-4">
+							<div class="grid gap-3">
+								<Label for="title">
+									{__('Title (Only visible to you)')}
 
-							<Input class="col-span-3" name="title" bind:value={title} />
+									{#if titleError}
+										<div class="text-red-600 mt-2">{titleError}</div>
+									{/if}
+								</Label>
+								<Input class="col-span-3" name="title" bind:value={title} />
+							</div>
+
+							<div class="grid gap-3">
+								<Label for="ruleType">
+									{__('Rule type')}
+
+									{#if ruleTypeError}
+										<div class="text-red-600 mt-2">{ruleTypeError}</div>
+									{/if}
+								</Label>
+
+								<Select.Root name="ruleType" items={ruleTypes} bind:selected>
+									<Select.Trigger class="w-[180px]">
+										<Select.Value placeholder={__('Select type')} />
+									</Select.Trigger>
+									<Select.Content>
+										<Select.Group>
+											<Select.Label>
+												{__('Select type')}
+											</Select.Label>
+
+											{#each ruleTypes as type}
+												<Select.Item value={type.value} label={type.label}>{type.label}</Select.Item
+												>
+											{/each}
+										</Select.Group>
+									</Select.Content>
+
+									<Select.Input name="ruleType" />
+								</Select.Root>
+							</div>
 						</div>
 
-						<div class="grid gap-3">
-							<Label for="roleType">Type</Label>
-
-							<Select.Root name="roleType" items={ruleTypes} bind:selected>
-								<Select.Trigger class="w-[180px]">
-									<Select.Value placeholder={__('Select type')} />
-								</Select.Trigger>
-								<Select.Content>
-									<Select.Group>
-										<Select.Label>
-											{__('Select type')}
-										</Select.Label>
-
-										{#each ruleTypes as type}
-											<Select.Item value={type.value} label={type.label}>{type.label}</Select.Item>
-										{/each}
-									</Select.Group>
-								</Select.Content>
-
-								<Select.Input name="ruleType" />
-							</Select.Root>
-						</div>
-					</div>
-
-					<Dialog.Footer>
-						<Button type="submit" on:click={handleCreateRule}>
-							{__('Create')}
-						</Button>
-					</Dialog.Footer>
+						<Dialog.Footer>
+							<Button type="submit">
+								{__('Create')}
+							</Button>
+						</Dialog.Footer>
+					</form>
 				</Dialog.Content>
 			</Dialog.Root>
 		</Card.Header>
