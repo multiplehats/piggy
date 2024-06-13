@@ -2,6 +2,7 @@
 	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
 	import { __ } from '@wordpress/i18n';
 	import EarnRulePlaceOrder from '$lib/components/earn-rules/earn-rule-place-order.svelte';
+	import EarnRuleSocial from '$lib/components/earn-rules/earn-rule-social.svelte';
 	import SettingsCalendar from '$lib/components/settings-calendar.svelte';
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import SettingsSelect from '$lib/components/settings-select.svelte';
@@ -55,17 +56,17 @@
 			return;
 		}
 
-		console.log($rule);
-
 		$mutate.mutate({
 			id: $rule.id,
 			type: $rule.type.value,
 			label: $rule.label.value,
 			status: $rule.status.value,
-			title: $rule.title.value,
+			title: $rule.title?.value ?? __('New rule', 'piggy'),
 			startsAt: $rule.startsAt.value,
 			expiresAt: $rule.expiresAt.value,
-			minimumOrderAmount: $rule.minimumOrderAmount.value
+			minimumOrderAmount: $rule.minimumOrderAmount.value,
+			credits: $rule.credits.value,
+			socialHandle: $rule.socialHandle.value
 		});
 	}
 
@@ -74,6 +75,8 @@
 
 		rule.set($query.data);
 	}
+
+	$: ruleTypeLabel = $rule?.type?.options[$rule?.type?.value]?.label ?? '';
 </script>
 
 {#if $rule && $query.isSuccess && $query.data}
@@ -93,9 +96,18 @@
 				{@html $rule.title.value}
 			</h1>
 
-			<Badge variant="outline" class="ml-auto sm:ml-0">
+			<Badge
+				variant={$rule.status.value === 'publish' ? 'default' : 'secondary'}
+				class="ml-auto sm:ml-0"
+			>
 				{getStatusText($rule.status.value)}
 			</Badge>
+
+			{#if ruleTypeLabel}
+				<Badge variant="outline" class="ml-auto sm:ml-0">
+					{ruleTypeLabel}
+				</Badge>
+			{/if}
 
 			<div class="hidden items-center gap-2 md:ml-auto md:flex">
 				<Button size="sm" on:click={handleSave}>
@@ -118,12 +130,18 @@
 							</div>
 
 							<SettingsTranslateableInput {...$rule.label} bind:value={$rule.label.value} />
+
+							{#if $rule.type.value !== 'PLACE_ORDER'}
+								<SettingsInput {...$rule.credits} bind:value={$rule.credits.value} />
+							{/if}
 						</div>
 					</Card.Content>
 				</Card.Root>
 
 				{#if $rule?.type?.value === 'PLACE_ORDER'}
 					<EarnRulePlaceOrder bind:minimumOrderAmount={$rule.minimumOrderAmount} />
+				{:else if $rule?.type.value === 'LIKE_ON_FACEBOOK' || $rule?.type.value === 'FOLLOW_ON_INSTAGRAM'}
+					<EarnRuleSocial bind:socialHandle={$rule.socialHandle} />
 				{/if}
 			</div>
 
@@ -173,7 +191,6 @@
 								bind:value={$rule.startsAt.value}
 								placeholder={$rule.startsAt.value}
 							/>
-							{$rule.expiresAt.value}
 							<SettingsCalendar
 								{...$rule.expiresAt}
 								bind:value={$rule.expiresAt.value}

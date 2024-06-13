@@ -29,6 +29,7 @@ export interface GetEarnRuleByIdParams {
 export type GetEarnRuleByIdResponse = [EarnRuleValueItem];
 
 export type UpsertEarnRuleParams = Partial<PluginEarnRuleItemValues> & {
+	id?: string | number;
 	title: string;
 };
 

@@ -86,9 +86,8 @@ class EarnRules extends AbstractRoute {
 			'startsAt' => $request->get_param( 'startsAt' ),
 			'expiresAt' => $request->get_param( 'expiresAt' ),
 			'completed' => $request->get_param( 'completed' ),
-			'points' => $request->get_param( 'points' ),
-			'socialNetworkUrl' => $request->get_param( 'socialNetworkUrl' ),
-			'socialMessage' => $request->get_param( 'socialMessage' ),
+			'credits' => $request->get_param( 'credits' ),
+			'socialHandle' => $request->get_param( 'socialHandle' ),
 			'excludedCollectionIds' => $request->get_param( 'excludedCollectionIds' ),
 			'excludedProductIds' => $request->get_param( 'excludedProductIds' ),
 			'minimumOrderAmount' => $request->get_param( 'minimumOrderAmount' ),
@@ -105,9 +104,8 @@ class EarnRules extends AbstractRoute {
 				'_piggy_earn_rule_starts_at' => $data['startsAt'],
 				'_piggy_earn_rule_expires_at' => $data['expiresAt'],
 				'_piggy_earn_rule_completed' => $data['completed'],
-				'_piggy_earn_rule_points' => $data['points'],
-				'_piggy_earn_rule_social_network_url' => $data['socialNetworkUrl'],
-				'_piggy_earn_rule_social_message' => $data['socialMessage'],
+				'_piggy_earn_rule_points' => $data['credits'],
+				'_piggy_earn_rule_social_handle' => $data['socialHandle'],
 				'_piggy_earn_rule_excluded_collection_ids' => $data['excludedCollectionIds'],
 				'_piggy_earn_rule_excluded_product_ids' => $data['excludedProductIds'],
 				'_piggy_earn_rule_min_order_subtotal_cents' => $data['minimumOrderAmount'],
@@ -153,11 +151,11 @@ class EarnRules extends AbstractRoute {
 
 		$query = new \WP_Query();
 		$query_result = $query->query( $prepared_args );
+
 		$response_objects = array();
 
 		foreach ( $query_result as $post ) {
 			$data               = $this->prepare_item_for_response( $post, $request );
-			error_log( print_r( $data, true ) );
 			$response_objects[] = $this->prepare_response_for_collection( $data );
 		}
 
