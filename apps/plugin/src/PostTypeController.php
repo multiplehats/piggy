@@ -18,7 +18,7 @@ final class PostTypeController {
 		add_action('init', array($this, 'register_earn_rules_post_type'));
 		add_action('add_meta_boxes', array($this, 'add_earn_rules_metaboxes'));
 		add_action('save_post', array($this, 'save_earn_rule_meta'), 10, 2);
-		add_filter('wp_insert_post_data', array($this, 'restrict_post_status'), 10, 2);
+		// add_filter('wp_insert_post_data', array($this, 'restrict_post_status'), 10, 2);
 	}
 
 	/**
@@ -133,12 +133,12 @@ final class PostTypeController {
 		echo '<input type="checkbox" name="piggy_earn_rule_completed" id="piggy_earn_rule_completed" value="1"' . checked($completed, '1', false) . '></p>';
 
 		$type_fields = array(
-			'LIKE_ON_FACEBOOK' => array('points', 'socialNetworkUrl', 'socialMessage'),
-			'FOLLOW_ON_TIKTOK' => array('points', 'socialNetworkUrl', 'socialMessage'),
-			'FOLLOW_ON_INSTAGRAM' => array('points', 'socialNetworkUrl', 'socialMessage'),
+			'LIKE_ON_FACEBOOK' => array('credits', 'socialHandle'),
+			'FOLLOW_ON_TIKTOK' => array('credits', 'socialHandle'),
+			'FOLLOW_ON_INSTAGRAM' => array('credits', 'socialHandle'),
 			'PLACE_ORDER' => array('excludedCollectionIds', 'excludedProductIds', 'minimumOrderAmount'),
-			'CELEBRATE_BIRTHDAY' => array('points'),
-			'CREATE_ACCOUNT' => array('points')
+			'CELEBRATE_BIRTHDAY' => array('credits'),
+			'CREATE_ACCOUNT' => array('credits')
 		);
 
 		foreach ($type_fields as $rule_type => $fields) {
@@ -150,7 +150,7 @@ final class PostTypeController {
 				if ($field === 'excludedCollectionIds' || $field === 'excludedProductIds') {
 					echo '<textarea name="piggy_earn_rule_' . $field . '[]" id="piggy_earn_rule_' . $field . '" rows="4" cols="50">' . esc_textarea(is_array($value) ? implode(', ', $value) : $value) . '</textarea>';
 				} else {
-					echo '<input type="' . ($field === 'points' || $field === 'minimumOrderAmount' ? 'number' : 'text') . '" name="piggy_earn_rule_' . $field . '" id="piggy_earn_rule_' . $field . '" value="' . esc_attr($value) . '"></p>';
+					echo '<input type="' . ($field === 'credits' || $field === 'minimumOrderAmount' ? 'number' : 'text') . '" name="piggy_earn_rule_' . $field . '" id="piggy_earn_rule_' . $field . '" value="' . esc_attr($value) . '"></p>';
 				}
 			}
 			echo '</div>';
@@ -199,12 +199,12 @@ final class PostTypeController {
 		update_post_meta($post_id, '_piggy_earn_rule_completed', $completed);
 
 		$type_fields = array(
-			'LIKE_ON_FACEBOOK' => array('points', 'socialNetworkUrl', 'socialMessage'),
-			'FOLLOW_ON_TIKTOK' => array('points', 'socialNetworkUrl', 'socialMessage'),
-			'FOLLOW_ON_INSTAGRAM' => array('points', 'socialNetworkUrl', 'socialMessage'),
+			'LIKE_ON_FACEBOOK' => array('credits', 'socialHandle'),
+			'FOLLOW_ON_TIKTOK' => array('credits', 'socialHandle'),
+			'FOLLOW_ON_INSTAGRAM' => array('credits', 'socialHandle'),
 			'PLACE_ORDER' => array('excludedCollectionIds', 'excludedProductIds', 'minimumOrderAmount'),
-			'CELEBRATE_BIRTHDAY' => array('points'),
-			'CREATE_ACCOUNT' => array('points')
+			'CELEBRATE_BIRTHDAY' => array('credits'),
+			'CREATE_ACCOUNT' => array('credits')
 		);
 
 		foreach ($type_fields as $rule_type => $fields) {

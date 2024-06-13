@@ -157,7 +157,7 @@ class Options {
 					array(
 						'id'      => 'withdraw_order_statuses',
 						'type'    => self::CHECKBOXES,
-						'label'   => __( 'Withdraw points order statuses', 'piggy' ),
+						'label'   => __( 'Withdraw credits order statuses', 'piggy' ),
 						'description' => __( 'Withdraw credits from customers when the order financial status is one of the following', 'piggy'),
 						'default' => array(
 							'paid' => 'on',
@@ -691,9 +691,8 @@ class Options {
 					case 'LIKE_ON_FACEBOOK':
 					case 'FOLLOW_ON_TIKTOK':
 					case 'FOLLOW_ON_INSTAGRAM':
-						$earn_rule['points'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_points', null);
-						$earn_rule['socialNetworkUrl'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_social_network_url', null);
-						$earn_rule['socialMessage'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_social_message', null);
+						$earn_rule['credits'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_points', null);
+						$earn_rule['socialHandle'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_social_handle', null);
 						break;
 					case 'PLACE_ORDER':
 						$earn_rule['excludedCollectionIds'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_excluded_collection_ids', array());
@@ -701,10 +700,10 @@ class Options {
 						$earn_rule['minimumOrderAmount'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_min_order_subtotal_cents', null);
 						break;
 					case 'CELEBRATE_BIRTHDAY':
-						$earn_rule['points'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_points', null);
+						$earn_rule['credits'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_points', null);
 						break;
 					case 'CREATE_ACCOUNT':
-						$earn_rule['points'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_points', null);
+						$earn_rule['credits'] =  $this->get_post_meta_data(get_the_ID(), '_piggy_earn_rule_points', null);
 						break;
 				}
 
@@ -736,21 +735,15 @@ class Options {
 				'label' => __( 'Like on Facebook', 'piggy' ),
 				'fields' => array_merge($default_fields, array(
 					array(
-						'id' => 'points',
+						'id' => 'credits',
 						'type' => self::NUMBER,
-						'label' => __( 'Points', 'piggy' ),
+						'label' => __( 'Credits', 'piggy' ),
 						'default' => 0,
 					),
 					array(
-						'id' => 'socialNetworkUrl',
+						'id' => 'socialHandle',
 						'type' => self::TEXT,
 						'label' => __( 'Social Network URL', 'piggy' ),
-						'default' => '',
-					),
-					array(
-						'id' => 'socialMessage',
-						'type' => self::TEXT,
-						'label' => __( 'Social Message', 'piggy' ),
 						'default' => '',
 					),
 				)),
@@ -759,13 +752,13 @@ class Options {
 				'label' => __( 'Follow on TikTok', 'piggy' ),
 				'fields' => array_merge($default_fields, array(
 					array(
-						'id' => 'points',
+						'id' => 'credits',
 						'type' => self::NUMBER,
-						'label' => __( 'Points', 'piggy' ),
+						'label' => __( 'Credits', 'piggy' ),
 						'default' => 0,
 					),
 					array(
-						'id' => 'socialNetworkUrl',
+						'id' => 'socialHandle',
 						'type' => self::TEXT,
 						'label' => __( 'Social Network URL', 'piggy' ),
 						'default' => '',
@@ -782,13 +775,13 @@ class Options {
 				'label' => __( 'Follow on Instagram', 'piggy' ),
 				'fields' => array_merge($default_fields, array(
 					array(
-						'id' => 'points',
+						'id' => 'credits',
 						'type' => self::NUMBER,
-						'label' => __( 'Points', 'piggy' ),
+						'label' => __( 'Credits', 'piggy' ),
 						'default' => 0,
 					),
 					array(
-						'id' => 'socialNetworkUrl',
+						'id' => 'socialHandle',
 						'type' => self::TEXT,
 						'label' => __( 'Social Network URL', 'piggy' ),
 						'default' => '',
@@ -828,9 +821,9 @@ class Options {
 				'label' => __( 'Celebrate Birthday', 'piggy' ),
 				'fields' => array_merge($default_fields, array(
 					array(
-						'id' => 'points',
+						'id' => 'credits',
 						'type' => self::NUMBER,
-						'label' => __( 'Points', 'piggy' ),
+						'label' => __( 'Credits', 'piggy' ),
 						'default' => 0,
 					),
 				)),
@@ -839,9 +832,9 @@ class Options {
 				'label' => __( 'Create Account', 'piggy' ),
 				'fields' => array_merge($default_fields, array(
 					array(
-						'id' => 'points',
+						'id' => 'credits',
 						'type' => self::NUMBER,
-						'label' => __( 'Points', 'piggy' ),
+						'label' => __( 'Credits', 'piggy' ),
 						'default' => 0,
 					),
 				)),

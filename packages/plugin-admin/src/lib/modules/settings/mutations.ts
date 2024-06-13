@@ -75,7 +75,7 @@ export function upsertEarnRuleMutationConfig(
 		},
 		retry: true,
 		onMutate: async (earnRule) => {
-			await queryClient.invalidateQueries({ queryKey: [QueryKeys.earnRules] });
+			await queryClient.refetchQueries({ queryKey: [QueryKeys.earnRules] });
 
 			if (opts.onMutateCb) {
 				opts.onMutateCb(earnRule);

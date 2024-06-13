@@ -166,9 +166,8 @@ export const zEarnRuleValueItem = z.object({
 	startsAt: zDate,
 	expiresAt: zDate,
 	completed: z.boolean().nullable().optional(),
-	points: z.number().nullable().optional(),
-	socialNetworkUrl: z.string().nullable().optional(),
-	socialMessage: z.string().nullable().optional(),
+	credits: zNumber,
+	socialHandle: zText,
 	excludedCollectionIds: z.array(z.string()).nullable().optional(),
 	excludedProductIds: z.array(z.string()).nullable().optional(),
 	minimumOrderAmount: zNumber
