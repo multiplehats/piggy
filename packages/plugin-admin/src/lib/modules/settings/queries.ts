@@ -2,12 +2,7 @@ import type { DefaultError, QueryKey, UndefinedInitialDataOptions } from '@tanst
 import { QueryKeys } from '$lib/utils/query-keys';
 import type { PluginOptionsAdminKeys } from '@piggy/types';
 import { SettingsAdminService } from '.';
-import type {
-	GetEarnRulesResponse,
-	GetSettingByIdResponse,
-	GetSettingsParams,
-	GetSettingsResponse
-} from './types';
+import type { GetSettingByIdResponse, GetSettingsParams, GetSettingsResponse } from './types';
 
 const service = new SettingsAdminService();
 
@@ -21,20 +16,6 @@ export function getApiKeyQueryConfig(): UndefinedInitialDataOptions<
 		queryKey: [QueryKeys.apiKey],
 		retry: false,
 		queryFn: async () => await service.getSetting({ id: 'api_key' }),
-		refetchOnWindowFocus: true
-	};
-}
-
-export function getEarnRulesQueryConfig(): UndefinedInitialDataOptions<
-	GetEarnRulesResponse,
-	DefaultError,
-	GetEarnRulesResponse,
-	QueryKey
-> {
-	return {
-		queryKey: [QueryKeys.earnRules],
-		retry: false,
-		queryFn: async () => await service.getEarnRules(),
 		refetchOnWindowFocus: true
 	};
 }

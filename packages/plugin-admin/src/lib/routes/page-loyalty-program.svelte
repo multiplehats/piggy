@@ -3,5 +3,8 @@
 	import SpendRulesTable from '$lib/components/spend-rules/spend-rules-table.svelte';
 </script>
 
-<EarnRulesTable />
-<SpendRulesTable />
+<div class="space-y-12">
+	<EarnRulesTable />
+
+	<SpendRulesTable />
+</div>

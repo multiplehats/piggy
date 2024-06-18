@@ -174,6 +174,30 @@ export const zEarnRuleValueItem = z.object({
 });
 export type EarnRuleValueItem = z.infer<typeof zEarnRuleValueItem>;
 
+// Spent rules
+export const zSpendRuleType = z.literal('PRODUCT_DISCOUNT');
+
+export type SpendRuleType = z.infer<typeof zSpendRuleType>;
+
+export const zSpendRuleValueItem = z.object({
+	id: z.number(),
+	title: zText,
+	label: zTranslatableText,
+	status: zSelect.extend({
+		default: z.literal('publish').or(z.literal('draft')),
+		value: z.literal('publish').or(z.literal('draft'))
+	}),
+	type: zSelect.extend({
+		value: zSpendRuleType
+	}),
+	createdAt: z.string(),
+	updatedAt: z.string(),
+	startsAt: zDate,
+	expiresAt: zDate,
+	completed: z.boolean().nullable().optional()
+});
+export type SpendRuleValueItem = z.infer<typeof zSpendRuleValueItem>;
+
 export const zEarnRules = zSettingsBaseField.extend({
 	type: z.literal('earn_rules'),
 	default: z.array(zEarnRuleValueItem).or(z.tuple([])),

@@ -112,6 +112,18 @@ export const zPluginEarnRuleItemValues = transformSchema(
 );
 export type PluginEarnRuleItemValues = z.infer<typeof zPluginEarnRuleItemValues>;
 
+export const zPluginSpendRuleItemValues = transformSchema(
+	adminFields.zSpendRuleValueItem.pick({
+		label: true,
+		status: true,
+		type: true,
+		title: true,
+		startsAt: true,
+		expiresAt: true
+	})
+);
+export type PluginSpendRuleItemValues = z.infer<typeof zPluginSpendRuleItemValues>;
+
 /**
  * Frontend options interface.
  * This schema extracts the `value` field from each property of the base schema.

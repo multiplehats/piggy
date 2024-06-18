@@ -9,16 +9,23 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as Select from '$lib/components/ui/select';
 	import * as Table from '$lib/components/ui/table/index.js';
+	import { SettingsAdminService } from '$lib/modules/settings';
 	import { upsertEarnRuleMutationConfig } from '$lib/modules/settings/mutations';
-	import { getEarnRulesQueryConfig } from '$lib/modules/settings/queries';
+	import { QueryKeys } from '$lib/utils/query-keys';
 	import { getStatusText } from '$lib/utils/status-text';
 	import { WalletMinimal } from 'lucide-svelte';
 	import { useNavigate } from 'svelte-navigator';
 	import type { EarnRuleType } from '@piggy/types/plugin/settings/adminTypes';
 
+	const service = new SettingsAdminService();
 	const navigate = useNavigate();
 	const client = useQueryClient();
-	const query = createQuery(getEarnRulesQueryConfig());
+	const query = createQuery({
+		queryKey: [QueryKeys.earnRules],
+		retry: false,
+		queryFn: async () => await service.getEarnRules(),
+		refetchOnWindowFocus: true
+	});
 	const mutate = createMutation(
 		upsertEarnRuleMutationConfig(
 			client,
@@ -34,12 +41,12 @@
 	);
 
 	const ruleTypes = [
-		{ label: 'Like on Facebook', value: 'LIKE_ON_FACEBOOK' },
-		{ label: 'Follow on TikTok', value: 'FOLLOW_ON_TIKTOK' },
-		{ label: 'Follow on Instagram', value: 'FOLLOW_ON_INSTAGRAM' },
-		{ label: 'Place an order', value: 'PLACE_ORDER' },
-		{ label: 'Celebrate your birthday', value: 'CELEBRATE_BIRTHDAY' },
-		{ label: 'Create an account', value: 'CREATE_ACCOUNT' }
+		{ label: __('Like on Facebook', 'piggy'), value: 'LIKE_ON_FACEBOOK' },
+		{ label: __('Follow on TikTok', 'piggy'), value: 'FOLLOW_ON_TIKTOK' },
+		{ label: __('Follow on Instagram', 'piggy'), value: 'FOLLOW_ON_INSTAGRAM' },
+		{ label: __('Place an order', 'piggy'), value: 'PLACE_ORDER' },
+		{ label: __('Celebrate your birthday', 'piggy'), value: 'CELEBRATE_BIRTHDAY' },
+		{ label: __('Create an account', 'piggy'), value: 'CREATE_ACCOUNT' }
 	] satisfies { label: string; value: EarnRuleType }[];
 
 	let title: string | undefined = undefined;
@@ -128,13 +135,13 @@
 
 					<Dialog.Root>
 						<Dialog.Trigger class={buttonVariants({ variant: 'default', size: 'sm' })}>
-							{__('Create new rule')}
+							{__('Add earn rule')}
 						</Dialog.Trigger>
 
 						<Dialog.Content>
 							<Dialog.Header>
 								<Dialog.Title>
-									{__('Create new rule')}
+									{__('Add earn rule')}
 								</Dialog.Title>
 							</Dialog.Header>
 
