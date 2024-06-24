@@ -6,7 +6,8 @@ export const QueryKeys = {
 	spendRules: 'spendRules',
 	spendRuleById: 'spendRuleById',
 	apiKey: 'apiKey',
-	shops: 'shops'
+	piggyShops: 'shops',
+	piggyRewards: 'piggyRewards'
 } as const;
 
 export const MutationKeys = {

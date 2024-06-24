@@ -6,8 +6,7 @@ interface Item {
 }
 
 interface Props {
-	value: string | undefined;
-
+	value: string | undefined | null;
 	items: Item[];
 	itemName: string;
 	widthClass?: string | undefined;

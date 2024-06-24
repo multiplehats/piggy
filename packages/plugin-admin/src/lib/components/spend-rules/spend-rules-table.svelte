@@ -41,15 +41,15 @@
 	);
 
 	const ruleTypes = [
-		{ label: __('Product discount', 'piggy'), value: 'PRODUCT_DISCOUNT' }
+		{ label: __('Product discount', 'piggy'), value: 'PRODUCT_DISCOUNT' },
+		{ label: __('Order discount', 'piggy'), value: 'ORDER_DISCOUNT' },
+		{ label: __('Free shipping', 'piggy'), value: 'FREE_SHIPPING' }
 	] satisfies { label: string; value: SpendRuleType }[];
 
 	let title: string | undefined = undefined;
 	let selected: (typeof ruleTypes)[number] | undefined = undefined;
 	let titleError = '';
 	let ruleTypeError = '';
-
-	$: existingRuleTypes = $query.data?.map((rule) => rule.type.value) || [];
 
 	function validateForm() {
 		titleError = title ? '' : __('Title is required.');
@@ -63,6 +63,8 @@
 		if (!title || !selected || ruleTypeError) {
 			return;
 		}
+
+		console.log('Creating rule', title, selected);
 
 		if (!titleError && !ruleTypeError) {
 			$mutate.mutate({
@@ -82,10 +84,7 @@
 			<h2 class="text-lg font-semibold mb-3">{__('Add ways for customers to spend credits')}</h2>
 
 			<p>
-				{__(
-					'Create rules that reward customers with credits when they perform certain actions. For example, you can reward customers with credits when they create an account or place an order.',
-					'piggy'
-				)}
+				{__('Create and manage spend rules to allow customers to spend their credits.', 'piggy')}
 			</p>
 		</div>
 
@@ -203,9 +202,9 @@
 								</Table.Cell>
 
 								<Table.Cell class="text-right">
-									<Badge variant={rule.status.value === 'publish' ? 'default' : 'secondary'}
-										>{getStatusText(rule.status.value)}</Badge
-									>
+									<Badge variant={rule.status.value === 'publish' ? 'default' : 'secondary'}>
+										{getStatusText(rule.status.value)}
+									</Badge>
 								</Table.Cell>
 							</Table.Row>
 						{/each}

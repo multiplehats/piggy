@@ -2,7 +2,8 @@
 	import { __ } from '@wordpress/i18n';
 	import * as Select from '$lib/components/ui/select';
 	import { cn } from '$lib/utils/tw.js';
-	import SettingsFieldErrors from './settings-field-errors.svelte';
+	import type { Selected, SelectPropsWithoutHTML } from 'bits-ui';
+	// import SettingsFieldErrors from './settings-field-errors.svelte';
 	import { SettingsLabel, type SettingsLabelProps } from './settings-label';
 
 	interface Item {
@@ -12,11 +13,14 @@
 
 	let className: string | undefined = undefined;
 
+	type SelectProps = SelectPropsWithoutHTML<string>;
+
 	type $$Props = SettingsLabelProps & {
 		class?: string | undefined;
 		items: Item[];
 		value?: string | undefined;
 		hidden?: boolean | undefined;
+		onSelectChange?: (selected: SelectProps['selected']) => void | undefined;
 	};
 
 	export { className as class };
@@ -24,6 +28,17 @@
 	export let id: $$Props['id'];
 	export let value: $$Props['value'] = undefined;
 	export let hidden: $$Props['hidden'] = false;
+	export let onSelectChange: $$Props['onSelectChange'] = undefined;
+
+	function handleOnSelectChange(selected: SelectProps['selected']) {
+		if (selected?.value) {
+			value = selected.value;
+		}
+
+		if (onSelectChange) {
+			onSelectChange(selected);
+		}
+	}
 
 	$: selected = items.find((item) => item.value === value);
 </script>
@@ -37,15 +52,7 @@
 		{id}
 	/>
 
-	<Select.Root
-		{selected}
-		onSelectedChange={(selected) => {
-			if (selected?.value) {
-				value = selected.value;
-			}
-		}}
-		{items}
-	>
+	<Select.Root {selected} onSelectedChange={handleOnSelectChange} {items}>
 		<Select.Trigger class="max-w-xl">
 			<Select.Value asChild>
 				{#if selected}

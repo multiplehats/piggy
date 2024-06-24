@@ -26,7 +26,7 @@ export function getShopsQueryConfig(): UndefinedInitialDataOptions<
 	QueryKey
 > {
 	return {
-		queryKey: [QueryKeys.shops],
+		queryKey: [QueryKeys.piggyShops],
 		retry: false,
 		queryFn: async () => await service.getShops(),
 		refetchOnWindowFocus: true

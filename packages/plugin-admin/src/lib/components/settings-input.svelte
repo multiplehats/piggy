@@ -14,17 +14,18 @@
 			withVisibility?: boolean;
 			attributes?: HTMLInputAttributes | undefined;
 			class?: string | undefined;
+			inputWrapperClass?: string | undefined;
 			el?: HTMLInputElement | undefined;
 		};
 
 	export { className as class };
 	export let el: $$Props['el'] = undefined;
 	export let placeholder: $$Props['placeholder'] = undefined;
+	export let inputWrapperClass: $$Props['inputWrapperClass'] = undefined;
 	export let value: $$Props['value'] = undefined;
 	export let attributes: $$Props['attributes'] = undefined;
 	export let id: string;
 	export let withVisibility: $$Props['withVisibility'] = false;
-
 	let show = true;
 
 	onMount(() => {
@@ -57,27 +58,31 @@
 		/>
 	</div>
 
-	{#if show}
-		<Input
-			{placeholder}
-			bind:el
-			bind:value
-			on:blur
-			on:change
-			on:click
-			on:focus
-			on:keydown
-			on:keypress
-			on:keyup
-			on:mouseover
-			on:mouseenter
-			on:mouseleave
-			on:paste
-			on:input
-			{id}
-			class="max-w-xl"
-			{...$$restProps}
-			{...attributes}
-		/>
-	{/if}
+	<div class={cn('relative', inputWrapperClass)}>
+		{#if show}
+			<Input
+				{placeholder}
+				bind:el
+				bind:value
+				on:blur
+				on:change
+				on:click
+				on:focus
+				on:keydown
+				on:keypress
+				on:keyup
+				on:mouseover
+				on:mouseenter
+				on:mouseleave
+				on:paste
+				on:input
+				{id}
+				class="max-w-xl"
+				{...$$restProps}
+				{...attributes}
+			/>
+		{/if}
+
+		<slot />
+	</div>
 </div>

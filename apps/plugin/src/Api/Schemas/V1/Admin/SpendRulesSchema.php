@@ -70,6 +70,10 @@ class SpendRulesSchema extends AbstractSchema {
 				'description' => __( 'Whether rule has been completed.', 'piggy' ),
 				'type'        => 'boolean',
 			],
+			'creditCost' => [
+				'description' => __( 'Credit cost to redeem the reward', 'piggy' ),
+				'type'        => 'number',
+			],
 		];
 	}
 
@@ -118,12 +122,14 @@ class SpendRulesSchema extends AbstractSchema {
 				'value' => $type,
 				'type' => 'select',
 				'options' => [
-					'PRODUCT_DISCOUNT' => [ 'label' => __( 'Like on Facebook', 'piggy' ) ],
+					'PRODUCT_DISCOUNT' => [ 'label' => __( 'Product discount', 'piggy' ) ],
+					'ORDER_DISCOUNT' => [ 'label' => __( 'Order discount', 'piggy' ) ],
+					'FREE_SHIPPING' => [ 'label' => __( 'Free shipping', 'piggy' ) ],
 				],
 				'description' => __( 'The type of spend rule.', 'piggy' ),
 			],
 			'startsAt' => [
-				'id' => 'startsAt',
+				'id' => 'starts_atq	',
 				'label' => __( 'Starts at', 'piggy' ),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_starts_at', null),
@@ -131,7 +137,7 @@ class SpendRulesSchema extends AbstractSchema {
 				'description' => __( 'Optional date for when the rule should start.', 'piggy' ),
 			],
 			'expiresAt' => [
-				'id' => 'expiresAt',
+				'id' => 'expires_at',
 				'label' => __( 'Expires at', 'piggy' ),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_expires_at', null),
@@ -139,16 +145,90 @@ class SpendRulesSchema extends AbstractSchema {
 				'description' => __( 'Optional date for when the rule should expire.', 'piggy' ),
 			],
 			'completed' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_completed', null),
+			'creditCost' => [
+				'id' => 'credit_cost',
+				'label' => __( 'Credit cost', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_credit_cost', null),
+				'type' => 'number',
+				'description' => __( 'The amount of credits it will cost to redeem the reward.', 'piggy' ),
+			],
+			'label' => [
+				'id' => 'label',
+				'label' => __( 'Label', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label', null),
+				'type' => 'translatable_text',
+				'description' => $this->get_label_description($type),
+			],
+			'selectedReward' => [
+				'id' => 'selected_reward',
+				'label' => __( 'Selected reward', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_selected_reward', null),
+				'type' => 'text',
+				'description' => __( 'The reward that is selected for the spend rule.', 'piggy' ),
+			],
+			'description' => [
+				'id' => 'description',
+				'label' => __( 'Description', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_description', null),
+				'type' => 'translatable_text',
+				'description' => $this->get_description_placeholder($type),
+			],
+			'instructions' => [
+				'id' => 'instructions',
+				'label' => __( 'Instructions', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_instructions', null),
+				'type' => 'translatable_text',
+				'description' => $this->get_instructions_placeholder($type),
+			],
+			'fulfillment' => [
+				'id' => 'fulfillment',
+				'label' => __( 'Fulfillment description', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_fulfillment', null),
+				'type' => 'translatable_text',
+				'description' => $this->get_fulfillment_placeholder($type),
+			]
 		];
 
-		$spend_rule['label'] = [
-			'id' => 'label',
-			'label' => __( 'Label', 'piggy' ),
-			'default' => null,
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label', null),
-			'type' => 'translatable_text',
-			'description' => $this->get_label_description($type),
-		];
+		if (in_array($type, ['PRODUCT_DISCOUNT', 'ORDER_DISCOUNT'])) {
+			$spend_rule['discountValue'] = [
+				'id' => 'discount_value',
+				'label' => __( 'Discount value', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_value', null),
+				'type' => 'number',
+				'description' => __( 'The value of the discount.', 'piggy' ),
+			];
+
+			$spend_rule['discountType'] = [
+				'id' => 'discount_type',
+				'label' => __( 'Discount type', 'piggy' ),
+				'default' => 'percentage',
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_type', 'percentage'),
+				'type' => 'select',
+				'options' => [
+					'percentage' => [ 'label' => __( 'Percentage', 'piggy' ) ],
+					'fixed' => [ 'label' => __( 'Fixed amount', 'piggy' ) ],
+				],
+				'description' => __( 'The type of discount.', 'piggy' ),
+			];
+		}
+
+		if (in_array($type, ['ORDER_DISCOUNT'])) {
+			$spend_rule['minimumPurchaseAmount'] = [
+				'id' => 'minimum_purchase_amount',
+				'label' => __( 'Minimum purchase amount', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_minimum_purchase_amount', null),
+				'type' => 'number',
+				'description' => __( 'The minimum purchase amount required to redeem the reward.', 'piggy' ),
+			];
+		}
 
 		return $spend_rule;
 	}
@@ -157,9 +237,55 @@ class SpendRulesSchema extends AbstractSchema {
 		$placeholders = '';
 		switch ($type) {
 			case 'PRODUCT_DISCOUNT':
-				$placeholders = "{{handle}}, {{credits}}, {{credits_currency}}";
+			case 'ORDER_DISCOUNT':
+			case 'FREE_SHIPPING':
+				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
 				break;
 		}
+
+		/* translators: %s: a list of placeholders */
 		return sprintf( __( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'piggy' ), $placeholders );
+	}
+
+	private function get_description_placeholder($type) {
+		$placeholders = '';
+		switch ($type) {
+			case 'PRODUCT_DISCOUNT':
+			case 'ORDER_DISCOUNT':
+			case 'FREE_SHIPPING':
+				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				break;
+		}
+
+		/* translators: %s: a list of placeholders */
+		return sprintf( __( "Add a description of the reward. Available placeholders: %s", 'piggy' ), $placeholders );
+	}
+
+	private function get_instructions_placeholder($type) {
+		$placeholders = '';
+		switch ($type) {
+			case 'PRODUCT_DISCOUNT':
+			case 'ORDER_DISCOUNT':
+			case 'FREE_SHIPPING':
+				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				break;
+		}
+
+		/* translators: %s: a list of placeholders */
+		return sprintf( __( "Add instructions on how to redeem the reward. Available placeholders: %s", 'piggy' ), $placeholders );
+	}
+
+	private function get_fulfillment_placeholder($type) {
+		$placeholders = '';
+		switch ($type) {
+			case 'PRODUCT_DISCOUNT':
+			case 'ORDER_DISCOUNT':
+			case 'FREE_SHIPPING':
+				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				break;
+		}
+
+		/* translators: %s: a list of placeholders */
+		return sprintf( __( "Add instructions on how to fulfill will be handled. Available placeholders: %s", 'piggy' ), $placeholders );
 	}
 }

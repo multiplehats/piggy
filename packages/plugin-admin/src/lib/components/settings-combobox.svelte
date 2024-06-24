@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Label } from '$lib/components/ui/label';
 	import { cn } from '$lib/utils/tw.js';
 	import SettingsFieldErrors from './settings-field-errors.svelte';
 	import type { SettingsLabelProps } from './settings-label';
@@ -37,5 +36,5 @@
 	<!-- Compatiblity for <form> -->
 	<input type="hidden" name={id} bind:value {id} />
 
-	<SettingsFieldErrors {...$$props} />
+	<!-- <SettingsFieldErrors {...$$props} /> -->
 </div>

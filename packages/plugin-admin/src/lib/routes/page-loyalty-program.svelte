@@ -5,6 +5,5 @@
 
 <div class="space-y-12">
 	<EarnRulesTable />
-
 	<SpendRulesTable />
 </div>

@@ -33,10 +33,11 @@ class SchemaController {
 			'v1' => [
 				Schemas\V1\Admin\EarnRulesSchema::IDENTIFIER => Schemas\V1\Admin\EarnRulesSchema::class,
 				Schemas\V1\Admin\SpendRulesSchema::IDENTIFIER => Schemas\V1\Admin\SpendRulesSchema::class,
-				Schemas\V1\Admin\ShopsSchema::IDENTIFIER => Schemas\V1\Admin\ShopsSchema::class,
 				Schemas\V1\Admin\ApiKeySchema::IDENTIFIER => Schemas\V1\Admin\ApiKeySchema::class,
 				Schemas\V1\Admin\SettingsSchema::IDENTIFIER => Schemas\V1\Admin\SettingsSchema::class,
 				Schemas\V1\SettingsSchema::IDENTIFIER => Schemas\V1\SettingsSchema::class,
+				Schemas\V1\Admin\ShopsSchema::IDENTIFIER => Schemas\V1\Admin\ShopsSchema::class,
+				Schemas\V1\Admin\RewardsSchema::IDENTIFIER => Schemas\V1\Admin\RewardsSchema::class,
 			],
 		];
 	}
