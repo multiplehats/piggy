@@ -5,7 +5,6 @@
 	import PageHome from '$lib/routes/page-home.svelte';
 	import { settingsState } from '$lib/stores/settings';
 	import { history } from '$lib/utils/custom-history';
-	import type { SvelteComponent } from 'svelte';
 	import { Route, Router } from 'svelte-navigator';
 	import type { PluginOptionsAdmin, PluginOptionsAdminKeys } from '@piggy/types/plugin';
 	import '@piggy/tailwind-config/global.postcss';
@@ -14,6 +13,7 @@
 	import PageEarnRulesId from './routes/page-earn-rules-id.svelte';
 	import PageLoyaltyProgram from './routes/page-loyalty-program.svelte';
 	import PageOnboarding from './routes/page-onboarding.svelte';
+	import PageSpendRulesId from './routes/page-spend-rules-id.svelte';
 
 	export let pluginSettings: PluginOptionsAdmin;
 
@@ -66,6 +66,7 @@
 			<Route path="loyalty-program/*">
 				<!-- Render specific earn-rules with id "123" at /loyalty-program/earn-rules/123 -->
 				<Route path="earn-rules/:id" component={PageEarnRulesId} />
+				<Route path="spend-rules/:id" component={PageSpendRulesId} />
 
 				<!-- Index Route for /loyalty-program -->
 				<Route path="/" component={PageLoyaltyProgram} />

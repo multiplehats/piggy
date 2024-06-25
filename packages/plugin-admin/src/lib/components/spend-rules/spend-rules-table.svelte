@@ -9,67 +9,51 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as Select from '$lib/components/ui/select';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import { upsertEarnRuleMutationConfig } from '$lib/modules/settings/mutations';
-	import { getEarnRulesQueryConfig } from '$lib/modules/settings/queries';
+	import { SettingsAdminService } from '$lib/modules/settings';
+	import { upsertSpendRuleMutationConfig } from '$lib/modules/settings/mutations';
+	import { QueryKeys } from '$lib/utils/query-keys';
 	import { getStatusText } from '$lib/utils/status-text';
 	import { WalletMinimal } from 'lucide-svelte';
 	import { useNavigate } from 'svelte-navigator';
-	import type { EarnRuleType } from '@piggy/types/plugin/settings/adminTypes';
+	import type { SpendRuleType } from '@piggy/types/plugin/settings/adminTypes';
 
+	const service = new SettingsAdminService();
 	const navigate = useNavigate();
 	const client = useQueryClient();
-	const query = createQuery(getEarnRulesQueryConfig());
+	const query = createQuery({
+		queryKey: [QueryKeys.spendRules],
+		retry: false,
+		queryFn: async () => await service.getSpendRules(),
+		refetchOnWindowFocus: true
+	});
 	const mutate = createMutation(
-		upsertEarnRuleMutationConfig(
+		upsertSpendRuleMutationConfig(
 			client,
 			{},
 			{
-				onSuccessCb: (earnRule) => {
+				onSuccessCb: (spendRule) => {
 					$query.refetch();
 
-					navigate(`earn-rules/${earnRule.id}`);
+					navigate(`spend-rules/${spendRule.id}`);
 				}
 			}
 		)
 	);
 
 	const ruleTypes = [
-		{ label: 'Like on Facebook', value: 'LIKE_ON_FACEBOOK' },
-		{ label: 'Follow on TikTok', value: 'FOLLOW_ON_TIKTOK' },
-		{ label: 'Follow on Instagram', value: 'FOLLOW_ON_INSTAGRAM' },
-		{ label: 'Place an order', value: 'PLACE_ORDER' },
-		{ label: 'Celebrate your birthday', value: 'CELEBRATE_BIRTHDAY' },
-		{ label: 'Create an account', value: 'CREATE_ACCOUNT' }
-	] satisfies { label: string; value: EarnRuleType }[];
+		{ label: __('Product discount', 'piggy'), value: 'PRODUCT_DISCOUNT' },
+		{ label: __('Order discount', 'piggy'), value: 'ORDER_DISCOUNT' },
+		{ label: __('Free shipping', 'piggy'), value: 'FREE_SHIPPING' }
+	] satisfies { label: string; value: SpendRuleType }[];
 
 	let title: string | undefined = undefined;
 	let selected: (typeof ruleTypes)[number] | undefined = undefined;
 	let titleError = '';
 	let ruleTypeError = '';
 
-	const restrictedRuleTypes = [
-		'LIKE_ON_FACEBOOK',
-		'FOLLOW_ON_TIKTOK',
-		'FOLLOW_ON_INSTAGRAM',
-		'CELEBRATE_BIRTHDAY',
-		'CREATE_ACCOUNT'
-	] as const;
-
-	$: existingRuleTypes = $query.data?.map((rule) => rule.type.value) || [];
-
-	$: allowedRules = ruleTypes.filter((type) => {
-		if (type.value === 'PLACE_ORDER') {
-			return true;
-		}
-		return !restrictedRuleTypes.includes(type.value) || !existingRuleTypes.includes(type.value);
-	});
-
 	function validateForm() {
 		titleError = title ? '' : __('Title is required.');
 		ruleTypeError = selected ? '' : __('Rule type is required.');
-		if (selected && existingRuleTypes.includes(selected.value)) {
-			ruleTypeError = __('This rule type has already been created.');
-		}
 	}
 
 	function handleCreateRule(event: Event) {
@@ -79,6 +63,8 @@
 		if (!title || !selected || ruleTypeError) {
 			return;
 		}
+
+		console.log('Creating rule', title, selected);
 
 		if (!titleError && !ruleTypeError) {
 			$mutate.mutate({
@@ -95,23 +81,20 @@
 		<div class="col-span-6 sm:col-span-1 sm:order-1 sm:mt-2">
 			<WalletMinimal class="w-10 h-10 text-foreground/75 mb-4" />
 
-			<h2 class="text-lg font-semibold mb-3">{__('Add ways for customers to earn credits')}</h2>
+			<h2 class="text-lg font-semibold mb-3">{__('Add ways for customers to spend credits')}</h2>
 
 			<p>
-				{__(
-					'Create rules that reward customers with credits when they perform certain actions. For example, you can reward customers with credits when they create an account or place an order.',
-					'piggy'
-				)}
+				{__('Create and manage spend rules to allow customers to spend their credits.', 'piggy')}
 			</p>
 		</div>
 
 		<Card.Root class="col-span-6 sm:col-span-5 sm:order-2">
 			<Card.Header class="flex  sm:flex-row items-center justify-between">
 				<div class="grid gap-2">
-					<Card.Title>{__('Earn rules')}</Card.Title>
+					<Card.Title>{__('Spend rules')}</Card.Title>
 
 					<Card.Description>
-						{__('Create and manage earn rules')}
+						{__('Create and manage spend rules')}
 					</Card.Description>
 				</div>
 
@@ -128,13 +111,13 @@
 
 					<Dialog.Root>
 						<Dialog.Trigger class={buttonVariants({ variant: 'default', size: 'sm' })}>
-							{__('Create new rule')}
+							{__('Add spend rule')}
 						</Dialog.Trigger>
 
 						<Dialog.Content>
 							<Dialog.Header>
 								<Dialog.Title>
-									{__('Create new rule')}
+									{__('Add spend rule')}
 								</Dialog.Title>
 							</Dialog.Header>
 
@@ -160,11 +143,7 @@
 											{/if}
 										</Label>
 
-										<Select.Root
-											name="ruleType"
-											items={ruleTypes.filter((type) => !existingRuleTypes.includes(type.value))}
-											bind:selected
-										>
+										<Select.Root name="ruleType" items={ruleTypes} bind:selected>
 											<Select.Trigger class="w-[180px]">
 												<Select.Value placeholder={__('Select type')} />
 											</Select.Trigger>
@@ -174,7 +153,7 @@
 														{__('Select type')}
 													</Select.Label>
 
-													{#each allowedRules as type}
+													{#each ruleTypes as type}
 														<Select.Item value={type.value} label={type.label}>
 															{type.label}
 														</Select.Item>
@@ -209,7 +188,7 @@
 					</Table.Header>
 					<Table.Body>
 						{#each $query.data as rule}
-							<Table.Row class="cursor-pointer" on:click={() => navigate(`earn-rules/${rule.id}`)}>
+							<Table.Row class="cursor-pointer" on:click={() => navigate(`spend-rules/${rule.id}`)}>
 								<Table.Cell>
 									<div class="font-medium">{@html rule.title.value}</div>
 								</Table.Cell>
@@ -223,9 +202,9 @@
 								</Table.Cell>
 
 								<Table.Cell class="text-right">
-									<Badge variant={rule.status.value === 'publish' ? 'default' : 'secondary'}
-										>{getStatusText(rule.status.value)}</Badge
-									>
+									<Badge variant={rule.status.value === 'publish' ? 'default' : 'secondary'}>
+										{getStatusText(rule.status.value)}
+									</Badge>
 								</Table.Cell>
 							</Table.Row>
 						{/each}

@@ -6,6 +6,7 @@ import type {
 	AdminGetApiKeyResponse,
 	AdminSetApiKeyParams,
 	AdminSetApiKeyResponse,
+	GetRewardsResponse,
 	GetShopsResponse
 } from './types';
 
@@ -92,6 +93,20 @@ export class PiggyAdminService {
 
 	async getShops() {
 		const { data, error } = await api.get<GetShopsResponse>('/piggy/private/shops');
+
+		if (error ?? !data) {
+			if (error) {
+				throw new PiggyApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new Error('No data returned');
+		}
+
+		return data;
+	}
+
+	async getRewards() {
+		const { data, error } = await api.get<GetRewardsResponse>('/piggy/private/rewards');
 
 		if (error ?? !data) {
 			if (error) {

@@ -4,27 +4,27 @@ namespace PiggyWP\Api\Routes\V1\Admin;
 
 use PiggyWP\Api\Routes\V1\AbstractRoute;
 use PiggyWP\Api\Routes\V1\Admin\Middleware;
-use Piggy\Api\Models\Shops\Shop;
+use Piggy\Api\Models\Loyalty\Rewards\Reward;
 
 /**
- * Shops class.
+ * Rewards class.
  *
  * @internal
  */
-class Shops extends AbstractRoute {
+class Rewards extends AbstractRoute {
 	/**
 	 * The route identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'shops';
+	const IDENTIFIER = 'rewards';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const SCHEMA_TYPE = 'shops';
+	const SCHEMA_TYPE = 'rewards';
 
 	/**
 	 * Get the path of this REST route.
@@ -32,7 +32,7 @@ class Shops extends AbstractRoute {
 	 * @return string
 	 */
 	public function get_path() {
-		return '/shops';
+		return '/rewards';
 	}
 
 	/**
@@ -54,7 +54,7 @@ class Shops extends AbstractRoute {
 	}
 
 	/**
-	 * Get shops
+	 * Get rewards
 	 *
 	 * @param  \WP_REST_Request $request Request object.
 	 *
@@ -62,14 +62,14 @@ class Shops extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$this->init_client();
-		$results = Shop::list();
-		$shops = array();
+		$results = Reward::list();
+		$rewards = array();
 
-		foreach ($results as $shop) {
-			$shops[] = $this->schema->get_item_response( $shop );
+		foreach ($results as $reward) {
+			$rewards[] = $this->schema->get_item_response( $reward );
 		}
 
-		return rest_ensure_response( $shops );
+		return rest_ensure_response( $rewards );
 	}
 
 }

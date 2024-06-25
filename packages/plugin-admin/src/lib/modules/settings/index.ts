@@ -8,10 +8,16 @@ import type {
 	GetSettingByIdParams,
 	GetSettingByIdResponse,
 	GetSettingsResponse,
+	GetSpendRuleByIdParams,
+	GetSpendRuleByIdResponse,
+	GetSpendRulesParams,
+	GetSpendRulesResponse,
 	SaveSettingsParams,
 	SaveSettingsResponse,
 	UpsertEarnRuleParams,
-	UpsertEarnRuleResponse
+	UpsertEarnRuleResponse,
+	UpsertSpendRuleParams,
+	UpsertSpendRuleResponse
 } from './types';
 
 export class SettingsAdminApiError extends Error {
@@ -137,6 +143,58 @@ export class SettingsAdminService {
 		const { data, error } = await api.post<UpsertEarnRuleResponse>(
 			'/piggy/private/earn-rules',
 			earnRule
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, 'No data returned', 'No data returned');
+		}
+
+		return data;
+	}
+
+	async getSpendRules(): Promise<GetSpendRulesResponse> {
+		const { data, error } = await api.get<GetSpendRulesResponse>('/piggy/private/spend-rules', {
+			cache: 'no-store'
+		});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, 'No data returned', 'No data returned');
+		}
+
+		return data;
+	}
+
+	async upsertSpendRule(spendRule: UpsertSpendRuleParams): Promise<UpsertSpendRuleResponse> {
+		const { data, error } = await api.post<UpsertSpendRuleResponse>(
+			'/piggy/private/spend-rules',
+			spendRule
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, 'No data returned', 'No data returned');
+		}
+
+		return data;
+	}
+
+	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
+		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
+			`/piggy/private/spend-rules/?id=${id}`,
+			{
+				cache: 'no-store'
+			}
 		);
 
 		if (error ?? !data) {

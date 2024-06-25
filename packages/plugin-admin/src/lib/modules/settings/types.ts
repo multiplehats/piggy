@@ -4,9 +4,13 @@ import type {
 	PluginOptionsAdmin,
 	PluginOptionsAdminKeys,
 	PluginOptionsAdminKeyValue,
-	PluginOptionType
+	PluginOptionType,
+	PluginSpendRuleItemValues
 } from '@piggy/types';
-import type { EarnRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
+import type {
+	EarnRuleValueItem,
+	SpendRuleValueItem
+} from '@piggy/types/plugin/settings/adminTypes';
 
 export type SaveSettingsParams = typeof settingsState;
 export type SaveSettingsResponse = PluginOptionsAdmin | null;
@@ -34,3 +38,19 @@ export type UpsertEarnRuleParams = Partial<PluginEarnRuleItemValues> & {
 };
 
 export type UpsertEarnRuleResponse = EarnRuleValueItem;
+
+// Spend rules
+export type GetSpendRulesResponse = SpendRuleValueItem[];
+export type GetSpendRulesParams = void;
+
+export interface GetSpendRuleByIdParams {
+	id: number | string;
+}
+export type GetSpendRuleByIdResponse = [SpendRuleValueItem];
+
+export type UpsertSpendRuleParams = Partial<PluginSpendRuleItemValues> & {
+	id?: string | number;
+	title: string;
+};
+
+export type UpsertSpendRuleResponse = SpendRuleValueItem;

@@ -31,16 +31,12 @@
 	let rawValue: DateValue | undefined = undefined;
 
 	onMount(() => {
-		console.log('bindded value', value);
-
 		rawValue = value ? parseAbsoluteToLocal(value) : undefined;
 	});
 
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
 	});
-
-	$: console.log('settings cal value', { value, localTz: getLocalTimeZone() });
 </script>
 
 <div class={cn(className)}>

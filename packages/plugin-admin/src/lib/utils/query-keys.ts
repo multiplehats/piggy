@@ -3,12 +3,16 @@ export const QueryKeys = {
 	settingById: 'settingById',
 	earnRules: 'earnRules',
 	earnRuleById: 'earnRuleById',
+	spendRules: 'spendRules',
+	spendRuleById: 'spendRuleById',
 	apiKey: 'apiKey',
-	shops: 'shops'
+	piggyShops: 'shops',
+	piggyRewards: 'piggyRewards'
 } as const;
 
 export const MutationKeys = {
 	setApiKey: 'setApiKey',
 	saveSettings: 'saveSettings',
-	upsertEarnRule: 'upsertEarnRule'
+	upsertEarnRule: 'upsertEarnRule',
+	upsertSpendRule: 'upsertSpendRule'
 } as const;

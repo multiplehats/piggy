@@ -7,7 +7,9 @@ import type {
 	SaveSettingsParams,
 	SaveSettingsResponse,
 	UpsertEarnRuleParams,
-	UpsertEarnRuleResponse
+	UpsertEarnRuleResponse,
+	UpsertSpendRuleParams,
+	UpsertSpendRuleResponse
 } from './types';
 
 const service = new SettingsAdminService();
@@ -70,6 +72,48 @@ export function upsertEarnRuleMutationConfig(
 		mutationKey: [MutationKeys.upsertEarnRule],
 		mutationFn: async (params) => {
 			const data = await service.upsertEarnRule(params);
+
+			return data;
+		},
+		retry: true,
+		onMutate: async (earnRule) => {
+			await queryClient.refetchQueries({ queryKey: [QueryKeys.earnRules] });
+
+			if (opts.onMutateCb) {
+				opts.onMutateCb(earnRule);
+			}
+		},
+		onSuccess: (newRule) => {
+			toast.success(__('Earn rule saved', 'piggy'));
+
+			if (opts.onSuccessCb) {
+				opts.onSuccessCb(newRule);
+			}
+		},
+		...mutationOpts
+	};
+}
+
+type UpsertSpendRuleMutationConfig = CreateMutationOptions<
+	UpsertSpendRuleResponse,
+	DefaultError,
+	UpsertSpendRuleParams
+>;
+
+export function upsertSpendRuleMutationConfig(
+	queryClient: QueryClient,
+	mutationOpts: Partial<
+		Omit<UpsertSpendRuleMutationConfig, 'mutationKey' | 'mutationFn' | 'onSuccess' | 'onMutate'>
+	> = {},
+	opts: {
+		onSuccessCb?: (newRule: UpsertSpendRuleResponse) => void;
+		onMutateCb?: (spendRule: UpsertSpendRuleParams) => void;
+	} = {}
+): UpsertSpendRuleMutationConfig {
+	return {
+		mutationKey: [MutationKeys.upsertSpendRule],
+		mutationFn: async (params) => {
+			const data = await service.upsertSpendRule(params);
 
 			return data;
 		},

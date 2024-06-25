@@ -193,30 +193,28 @@ class EarnRulesSchema extends AbstractSchema {
 					'step' => 1,
 				],
 			],
+			'label' => [
+				'id' => 'label',
+				'label' => __( 'Label', 'piggy' ),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_label', null),
+				'type' => 'translatable_text',
+				'description' => $this->get_label_description($type),
+			],
+			'socialHandle' => [
+				'id' => 'social_handle',
+				'label' => $this->get_social_network_label($type),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_social_handle', null),
+				'type' => 'text',
+				'description' => $this->get_social_network_description($type),
+			]
 		];
 
-		$earn_rule['label'] = [
-			'id' => 'label',
-			'label' => __( 'Label', 'piggy' ),
-			'default' => null,
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_label', null),
-			'type' => 'translatable_text',
-			'description' => $this->get_label_description($type),
-		];
-
-		$earn_rule['socialHandle'] = [
-			'id' => 'socialHandle',
-			'label' => $this->get_social_network_label($type),
-			'default' => null,
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_social_handle', null),
-			'type' => 'text',
-			'description' => $this->get_social_network_description($type),
-		];
-
-		if (in_array($type, ['LIKE_ON_FACEBOOK', 'FOLLOW_ON_TIKTOK', 'PLACE_ORDER'])) {
-			$earn_rule['excludedCollectionIds'] = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_excluded_collection_ids', []);
-			$earn_rule['excludedProductIds'] = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_excluded_product_ids', []);
-		}
+		// if (in_array($type, ['LIKE_ON_FACEBOOK', 'FOLLOW_ON_TIKTOK', 'PLACE_ORDER'])) {
+			// $earn_rule['excludedCollectionIds'] = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_excluded_collection_ids', []);
+			// $earn_rule['excludedProductIds'] = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_excluded_product_ids', []);
+		// }
 
 		return $earn_rule;
 	}
@@ -237,6 +235,8 @@ class EarnRulesSchema extends AbstractSchema {
 				$placeholders = "{{handle}}, {{credits}}, {{credits_currency}}";
 				break;
 		}
+
+		/* translators: %s: a list of placeholders */
 		return sprintf( __( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'piggy' ), $placeholders );
 	}
 
