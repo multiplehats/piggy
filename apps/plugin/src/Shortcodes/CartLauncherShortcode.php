@@ -123,8 +123,6 @@ class CartLauncherShortcode extends AbstractShortcode {
 			echo '<div class="' . esc_html( implode( ' ', array_filter( $args['classes'] ) ) ) . '">';
 		}
 
-		error_log(print_r($args, true));
-
 		?>
 		<div class="piggy-cart__toggle piggy-cart__container-wrapper" id="piggy-cart-launcher-<?php echo esc_attr( wp_unique_id() ); ?>">
 			<div class="piggy-cart__container piggy-toggle-drawer">
