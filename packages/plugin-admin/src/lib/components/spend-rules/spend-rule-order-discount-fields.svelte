@@ -16,7 +16,7 @@
 	</Card.Header>
 
 	<Card.Content>
-		<div class="grid grid-cols-2 gap-4">
+		<div class="grid">
 			<SettingsInput
 				{...minimumPurchaseAmount}
 				type="number"

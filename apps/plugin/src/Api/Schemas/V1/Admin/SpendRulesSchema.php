@@ -199,7 +199,7 @@ class SpendRulesSchema extends AbstractSchema {
 			$spend_rule['discountValue'] = [
 				'id' => 'discount_value',
 				'label' => __( 'Discount value', 'piggy' ),
-				'default' => null,
+				'default' => 10,
 				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_value', null),
 				'type' => 'number',
 				'description' => __( 'The value of the discount.', 'piggy' ),

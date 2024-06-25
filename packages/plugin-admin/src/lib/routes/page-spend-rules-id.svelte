@@ -5,7 +5,6 @@
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import SettingsSelect from '$lib/components/settings-select.svelte';
 	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
-	import SpendRuleOrderDsicountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
 	import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
 	import SpendRuleProductDiscountFields from '$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte';
 	import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
@@ -68,12 +67,12 @@
 			expiresAt: $rule.expiresAt.value,
 			selectedReward: $rule.selectedReward.value,
 			instructions: $rule.instructions.value,
-			creditCost: $rule.creditCost,
+			creditCost: $rule.creditCost.value,
 			description: $rule.description.value,
 			fulfillment: $rule.fulfillment.value,
 			discountValue: $rule?.discountValue?.value,
 			discountType: $rule.discountType.value,
-			minimumPurchaseAmount: $rule.minimumPurchaseAmount
+			minimumPurchaseAmount: $rule.minimumPurchaseAmount.value
 		});
 	}
 

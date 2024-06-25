@@ -116,6 +116,8 @@ class SpendRules extends AbstractRoute {
 			)
 		);
 
+		error_log( print_r( $post_data, true ) );
+
 		if ( ! empty( $data['id'] ) ) {
 			$post_data['ID'] = $data['id'];
 			$post_id = wp_update_post( $post_data, true );
