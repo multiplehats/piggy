@@ -3,10 +3,8 @@
 	import Layout from '$lib/components/layout-wrapper.svelte';
 	import PageGeneralSettings from '$lib/routes/page-general-settings.svelte';
 	import PageHome from '$lib/routes/page-home.svelte';
-	import { settingsState } from '$lib/stores/settings';
 	import { history } from '$lib/utils/custom-history';
 	import { Route, Router } from 'svelte-navigator';
-	import type { PluginOptionsAdmin, PluginOptionsAdminKeys } from '@piggy/types/plugin';
 	import '@piggy/tailwind-config/global.postcss';
 	import { __ } from '@wordpress/i18n';
 	import toast from 'svelte-french-toast';
@@ -14,25 +12,6 @@
 	import PageLoyaltyProgram from './routes/page-loyalty-program.svelte';
 	import PageOnboarding from './routes/page-onboarding.svelte';
 	import PageSpendRulesId from './routes/page-spend-rules-id.svelte';
-
-	export let pluginSettings: PluginOptionsAdmin;
-
-	settingsState.update((current) => {
-		const updated = { ...current };
-
-		// Merge the settings from the server with the defaults.
-		// If there's for whatever reason no settings, this will just use the defaults.
-		if (pluginSettings) {
-			for (const key in pluginSettings) {
-				if (pluginSettings.hasOwnProperty(key)) {
-					// @ts-expect-error - TODO: Fix this
-					updated[key] = pluginSettings[key as PluginOptionsAdminKeys];
-				}
-			}
-		}
-
-		return updated;
-	});
 
 	const mutationCache = new MutationCache({
 		onError: (error) => {
