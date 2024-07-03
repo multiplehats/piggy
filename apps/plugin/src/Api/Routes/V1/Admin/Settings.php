@@ -105,9 +105,11 @@ class Settings extends AbstractRoute {
 				return $setting['id'] === $id;
 			});
 
-			if(!$item) {
+			if( ! $item ) {
 				return rest_ensure_response( null );
 			}
+
+			$item = reset( $item );
 
 			$settings = $this->prepare_item_for_response( $item, $request );
 

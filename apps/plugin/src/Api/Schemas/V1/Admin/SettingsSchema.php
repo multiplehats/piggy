@@ -67,7 +67,7 @@ class SettingsSchema extends AbstractSchema {
 
 		$item['value'] = get_option('piggy_' . $id, $default);
 
-		if($item['type'] === 'translatable_text') {
+		if( $item['type'] === 'translatable_text' ) {
 			$item['value'] = json_decode($item['value'], true);
 		}
 
