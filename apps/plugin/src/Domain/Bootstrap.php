@@ -1,30 +1,17 @@
 <?php
 namespace PiggyWP\Domain;
 
-use PiggyWP\Options;
 use PiggyWP\Assets\Api as AssetApi;
 use PiggyWP\Assets\AssetDataRegistry;
 use PiggyWP\Utils\AdminUtils;
 use PiggyWP\AssetsController;
-use PiggyWP\CustomizerController;
-use PiggyWP\AjaxController;
 use PiggyWP\Installer;
 use PiggyWP\Registry\Container;
 use PiggyWP\Migration;
 use PiggyWP\Domain\Services\OrderContext;
-use PiggyWP\Shortcodes\CartLauncherShortcode;
-use PiggyWP\StoreApiExtension\Api as StoreApiExtensionApi;
-use PiggyWP\StoreApiExtension\StoreApiExtensionRegistry;
-use PiggyWP\StoreApiExtension\Core\FreeShippingMeter;
-use PiggyWP\StoreApiExtension\Core\ProductSuggestions;
-use PiggyWP\StoreApiExtension\Core\Common;
 use PiggyWP\Api\Api;
-use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
-use Automattic\WooCommerce\StoreApi\SchemaController;
-use Automattic\WooCommerce\StoreApi\StoreApi;
 use PiggyWP\PostTypeController;
 use PiggyWP\Settings;
-use PiggyWP\StoreApiExtension\Compat\CompatRegistry;
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -98,7 +85,6 @@ class Bootstrap {
 		do_action( 'before_piggy_init' );
 
 		$this->register_dependencies();
-		$this->register_api_route_extensions();
 
 		if ( is_admin() ) {
 			if ( $this->package->get_version() !== $this->package->get_version_stored_on_db() ) {
@@ -118,12 +104,9 @@ class Bootstrap {
 			$this->container->get( AssetDataRegistry::class );
 			$this->container->get( Installer::class );
 			$this->container->get( AssetsController::class );
-			$this->container->get (PostTypeController::class);
-			$this->container->get( AjaxController::class );
+			$this->container->get( PostTypeController::class );
 		}
 		$this->container->get( OrderContext::class )->init();
-		$this->container->get( CartLauncherShortcode::class )->init();
-		$this->container->get( StoreApiExtensionApi::class );
 
 		/**
 		* Action triggered after Piggy initialization finishes.
@@ -241,12 +224,6 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
-			Options::class,
-			function ( Container $container ) {
-				return new Options();
-			}
-		);
-		$this->container->register(
 			Settings::class,
 			function ( Container $container ) {
 				return new Settings();
@@ -255,13 +232,7 @@ class Bootstrap {
 		$this->container->register(
 			AdminUtils::class,
 			function ( Container $container ) {
-				return new AdminUtils( $container->get( Options::class ) );
-			}
-		);
-		$this->container->register(
-			AssetApi::class,
-			function ( Container $container ) {
-				return new AssetApi( $container->get( Package::class ) );
+				return new AdminUtils();
 			}
 		);
 		$this->container->register(
@@ -279,19 +250,7 @@ class Bootstrap {
 		$this->container->register(
 			AssetsController::class,
 			function( Container $container ) {
-				return new AssetsController( $container->get( AssetApi::class ), $container->get( Options::class ) );
-			}
-		);
-		$this->container->register(
-			CustomizerController::class,
-			function( Container $container ) {
-				return new CustomizerController( $container->get( AssetApi::class ), $container->get( Options::class ) );
-			}
-		);
-		$this->container->register(
-			AjaxController::class,
-			function( Container $container ) {
-				return new AjaxController( $container->get( Options::class ), $container->get( AdminUtils::class ) );
+				return new AssetsController( $container->get( AssetApi::class ), $container->get( Settings::class ) );
 			}
 		);
 		$this->container->register(
@@ -301,33 +260,9 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
-			StoreApiExtensionRegistry::class,
-			function() {
-				return new StoreApiExtensionRegistry();
-			}
-		);
-		$this->container->register(
 			Installer::class,
 			function () {
 				return new Installer();
-			}
-		);
-		$this->container->register(
-			CartLauncherShortcode::class,
-			function ( Container $container ) {
-				$asset_api            = $container->get( AssetApi::class );
-
-				return new CartLauncherShortcode( $asset_api );
-			}
-		);
-		$this->container->register(
-			StoreApiExtensionApi::class,
-			function ( Container $container ) {
-				$store_api_registry = $container->get( StoreApiExtensionRegistry::class );
-				$options            = $container->get( Options::class );
-				$extend_schema      = StoreApi::container()->get( ExtendSchema::class );
-
-				return new StoreApiExtensionApi( $store_api_registry, $extend_schema, $options );
 			}
 		);
 		$this->container->register(
@@ -399,51 +334,5 @@ class Bootstrap {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
 			trigger_error( $error_message, E_USER_DEPRECATED );
 		}
-	}
-
-	/**
-	 * Register payment method integrations with the container.
-	 */
-	protected function register_api_route_extensions() {
-		$this->container->register(
-			FreeShippingMeter::class,
-			function ( Container $container ) {
-				$extend_schema     = StoreApi::container()->get( ExtendSchema::class );
-				$schema_controller = StoreApi::container()->get( SchemaController::class );
-				$options           = $container->get( Options::class );
-
-				return new FreeShippingMeter( $extend_schema, $schema_controller, $options );
-			}
-		);
-		$this->container->register(
-			ProductSuggestions::class,
-			function ( Container $container ) {
-				$extend_schema     = StoreApi::container()->get( ExtendSchema::class );
-				$schema_controller = StoreApi::container()->get( SchemaController::class );
-				$options           = $container->get( Options::class );
-
-				return new ProductSuggestions( $extend_schema, $schema_controller, $options );
-			}
-		);
-		$this->container->register(
-			CompatRegistry::class,
-			function ( Container $container ) {
-				$extend_schema     = StoreApi::container()->get( ExtendSchema::class );
-				$schema_controller = StoreApi::container()->get( SchemaController::class );
-				$options           = $container->get( Options::class );
-
-				return new CompatRegistry( $extend_schema, $schema_controller, $options );
-			}
-		);
-		$this->container->register(
-			Common::class,
-			function ( Container $container ) {
-				$extend_schema     = StoreApi::container()->get( ExtendSchema::class );
-				$schema_controller = StoreApi::container()->get( SchemaController::class );
-				$options           = $container->get( Options::class );
-
-				return new Common( $extend_schema, $schema_controller, $options );
-			}
-		);
 	}
 }

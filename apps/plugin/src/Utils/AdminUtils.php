@@ -1,29 +1,16 @@
 <?php
 namespace PiggyWP\Utils;
 
-use PiggyWP\Options;
 use PiggyWP\Utils\Common;
-use WooCommerce;
 
 /**
  * Common Helper class.
  */
 class AdminUtils {
 	/**
-	 * Contains options.
-	 *
-	 * @var Options
-	 */
-	private $options;
-
-	/**
 	 * Constructor.
-	 *
-	 * @param Options $options   Options interface.
 	 */
-	public function __construct( Options $options ) {
-		$this->options = $options;
-	}
+	public function __construct() {}
 
 	/**
 	 * Check if it's a valid product.

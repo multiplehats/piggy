@@ -1,9 +1,8 @@
 <?php
 namespace PiggyWP;
 
-use PiggyWP\Options;
+use PiggyWP\Settings;
 use PiggyWP\Assets\Api as AssetApi;
-use Kucrut\Vite;
 use PiggyWP\Utils\Common;
 
 /**
@@ -31,11 +30,11 @@ final class AssetsController {
 	private $wc_settings_data = array();
 
 	/**
-	 * Contains options.
+	 * Contains Settings.
 	 *
-	 * @var Options
+	 * @var Settings
 	 */
-	private $options;
+	private $settings;
 
 	/**
 	 * Slug of the plugin screen.
@@ -48,11 +47,11 @@ final class AssetsController {
 	 * Constructor.
 	 *
 	 * @param AssetApi $asset_api Asset API interface for various asset registration.
-	 * @param Options  $options   Options interface.
+	 * @param Settings  $settings   Settings interface.
 	 */
-	public function __construct( AssetApi $asset_api, Options $options ) {
+	public function __construct( AssetApi $asset_api, Settings $settings ) {
 		$this->assets_api     = $asset_api;
-		$this->options = $options;
+		$this->settings = $settings;
 		$this->init();
 	}
 
@@ -63,8 +62,7 @@ final class AssetsController {
 		add_action( 'wp_footer', array( $this, 'render_frontend_mount' ), 100 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ), 80 );
 		add_action( 'wp_head', array( $this, 'enqueue_frontend_dynamic_css' ), 90 );
-		add_action( 'wp_head', array( $this, 'enqueue_custom_css' ), 100 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_custom_js' ), 90 );
+
 
 		$this->plugin_screen_hook_suffix = add_menu_page(
 			'Piggy',
@@ -107,7 +105,7 @@ final class AssetsController {
 		);
 
 		if ( wp_script_is( self::APP_HANDLE, 'enqueued' ) ) {
-			$settings = rawurlencode( wp_json_encode( $this->options->get_frontend_options_payload() ) );
+			$settings = rawurlencode( wp_json_encode( array() ) );
 
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
@@ -145,25 +143,6 @@ final class AssetsController {
 		// }
 	}
 
-
-	/**
-	 * Enqueue custom CSS.
-	 */
-	public function enqueue_custom_css() {
-		echo '<style>' . esc_html( wp_unslash( $this->get_custom_css() ) ) . '</style>';
-	}
-
-	/**
-	 * Enqueue custom JS.
-	 */
-	public function enqueue_custom_js() {
-		$custom_js = $this->get_custom_js();
-
-		if ( $custom_js ) {
-			$this->assets_api->add_inline_script( self::APP_HANDLE, wp_unslash( $custom_js ) );
-		}
-	}
-
 	/**
 	 * Enqueue dynamic CSS.
 	 */
@@ -196,7 +175,7 @@ final class AssetsController {
 		);
 
 		if ( wp_script_is( self::ADMIN_APP_HANDLE, 'enqueued' ) ) {
-			$settings = rawurlencode( wp_json_encode( $this->options->get_admin_options_payload() ) );
+			$settings = rawurlencode( wp_json_encode( array() ) );
 
 			$this->assets_api->add_inline_script(
 				self::ADMIN_APP_HANDLE,
@@ -348,73 +327,10 @@ final class AssetsController {
 	}
 
 	/**
-	 * Get custom JS for output.
-	 */
-	protected function get_custom_js() {
-		$custom_js = $this->options->get( 'custom_js' );
-
-		if ( ! empty( $custom_js ) ) {
-			return $custom_js;
-		}
-		return '';
-	}
-
-	/**
-	 * Get custom CSS for output.
-	 */
-	protected function get_custom_css() {
-		$custom_css = $this->options->get( 'custom_css' );
-
-		if ( ! empty( $custom_css ) ) {
-			return $custom_css;
-		}
-		return '';
-	}
-
-	/**
 	 * Get dynamic CSS output.
 	 */
 	protected function get_dynamic_css() {
-		$options = $this->options->get_frontend_options_payload();
-
-		if ( empty( $options ) ) {
-			return '';
-		}
-
-		$css = ':root {';
-
-		// Gather colors.
-		$colors = array_filter(
-			$options,
-			function( $key ) {
-				return strpos( $key, 'color_' ) === 0;
-			},
-			ARRAY_FILTER_USE_KEY
-		);
-
-		foreach ( $colors as $key => $value ) {
-			$css .= '--piggy-color-' . str_replace( '_', '-', substr( $key, 6 ) ) . ':' . $value . ';';
-		}
-
-		// Misc.
-		$border_radius       = $this->options->get( 'border_radius_rounded' ) === 'on' ? '6px' : '0';
-		$drawer_width        = $this->options->get( 'customize_width_drawer_desktop' ) . 'px';
-		$drawer_width_mobile = $this->options->get( 'customize_width_drawer_mobile' ) . '%';
-		$white_space         = $this->options->get( 'customize_white_space_text' );
-		$animation_duration  = $this->options->get( 'customize_animation_duration' ) . 'ms';
-
-		$css .= '
-			--piggy-width-drawer-desktop: ' . $drawer_width . ';
-			--piggy-width-drawer-mobile: ' . $drawer_width_mobile . ';
-			--piggy-white-space-text: ' . $white_space . ';
-			--piggy-animation-duration: ' . $animation_duration . ';
-			--piggy-border-radius: ' . $border_radius . ';
-			--piggy-px-drawer-desktop: 25px;
-			--piggy-px-drawer-mobile: 4px;
-			--piggy-button-hover-opacity: 0.7;
-		';
-
-		$css .= '}';
+		$css = '';
 
 		return $css;
 	}
