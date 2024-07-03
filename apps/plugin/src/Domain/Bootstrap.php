@@ -23,6 +23,7 @@ use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 use Automattic\WooCommerce\StoreApi\SchemaController;
 use Automattic\WooCommerce\StoreApi\StoreApi;
 use PiggyWP\PostTypeController;
+use PiggyWP\Settings;
 use PiggyWP\StoreApiExtension\Compat\CompatRegistry;
 
 /**
@@ -243,6 +244,12 @@ class Bootstrap {
 			Options::class,
 			function ( Container $container ) {
 				return new Options();
+			}
+		);
+		$this->container->register(
+			Settings::class,
+			function ( Container $container ) {
+				return new Settings();
 			}
 		);
 		$this->container->register(
