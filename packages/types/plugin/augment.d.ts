@@ -10,8 +10,6 @@ declare global {
 	interface Window {
 		// Frontend settings
 		piggyConfig: PluginOptionsFrontend;
-		// Admin settings
-		piggySettingsConfig: PluginOptionsAdmin;
 		// WooCommerce settings
 		piggyWcSettings: IWooSettings;
 		// WP Fetch middleware config

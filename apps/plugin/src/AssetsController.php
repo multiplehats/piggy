@@ -4,6 +4,7 @@ namespace PiggyWP;
 use PiggyWP\Settings;
 use PiggyWP\Assets\Api as AssetApi;
 use PiggyWP\Utils\Common;
+use WP_REST_Request;
 
 /**
  * AssetsController class.
@@ -93,6 +94,27 @@ final class AssetsController {
 		";
 	}
 
+	protected function get_settings_via_rest() {
+		$request = new WP_REST_Request( 'GET', '/piggy/private/settings' );
+		$request->set_query_params( [ 'per_page' => 12 ] );
+		$response = rest_do_request( $request );
+		$server = rest_get_server();
+		$data = $server->response_to_data( $response, false );
+
+		if( ! $data ) {
+			return null;
+		}
+
+		$data = array_map(function($item) {
+			return $item['value'];
+		}, $data);
+
+		// Omit the API key from the settings.
+		unset( $data['api_key'] );
+
+		return $data;
+	}
+
 	/**
 	 * Register assets.
 	 */
@@ -105,7 +127,7 @@ final class AssetsController {
 		);
 
 		if ( wp_script_is( self::APP_HANDLE, 'enqueued' ) ) {
-			$settings = rawurlencode( wp_json_encode( array() ) );
+			$settings = rawurlencode( wp_json_encode( $this->get_settings_via_rest() ) );
 
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
@@ -113,34 +135,27 @@ final class AssetsController {
 				"window.piggyConfig = JSON.parse( decodeURIComponent( '" . esc_js( $settings ) . "' ) );",
 				'before'
 			);
-		}
 
-		if ( wp_script_is( self::APP_HANDLE, 'enqueued' ) ) {
 			$this->initialize_core_data();
 
 			$wc_settings = rawurlencode( wp_json_encode( $this->wc_settings_data ) );
-
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
 				"window.piggyWcSettings = JSON.parse( decodeURIComponent( '" . esc_js( $wc_settings ) . "' ) );",
 				'before'
 			);
-		}
 
-		if ( wp_script_is( self::APP_HANDLE, 'enqueued' ) ) {
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
 				$this->get_middleware_config(),
 				'before'
 			);
-		}
 
-		// if ( wp_script_is( self::APP_HANDLE, 'enqueued' ) ) {
 			wp_add_inline_style(
 				self::APP_HANDLE,
 				$this->get_dynamic_css()
 			);
-		// }
+		}
 	}
 
 	/**
@@ -175,15 +190,6 @@ final class AssetsController {
 		);
 
 		if ( wp_script_is( self::ADMIN_APP_HANDLE, 'enqueued' ) ) {
-			$settings = rawurlencode( wp_json_encode( array() ) );
-
-			$this->assets_api->add_inline_script(
-				self::ADMIN_APP_HANDLE,
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
-				"window.piggySettingsConfig = JSON.parse( decodeURIComponent( '" . esc_js( $settings ) . "' ) );",
-				'before'
-			);
-
 			$this->initialize_core_data();
 
 			$wc_settings = rawurlencode( wp_json_encode( $this->wc_settings_data ) );
