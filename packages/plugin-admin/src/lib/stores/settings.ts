@@ -1,4 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
+import type { GetSettingsResponse } from '$lib/modules/settings/types';
 import toast from 'svelte-french-toast';
 import { get, writable } from 'svelte/store';
 import type { PluginOptionsAdmin, PluginOptionsAdminKeys } from '@piggy/types';
@@ -6,7 +7,7 @@ import { zPluginOptionsAdmin } from '@piggy/types/plugin';
 
 // Settings State
 
-export const settingsState = writable<PluginOptionsAdmin>();
+export const settingsState = writable<GetSettingsResponse>();
 
 // ACTIONS
 

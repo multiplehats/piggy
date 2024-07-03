@@ -44,9 +44,7 @@ class Options {
 	private $all_option_values;
 
 	/**
-	 * Constructor.
-	 */
-	public function __construct() {}
+	 * Constructor.;
 
 	/**
 	 * Default settings.

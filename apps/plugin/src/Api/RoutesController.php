@@ -3,8 +3,7 @@ namespace PiggyWP\Api;
 
 use PiggyWP\Api\Routes\V1\AbstractRoute;
 use PiggyWP\Api\Connection;
-use PiggyWP\Api\Routes\V1\Settings;
-use PiggyWP\Options;
+use PiggyWP\Settings;
 
 /**
  * RoutesController class.
@@ -25,11 +24,11 @@ class RoutesController {
 	protected $connection;
 
 	/**
-	 * Options
+	 * Settings
 	 *
-	 * @var Connection
+	 * @var Settings
 	 */
-	protected $options;
+	protected $settings;
 
 	/**
 	 * Piggy routes.
@@ -43,19 +42,16 @@ class RoutesController {
 	 *
 	 * @param SchemaController $schema_controller Schema controller class passed to each route.
 	 */
-	public function __construct( SchemaController $schema_controller, Connection $connection, Options $options) {
+	public function __construct( SchemaController $schema_controller, Connection $connection, Settings $settings) {
 		$this->schema_controller = $schema_controller;
 		$this->connection = $connection;
-		$this->options = $options;
+		$this->settings = $settings;
 
 		$this->routes            = [
-			'v1'      => [
-				Routes\V1\Settings::IDENTIFIER => Routes\V1\Settings::class,
-			],
+			'v1'      => [],
 			'private' => [
 				Routes\V1\Admin\EarnRules::IDENTIFIER => Routes\V1\Admin\EarnRules::class,
 				ROutes\V1\Admin\SpendRules::IDENTIFIER => Routes\V1\Admin\SpendRules::class,
-				Routes\V1\Admin\ApiKey::IDENTIFIER => Routes\V1\Admin\ApiKey::class,
 				Routes\V1\Admin\Settings::IDENTIFIER => Routes\V1\Admin\Settings::class,
 				Routes\V1\Admin\Shops::IDENTIFIER => Routes\V1\Admin\Shops::class,
 				Routes\V1\Admin\Rewards::IDENTIFIER => Routes\V1\Admin\Rewards::class,
@@ -92,7 +88,7 @@ class RoutesController {
 			$this->schema_controller,
 			$this->schema_controller->get( $route::SCHEMA_TYPE, $route::SCHEMA_VERSION ),
 			$this->connection,
-			$this->options
+			$this->settings
 		);
 	}
 

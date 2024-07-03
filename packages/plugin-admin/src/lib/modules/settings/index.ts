@@ -41,6 +41,7 @@ export class SettingsAdminService {
 			settings: Object.entries(get(settingsStore)).reduce(
 				(acc, [key, setting]) => {
 					acc[key] = {
+						id: setting.id,
 						type: setting.type,
 						value: setting.value
 					};
@@ -49,6 +50,7 @@ export class SettingsAdminService {
 				{} as Record<
 					string,
 					{
+						id: string;
 						type: string;
 						value: unknown;
 					}

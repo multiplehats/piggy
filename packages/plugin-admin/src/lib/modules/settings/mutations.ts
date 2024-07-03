@@ -40,7 +40,7 @@ export function saveSettingsMutationConfig(
 			}
 		},
 		onSuccess: async (newSettings) => {
-			await queryClient.invalidateQueries({ queryKey: [QueryKeys.shops] });
+			await queryClient.invalidateQueries({ queryKey: [QueryKeys.piggyShops] });
 
 			toast.success(__('Settings saved updated', 'piggy'));
 

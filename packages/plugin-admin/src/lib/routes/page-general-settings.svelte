@@ -1,18 +1,30 @@
 <script lang="ts">
+	import { createMutation, useQueryClient } from '@tanstack/svelte-query';
+	import SettingsFormActions from '$lib/components/settings-form-actions.svelte';
 	import SettingsSectionGeneral from '$lib/components/settings-section-general.svelte';
-	import { zPluginOptionsAdmin } from '@piggy/types';
+	import { saveSettingsMutationConfig } from '$lib/modules/settings/mutations';
+	import { settingsState } from '$lib/stores/settings';
 
 	$$restProps;
 
-	$: result = zPluginOptionsAdmin.safeParse(window.piggySettingsConfig);
-	$: if (result?.error) {
-		const formatted = result.error.format();
-		const errors = formatted._errors;
+	const client = useQueryClient();
+	const saveSettingsMutation = createMutation(saveSettingsMutationConfig(client));
 
-		console.error('SettingsSectionGeneral', formatted);
+	function handleSubmit(
+		e: SubmitEvent & {
+			currentTarget: EventTarget & HTMLFormElement;
+		}
+	) {
+		e.preventDefault();
+
+		$saveSettingsMutation.mutateAsync(settingsState);
 	}
 </script>
 
-<div class="grid grid-cols-1 gap-6">
-	<SettingsSectionGeneral />
-</div>
+<form method="POST" on:submit={handleSubmit}>
+	<div class="grid grid-cols-1 gap-3">
+		<SettingsSectionGeneral />
+
+		<SettingsFormActions saving={$saveSettingsMutation.isPending} />
+	</div>
+</form>

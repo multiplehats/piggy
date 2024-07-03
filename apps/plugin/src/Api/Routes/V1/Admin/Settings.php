@@ -77,9 +77,26 @@ class Settings extends AbstractRoute {
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$settings = $request->get_param( 'settings' );
-		$returned_options = $this->options->save_options( $settings );
 
-		return rest_ensure_response( $returned_options );
+		if( ! $settings ) {
+			return rest_ensure_response( null );
+		}
+
+		foreach( $settings as $setting ) {
+			$value = $setting['value'];
+
+			if( $setting['type'] === 'translatable_text' && is_array( $value ) ) {
+				$value = json_encode( $value );
+			}
+
+			if( $setting['type'] === 'checkboxes' && is_array( $value ) ) {
+				$value = json_encode( $value );
+			}
+
+			update_option( 'piggy_' . $setting['id'], $value );
+		}
+
+		return rest_ensure_response( true );
 	}
 
 	/**
@@ -91,15 +108,32 @@ class Settings extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
+		$all_settings = $this->settings->get_all_settings();
 
-		if($id) {
-			$settings = $this->options->get_field( $id );
+		if( $id ) {
+			$item = array_filter($all_settings, function($setting) use ($id) {
+				return $setting['id'] === $id;
+			});
+
+			if( ! $item ) {
+				return rest_ensure_response( null );
+			}
+
+			$item = reset( $item );
+
+			$settings = $this->prepare_item_for_response( $item, $request );
 
 			return rest_ensure_response( $settings );
 		}
 
-		$settings = $this->options->get_all_options();
+		// Returns settings as an object rather than an array.
+		// This makes it easier to work with in the front-end.
+		$return = [];
+		foreach ( $all_settings as $item ) {
+			$data = $this->prepare_item_for_response( $item, $request );
+			$return[$item['id']] = $this->prepare_response_for_collection( $data );
+		}
 
-		return rest_ensure_response( $settings );
+		return rest_ensure_response( $return );
 	}
 }

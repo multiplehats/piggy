@@ -3,7 +3,6 @@ import type {
 	PluginEarnRuleItemValues,
 	PluginOptionsAdmin,
 	PluginOptionsAdminKeys,
-	PluginOptionsAdminKeyValue,
 	PluginOptionType,
 	PluginSpendRuleItemValues
 } from '@piggy/types';
@@ -15,7 +14,7 @@ import type {
 export type SaveSettingsParams = typeof settingsState;
 export type SaveSettingsResponse = PluginOptionsAdmin | null;
 
-export type GetSettingsResponse = PluginOptionsAdminKeyValue;
+export type GetSettingsResponse = PluginOptionsAdmin;
 export type GetSettingsParams = void;
 
 export interface GetSettingByIdParams<K extends PluginOptionsAdminKeys> {
