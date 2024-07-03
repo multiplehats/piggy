@@ -83,7 +83,17 @@ class Settings extends AbstractRoute {
 		}
 
 		foreach( $settings as $setting ) {
-			update_option( 'piggy_' . $setting['id'], $setting['value'] );
+			$value = $setting['value'];
+
+			if( $setting['type'] === 'translatable_text' && is_array( $value ) ) {
+				$value = json_encode( $value );
+			}
+
+			if( $setting['type'] === 'checkboxes' && is_array( $value ) ) {
+				$value = json_encode( $value );
+			}
+
+			update_option( 'piggy_' . $setting['id'], $value );
 		}
 
 		return rest_ensure_response( true );
