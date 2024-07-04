@@ -47,13 +47,14 @@ class RoutesController {
 		$this->connection = $connection;
 		$this->settings = $settings;
 
-		$this->routes            = [
+		$this->routes = [
 			'v1'      => [],
 			'private' => [
 				Routes\V1\Admin\EarnRules::IDENTIFIER => Routes\V1\Admin\EarnRules::class,
 				ROutes\V1\Admin\SpendRules::IDENTIFIER => Routes\V1\Admin\SpendRules::class,
 				Routes\V1\Admin\Settings::IDENTIFIER => Routes\V1\Admin\Settings::class,
 				Routes\V1\Admin\Shops::IDENTIFIER => Routes\V1\Admin\Shops::class,
+				Routes\V1\Admin\Contacts::IDENTIFIER => Routes\V1\Admin\Contacts::class,
 				Routes\V1\Admin\Rewards::IDENTIFIER => Routes\V1\Admin\Rewards::class,
 			],
 		];

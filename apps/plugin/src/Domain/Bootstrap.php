@@ -10,6 +10,7 @@ use PiggyWP\Registry\Container;
 use PiggyWP\Migration;
 use PiggyWP\Domain\Services\OrderContext;
 use PiggyWP\Api\Api;
+use PiggyWP\Domain\Services\CustomerCreation;
 use PiggyWP\PostTypeController;
 use PiggyWP\Settings;
 use PiggyWP\Shortcodes\CustomerDashboardShortcode;
@@ -109,6 +110,7 @@ class Bootstrap {
 		}
 		$this->container->get( CustomerDashboardShortcode::class )->init();
 		$this->container->get( OrderContext::class )->init();
+		$this->container->get( CustomerCreation::class );
 
 		/**
 		* Action triggered after Piggy initialization finishes.
@@ -259,6 +261,12 @@ class Bootstrap {
 			OrderContext::class,
 			function( Container $container ) {
 				return new OrderContext( $container->get( Package::class ) );
+			}
+		);
+		$this->container->register(
+			CustomerCreation::class,
+			function( Container $container ) {
+				return new CustomerCreation();
 			}
 		);
 		$this->container->register(

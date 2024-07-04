@@ -55,7 +55,7 @@ class Settings extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'permission_callback' => '__return_true',
 				'args'                => [
 					'id' => [
 						'description' => __( 'Setting ID', 'piggy' ),
@@ -109,6 +109,13 @@ class Settings extends AbstractRoute {
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 		$all_settings = $this->settings->get_all_settings();
+
+		// Remove "api_key" from settings if user is not an admin.
+		if( ! current_user_can( 'manage_options' ) ) {
+			$all_settings = array_filter($all_settings, function($setting) {
+				return $setting['id'] !== 'api_key';
+			});
+		}
 
 		if( $id ) {
 			$item = array_filter($all_settings, function($setting) use ($id) {

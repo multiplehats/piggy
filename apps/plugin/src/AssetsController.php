@@ -107,9 +107,6 @@ final class AssetsController {
 			return $item['value'];
 		}, $data);
 
-		// Omit the API key from the settings.
-		unset( $data['api_key'] );
-
 		return $data;
 	}
 
