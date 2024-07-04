@@ -60,10 +60,8 @@ final class AssetsController {
 	 * Initialize class features.
 	 */
 	protected function init() {
-		add_action( 'wp_footer', array( $this, 'render_frontend_mount' ), 100 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ), 80 );
 		add_action( 'wp_head', array( $this, 'enqueue_frontend_dynamic_css' ), 90 );
-
 
 		$this->plugin_screen_hook_suffix = add_menu_page(
 			'Piggy',
@@ -165,12 +163,6 @@ final class AssetsController {
 		echo '<style id="piggy-dynamic-css">' . esc_html( $this->get_dynamic_css() ) . '</style>';
 	}
 
-	/**
-	 * The app mount.
-	 */
-	public function render_frontend_mount() {
-		echo '<div id="piggy-frontend-mount"></div>';
-	}
 
 	/**
 	 * Register assets.

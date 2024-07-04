@@ -12,6 +12,7 @@ use PiggyWP\Domain\Services\OrderContext;
 use PiggyWP\Api\Api;
 use PiggyWP\PostTypeController;
 use PiggyWP\Settings;
+use PiggyWP\Shortcodes\CustomerDashboardShortcode;
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -106,6 +107,7 @@ class Bootstrap {
 			$this->container->get( AssetsController::class );
 			$this->container->get( PostTypeController::class );
 		}
+		$this->container->get( CustomerDashboardShortcode::class )->init();
 		$this->container->get( OrderContext::class )->init();
 
 		/**
@@ -263,6 +265,14 @@ class Bootstrap {
 			Installer::class,
 			function () {
 				return new Installer();
+			}
+		);
+		$this->container->register(
+			CustomerDashboardShortcode::class,
+			function ( Container $container ) {
+				$asset_api = $container->get( AssetApi::class );
+
+				return new CustomerDashboardShortcode( $asset_api );
 			}
 		);
 		$this->container->register(

@@ -55,6 +55,6 @@
 	{/if}
 
 	{#if isDev}
-		<SvelteQueryDevtools buttonPosition="top-left" position="left" styleNonce="123" />
+		<SvelteQueryDevtools />
 	{/if}
 </QueryClientProvider>

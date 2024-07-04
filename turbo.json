@@ -22,6 +22,10 @@
       "persistent": true,
       "cache": false
     },
+    "dev:frontend": {
+      "persistent": true,
+      "cache": false
+    },
     "analyze": {
       "dependsOn": [
         "^build"
