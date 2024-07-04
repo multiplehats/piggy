@@ -1,1 +1,1 @@
-export { default as Frontend } from './frontend.svelte';
+export { default as CustomerDashbaord } from './customer-dashboard.svelte';

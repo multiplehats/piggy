@@ -16,7 +16,7 @@ export class PiggyApiError extends Error {
 	}
 }
 
-export class PiggyAdminService {
+export class PiggyFrontendService {
 	async getShops() {
 		const { data, error } = await api.get<GetShopsResponse>('/piggy/private/shops');
 

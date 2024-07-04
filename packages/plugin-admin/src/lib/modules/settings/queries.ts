@@ -6,20 +6,6 @@ import type { GetSettingByIdResponse, GetSettingsParams, GetSettingsResponse } f
 
 const service = new SettingsAdminService();
 
-export function getApiKeyQueryConfig(): UndefinedInitialDataOptions<
-	GetSettingByIdResponse<'api_key'>,
-	DefaultError,
-	GetSettingByIdResponse<'api_key'>,
-	QueryKey
-> {
-	return {
-		queryKey: [QueryKeys.apiKey],
-		retry: false,
-		queryFn: async () => await service.getSetting({ id: 'api_key' }),
-		refetchOnWindowFocus: true
-	};
-}
-
 export function getSettingByIdQueryConfig<K extends PluginOptionsAdminKeys>(
 	id: K
 ): UndefinedInitialDataOptions<

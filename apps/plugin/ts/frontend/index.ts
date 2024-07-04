@@ -1,4 +1,4 @@
-import { Frontend } from '@piggy/plugin-frontend';
+import { CustomerDashbaord } from '@piggy/plugin-frontend';
 
 const piggyConfig = window.piggyConfig;
 const piggyWcSettingsConfig = window.piggyWcSettings;
@@ -27,7 +27,7 @@ const mountFrontend = () => {
 
 	if (frontendMounts.length > 0) {
 		Array.from(frontendMounts).forEach((frontendMount) => {
-			new Frontend({
+			new CustomerDashbaord({
 				target: frontendMount,
 				props: {
 					pluginSettings: piggyConfig,

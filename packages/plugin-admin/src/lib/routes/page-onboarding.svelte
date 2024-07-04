@@ -6,6 +6,7 @@
 	import { saveSettingsMutationConfig } from '$lib/modules/settings/mutations';
 	import { onboardingSteps, useOnboarding } from '$lib/stores/onboarding';
 	import { settingsState } from '$lib/stores/settings';
+	import { QueryKeys } from '$lib/utils/query-keys';
 	import { useNavigate } from 'svelte-navigator';
 
 	$$restProps;
@@ -15,7 +16,9 @@
 	const client = useQueryClient();
 	const saveSettingsMutation = createMutation(
 		saveSettingsMutationConfig(client, {
-			onSuccess: () => {
+			onSuccess: async () => {
+				await client.invalidateQueries({ queryKey: [QueryKeys.piggyShops] });
+
 				const isLastStep = onboarding.isLastStep();
 
 				if (isLastStep) {
