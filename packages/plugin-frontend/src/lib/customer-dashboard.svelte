@@ -11,6 +11,7 @@
 	import { hooks } from '$lib/utils/hooks';
 	import { onMount } from 'svelte';
 	import type { IWooSettings, PluginOptionsFrontend } from '@piggy/types/plugin';
+	import DashboardHeaderPts from './components/dashboard-header-pts.svelte';
 
 	export let wcSettings: IWooSettings;
 	export let pluginSettings: PluginOptionsFrontend;
@@ -50,7 +51,9 @@
 <QueryClientProvider client={queryClient}>
 	{#if $settingsState}
 		{#if $settingsState.plugin_enable}
-			<div>Frontend thing</div>
+			<div class="piggy-dashboard">
+				<DashboardHeaderPts />
+			</div>
 		{/if}
 	{/if}
 
@@ -58,3 +61,26 @@
 		<SvelteQueryDevtools />
 	{/if}
 </QueryClientProvider>
+
+<style>
+	.piggy-dashboard {
+		background-color: white;
+		font-size: 16px;
+		max-width: 1260px;
+		margin: 0 auto;
+	}
+
+	@media (min-width: 768px) {
+		.piggy-dashboard {
+			padding: 40px;
+		}
+	}
+
+	.piggy-dashboard {
+		margin-left: auto;
+		margin-right: auto;
+		height: 100%;
+		max-width: 1260px;
+		padding: 16px;
+	}
+</style>

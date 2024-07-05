@@ -92,7 +92,7 @@ class Connection {
 			'attributes' =>  $contact->getCurrentValues(),
 			'balance' => [
 				'prepaid' => $contact->getPrepaidBalance()->getBalanceInCents(),
-				'credit'  => $contact->getCreditBalance()->getBalance(),
+				'credits'  => $contact->getCreditBalance()->getBalance(),
 			]
 		];
 	}

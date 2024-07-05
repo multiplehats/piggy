@@ -61,9 +61,9 @@ interface PiggyData {
 		};
 		balance: {
 			prepaid: number;
-			credit: number;
+			credits: number;
 		};
-	};
+	} | null;
 }
 
 declare global {
