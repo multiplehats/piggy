@@ -4,7 +4,6 @@ namespace PiggyWP\Api\Routes\V1\Admin;
 
 use PiggyWP\Api\Routes\V1\AbstractRoute;
 use PiggyWP\Api\Routes\V1\Admin\Middleware;
-use Piggy\Api\Models\Loyalty\Rewards\Reward;
 
 /**
  * Rewards class.
@@ -62,12 +61,8 @@ class Rewards extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$this->init_client();
-		$results = Reward::list();
-		$rewards = array();
 
-		foreach ($results as $reward) {
-			$rewards[] = $this->schema->get_item_response( $reward );
-		}
+		$rewards = $this->connection->get_rewards();
 
 		return rest_ensure_response( $rewards );
 	}

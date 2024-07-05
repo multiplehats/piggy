@@ -63,22 +63,4 @@ class RewardsSchema extends AbstractSchema {
 			],
 		];
 	}
-
-	/**
-	 * Get the Reward response.
-	 *
-	 * @param Reward $reward Reward object.
-	 *
-	 * @return array
-	 */
-	public function get_item_response( $reward ) {
-		return [
-			'uuid' => $reward->getUuid(),
-			'title' => $reward->getTitle(),
-			'requiredCredits' => $reward->getRequiredCredits(),
-			'type' => $reward->getRewardType(),
-			'active' => $reward->isActive(),
-			'attributes' => $reward->getAttributes(),
-		];
-	}
 }

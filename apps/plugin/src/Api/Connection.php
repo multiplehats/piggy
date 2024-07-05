@@ -3,6 +3,7 @@ namespace PiggyWP\Api;
 
 use Piggy\Api\RegisterClient;
 use Piggy\Api\ApiClient;
+use Piggy\Api\Models\Loyalty\Rewards\Reward;
 use Piggy\Api\Models\Contacts\Contact;
 use Piggy\Api\Models\Shops\Shop;
 
@@ -243,5 +244,50 @@ class Connection {
 		}
 
 		return $this->format_shop( $shop );
+	}
+
+	/**
+	 * Get the Rewards response.
+	 *
+	 * @param Reward $reward The reward object.
+	 *
+	 * @return array
+	 */
+	public function format_reward( Reward $reward ) {
+		return [
+			'uuid' => $reward->getUuid(),
+			'title' => $reward->getTitle(),
+			'requiredCredits' => $reward->getRequiredCredits(),
+			'type' => $reward->getRewardType(),
+			'active' => $reward->isActive(),
+			'attributes' => $reward->getAttributes(),
+		];
+	}
+
+	/**
+	 * Get the rewards.
+	 *
+	 * @return array|null
+	 */
+	public function get_rewards() {
+		$client = $this->init_client();
+
+		if( ! $client ) {
+			return null;
+		}
+
+		$results = Reward::list();
+
+		if( ! $results ) {
+			return null;
+		}
+
+		$rewards = array();
+
+		foreach( $results as $reward ) {
+			$rewards[] = $this->format_reward( $reward );
+		}
+
+		return $rewards;
 	}
 }
