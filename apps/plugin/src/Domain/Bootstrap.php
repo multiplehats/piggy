@@ -1,6 +1,7 @@
 <?php
 namespace PiggyWP\Domain;
 
+use PiggyWP\Api\Connection;
 use PiggyWP\Assets\Api as AssetApi;
 use PiggyWP\Assets\AssetDataRegistry;
 use PiggyWP\Utils\AdminUtils;
@@ -10,7 +11,7 @@ use PiggyWP\Registry\Container;
 use PiggyWP\Migration;
 use PiggyWP\Domain\Services\OrderContext;
 use PiggyWP\Api\Api;
-use PiggyWP\Domain\Services\CustomerCreation;
+use PiggyWP\Domain\Services\CustomerSession;
 use PiggyWP\PostTypeController;
 use PiggyWP\Settings;
 use PiggyWP\Shortcodes\CustomerDashboardShortcode;
@@ -110,7 +111,7 @@ class Bootstrap {
 		}
 		$this->container->get( CustomerDashboardShortcode::class )->init();
 		$this->container->get( OrderContext::class )->init();
-		$this->container->get( CustomerCreation::class );
+		$this->container->get( CustomerSession::class );
 
 		/**
 		* Action triggered after Piggy initialization finishes.
@@ -252,9 +253,15 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
+			Connection::class,
+			function( Container $container ) {
+				return new Connection();
+			}
+		);
+		$this->container->register(
 			AssetsController::class,
 			function( Container $container ) {
-				return new AssetsController( $container->get( AssetApi::class ), $container->get( Settings::class ) );
+				return new AssetsController( $container->get( AssetApi::class ), $container->get( Settings::class, ), $container->get( Connection::class ) );
 			}
 		);
 		$this->container->register(
@@ -264,9 +271,9 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
-			CustomerCreation::class,
+			CustomerSession::class,
 			function( Container $container ) {
-				return new CustomerCreation();
+				return new CustomerSession();
 			}
 		);
 		$this->container->register(

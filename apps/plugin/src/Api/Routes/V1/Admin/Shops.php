@@ -45,7 +45,7 @@ class Shops extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'permission_callback' => [ Middleware::class, 'is_logged_in' ],
 				'args'                => [],
 			],
 			'schema'      => [ $this->schema, 'get_public_item_schema' ],

@@ -47,8 +47,36 @@ class ContactsSchema extends AbstractSchema {
 	 * @return array
 	 */
 	public function get_item_response( $contact ) {
+		$subscriptions = $contact->getSubscriptions();
+		$subscription_list = array();
+
+		if( $subscriptions ) {
+			foreach( $subscriptions as $subscription ) {
+				$type = $subscription->getSubscriptionType();
+
+				$subscription_list[] = [
+					'is_subscribed' => $subscription->isSubscribed(),
+					'status' => $subscription->getStatus(),
+					'type' => [
+						'uuid' => $type->getUuid(),
+						'name' =>  $type->getName(),
+						'description' => $type->getDescription(),
+						'active' => $type->isActive(),
+						'strategy' => $type->getStrategy(),
+					]
+				];
+			}
+		}
+
 		return [
 			'uuid' => $contact->getUuid(),
+			'email' => $contact->getEmail(),
+			'subscriptions' => isset( $subscription_list ) ? $subscription_list : [],
+			'attributes' =>  $contact->getCurrentValues(),
+			'balance' => [
+				'prepaid' => $contact->getPrepaidBalance()->getBalanceInCents(),
+				'credit'  => $contact->getCreditBalance()->getBalance(),
+			]
 		];
 	}
 }
