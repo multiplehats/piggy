@@ -104,7 +104,7 @@ final class AssetsController
 		);
 
 		if (wp_script_is(self::APP_HANDLE, 'enqueued')) {
-			$settings = rawurlencode(wp_json_encode($this->get_settings_via_rest()));
+			$settings = rawurlencode(wp_json_encode($this->get_plugin_settings()));
 
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
@@ -230,10 +230,10 @@ final class AssetsController
 			return null;
 		}
 
-		$id = get_current_user_id();
-		$uuid = get_user_meta($id, 'piggy_uuid', true);
-		$contact = $this->fetch_contact($uuid);
-		$shop = $this->fetch_shop(get_option('piggy_shop_uuid'));
+		$uuid = get_user_meta( get_current_user_id(), 'piggy_uuid', true);
+		$contact = $uuid ? $this->connection->get_contact( $uuid ) : null;
+		$shop_id = get_option('piggy_shop_uuid');
+		$shop = $shop_id ? $this->connection->get_shop( $shop_id ) : null;
 
 		return "
             window.piggyData = {
@@ -244,51 +244,11 @@ final class AssetsController
 	}
 
 	/**
-	 * Fetch contact data.
-	 *
-	 * @param string $uuid
-	 * @return array|null
-	 */
-	protected function fetch_contact($uuid)
-	{
-		if (!$uuid) {
-			return null;
-		}
-
-		$request = new WP_REST_Request('GET', '/piggy/private/contacts');
-		$request->set_query_params(['id' => $uuid]);
-		$response = rest_do_request($request);
-		$server = rest_get_server();
-		$contact = $server->response_to_data($response, false);
-
-		return $contact;
-	}
-
-	/**
-	 * Fetch shop data.
-	 *
-	 * @param string $shop_id
-	 * @return array|null
-	 */
-	protected function fetch_shop($shop_id)
-	{
-		if (!$shop_id) {
-			return null;
-		}
-
-		$request = new WP_REST_Request('GET', '/piggy/private/shops');
-		$request->set_query_params(['id' => $shop_id]);
-		$response = rest_do_request($request);
-		$server = rest_get_server();
-		return $server->response_to_data($response, false);
-	}
-
-	/**
 	 * Get settings via REST API.
 	 *
 	 * @return array|null
 	 */
-	protected function get_settings_via_rest()
+	protected function get_plugin_settings()
 	{
 		$request = new WP_REST_Request('GET', '/piggy/private/settings');
 		$request->set_query_params(['per_page' => 12]);

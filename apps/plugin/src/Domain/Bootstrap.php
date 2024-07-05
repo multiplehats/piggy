@@ -273,7 +273,7 @@ class Bootstrap {
 		$this->container->register(
 			CustomerSession::class,
 			function( Container $container ) {
-				return new CustomerSession();
+				return new CustomerSession( $container->get( Connection::class ) );
 			}
 		);
 		$this->container->register(
