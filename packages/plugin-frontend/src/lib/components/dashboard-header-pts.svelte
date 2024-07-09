@@ -1,73 +1,129 @@
 <script lang="ts">
 	import { currentLanguage, isLoggedIn, pluginSettings } from '$lib/modules/settings';
-	import { replacePlaceholders } from '$lib/utils/replace-text-vars';
 	import BadgeEuro from 'lucide-svelte/icons/badge-euro';
 	import BarChart from 'lucide-svelte/icons/bar-chart';
 	import ShoppingBag from 'lucide-svelte/icons/shopping-bag';
 	import Tag from 'lucide-svelte/icons/tag';
+	import { replaceStrings } from '@piggy/lib';
 
 	const navItems = [
 		{
 			icon: Tag,
+			id: 'coupons',
 			text: $pluginSettings?.dashboard_nav_coupons?.[currentLanguage]
 		},
 		{
 			icon: BadgeEuro,
+			id: 'earn',
 			text: $pluginSettings?.dashboard_nav_earn?.[currentLanguage]
 		},
 		{
 			icon: ShoppingBag,
+			id: 'rewards',
 			text: $pluginSettings?.dashboard_nav_rewards?.[currentLanguage]
 		},
 		{
 			icon: BarChart,
+			id: 'activity',
 			text: $pluginSettings?.dashboard_nav_activity?.[currentLanguage]
 		}
 	];
+
+	function getHeaderTitle(text: string, credits: number | string) {
+		if (!text) return '';
+
+		const creditsName = $pluginSettings?.credits_name?.[currentLanguage];
+
+		return replaceStrings(text, [
+			{
+				'{{credits__currency}}': creditsName ?? '',
+				'{{credits}}': credits?.toString() ?? '0'
+			}
+		]);
+	}
+
+	function getNavItemText(text?: string) {
+		if (!text) return '';
+
+		const creditsName = $pluginSettings?.credits_name?.[currentLanguage];
+
+		return replaceStrings(text, [{ '{{credits__currency}}': creditsName ?? '' }]);
+	}
+
+	function handleScrollNavigation(id: string) {
+		// scroll to the nearest `piggy-dashboard-${id}` element
+		return () => {
+			const element = document.querySelector(`.piggy-dashboard-${id}`);
+
+			if (element) {
+				element.scrollIntoView({ behavior: 'smooth' });
+			}
+		};
+	}
 </script>
 
 <section>
-	<div class="piggy-dashboard__container">
-		<h2 class="piggy-dashboard__header">
-			{#if isLoggedIn}
-				{replacePlaceholders($pluginSettings?.dashboard_title_logged_in?.[currentLanguage])}
-			{:else}
-				{replacePlaceholders($pluginSettings?.dashboard_title_logged_out?.[currentLanguage])}
-			{/if}
-		</h2>
-
-		<!-- Call to action-->
-		{#if !isLoggedIn}
-			CTA
-		{/if}
-
+	<h2 class="piggy-dashboard__header">
 		{#if isLoggedIn}
-			<nav class="piggy-dashboard__nav">
-				<ul class="piggy-dashboard__list">
-					{#each navItems as { icon, text }, i}
-						<li>
-							<button class="piggy-dashboard__item">
-								<svelte:component this={icon} size={24} />
-
-								{replacePlaceholders(text)}
-							</button>
-						</li>
-					{/each}
-				</ul>
-			</nav>
+			{getHeaderTitle(
+				$pluginSettings?.dashboard_title_logged_in?.[currentLanguage] ?? '',
+				window.piggyData.contact?.balance.credits ?? 0
+			)}
+		{:else}
+			{getHeaderTitle($pluginSettings?.dashboard_title_logged_out?.[currentLanguage] ?? '', 400)}
 		{/if}
-	</div>
+	</h2>
+
+	<!-- Call to action-->
+	{#if !isLoggedIn}
+		<div class="piggy-dashboard__cta">
+			{#if window.piggyWcSettings.storePages.myaccount?.permalink}
+				<a href={window.piggyWcSettings.storePages.myaccount?.permalink} class="piggy-button">
+					{$pluginSettings?.dashboard_join_cta?.[currentLanguage]}
+				</a>
+
+				<a href={window.piggyWcSettings.storePages.myaccount?.permalink} class="piggy-button">
+					{$pluginSettings?.dashboard_login_cta?.[currentLanguage]}
+				</a>
+			{/if}
+		</div>
+	{/if}
+
+	{#if isLoggedIn}
+		<nav class="piggy-dashboard__nav">
+			<ul class="piggy-dashboard__list">
+				{#each navItems as { icon, text, id }, i}
+					<li>
+						<button class="piggy-dashboard__item" on:click={handleScrollNavigation(id)}>
+							<svelte:component this={icon} size={24} />
+
+							{getNavItemText(text)}
+						</button>
+					</li>
+				{/each}
+			</ul>
+		</nav>
+	{/if}
 </section>
 
 <style lang="postcss">
-	.piggy-dashboard__container {
+	section {
 		text-align: center;
 	}
 
 	.piggy-dashboard__header {
 		font-size: 1.5rem;
 		margin: 0;
-		margin-bottom: 2rem;
+		margin-bottom: 1.5rem;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 450px;
+	}
+
+	@media screen and (max-width: 768px) {
+		.piggy-dashboard__header {
+			font-size: 1.25rem;
+		}
 	}
 
 	.piggy-dashboard__nav {
@@ -84,6 +140,12 @@
 		flex-wrap: wrap;
 		list-style-type: none;
 		margin: 0;
+	}
+
+	.piggy-dashboard__cta {
+		display: flex;
+		justify-content: center;
+		gap: 0.5rem;
 	}
 
 	.piggy-dashboard__item {

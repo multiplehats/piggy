@@ -1,0 +1,10 @@
+.piggy-button {
+	background-color: var(--piggy-color-primary, var(--wp--preset--color--contrast, #007cba));
+	color: var(--piggy-color-white, var(--wp--preset--color--base, #fff));
+	font-size: var(--piggy-font-size-base, 0.85rem);
+	text-decoration: none;
+	border: none;
+	padding: 0.6rem 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+}

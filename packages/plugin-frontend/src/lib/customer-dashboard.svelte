@@ -12,6 +12,8 @@
 	import { onMount } from 'svelte';
 	import type { IWooSettings, PluginOptionsFrontend } from '@piggy/types/plugin';
 	import DashboardHeaderPts from './components/dashboard-header-pts.svelte';
+	import './global.css';
+	import DashboardCoupons from './components/dashboard-coupons.svelte';
 
 	export let wcSettings: IWooSettings;
 	export let pluginSettings: PluginOptionsFrontend;
@@ -53,6 +55,7 @@
 		{#if $settingsState.plugin_enable}
 			<div class="piggy-dashboard">
 				<DashboardHeaderPts />
+				<DashboardCoupons />
 			</div>
 		{/if}
 	{/if}
@@ -66,6 +69,7 @@
 	.piggy-dashboard {
 		background-color: white;
 		font-size: 16px;
+		border-radius: 6px;
 		max-width: 1260px;
 		margin: 0 auto;
 	}

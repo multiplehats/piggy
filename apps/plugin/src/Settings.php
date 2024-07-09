@@ -121,7 +121,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_out',
 			'default'  => array(
-				'en_US' => __( 'Join our Loyalty Program and get rewarded when you shop with us.', 'piggy' ),
+				'en_US' => __( 'Join our Loyalty Program and get rewarded when you shop with us. Get your first {{ credits }} {{ credits_currency }} when you sign up now', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Title (Logged out)', 'piggy' ),
