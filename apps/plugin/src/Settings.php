@@ -28,7 +28,6 @@ class Settings {
 			'tooltip'  => __( 'This will delete all plugins settings upon deactivation. Use with caution!', 'piggy' ),
 		);
 		$settings[] = array(
-			'title'    => __( 'API Key', 'piggy' ),
 			'id'       => 'api_key',
 			'default'  => '',
 			'type'     => 'text',
@@ -43,7 +42,6 @@ class Settings {
 			'tooltip'  => __( 'Select the shop you want to connect to.', 'piggy' ),
 		);
 		$settings[] = array(
-			'title'    => __( 'General Settings', 'piggy' ),
 			'id'       => 'credits_name',
 			'default'  => null,
 			'type'     => 'translatable_text',
@@ -106,6 +104,86 @@ class Settings {
 				'functional' => array('label' => __( 'Functional email', 'piggy' ), 'tooltip' => __( 'Functional emails are emails that are necessary for the functioning of the service. These include emails for password resets, order confirmations, and account creation.', 'piggy' )),
 				'marketing' => array('label' => __( 'Marketing email', 'piggy' ), 'tooltip' => __( 'Marketing emails are emails that are used for marketing purposes. These include newsletters, promotions, and other marketing emails.', 'piggy' )),
 			),
+		);
+
+		// Customer Dashboard related settings.
+		$settings[] = array(
+			'id'       => 'dashboard_title_logged_in',
+			'default'  => array(
+				'en_US' => __( 'You have {{ credits }} {{ credits__currency }}', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Title (Logged in)', 'piggy' ),
+			/* translators: %s: a list of placeholders */
+			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged in. You can use the following placeholders: %s', 'piggy' ), '{{ credits }} {{ credits_currency }}' ),
+		);
+
+		$settings[] = array(
+			'id'       => 'dashboard_title_logged_out',
+			'default'  => array(
+				'en_US' => __( 'Join our Loyalty Program and get rewarded when you shop with us.', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Title (Logged out)', 'piggy' ),
+			/* translators: %s: a list of placeholders */
+			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged out. You can use the following placeholders: %s', 'piggy' ), '{{ credits }} {{ credits_currency }}' ),
+		);
+
+		$settings[] = array(
+			'id'       => 'dashboard_join_cta',
+			'default'  => array(
+				'en_US' => __( 'Join now', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Join program button', 'piggy' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'piggy' ),
+		);
+
+		$settings[] = array(
+			'id'       => 'dashboard_login_cta',
+			'default'  => array(
+				'en_US' => __( 'Log in', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Log in button', 'piggy' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to log in.', 'piggy' ),
+		);
+
+		$settings[] = array(
+			'id'       => 'dashboard_nav_coupons',
+			'default'  => array(
+				'en_US' => __( 'Your coupons', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Coupons navigation item', 'piggy' ),
+		);
+
+		$settings[] = array(
+			'id'       => 'dashboard_nav_earn',
+			'default'  => array(
+				'en_US' => __( 'Earn {{ credits__currency }}', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Earn navigation item', 'piggy' ),
+			'description' => sprintf( __( 'The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s', 'piggy' ), '{{ credits_currency }}' ),
+		);
+
+		$settings[] = array(
+			'id'       => 'dashboard_nav_rewards',
+			'default'  => array(
+				'en_US' => __( 'Rewards', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Rewards navigation item', 'piggy' ),
+		);
+
+		$settings[] = array(
+			'id'       => 'dashboard_nav_activity',
+			'default'  => array(
+				'en_US' => __( 'Your activity', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Activity navigation item', 'piggy' ),
 		);
 
 		/**

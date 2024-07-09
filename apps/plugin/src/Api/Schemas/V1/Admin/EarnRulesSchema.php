@@ -223,16 +223,16 @@ class EarnRulesSchema extends AbstractSchema {
 		$placeholders = '';
 		switch ($type) {
 			case 'PLACE_ORDER':
-				$placeholders = "{{credits_currency}}";
+				$placeholders = "{{ credits_currency }}";
 				break;
 			case 'CREATE_ACCOUNT':
 			case 'CELEBRATE_BIRTHDAY':
-				$placeholders = "{{credits}}, {{credits_currency}}";
+				$placeholders = "{{ credits }}, {{ credits_currency }}";
 				break;
 			case 'LIKE_ON_FACEBOOK':
 			case 'FOLLOW_ON_TIKTOK':
 			case 'FOLLOW_ON_INSTAGRAM':
-				$placeholders = "{{handle}}, {{credits}}, {{credits_currency}}";
+				$placeholders = "{{ handle }}, {{ credits }}, {{ credits_currency }}";
 				break;
 		}
 

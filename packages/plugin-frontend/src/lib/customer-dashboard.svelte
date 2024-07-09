@@ -72,7 +72,7 @@
 
 	@media (min-width: 768px) {
 		.piggy-dashboard {
-			padding: 40px;
+			padding: 16px;
 		}
 	}
 
@@ -81,6 +81,6 @@
 		margin-right: auto;
 		height: 100%;
 		max-width: 1260px;
-		padding: 16px;
+		padding: 80px 40px;
 	}
 </style>

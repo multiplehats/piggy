@@ -77,7 +77,15 @@ export const zBasePluginOptions = z.object({
 	),
 	reward_order_parts: adminFields.zCheckboxes,
 	marketing_consent_subscription: adminFields.zSelect,
-	earn_rules: adminFields.zEarnRules
+	earn_rules: adminFields.zEarnRules,
+	dashboard_title_logged_in: adminFields.zTranslatableText,
+	dashboard_title_logged_out: adminFields.zTranslatableText,
+	dashboard_join_cta: adminFields.zTranslatableText,
+	dashboard_login_cta: adminFields.zTranslatableText,
+	dashboard_nav_coupons: adminFields.zTranslatableText,
+	dashboard_nav_earn: adminFields.zTranslatableText,
+	dashboard_nav_rewards: adminFields.zTranslatableText,
+	dashboard_nav_activity: adminFields.zTranslatableText
 });
 
 /**

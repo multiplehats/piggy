@@ -75,6 +75,7 @@ declare global {
 		piggyWcSettings: IWooSettings;
 		// WP Fetch middleware config
 		piggyMiddlewareConfig: {
+			loggedIn: boolean;
 			siteLanguage: string;
 			languages: string[];
 			currentLanguage: string;

@@ -239,7 +239,7 @@ class SpendRulesSchema extends AbstractSchema {
 			case 'PRODUCT_DISCOUNT':
 			case 'ORDER_DISCOUNT':
 			case 'FREE_SHIPPING':
-				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
 				break;
 		}
 
@@ -253,7 +253,7 @@ class SpendRulesSchema extends AbstractSchema {
 			case 'PRODUCT_DISCOUNT':
 			case 'ORDER_DISCOUNT':
 			case 'FREE_SHIPPING':
-				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
 				break;
 		}
 
@@ -267,7 +267,7 @@ class SpendRulesSchema extends AbstractSchema {
 			case 'PRODUCT_DISCOUNT':
 			case 'ORDER_DISCOUNT':
 			case 'FREE_SHIPPING':
-				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
 				break;
 		}
 
@@ -281,7 +281,7 @@ class SpendRulesSchema extends AbstractSchema {
 			case 'PRODUCT_DISCOUNT':
 			case 'ORDER_DISCOUNT':
 			case 'FREE_SHIPPING':
-				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
 				break;
 		}
 

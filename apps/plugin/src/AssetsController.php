@@ -208,6 +208,7 @@ final class AssetsController
 
 		return "
             window.piggyMiddlewareConfig = {
+				loggedIn: " . json_encode(is_user_logged_in()) . ",
                 siteLanguage: '" . esc_js(get_bloginfo('language')) . "',
                 currentLanguage: '" . esc_js($current_language) . "',
                 languages: " . wp_json_encode($all_languages) . ",
