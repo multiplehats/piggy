@@ -11,16 +11,16 @@
 	}
 </script>
 
-<div class="piggy-dashboard-coupons">
+<div class="piggy-dashboard-rewards">
 	<div>
 		<h3 class="piggy-dashboard__header">
-			{getNavItemText($pluginSettings?.dashboard_nav_coupons?.[currentLanguage])}
+			{getNavItemText($pluginSettings?.dashboard_nav_rewards?.[currentLanguage])}
 		</h3>
 	</div>
 </div>
 
 <style>
-	.piggy-dashboard-coupons {
+	.piggy-dashboard-rewards {
 		text-align: center;
 		max-width: 1260px;
 		width: 100%;

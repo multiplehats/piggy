@@ -14,6 +14,8 @@
 	import DashboardHeaderPts from './components/dashboard-header-pts.svelte';
 	import './global.css';
 	import DashboardCoupons from './components/dashboard-coupons.svelte';
+	import DashboardEarn from './components/dashboard-earn.svelte';
+	import DashboardRewards from './components/dashboard-rewards.svelte';
 
 	export let wcSettings: IWooSettings;
 	export let pluginSettings: PluginOptionsFrontend;
@@ -56,6 +58,8 @@
 			<div class="piggy-dashboard">
 				<DashboardHeaderPts />
 				<DashboardCoupons />
+				<DashboardEarn />
+				<DashboardRewards />
 			</div>
 		{/if}
 	{/if}

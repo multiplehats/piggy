@@ -48,10 +48,11 @@ class RoutesController {
 		$this->settings = $settings;
 
 		$this->routes = [
-			'v1'      => [],
+			'v1'      => [
+				Routes\V1\EarnRules::IDENTIFIER => Routes\V1\EarnRules::class,
+				ROutes\V1\SpendRules::IDENTIFIER => Routes\V1\SpendRules::class,
+			],
 			'private' => [
-				Routes\V1\Admin\EarnRules::IDENTIFIER => Routes\V1\Admin\EarnRules::class,
-				ROutes\V1\Admin\SpendRules::IDENTIFIER => Routes\V1\Admin\SpendRules::class,
 				Routes\V1\Admin\Settings::IDENTIFIER => Routes\V1\Admin\Settings::class,
 				Routes\V1\Admin\Shops::IDENTIFIER => Routes\V1\Admin\Shops::class,
 				Routes\V1\Admin\Rewards::IDENTIFIER => Routes\V1\Admin\Rewards::class,

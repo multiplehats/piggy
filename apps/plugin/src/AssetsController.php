@@ -105,10 +105,17 @@ final class AssetsController
 
 		if (wp_script_is(self::APP_HANDLE, 'enqueued')) {
 			$settings = rawurlencode(wp_json_encode($this->get_plugin_settings()));
+			$earn_rules = rawurlencode(wp_json_encode($this->get_earn_rules_config()));
 
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
 				"window.piggyConfig = JSON.parse(decodeURIComponent('" . esc_js($settings) . "'));",
+				'before'
+			);
+
+			$this->assets_api->add_inline_script(
+				self::APP_HANDLE,
+				"window.piggyEarnRules = JSON.parse(decodeURIComponent('" . esc_js($earn_rules) . "'));",
 				'before'
 			);
 
@@ -252,18 +259,36 @@ final class AssetsController
 	protected function get_plugin_settings()
 	{
 		$request = new WP_REST_Request('GET', '/piggy/private/settings');
-		$request->set_query_params(['per_page' => 12]);
 		$response = rest_do_request($request);
 		$server = rest_get_server();
 		$data = $server->response_to_data($response, false);
 
-		if (!$data) {
+		if ( ! $data ) {
 			return null;
 		}
 
 		return array_map(function ($item) {
 			return $item['value'];
 		}, $data);
+	}
+
+	/**
+	 * Get earn rule config
+	 *
+	 * @return array|null
+	 */
+	protected function get_earn_rules_config()
+	{
+		$request = new WP_REST_Request('GET', '/piggy/v1/earn-rules');
+		$response = rest_do_request($request);
+		$server = rest_get_server();
+		$data = $server->response_to_data($response, false);
+
+		if ( ! $data || ! is_array($data) ) {
+			return null;
+		}
+
+		return $data;
 	}
 
 	/**

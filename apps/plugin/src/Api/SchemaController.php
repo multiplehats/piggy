@@ -31,8 +31,8 @@ class SchemaController {
 		$this->extend  = $extend;
 		$this->schemas = [
 			'v1' => [
-				Schemas\V1\Admin\EarnRulesSchema::IDENTIFIER => Schemas\V1\Admin\EarnRulesSchema::class,
-				Schemas\V1\Admin\SpendRulesSchema::IDENTIFIER => Schemas\V1\Admin\SpendRulesSchema::class,
+				Schemas\V1\EarnRulesSchema::IDENTIFIER => Schemas\V1\EarnRulesSchema::class,
+				Schemas\V1\SpendRulesSchema::IDENTIFIER => Schemas\V1\SpendRulesSchema::class,
 				Schemas\V1\Admin\SettingsSchema::IDENTIFIER => Schemas\V1\Admin\SettingsSchema::class,
 				Schemas\V1\Admin\ShopsSchema::IDENTIFIER => Schemas\V1\Admin\ShopsSchema::class,
 				Schemas\V1\Admin\RewardsSchema::IDENTIFIER => Schemas\V1\Admin\RewardsSchema::class,

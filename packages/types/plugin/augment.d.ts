@@ -5,6 +5,7 @@ import type {
 	PluginOptionsAdmin,
 	PluginOptionsFrontend
 } from './settings';
+import { EarnRuleValueItem } from './settings/adminTypes';
 
 interface PiggyData {
 	contact: {
@@ -73,6 +74,7 @@ declare global {
 		piggyConfig: PluginOptionsFrontend;
 		// WooCommerce settings
 		piggyWcSettings: IWooSettings;
+		piggyEarnRules: EarnRuleValueItem[] | null;
 		// WP Fetch middleware config
 		piggyMiddlewareConfig: {
 			loggedIn: boolean;

@@ -1,6 +1,6 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1\Admin;
+namespace PiggyWP\Api\Routes\V1;
 
 use PiggyWP\Api\Routes\V1\AbstractRoute;
 use PiggyWP\Api\Routes\V1\Admin\Middleware;

@@ -2,7 +2,6 @@
 namespace PiggyWP\Api\Schemas\V1\Admin;
 
 use PiggyWP\Api\Schemas\V1\AbstractSchema;
-use Piggy\Api\Models\Loyalty\Rewards\Reward;
 
 /**
  * Rewards class.

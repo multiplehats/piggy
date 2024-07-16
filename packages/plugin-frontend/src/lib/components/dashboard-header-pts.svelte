@@ -21,12 +21,12 @@
 			icon: ShoppingBag,
 			id: 'rewards',
 			text: $pluginSettings?.dashboard_nav_rewards?.[currentLanguage]
-		},
-		{
-			icon: BarChart,
-			id: 'activity',
-			text: $pluginSettings?.dashboard_nav_activity?.[currentLanguage]
 		}
+		// {
+		// 	icon: BarChart,
+		// 	id: 'activity',
+		// 	text: $pluginSettings?.dashboard_nav_activity?.[currentLanguage]
+		// }
 	];
 
 	function getHeaderTitle(text: string, credits: number | string) {
@@ -36,7 +36,7 @@
 
 		return replaceStrings(text, [
 			{
-				'{{credits__currency}}': creditsName ?? '',
+				'{{credits_currency}}': creditsName ?? '',
 				'{{credits}}': credits?.toString() ?? '0'
 			}
 		]);
@@ -47,7 +47,7 @@
 
 		const creditsName = $pluginSettings?.credits_name?.[currentLanguage];
 
-		return replaceStrings(text, [{ '{{credits__currency}}': creditsName ?? '' }]);
+		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
 	}
 
 	function handleScrollNavigation(id: string) {

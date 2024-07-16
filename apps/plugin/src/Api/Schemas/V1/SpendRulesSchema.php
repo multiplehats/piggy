@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1\Admin;
+namespace PiggyWP\Api\Schemas\V1;
 
 use PiggyWP\Api\Schemas\V1\AbstractSchema;
 

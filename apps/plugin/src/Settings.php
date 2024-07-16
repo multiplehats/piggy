@@ -43,7 +43,9 @@ class Settings {
 		);
 		$settings[] = array(
 			'id'       => 'credits_name',
-			'default'  => null,
+			'default'  => array(
+				'en_US' => __( 'Credits', 'piggy' ),
+			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Credits name', 'piggy' ),
 			'description' => __( 'The name of the credits in your shop.', 'piggy' ),
@@ -110,7 +112,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_in',
 			'default'  => array(
-				'en_US' => __( 'You have {{ credits }} {{ credits__currency }}', 'piggy' ),
+				'en_US' => __( 'You have {{ credits }} {{ credits_currency }}', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Title (Logged in)', 'piggy' ),
@@ -161,7 +163,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_nav_earn',
 			'default'  => array(
-				'en_US' => __( 'Earn {{ credits__currency }}', 'piggy' ),
+				'en_US' => __( 'Earn {{ credits_currency }}', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Earn navigation item', 'piggy' ),
