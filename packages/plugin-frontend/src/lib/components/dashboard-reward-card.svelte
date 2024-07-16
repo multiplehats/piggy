@@ -2,35 +2,31 @@
 	import { pluginSettings } from '$lib/modules/settings';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
-	import type { EarnRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
+	import type { SpendRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
 
-	export let earnRule: EarnRuleValueItem;
+	export let rule: SpendRuleValueItem;
 
 	function getLabel(text: string, credits: number | string) {
 		if (!text) return '';
 
 		const creditsName = getTranslatedText($pluginSettings.credits_name);
-		const handle = earnRule.socialHandle.value;
 
 		return replaceStrings(text, [
 			{
 				'{{ credits_currency }}': creditsName ?? '',
-				'{{ credits }}': credits?.toString() ?? '0',
-				'{{ handle }}': `@${handle}` ?? ''
+				'{{ credits }}': credits?.toString() ?? '0'
 			}
 		]);
 	}
+
+	$: console.log(rule);
 </script>
 
 <div class="piggy-dashboard-earn-card">
 	<div>
-		<div class="piggy-dashboard__icon">
-			{@html earnRule.svg}
-		</div>
-
 		<h4 class="piggy-dashboard__header">
-			{#if earnRule.label.value}
-				{getLabel(getTranslatedText(earnRule.label.value), earnRule.credits.value ?? 0)}
+			{#if rule.label.value}
+				{getLabel(getTranslatedText(rule.label.value), 0)}
 			{/if}
 		</h4>
 	</div>
@@ -48,13 +44,8 @@
 			0 1px 2px -1px rgb(0 0 0 / 0.1);
 	}
 
-	.piggy-dashboard__icon {
-		width: 100%;
-		height: auto;
-	}
-
 	.piggy-dashboard-earn-card h4 {
 		font-size: 1rem;
-		margin: 1rem 0 0;
+		margin: 0;
 	}
 </style>

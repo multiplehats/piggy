@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { currentLanguage, pluginSettings } from '$lib/modules/settings';
+	import { pluginSettings } from '$lib/modules/settings';
+	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
 	import DashboardEarnCard from './dashboard-earn-card.svelte';
 
@@ -8,7 +9,7 @@
 	function getNavItemText(text?: string) {
 		if (!text) return '';
 
-		const creditsName = $pluginSettings?.credits_name?.[currentLanguage];
+		const creditsName = getTranslatedText($pluginSettings.credits_name);
 
 		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
 	}
@@ -17,7 +18,7 @@
 <div class="piggy-dashboard-earn">
 	<div>
 		<h3 class="piggy-dashboard__header">
-			{getNavItemText($pluginSettings?.dashboard_nav_earn?.[currentLanguage])}
+			{getNavItemText(getTranslatedText($pluginSettings.dashboard_nav_earn))}
 		</h3>
 
 		{#if earnRules}

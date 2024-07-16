@@ -106,6 +106,7 @@ final class AssetsController
 		if (wp_script_is(self::APP_HANDLE, 'enqueued')) {
 			$settings = rawurlencode(wp_json_encode($this->get_plugin_settings()));
 			$earn_rules = rawurlencode(wp_json_encode($this->get_earn_rules_config()));
+			$spend_rules = rawurlencode(wp_json_encode($this->get_spend_rules_config()));
 
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
@@ -116,6 +117,12 @@ final class AssetsController
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
 				"window.piggyEarnRules = JSON.parse(decodeURIComponent('" . esc_js($earn_rules) . "'));",
+				'before'
+			);
+
+			$this->assets_api->add_inline_script(
+				self::APP_HANDLE,
+				"window.piggySpentRules = JSON.parse(decodeURIComponent('" . esc_js($spend_rules) . "'));",
 				'before'
 			);
 
@@ -280,6 +287,25 @@ final class AssetsController
 	protected function get_earn_rules_config()
 	{
 		$request = new WP_REST_Request('GET', '/piggy/v1/earn-rules');
+		$response = rest_do_request($request);
+		$server = rest_get_server();
+		$data = $server->response_to_data($response, false);
+
+		if ( ! $data || ! is_array($data) ) {
+			return null;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get spend rule config
+	 *
+	 * @return array|null
+	 */
+	protected function get_spend_rules_config()
+	{
+		$request = new WP_REST_Request('GET', '/piggy/v1/spend-rules');
 		$response = rest_do_request($request);
 		$server = rest_get_server();
 		$data = $server->response_to_data($response, false);

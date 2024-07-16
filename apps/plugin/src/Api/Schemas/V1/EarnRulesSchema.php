@@ -244,7 +244,7 @@ class EarnRulesSchema extends AbstractSchema {
 	}
 
 	private function get_label_default($type) {
-		$default = null;
+		$default = '';
 
 		switch ($type) {
 			case 'LIKE_ON_FACEBOOK':

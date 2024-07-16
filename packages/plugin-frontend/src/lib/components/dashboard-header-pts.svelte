@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { currentLanguage, isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { getTranslatedText } from '$lib/utils/translated-text';
 	import BadgeEuro from 'lucide-svelte/icons/badge-euro';
 	import BarChart from 'lucide-svelte/icons/bar-chart';
 	import ShoppingBag from 'lucide-svelte/icons/shopping-bag';
@@ -10,29 +11,29 @@
 		{
 			icon: Tag,
 			id: 'coupons',
-			text: $pluginSettings?.dashboard_nav_coupons?.[currentLanguage]
+			text: getTranslatedText($pluginSettings?.dashboard_nav_coupons)
 		},
 		{
 			icon: BadgeEuro,
 			id: 'earn',
-			text: $pluginSettings?.dashboard_nav_earn?.[currentLanguage]
+			text: getTranslatedText($pluginSettings?.dashboard_nav_earn)
 		},
 		{
 			icon: ShoppingBag,
 			id: 'rewards',
-			text: $pluginSettings?.dashboard_nav_rewards?.[currentLanguage]
+			text: getTranslatedText($pluginSettings?.dashboard_nav_rewards)
 		}
 		// {
 		// 	icon: BarChart,
 		// 	id: 'activity',
-		// 	text: $pluginSettings?.dashboard_nav_activity?.[currentLanguage]
+		// 	text: getTranslatedText($pluginSettings?.dashboard_nav_activity)
 		// }
 	];
 
 	function getHeaderTitle(text: string, credits: number | string) {
 		if (!text) return '';
 
-		const creditsName = $pluginSettings?.credits_name?.[currentLanguage];
+		const creditsName = getTranslatedText($pluginSettings?.credits_name);
 
 		return replaceStrings(text, [
 			{
@@ -45,7 +46,7 @@
 	function getNavItemText(text?: string) {
 		if (!text) return '';
 
-		const creditsName = $pluginSettings?.credits_name?.[currentLanguage];
+		const creditsName = getTranslatedText($pluginSettings?.credits_name);
 
 		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
 	}
@@ -66,11 +67,11 @@
 	<h2 class="piggy-dashboard__header">
 		{#if isLoggedIn}
 			{getHeaderTitle(
-				$pluginSettings?.dashboard_title_logged_in?.[currentLanguage] ?? '',
+				getTranslatedText($pluginSettings.dashboard_title_logged_in),
 				window.piggyData.contact?.balance.credits ?? 0
 			)}
 		{:else}
-			{getHeaderTitle($pluginSettings?.dashboard_title_logged_out?.[currentLanguage] ?? '', 400)}
+			{getHeaderTitle(getTranslatedText($pluginSettings.dashboard_title_logged_out) ?? '', 400)}
 		{/if}
 	</h2>
 
@@ -79,11 +80,11 @@
 		<div class="piggy-dashboard__cta">
 			{#if window.piggyWcSettings.storePages.myaccount?.permalink}
 				<a href={window.piggyWcSettings.storePages.myaccount?.permalink} class="piggy-button">
-					{$pluginSettings?.dashboard_join_cta?.[currentLanguage]}
+					{getTranslatedText($pluginSettings.dashboard_join_cta)}
 				</a>
 
 				<a href={window.piggyWcSettings.storePages.myaccount?.permalink} class="piggy-button">
-					{$pluginSettings?.dashboard_login_cta?.[currentLanguage]}
+					{getTranslatedText($pluginSettings.dashboard_login_cta)}
 				</a>
 			{/if}
 		</div>
