@@ -4,7 +4,6 @@ namespace PiggyWP\Api\Routes\V1\Admin;
 
 use PiggyWP\Api\Routes\V1\AbstractRoute;
 use PiggyWP\Api\Routes\V1\Admin\Middleware;
-use Piggy\Api\Models\Shops\Shop;
 
 /**
  * Shops class.
@@ -45,7 +44,7 @@ class Shops extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'permission_callback' => [ Middleware::class, 'is_logged_in' ],
 				'args'                => [],
 			],
 			'schema'      => [ $this->schema, 'get_public_item_schema' ],
@@ -62,12 +61,14 @@ class Shops extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$this->init_client();
-		$results = Shop::list();
-		$shops = array();
 
-		foreach ($results as $shop) {
-			$shops[] = $this->schema->get_item_response( $shop );
+		$id = $request->get_param( 'id' );
+
+		if( $id ) {
+			return $this->connection->get_shop( $id );
 		}
+
+		$shops = $this->connection->get_shops();
 
 		return rest_ensure_response( $shops );
 	}

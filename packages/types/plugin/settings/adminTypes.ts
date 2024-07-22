@@ -151,6 +151,7 @@ export type EarnRuleType = z.infer<typeof zEarnRuleType>;
 
 export const zEarnRuleValueItem = z.object({
 	id: z.number(),
+	svg: z.string(),
 	title: zText,
 	label: zTranslatableText,
 	status: zSelect.extend({

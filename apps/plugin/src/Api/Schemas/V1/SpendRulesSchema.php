@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1\Admin;
+namespace PiggyWP\Api\Schemas\V1;
 
 use PiggyWP\Api\Schemas\V1\AbstractSchema;
 
@@ -153,14 +153,6 @@ class SpendRulesSchema extends AbstractSchema {
 				'type' => 'number',
 				'description' => __( 'The amount of credits it will cost to redeem the reward.', 'piggy' ),
 			],
-			'label' => [
-				'id' => 'label',
-				'label' => __( 'Label', 'piggy' ),
-				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label', null),
-				'type' => 'translatable_text',
-				'description' => $this->get_label_description($type),
-			],
 			'selectedReward' => [
 				'id' => 'selected_reward',
 				'label' => __( 'Selected reward', 'piggy' ),
@@ -193,6 +185,16 @@ class SpendRulesSchema extends AbstractSchema {
 				'type' => 'translatable_text',
 				'description' => $this->get_fulfillment_placeholder($type),
 			]
+		];
+
+		$spend_rule['label'] = [
+			'id' => 'label',
+			'label' => __( 'Label', 'piggy' ),
+			'default' => null,
+			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label', null),
+			'type' => 'translatable_text',
+			'description' => $this->get_label_description($type),
+			'default' => $this->get_default_label($type),
 		];
 
 		if (in_array($type, ['PRODUCT_DISCOUNT', 'ORDER_DISCOUNT'])) {
@@ -239,12 +241,31 @@ class SpendRulesSchema extends AbstractSchema {
 			case 'PRODUCT_DISCOUNT':
 			case 'ORDER_DISCOUNT':
 			case 'FREE_SHIPPING':
-				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
 				break;
 		}
 
 		/* translators: %s: a list of placeholders */
 		return sprintf( __( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'piggy' ), $placeholders );
+	}
+
+	private function get_default_label($type) {
+		$label = '';
+
+		switch ($type) {
+			case 'PRODUCT_DISCOUNT':
+			case 'ORDER_DISCOUNT':
+			case 'FREE_SHIPPING':
+				$label = 'Unlock {{discount}} for {{points}} {{pointsCurrency}}';
+				break;
+
+			default:
+				throw new \Exception('Invalid type');
+		}
+
+		return array(
+			'en_US' => $label
+		);
 	}
 
 	private function get_description_placeholder($type) {
@@ -253,7 +274,7 @@ class SpendRulesSchema extends AbstractSchema {
 			case 'PRODUCT_DISCOUNT':
 			case 'ORDER_DISCOUNT':
 			case 'FREE_SHIPPING':
-				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
 				break;
 		}
 
@@ -267,7 +288,7 @@ class SpendRulesSchema extends AbstractSchema {
 			case 'PRODUCT_DISCOUNT':
 			case 'ORDER_DISCOUNT':
 			case 'FREE_SHIPPING':
-				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
 				break;
 		}
 
@@ -281,7 +302,7 @@ class SpendRulesSchema extends AbstractSchema {
 			case 'PRODUCT_DISCOUNT':
 			case 'ORDER_DISCOUNT':
 			case 'FREE_SHIPPING':
-				$placeholders = "{{points}}, {{pointsCurrency}}, {{discount}}";
+				$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
 				break;
 		}
 

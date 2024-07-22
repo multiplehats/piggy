@@ -11,6 +11,11 @@
 	import { hooks } from '$lib/utils/hooks';
 	import { onMount } from 'svelte';
 	import type { IWooSettings, PluginOptionsFrontend } from '@piggy/types/plugin';
+	import DashboardHeaderPts from './components/dashboard-header-pts.svelte';
+	import './global.css';
+	import DashboardCoupons from './components/dashboard-coupons.svelte';
+	import DashboardEarn from './components/dashboard-earn.svelte';
+	import DashboardRewards from './components/dashboard-rewards.svelte';
 
 	export let wcSettings: IWooSettings;
 	export let pluginSettings: PluginOptionsFrontend;
@@ -50,11 +55,40 @@
 <QueryClientProvider client={queryClient}>
 	{#if $settingsState}
 		{#if $settingsState.plugin_enable}
-			<div>Frontend thing</div>
+			<div class="piggy-dashboard">
+				<DashboardHeaderPts />
+				<DashboardCoupons />
+				<DashboardEarn />
+				<DashboardRewards />
+			</div>
 		{/if}
 	{/if}
 
 	{#if isDev}
-		<SvelteQueryDevtools buttonPosition="top-left" position="left" styleNonce="123" />
+		<SvelteQueryDevtools />
 	{/if}
 </QueryClientProvider>
+
+<style>
+	.piggy-dashboard {
+		background-color: white;
+		font-size: 16px;
+		border-radius: 6px;
+		max-width: 1260px;
+		margin: 0 auto;
+	}
+
+	@media (min-width: 768px) {
+		.piggy-dashboard {
+			padding: 16px;
+		}
+	}
+
+	.piggy-dashboard {
+		margin-left: auto;
+		margin-right: auto;
+		height: 100%;
+		max-width: 1260px;
+		padding: 80px 40px;
+	}
+</style>

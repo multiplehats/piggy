@@ -22,7 +22,7 @@
 	"types": "./dist/index.d.ts",
 	"scripts": {
 		"clean": "rm -rf .turbo node_modules",
-		"dev": "NODE_ENV=development pnpm sync && svelte-package --watch",
+		"dev:frontend": "NODE_ENV=development pnpm sync && svelte-package --watch",
 		"build": "NODE_ENV=production pnpm sync && svelte-package",
 		"sync": "svelte-kit sync",
 		"analyze": "ANALYZE=true pnpm build",
@@ -32,9 +32,6 @@
 		"format": "prettier --check \"**/*.{js,cjs,mjs,ts,tsx,md,json,svelte}\""
 	},
 	"devDependencies": {
-		"@piggy/lib": "workspace:^",
-		"@piggy/tailwind-config": "workspace:^",
-		"@piggy/types": "workspace:*",
 		"@codemirror/autocomplete": "^6.10.2",
 		"@codemirror/lang-css": "^6.2.1",
 		"@codemirror/lang-javascript": "^6.2.1",
@@ -44,6 +41,9 @@
 		"@codemirror/theme-one-dark": "^6.1.2",
 		"@codemirror/view": "^6.21.3",
 		"@kucrut/vite-for-wp": "^0.7.1",
+		"@piggy/lib": "workspace:^",
+		"@piggy/tailwind-config": "workspace:^",
+		"@piggy/types": "workspace:*",
 		"@popperjs/core": "^2.11.8",
 		"@rgossiaux/svelte-headlessui": "^2.0.0",
 		"@sveltejs/kit": "^2.5.7",
@@ -69,7 +69,7 @@
 		"dinero.js": "^1.9.1",
 		"install": "^0.13.0",
 		"lodash-es": "^4.17.21",
-		"lucide-svelte": "^0.288.0",
+		"lucide-svelte": "^0.399.0",
 		"postcss": "^8.4.31",
 		"qs": "^6.11.2",
 		"rimraf": "^5.0.5",

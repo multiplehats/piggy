@@ -1,6 +1,6 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1\Admin;
+namespace PiggyWP\Api\Routes\V1;
 
 use PiggyWP\Api\Routes\V1\AbstractRoute;
 use PiggyWP\Api\Routes\V1\Admin\Middleware;
@@ -55,7 +55,7 @@ class SpendRules extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'permission_callback' => '__return_true',
 				'args'                => [
 					'id' => [
 						'description' => __( 'Spend rule ID', 'piggy' ),

@@ -2,7 +2,6 @@
 namespace PiggyWP\Api\Schemas\V1\Admin;
 
 use PiggyWP\Api\Schemas\V1\AbstractSchema;
-use Piggy\Api\Models\Loyalty\Rewards\Reward;
 
 /**
  * Rewards class.
@@ -61,24 +60,6 @@ class RewardsSchema extends AbstractSchema {
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
 			],
-		];
-	}
-
-	/**
-	 * Get the Reward response.
-	 *
-	 * @param Reward $reward Reward object.
-	 *
-	 * @return array
-	 */
-	public function get_item_response( $reward ) {
-		return [
-			'uuid' => $reward->getUuid(),
-			'title' => $reward->getTitle(),
-			'requiredCredits' => $reward->getRequiredCredits(),
-			'type' => $reward->getRewardType(),
-			'active' => $reward->isActive(),
-			'attributes' => $reward->getAttributes(),
 		];
 	}
 }

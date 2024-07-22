@@ -66,6 +66,7 @@ export const zBasePluginOptions = z.object({
 	plugin_enable: adminFields.zSwitch,
 	plugin_reset: adminFields.zSwitch,
 	credits_name: adminFields.zTranslatableText,
+	credits_spend_rule_progress: adminFields.zTranslatableText,
 	include_guests: adminFields.zSwitch,
 	reward_order_statuses: adminFields.zCheckboxes.refine(
 		({ value }) => Object.entries(value).some(([key, value]) => value === 'on'),
@@ -77,7 +78,15 @@ export const zBasePluginOptions = z.object({
 	),
 	reward_order_parts: adminFields.zCheckboxes,
 	marketing_consent_subscription: adminFields.zSelect,
-	earn_rules: adminFields.zEarnRules
+	earn_rules: adminFields.zEarnRules,
+	dashboard_title_logged_in: adminFields.zTranslatableText,
+	dashboard_title_logged_out: adminFields.zTranslatableText,
+	dashboard_join_cta: adminFields.zTranslatableText,
+	dashboard_login_cta: adminFields.zTranslatableText,
+	dashboard_nav_coupons: adminFields.zTranslatableText,
+	dashboard_nav_earn: adminFields.zTranslatableText,
+	dashboard_nav_rewards: adminFields.zTranslatableText,
+	dashboard_nav_activity: adminFields.zTranslatableText
 });
 
 /**

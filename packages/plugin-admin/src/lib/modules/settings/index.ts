@@ -88,12 +88,9 @@ export class SettingsAdminService {
 	async getSetting<K extends PluginOptionsAdminKeys>({
 		id
 	}: GetSettingByIdParams<K>): Promise<GetSettingByIdResponse<K>> {
-		const { data, error } = await api.get<GetSettingByIdResponse<K>>(
-			`/piggy/private/settings/?id=${id}`,
-			{
-				cache: 'no-store'
-			}
-		);
+		const { data, error } = await api.get<GetSettingByIdResponse<K>>(`/piggy/settings/?id=${id}`, {
+			cache: 'no-store'
+		});
 
 		if (error ?? !data) {
 			if (error) {
@@ -108,7 +105,7 @@ export class SettingsAdminService {
 
 	async getEarnRuleById({ id }: GetEarnRuleByIdParams): Promise<GetEarnRuleByIdResponse> {
 		const { data, error } = await api.get<GetEarnRuleByIdResponse>(
-			`/piggy/private/earn-rules/?id=${id}`,
+			`/piggy/v1/earn-rules/?id=${id}`,
 			{
 				cache: 'no-store'
 			}
@@ -126,7 +123,7 @@ export class SettingsAdminService {
 	}
 
 	async getEarnRules(): Promise<GetEarnRulesResponse> {
-		const { data, error } = await api.get<GetEarnRulesResponse>('/piggy/private/earn-rules', {
+		const { data, error } = await api.get<GetEarnRulesResponse>('/piggy/v1/earn-rules', {
 			cache: 'no-store'
 		});
 
@@ -143,7 +140,7 @@ export class SettingsAdminService {
 
 	async upsertEarnRule(earnRule: UpsertEarnRuleParams): Promise<UpsertEarnRuleResponse> {
 		const { data, error } = await api.post<UpsertEarnRuleResponse>(
-			'/piggy/private/earn-rules',
+			'/piggy/v1/earn-rules',
 			earnRule
 		);
 
@@ -159,7 +156,7 @@ export class SettingsAdminService {
 	}
 
 	async getSpendRules(): Promise<GetSpendRulesResponse> {
-		const { data, error } = await api.get<GetSpendRulesResponse>('/piggy/private/spend-rules', {
+		const { data, error } = await api.get<GetSpendRulesResponse>('/piggy/v1/spend-rules', {
 			cache: 'no-store'
 		});
 
@@ -176,7 +173,7 @@ export class SettingsAdminService {
 
 	async upsertSpendRule(spendRule: UpsertSpendRuleParams): Promise<UpsertSpendRuleResponse> {
 		const { data, error } = await api.post<UpsertSpendRuleResponse>(
-			'/piggy/private/spend-rules',
+			'/piggy/v1/spend-rules',
 			spendRule
 		);
 
@@ -193,7 +190,7 @@ export class SettingsAdminService {
 
 	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
 		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
-			`/piggy/private/spend-rules/?id=${id}`,
+			`/piggy/v1/spend-rules/?id=${id}`,
 			{
 				cache: 'no-store'
 			}

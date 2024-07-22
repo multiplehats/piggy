@@ -38,6 +38,12 @@
 				bind:value={$settingsState.credits_name.value}
 			/>
 
+			<SettingsTranslateableInput
+				class="py-4"
+				{...$settingsState.credits_spend_rule_progress}
+				bind:value={$settingsState.credits_spend_rule_progress.value}
+			/>
+
 			<div class="py-4">
 				<SettingsSwitch
 					{...$settingsState.include_guests}

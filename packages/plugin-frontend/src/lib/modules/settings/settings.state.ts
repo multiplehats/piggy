@@ -1,7 +1,11 @@
 import { derived, writable } from 'svelte/store';
 import type { IWooSettings, PluginOptionsFrontend } from '@piggy/types/plugin';
 
+export const currentLanguage = window?.piggyMiddlewareConfig?.currentLanguage || 'en_US';
+
 export const pluginSettings = writable<PluginOptionsFrontend>();
+
+export const isLoggedIn = window.piggyMiddlewareConfig.loggedIn;
 
 // WC Settings
 

@@ -2,19 +2,26 @@
 	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
 	import { __ } from '@wordpress/i18n';
 	import SettingsInput from '$lib/components/settings-input.svelte';
-	import { setApiKeyMutationConfig } from '$lib/modules/piggy/mutations';
 	import { getShopsQueryConfig } from '$lib/modules/piggy/queries';
+	import { saveSettingsMutationConfig } from '$lib/modules/settings/mutations';
 	import { getSettingByIdQueryConfig } from '$lib/modules/settings/queries';
 	import { settingsState } from '$lib/stores/settings';
+	import { QueryKeys } from '$lib/utils/query-keys';
 	import SettingsCombobox from '../settings-combobox.svelte';
 	import SettingsSection from '../ui/settings-section/settings-section.svelte';
 
 	export let isLoading = false;
 
 	const client = useQueryClient();
-	const setApiKeyMutation = createMutation(setApiKeyMutationConfig(client));
 	const query = createQuery(getSettingByIdQueryConfig('api_key'));
 	const shopQuery = createQuery(getShopsQueryConfig());
+	const saveSettingsMutation = createMutation(
+		saveSettingsMutationConfig(client, {
+			onSuccess: async () => {
+				await client.invalidateQueries({ queryKey: [QueryKeys.piggyShops] });
+			}
+		})
+	);
 
 	$: {
 		isLoading = $query.isLoading || $shopQuery.isLoading;
@@ -29,7 +36,7 @@
 			id={$settingsState.api_key.id}
 			bind:value={$settingsState.api_key.value}
 			class="font-mono"
-			on:change={({ currentTarget }) => $setApiKeyMutation.mutate({ api_key: currentTarget.value })}
+			on:change={({ currentTarget }) => $saveSettingsMutation.mutate(settingsState)}
 		/>
 
 		{#if $query.data?.value}

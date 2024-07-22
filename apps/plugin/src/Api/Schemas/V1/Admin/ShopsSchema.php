@@ -42,18 +42,4 @@ class ShopsSchema extends AbstractSchema {
 			],
 		];
 	}
-
-	/**
-	 * Get the Shops response.
-	 *
-	 * @param array $item Item to get response for.
-	 *
-	 * @return array
-	 */
-	public function get_item_response( $shop ) {
-		return [
-			'uuid' => $shop->getUuid(),
-			'name' => $shop->getName(),
-		];
-	}
 }

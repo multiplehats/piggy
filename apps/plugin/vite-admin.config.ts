@@ -12,9 +12,6 @@ const env = process.env.NODE_ENV;
 const analyze = process.env.ANALYZE === 'true';
 
 const config = {
-	server: {
-		hmr: false
-	},
 	build: {
 		sourcemap: process.env.NODE_ENV === 'production' ? false : true,
 		rollupOptions: {
