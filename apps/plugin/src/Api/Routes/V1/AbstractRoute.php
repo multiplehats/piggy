@@ -6,7 +6,6 @@ use PiggyWP\Api\Routes\RouteInterface;
 use PiggyWP\Api\Exceptions\RouteException;
 use PiggyWP\Api\Schemas\v1\AbstractSchema;
 use PiggyWP\Api\Connection;
-use Piggy\Api\RegisterClient;
 use PiggyWP\Settings;
 use WP_Error;
 
@@ -83,13 +82,17 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @return true
 	 */
 	public function init_client() {
-		$client = $this->connection->init_client();
+		try {
+			$client = $this->connection->init_client();
 
-		if( $client === null ) {
+			if( $client === null ) {
+				throw new RouteException( 'piggy_rest_invalid_api_key', __( 'Invalid API Key', 'piggy' ), 401 );
+			}
+
+			return $client;
+		} catch (\Throwable $th) {
 			throw new RouteException( 'piggy_rest_invalid_api_key', __( 'Invalid API Key', 'piggy' ), 401 );
 		}
-
-		return $client;
 	}
 
 	/**

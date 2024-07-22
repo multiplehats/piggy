@@ -24,11 +24,11 @@
 
 <div class="piggy-dashboard-earn-card">
 	<div>
-		<div class="piggy-dashboard__icon">
+		<div class="piggy-dashboard-earn-card__icon">
 			{@html earnRule.svg}
 		</div>
 
-		<h4 class="piggy-dashboard__header">
+		<h4 class="piggy-dashboard-earn-card__header">
 			{#if earnRule.label.value}
 				{getLabel(getTranslatedText(earnRule.label.value), earnRule.credits.value ?? 0)}
 			{/if}
@@ -48,13 +48,13 @@
 			0 1px 2px -1px rgb(0 0 0 / 0.1);
 	}
 
-	.piggy-dashboard__icon {
+	.piggy-dashboard-earn-card__icon {
 		width: 100%;
 		height: auto;
 	}
 
-	.piggy-dashboard-earn-card h4 {
+	h4.piggy-dashboard-earn-card__header {
 		font-size: 1rem;
-		margin: 1rem 0 0;
+		margin: 0.5rem 0 0 0;
 	}
 </style>

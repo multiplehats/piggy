@@ -55,7 +55,7 @@ class SpendRules extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'permission_callback' => '__return_true',
 				'args'                => [
 					'id' => [
 						'description' => __( 'Spend rule ID', 'piggy' ),

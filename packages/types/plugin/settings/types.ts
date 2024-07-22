@@ -66,6 +66,7 @@ export const zBasePluginOptions = z.object({
 	plugin_enable: adminFields.zSwitch,
 	plugin_reset: adminFields.zSwitch,
 	credits_name: adminFields.zTranslatableText,
+	credits_spend_rule_progress: adminFields.zTranslatableText,
 	include_guests: adminFields.zSwitch,
 	reward_order_statuses: adminFields.zCheckboxes.refine(
 		({ value }) => Object.entries(value).some(([key, value]) => value === 'on'),

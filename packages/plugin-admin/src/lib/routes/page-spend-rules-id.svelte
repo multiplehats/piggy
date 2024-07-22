@@ -154,6 +154,8 @@
 								bind:value={$rule.fulfillment.value}
 							/>
 
+							<SettingsInput {...$rule.creditCost} bind:value={$rule.creditCost.value} />
+
 							{#if ($rule?.type?.value === 'PRODUCT_DISCOUNT' || $rule?.type?.value === 'ORDER_DISCOUNT') && $rule?.discountType && $rule?.discountValue}
 								<SpendRuleProductDiscountFields
 									bind:discountType={$rule.discountType}

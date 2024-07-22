@@ -51,6 +51,16 @@ class Settings {
 			'description' => __( 'The name of the credits in your shop.', 'piggy' ),
 		);
 		$settings[] = array(
+			'id'       => 'credits_spend_rule_progress',
+			'default'  => array(
+				'en_US' => __( 'You have {{ credits }} {{ credits_currency }} out of {{ credits_required }}', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Credits balance', 'piggy' ),
+			'description' =>
+			sprintf( __( 'The format of the credits balance message that will be displayed to the user. The following placeholders can be used: %s', 'piggy' ), '{{ credits }}, {{ credits_currency }} and {{ credits_required }}' ),
+		);
+		$settings[] = array(
 			'id'       => 'include_guests',
 			'default'  => 'off',
 			'type'     => 'switch',

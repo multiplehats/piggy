@@ -314,6 +314,11 @@ final class AssetsController
 			return null;
 		}
 
+		// If data is a 40x
+		if (isset($data['code'])) {
+			return null;
+		}
+
 		return $data;
 	}
 
