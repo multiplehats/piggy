@@ -3,7 +3,6 @@
 namespace PiggyWP\Domain\Services;
 
 use PiggyWP\Api\Connection;
-use WP_REST_Request;
 
 /**
  * Class CustomerSession
