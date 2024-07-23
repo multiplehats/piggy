@@ -12,6 +12,7 @@ use PiggyWP\Migration;
 use PiggyWP\Domain\Services\OrderContext;
 use PiggyWP\Api\Api;
 use PiggyWP\Domain\Services\CustomerSession;
+use PiggyWP\Domain\Services\EarnRules;
 use PiggyWP\PostTypeController;
 use PiggyWP\Settings;
 use PiggyWP\Shortcodes\CustomerDashboardShortcode;
@@ -259,6 +260,12 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
+			EarnRules::class,
+			function( Container $container ) {
+				return new EarnRules();
+			}
+		);
+		$this->container->register(
 			AssetsController::class,
 			function( Container $container ) {
 				return new AssetsController( $container->get( AssetApi::class ), $container->get( Settings::class, ), $container->get( Connection::class ) );
@@ -273,7 +280,7 @@ class Bootstrap {
 		$this->container->register(
 			CustomerSession::class,
 			function( Container $container ) {
-				return new CustomerSession( $container->get( Connection::class ) );
+				return new CustomerSession( $container->get( Connection::class ), $container->get( EarnRules::class ) );
 			}
 		);
 		$this->container->register(

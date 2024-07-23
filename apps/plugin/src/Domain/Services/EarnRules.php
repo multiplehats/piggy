@@ -1,114 +1,46 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
+namespace PiggyWP\Domain\Services;
 
 /**
- * Settings class.
- *
- * @internal
+ * Class EarnRules
  */
-class EarnRulesSchema extends AbstractSchema {
-	/**
-	 * The schema item name.
-	 *
-	 * @var string
-	 */
-	protected $title = 'earn-rules';
-
-	/**
-	 * The schema item identifier.
-	 *
-	 * @var string
-	 */
-	const IDENTIFIER = 'earn-rules';
-
-	/**
-	 * API key schema properties.
-	 *
-	 * @return array
-	 */
-	public function get_properties() {
-		return [
-			'id' => [
-				'description' => __( 'Unique identifier for the rule', 'piggy' ),
-				'type'        => 'integer',
-			],
-			'status' => [
-				'description' => __( 'Status of the rule', 'piggy' ),
-				'type'        => 'string',
-			],
-			'title' => [
-				'description' => __( 'Title of the rule', 'piggy' ),
-				'type'        => 'string',
-			],
-			'createdAt' => [
-				'description' => __( 'Date rule was created.', 'piggy' ),
-				'type'        => 'string',
-			],
-			'updatedAt' => [
-				'description' => __( 'Date rule was last updated.', 'piggy' ),
-				'type'        => 'string',
-			],
-			'description' => [
-				'description' => __( 'Description of the rule', 'piggy' ),
-				'type'        => 'string',
-			],
-			'type' => [
-				'description' => __( 'Type of the rule', 'piggy' ),
-				'type'        => 'string',
-			],
-			'piggyTierUuids' => [
-				'description' => __( 'Piggy tier UUIDs that rule is applicable to.', 'piggy' ),
-				'type'        => 'array',
-			],
-			'startsAt' => [
-				'description' => __( 'Date rule starts.', 'piggy' ),
-				'type'        => 'string',
-			],
-			'expiresAt' => [
-				'description' => __( 'Date rule expires.', 'piggy' ),
-				'type'        => 'string',
-			],
-			'completed' => [
-				'description' => __( 'Whether rule has been completed.', 'piggy' ),
-				'type'        => 'boolean',
-			],
-			'credits' => [
-				'description' => __( 'Credits awarded for completing the rule', 'piggy' ),
-				'type'        => 'integer',
-			],
-			'socialHandle' => [
-				'description' => __( 'URL of the social network.', 'piggy' ),
-				'type'        => 'string',
-			],
-			'excludedCollectionIds' => [
-				'description' => __( 'Collection IDs that are excluded from the rule', 'piggy' ),
-				'type'        => 'array',
-			],
-			'excludedProductIds' => [
-				'description' => __( 'Product IDs that are excluded from the rule', 'piggy' ),
-				'type'        => 'array',
-			],
-			'minimumOrderAmount' => [
-				'description' => __( 'Minimum order subtotal in cents.', 'piggy' ),
-				'type'        => 'integer',
-			],
-		];
-	}
-
+class EarnRules {
 	private function get_post_meta_data($post_id, $key, $fallback_value = null) {
 		$value = get_post_meta($post_id, $key, true);
 		return empty($value) ? $fallback_value : $value;
 	}
 
+	public function get_earn_rules_by_type($type, $post_status = ['publish']) {
+		$args = [
+			'post_type' => 'piggy_earn_rule',
+			'post_status' => $post_status,
+			'meta_query' => [
+				[
+					'key' => '_piggy_earn_rule_type',
+					'value' => $type,
+				],
+			],
+		];
+
+		$posts = get_posts($args);
+
+		if (empty($posts)) {
+			return null;
+		}
+
+		$posts = array_map([$this, 'get_formatted_post'], $posts);
+
+		return $posts;
+	}
+
 	/**
-	 * Convert a Earn Rule post into an object suitable for the response.
+	 * Convert a Earn Rule post into an object suitable for a WP REST API response.
 	 *
 	 * @param \WP_Post $post Earn Rule post object.
 	 * @return array
 	 */
-	public function get_item_response($post) {
+	public function get_formatted_post( $post ) {
 		$type = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_type', null);
 
 		$earn_rule = [
@@ -205,6 +137,7 @@ class EarnRulesSchema extends AbstractSchema {
 		];
 
 		$label_value = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_label', null);
+
 		$earn_rule['label'] = [
 			'id' => 'label',
 			'label' => __( 'Label', 'piggy' ),
@@ -213,11 +146,6 @@ class EarnRulesSchema extends AbstractSchema {
 			'type' => 'translatable_text',
 			'description' => $this->get_label_description($type),
 		];
-
-		// if (in_array($type, ['LIKE_ON_FACEBOOK', 'FOLLOW_ON_TIKTOK', 'PLACE_ORDER'])) {
-			// $earn_rule['excludedCollectionIds'] = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_excluded_collection_ids', []);
-			// $earn_rule['excludedProductIds'] = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_excluded_product_ids', []);
-		// }
 
 		return $earn_rule;
 	}
