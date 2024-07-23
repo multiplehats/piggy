@@ -6,6 +6,7 @@ use Piggy\Api\ApiClient;
 use Piggy\Api\Models\Loyalty\Rewards\Reward;
 use Piggy\Api\Models\Contacts\Contact;
 use Piggy\Api\Models\Shops\Shop;
+use Piggy\Api\Models\WebhookSubscriptions\WebhookSubscription;
 
 class Connection {
 	/**
@@ -14,6 +15,16 @@ class Connection {
 	 * @var RegisterClient
 	 */
 	protected $client;
+
+	/**
+	 * The webhook events.
+	 *
+	 * @var array
+	 */
+	protected $webhook_events = [
+		'contact_created',
+		'reward_updated'
+	];
 
 	/**
 	 * Constructor.
@@ -289,5 +300,52 @@ class Connection {
 		}
 
 		return $rewards;
+	}
+
+	/**
+	 * Install the webhooks.
+	 */
+	public function install_webhooks() {
+		foreach ($this->webhook_events as $event) {
+			$webhook_url = rest_url('piggy/v1/webhooks');
+
+			$response = WebhookSubscription::create([
+				'name' => 'WordPress plugin: Webhook for' . $event,
+				'event_type' => $event,
+				'url' => $webhook_url,
+			]);
+
+			$status = $response->getStatus();
+
+			if ($status !== 'ACTIVE') {
+				error_log('Failed to create webhook for event: ' . $event);
+			}
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * Verify the webhooks and reinstall if necessary.
+	 */
+	public function verify_webhooks() {
+		$webhooks = WebhookSubscription::list();
+
+		$webhook_urls = array_map(function($webhook) {
+			return $webhook->getUrl();
+		}, $webhooks);
+
+		$expected_webhook_urls = array_map(function($event) {
+			return rest_url('piggy/v1/webhooks');
+		}, $this->webhook_events);
+
+		$missing_webhooks = array_diff($expected_webhook_urls, $webhook_urls);
+
+		if (count($missing_webhooks) > 0) {
+			$this->install_webhooks();
+		}
+
+		return true;
 	}
 }
