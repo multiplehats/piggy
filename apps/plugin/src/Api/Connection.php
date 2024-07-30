@@ -6,6 +6,8 @@ use Piggy\Api\ApiClient;
 use Piggy\Api\Models\Loyalty\Rewards\Reward;
 use Piggy\Api\Models\Contacts\Contact;
 use Piggy\Api\Models\Shops\Shop;
+use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
+use PiggyWP\Settings;
 
 class Connection {
 	/**
@@ -289,5 +291,31 @@ class Connection {
 		}
 
 		return $rewards;
+	}
+
+	public function apply_credits( string $uuid, int $credits ) {
+		$client = $this->init_client();
+
+		if( ! $client ) {
+			return false;
+		}
+
+		$shop_uuid = get_option('piggy_shop_uuid', null);
+
+		if ( ! $shop_uuid ) {
+			return false;
+		}
+
+		$reception = CreditReception::create( [
+			'shop_uuid' => $shop_uuid,
+			'contact_uuid' => $uuid,
+			'credits' => $credits,
+		] );
+
+		if( ! $reception ) {
+			return false;
+		}
+
+		return $reception;
 	}
 }

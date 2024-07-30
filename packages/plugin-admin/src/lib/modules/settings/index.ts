@@ -88,9 +88,12 @@ export class SettingsAdminService {
 	async getSetting<K extends PluginOptionsAdminKeys>({
 		id
 	}: GetSettingByIdParams<K>): Promise<GetSettingByIdResponse<K>> {
-		const { data, error } = await api.get<GetSettingByIdResponse<K>>(`/piggy/settings/?id=${id}`, {
-			cache: 'no-store'
-		});
+		const { data, error } = await api.get<GetSettingByIdResponse<K>>(
+			`/piggy/private/settings/?id=${id}`,
+			{
+				cache: 'no-store'
+			}
+		);
 
 		if (error ?? !data) {
 			if (error) {

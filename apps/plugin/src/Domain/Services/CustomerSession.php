@@ -3,7 +3,7 @@
 namespace PiggyWP\Domain\Services;
 
 use PiggyWP\Api\Connection;
-use WP_REST_Request;
+use PiggyWp\Domain\Services\EarnRules;
 
 /**
  * Class CustomerSession
@@ -16,13 +16,19 @@ class CustomerSession
 	private $connection;
 
 	/**
+	 * @var EarnRules
+	 */
+	private $earn_rules;
+
+	/**
 	 * CustomerSession constructor.
 	 *
 	 * @param Connection $connection
 	 */
-	public function __construct( Connection $connection)
+	public function __construct( Connection $connection, EarnRules $earn_rules )
 	{
 		$this->connection = $connection;
+		$this->earn_rules = $earn_rules;
 
 		add_action('woocommerce_created_customer', [$this, 'handle_customer_creation'], 10, 3);
 		add_action('show_user_profile', [$this, 'show_uuid_on_profile']);
@@ -54,6 +60,26 @@ class CustomerSession
 
 		update_user_meta($customer_id, 'piggy_uuid', $uuid);
 		$this->update_piggy_contact($uuid, $customer_id);
+
+		// Fetch and log earn rules of type 'CREATE_ACCOUNT'
+		$earn_rules = $this->earn_rules->get_earn_rules_by_type('CREATE_ACCOUNT');
+
+		if ($earn_rules) {
+			// Here we have at least one earn rule of type 'CREATE_ACCOUNT'. We always grab teh first one
+			// We check $earnRule['credits']['value'] to see how much credit we should give
+			$earn_rule = $earn_rules[0];
+
+			if ($earn_rule['credits']['value'] > 0) {
+				$credits = $earn_rule['credits']['value'];
+
+				$result = $this->connection->apply_credits($uuid, $credits);
+
+				// // If result is false, log error
+				if ( ! $result) {
+					error_log("Failed to apply $credits credits to user $customer_id");
+				}
+			}
+		}
 	}
 
 	public function show_uuid_on_profile($user)
@@ -115,5 +141,10 @@ class CustomerSession
 		];
 
 		return $this->connection->update_contact( $uuid, $attributes );
+	}
+
+	private function apply_credits( $uuid, $credits )
+	{
+		// return $this->connection->apply_credits( $uuid, $credits );
 	}
 }
