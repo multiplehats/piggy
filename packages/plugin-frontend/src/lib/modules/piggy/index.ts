@@ -1,4 +1,5 @@
 import { api } from '@piggy/lib';
+import type { EarnRuleType } from '@piggy/types/plugin/settings/adminTypes';
 import type { GetRewardsResponse, GetShopsResponse } from './types';
 
 export class PiggyApiError extends Error {
@@ -43,5 +44,9 @@ export class PiggyFrontendService {
 		}
 
 		return data;
+	}
+
+	claimReward(type: EarnRuleType) {
+		console.log('Claiming reward', type);
 	}
 }

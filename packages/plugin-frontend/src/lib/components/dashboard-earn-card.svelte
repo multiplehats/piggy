@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { piggyService } from '$lib/config/services';
 	import { pluginSettings } from '$lib/modules/settings';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
-	import type { EarnRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
+	import type { EarnRuleType, EarnRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
 
 	export let earnRule: EarnRuleValueItem;
 
@@ -20,6 +21,18 @@
 			}
 		]);
 	}
+
+	function claimSocialReward(type: EarnRuleType) {
+		piggyService.claimReward(type);
+	}
+
+	const socialTypes = [
+		'LIKE_ON_FACEBOOK',
+		'FOLLOW_ON_INSTAGRAM',
+		'FOLLOW_ON_TIKTOK'
+	] as EarnRuleType[];
+
+	$: isSocial = socialTypes.includes(earnRule.type.value);
 </script>
 
 <div class="piggy-dashboard-earn-card">
@@ -33,6 +46,15 @@
 				{getLabel(getTranslatedText(earnRule.label.value), earnRule.credits.value ?? 0)}
 			{/if}
 		</h4>
+
+		{#if isSocial}
+			<button
+				class="piggy-button piggy-button--primary"
+				on:click={() => piggyService.claimReward(earnRule.type.value)}
+			>
+				Claim
+			</button>
+		{/if}
 	</div>
 </div>
 
@@ -56,5 +78,9 @@
 	h4.piggy-dashboard-earn-card__header {
 		font-size: 1rem;
 		margin: 0.5rem 0 0 0;
+	}
+
+	.piggy-button {
+		margin-top: 14px;
 	}
 </style>

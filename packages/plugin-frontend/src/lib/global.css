@@ -8,3 +8,13 @@
 	border-radius: 5px;
 	cursor: pointer;
 }
+
+.piggy-button--primary {
+	background-color: var(--piggy-color-primary, var(--wp--preset--color--contrast, #007cba));
+	color: var(--piggy-color-white, var(--wp--preset--color--base, #fff));
+}
+
+.piggy-button--secondary {
+	background-color: var(--piggy-color-secondary, var(--wp--preset--color--contrast, #007cba));
+	color: var(--piggy-color-white, var(--wp--preset--color--base, #fff));
+}
