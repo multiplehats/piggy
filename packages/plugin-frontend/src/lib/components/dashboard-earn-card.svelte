@@ -22,10 +22,6 @@
 		]);
 	}
 
-	function claimSocialReward(type: EarnRuleType) {
-		piggyService.claimReward(type);
-	}
-
 	const socialTypes = [
 		'LIKE_ON_FACEBOOK',
 		'FOLLOW_ON_INSTAGRAM',
@@ -50,7 +46,7 @@
 		{#if isSocial}
 			<button
 				class="piggy-button piggy-button--primary"
-				on:click={() => piggyService.claimReward(earnRule.type.value)}
+				on:click={() => piggyService.claimReward(earnRule.id, window.piggyMiddlewareConfig.userId)}
 			>
 				Claim
 			</button>

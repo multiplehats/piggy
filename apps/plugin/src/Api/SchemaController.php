@@ -1,6 +1,7 @@
 <?php
 namespace PiggyWP\Api;
 
+use PiggyWP\Api\Routes\V1\EarnReward;
 use PiggyWP\Api\Schemas\ExtendSchema;
 
 /**
@@ -31,6 +32,7 @@ class SchemaController {
 		$this->extend  = $extend;
 		$this->schemas = [
 			'v1' => [
+				Schemas\V1\EarnRewardSchema::IDENTIFIER => Schemas\V1\EarnRewardSchema::class,
 				Schemas\V1\EarnRulesSchema::IDENTIFIER => Schemas\V1\EarnRulesSchema::class,
 				Schemas\V1\SpendRulesSchema::IDENTIFIER => Schemas\V1\SpendRulesSchema::class,
 				Schemas\V1\Admin\SettingsSchema::IDENTIFIER => Schemas\V1\Admin\SettingsSchema::class,

@@ -3,7 +3,7 @@
 namespace PiggyWP\Domain\Services;
 
 use PiggyWP\Api\Connection;
-use PiggyWp\Domain\Services\EarnRules;
+use PiggyWP\Domain\Services\EarnRules;
 
 /**
  * Class CustomerSession
@@ -36,7 +36,7 @@ class CustomerSession
 		add_action('wp_login', [$this, 'sync_uuid_on_login'], 10, 2);
 	}
 
-	public function handle_customer_creation($customer_id, $new_customer_data, $password_generated)
+	public function handle_customer_creation($wp_user_id, $new_customer_data, $password_generated)
 	{
 		$client = $this->connection->init_client();
 
@@ -58,14 +58,14 @@ class CustomerSession
 
 		$uuid = $contact['uuid'];
 
-		update_user_meta($customer_id, 'piggy_uuid', $uuid);
-		$this->update_piggy_contact($uuid, $customer_id);
+		$this->connection->update_user_meta_uuid($uuid, $wp_user_id);
+		$this->update_piggy_contact($uuid, $wp_user_id);
 
 		// Fetch and log earn rules of type 'CREATE_ACCOUNT'
 		$earn_rules = $this->earn_rules->get_earn_rules_by_type('CREATE_ACCOUNT');
 
 		if ($earn_rules) {
-			// Here we have at least one earn rule of type 'CREATE_ACCOUNT'. We always grab teh first one
+			// Here we have at least one earn rule of type 'CREATE_ACCOUNT'. We always grab the first one
 			// We check $earnRule['credits']['value'] to see how much credit we should give
 			$earn_rule = $earn_rules[0];
 
@@ -76,7 +76,7 @@ class CustomerSession
 
 				// // If result is false, log error
 				if ( ! $result) {
-					error_log("Failed to apply $credits credits to user $customer_id");
+					error_log("Failed to apply $credits credits to user $wp_user_id");
 				}
 			}
 		}
@@ -92,7 +92,8 @@ class CustomerSession
 					<th><label for="piggy_uuid">Contact ID</label></th>
 					<td>
 						<?php
-						$uuid = get_user_meta($user->ID, 'piggy_uuid', true);
+						$uuid = $this->connection->get_contact_uuid_by_wp_id($user->ID);
+
 						echo $uuid ? $uuid : '—';
 						?>
 					</td>
@@ -110,7 +111,7 @@ class CustomerSession
 		}
 
 		$user_id = $user->ID;
-		$uuid = get_user_meta($user_id, 'piggy_uuid', true);
+		$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
 
 		if (!$uuid) {
 			$email = $user->user_email;
@@ -127,7 +128,7 @@ class CustomerSession
 
 			$uuid = $contact['uuid'];
 
-			update_user_meta($user_id, 'piggy_uuid', $uuid);
+			$this->connection->update_user_meta_uuid($uuid, $user_id);
 			$this->update_piggy_contact($uuid, $user_id);
 		} else {
 			$this->update_piggy_contact($uuid, $user_id);
@@ -143,8 +144,4 @@ class CustomerSession
 		return $this->connection->update_contact( $uuid, $attributes );
 	}
 
-	private function apply_credits( $uuid, $credits )
-	{
-		// return $this->connection->apply_credits( $uuid, $credits );
-	}
 }

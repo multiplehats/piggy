@@ -293,7 +293,7 @@ class Connection {
 		return $rewards;
 	}
 
-	public function apply_credits( string $uuid, int $credits ) {
+	public function apply_credits( string $contact_uuid, int $credits ) {
 		$client = $this->init_client();
 
 		if( ! $client ) {
@@ -308,7 +308,7 @@ class Connection {
 
 		$reception = CreditReception::create( [
 			'shop_uuid' => $shop_uuid,
-			'contact_uuid' => $uuid,
+			'contact_uuid' => $contact_uuid,
 			'credits' => $credits,
 		] );
 
@@ -317,5 +317,34 @@ class Connection {
 		}
 
 		return $reception;
+	}
+
+	/**
+	 * Get the contact UUID by WordPress user ID.
+	 *
+	 * @param int $wp_id
+	 * @return string|null
+	 */
+	public function get_contact_uuid_by_wp_id($wp_id)
+	{
+		$uuid = get_user_meta( $wp_id, 'piggy_uuid', true);
+
+		if( ! $uuid ) {
+			return null;
+		}
+
+		return $uuid;
+	}
+
+	/**
+	 * Set the user meta for the Piggy UUID.
+	 *
+	 * @param string $uuid
+	 * @param int $wp_id
+	 * @return bool
+	 */
+	public function update_user_meta_uuid($uuid, $wp_user_id)
+	{
+		return update_user_meta($wp_user_id, 'piggy_uuid', $uuid);
 	}
 }

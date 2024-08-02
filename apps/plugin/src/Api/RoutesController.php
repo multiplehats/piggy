@@ -49,6 +49,7 @@ class RoutesController {
 
 		$this->routes = [
 			'v1'      => [
+				Routes\V1\EarnReward::IDENTIFIER => Routes\V1\EarnReward::class,
 				Routes\V1\EarnRules::IDENTIFIER => Routes\V1\EarnRules::class,
 				ROutes\V1\SpendRules::IDENTIFIER => Routes\V1\SpendRules::class,
 			],
