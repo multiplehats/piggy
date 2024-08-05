@@ -64,6 +64,7 @@
 		"@wordpress/keycodes": "^3.43.0",
 		"autoprefixer": "^10.4.16",
 		"bits-ui": "^0.5.7",
+		"clsx": "^2.0.0",
 		"codemirror": "^6.0.1",
 		"concurrently": "^8.2.1",
 		"dinero.js": "^1.9.1",

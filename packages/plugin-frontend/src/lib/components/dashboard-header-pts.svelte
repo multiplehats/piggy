@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Button } from '$lib/components/button/index.js';
 	import { isLoggedIn, pluginSettings } from '$lib/modules/settings';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import BadgeEuro from 'lucide-svelte/icons/badge-euro';
@@ -79,13 +80,13 @@
 	{#if !isLoggedIn}
 		<div class="piggy-dashboard__cta">
 			{#if window.piggyWcSettings.storePages.myaccount?.permalink}
-				<a href={window.piggyWcSettings.storePages.myaccount?.permalink} class="piggy-button">
+				<Button href={window.piggyWcSettings.storePages.myaccount?.permalink} variant="primary">
 					{getTranslatedText($pluginSettings.dashboard_join_cta)}
-				</a>
+				</Button>
 
-				<a href={window.piggyWcSettings.storePages.myaccount?.permalink} class="piggy-button">
+				<Button href={window.piggyWcSettings.storePages.myaccount?.permalink} variant="primary">
 					{getTranslatedText($pluginSettings.dashboard_login_cta)}
-				</a>
+				</Button>
 			{/if}
 		</div>
 	{/if}

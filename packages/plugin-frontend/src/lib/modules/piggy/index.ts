@@ -51,7 +51,7 @@ export class PiggyFrontendService {
 			earnRuleId
 		});
 
-		if (error ?? !data) {
+		if (error) {
 			if (error) {
 				throw new PiggyApiError(error.status, error.statusText, error.data);
 			}
