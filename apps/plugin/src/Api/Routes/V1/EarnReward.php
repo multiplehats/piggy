@@ -56,7 +56,7 @@ class EarnReward extends AbstractRoute {
 					'userId' => [
 						'description' => __( 'The Customer ID', 'piggy' ),
 						'type'        => 'integer',
-						'required'    => true,
+						'required'    => false,
 					],
 				],
 			],
@@ -73,28 +73,31 @@ class EarnReward extends AbstractRoute {
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
-		$data = array(
-			'earnRuleId' => $request->get_param( 'earnRuleId' ),
-			'userId' => $request->get_param( 'userId' ),
-		);
+		try {
+			$data = array(
+				'earn_rule_id' => $request->get_param( 'earnRuleId' ),
+				'user_id' => $request->get_param( 'userId' ) ?? get_current_user_id(),
+			);
 
-		$earn_rules_service = new EarnRulesService();
-		$post = $earn_rules_service->get_by_id( $data['earnRuleId'] );
+			$earn_rules_service = new EarnRulesService();
+			$post = $earn_rules_service->get_by_id( $data['earn_rule_id'] );
 
-		if( ! $post ) {
-			throw new RouteException( 'earn-rule-not-found', 'Earn rule not found', 404 );
+			if( ! $post ) {
+				throw new RouteException( 'earn-rule-not-found', 'Earn rule not found', 404 );
+			}
+
+			$piggy_uuid = $this->connection->get_contact_uuid_by_wp_id( $data['user_id'] );
+
+			$credits = $post['credits']['value'] ?? 0;
+
+			$this->connection->apply_credits( $piggy_uuid, $credits );
+			$this->connection->add_reward_log($data['user_id'], $data['earn_rule_id'], $credits);
+
+			$data     = $this->prepare_item_for_response( $data, $request );
+			$response = $this->prepare_response_for_collection( $data );
+		} catch (\Throwable $th) {
+			return new RouteException( 'earn-reward-failed', 'Failed to earn reward', 500 );
 		}
-
-		$piggy_uuid = $this->connection->get_contact_uuid_by_wp_id( $data['userId'] );
-
-		$credits = $post['credits']['value'] ?? 0;
-
-		error_log( 'Applying ' . $credits . ' credits to user ' . $data['userId'] );
-
-		$this->connection->apply_credits( $piggy_uuid, $credits );
-
-		$data     = $this->prepare_item_for_response( $data, $request );
-		$response = $this->prepare_response_for_collection( $data );
 
 		return rest_ensure_response( $response );
 	}

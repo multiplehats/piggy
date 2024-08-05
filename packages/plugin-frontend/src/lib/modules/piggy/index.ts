@@ -45,7 +45,7 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async claimReward(earnRuleId: number, userId: number) {
+	async claimReward(earnRuleId: number, userId?: number) {
 		const { data, error } = await api.post('/piggy/v1/earn-reward', {
 			userId,
 			earnRuleId

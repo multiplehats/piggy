@@ -70,7 +70,7 @@
 			{/if}
 		</h4>
 
-		{#if isSocial}
+		{#if isSocial && !window.piggyData.claimedRewards.find((reward) => reward.earn_rule_id === earnRule.id.toString())}
 			<div class="piggy-dashboard-earn-card__action">
 				<Button
 					loading={$claimRewardMutation.isPending}

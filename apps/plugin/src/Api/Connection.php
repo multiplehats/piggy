@@ -347,4 +347,61 @@ class Connection {
 	{
 		return update_user_meta($wp_user_id, 'piggy_uuid', $uuid);
 	}
+
+	/**
+	 * Get all user metadata regarding piggy_
+	 *
+	 * @param int $wp_user_id
+	 * @return array
+	 */
+	public function get_user_piggy_metadata($wp_user_id)
+	{
+		$meta_data = get_user_meta($wp_user_id);
+
+		$piggy_meta_data = array_filter($meta_data, function($key) {
+			return strpos($key, 'piggy_') === 0;
+		}, ARRAY_FILTER_USE_KEY);
+
+		return $piggy_meta_data;
+	}
+
+	/**
+	 * Get user reward logs
+	 *
+	 * @param int $wp_user_id
+	 * @return array
+	 */
+	public function get_user_reward_logs($wp_user_id) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'piggy_reward_logs';
+
+		$query = $wpdb->prepare("SELECT * FROM $table_name WHERE wp_user_id = %d", $wp_user_id);
+		$reward_logs = $wpdb->get_results($query, ARRAY_A);
+
+		return $reward_logs;
+	}
+
+	/**
+	 * Add an entry to the user's reward logs
+	 *
+	 * @param int $wp_user_id
+	 * @param int $earn_rule_id
+	 * @param int $credits
+	 * @return bool
+	 */
+	public function add_reward_log($wp_user_id, $earn_rule_id, $credits) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'piggy_reward_logs';
+
+		$reward_log = [
+			'wp_user_id' => $wp_user_id,
+			'earn_rule_id' => $earn_rule_id,
+			'credits' => $credits,
+			'timestamp' => current_time('mysql', 1),
+		];
+
+		$inserted = $wpdb->insert($table_name, $reward_log);
+
+		return $inserted !== false;
+	}
 }

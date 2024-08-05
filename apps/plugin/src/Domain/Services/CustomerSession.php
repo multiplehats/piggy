@@ -25,7 +25,7 @@ class CustomerSession
 	 *
 	 * @param Connection $connection
 	 */
-	public function __construct( Connection $connection, EarnRules $earn_rules )
+	public function __construct(Connection $connection, EarnRules $earn_rules)
 	{
 		$this->connection = $connection;
 		$this->earn_rules = $earn_rules;
@@ -33,6 +33,8 @@ class CustomerSession
 		add_action('woocommerce_created_customer', [$this, 'handle_customer_creation'], 10, 3);
 		add_action('show_user_profile', [$this, 'show_uuid_on_profile']);
 		add_action('edit_user_profile', [$this, 'show_uuid_on_profile']);
+		add_action('show_user_profile', [$this, 'show_claimed_rewards_on_profile']);
+		add_action('edit_user_profile', [$this, 'show_claimed_rewards_on_profile']);
 		add_action('wp_login', [$this, 'sync_uuid_on_login'], 10, 2);
 	}
 
@@ -40,7 +42,7 @@ class CustomerSession
 	{
 		$client = $this->connection->init_client();
 
-		if(!$client) {
+		if (!$client) {
 			return;
 		}
 
@@ -50,9 +52,9 @@ class CustomerSession
 			return;
 		}
 
-		$contact = $this->connection->create_contact( $email );
+		$contact = $this->connection->create_contact($email);
 
-		if( ! $contact ) {
+		if (!$contact) {
 			return;
 		}
 
@@ -75,26 +77,37 @@ class CustomerSession
 				$result = $this->connection->apply_credits($uuid, $credits);
 
 				// // If result is false, log error
-				if ( ! $result) {
+				if (!$result) {
 					error_log("Failed to apply $credits credits to user $wp_user_id");
 				}
 			}
 		}
 	}
 
-	public function show_uuid_on_profile($user)
+	public function show_claimed_rewards_on_profile($user)
 	{
-		?>
-			<h3>Piggy</h3>
+		$reward_logs = $this->connection->get_user_reward_logs($user->ID);
 
+		?>
+			<h3>Piggy Claimed Rewards</h3>
 			<table class="form-table">
 				<tr>
-					<th><label for="piggy_uuid">Contact ID</label></th>
+					<th><label for="piggy_claimed_rewards">Claimed Rewards</label></th>
 					<td>
 						<?php
-						$uuid = $this->connection->get_contact_uuid_by_wp_id($user->ID);
-
-						echo $uuid ? $uuid : '—';
+						if (!empty($reward_logs)) {
+							echo '<ul>';
+								foreach ($reward_logs as $log) {
+									echo '<li>';
+									echo 'Earn Rule ID: ' . esc_html($log['earn_rule_id']) . '<br>';
+									echo 'Credits: ' . esc_html($log['credits']) . '<br>';
+									echo 'Timestamp: ' . esc_html(date('Y-m-d H:i:s', (int)$log['timestamp']));
+									echo '</li>';
+								}
+							echo '</ul>';
+						} else {
+							echo 'No claimed rewards.';
+						}
 						?>
 					</td>
 				</tr>
@@ -102,11 +115,31 @@ class CustomerSession
 		<?php
 	}
 
-	public function sync_uuid_on_login( $user_login, $user )
+	public function show_uuid_on_profile($user)
+	{
+		?>
+		<h3>Piggy</h3>
+
+		<table class="form-table">
+			<tr>
+				<th><label for="piggy_uuid">Contact ID</label></th>
+				<td>
+					<?php
+					$uuid = $this->connection->get_contact_uuid_by_wp_id($user->ID);
+
+					echo $uuid ? $uuid : '—';
+					?>
+				</td>
+			</tr>
+		</table>
+		<?php
+	}
+
+	public function sync_uuid_on_login($user_login, $user)
 	{
 		$client = $this->connection->init_client();
 
-		if(!$client) {
+		if (!$client) {
 			return;
 		}
 
@@ -120,9 +153,9 @@ class CustomerSession
 				return;
 			}
 
-			$contact = $this->connection->create_contact( $email );
+			$contact = $this->connection->create_contact($email);
 
-			if( ! $contact ) {
+			if (!$contact) {
 				return;
 			}
 
@@ -135,13 +168,12 @@ class CustomerSession
 		}
 	}
 
-	private function update_piggy_contact( $uuid, $user_id )
+	private function update_piggy_contact($uuid, $user_id)
 	{
 		$attributes = [
 			'wp_user_id' => $user_id,
 		];
 
-		return $this->connection->update_contact( $uuid, $attributes );
+		return $this->connection->update_contact($uuid, $attributes);
 	}
-
 }
