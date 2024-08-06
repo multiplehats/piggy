@@ -106,7 +106,7 @@ class Bootstrap {
 		if ( ! $is_rest ) {
 			$this->add_build_notice();
 			$this->container->get( AssetDataRegistry::class );
-			$this->container->get( Installer::class );
+			$this->container->get( Installer::class )->init();
 			$this->container->get( AssetsController::class );
 			$this->container->get( PostTypeController::class );
 		}

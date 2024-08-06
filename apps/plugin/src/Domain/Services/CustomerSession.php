@@ -3,7 +3,7 @@
 namespace PiggyWP\Domain\Services;
 
 use PiggyWP\Api\Connection;
-use PiggyWp\Domain\Services\EarnRules;
+use PiggyWP\Domain\Services\EarnRules;
 
 /**
  * Class CustomerSession
@@ -25,7 +25,7 @@ class CustomerSession
 	 *
 	 * @param Connection $connection
 	 */
-	public function __construct( Connection $connection, EarnRules $earn_rules )
+	public function __construct(Connection $connection, EarnRules $earn_rules)
 	{
 		$this->connection = $connection;
 		$this->earn_rules = $earn_rules;
@@ -33,14 +33,16 @@ class CustomerSession
 		add_action('woocommerce_created_customer', [$this, 'handle_customer_creation'], 10, 3);
 		add_action('show_user_profile', [$this, 'show_uuid_on_profile']);
 		add_action('edit_user_profile', [$this, 'show_uuid_on_profile']);
+		add_action('show_user_profile', [$this, 'show_claimed_rewards_on_profile']);
+		add_action('edit_user_profile', [$this, 'show_claimed_rewards_on_profile']);
 		add_action('wp_login', [$this, 'sync_uuid_on_login'], 10, 2);
 	}
 
-	public function handle_customer_creation($customer_id, $new_customer_data, $password_generated)
+	public function handle_customer_creation($wp_user_id, $new_customer_data, $password_generated)
 	{
 		$client = $this->connection->init_client();
 
-		if(!$client) {
+		if (!$client) {
 			return;
 		}
 
@@ -50,22 +52,22 @@ class CustomerSession
 			return;
 		}
 
-		$contact = $this->connection->create_contact( $email );
+		$contact = $this->connection->create_contact($email);
 
-		if( ! $contact ) {
+		if (!$contact) {
 			return;
 		}
 
 		$uuid = $contact['uuid'];
 
-		update_user_meta($customer_id, 'piggy_uuid', $uuid);
-		$this->update_piggy_contact($uuid, $customer_id);
+		$this->connection->update_user_meta_uuid($uuid, $wp_user_id);
+		$this->update_piggy_contact($uuid, $wp_user_id);
 
 		// Fetch and log earn rules of type 'CREATE_ACCOUNT'
 		$earn_rules = $this->earn_rules->get_earn_rules_by_type('CREATE_ACCOUNT');
 
 		if ($earn_rules) {
-			// Here we have at least one earn rule of type 'CREATE_ACCOUNT'. We always grab teh first one
+			// Here we have at least one earn rule of type 'CREATE_ACCOUNT'. We always grab the first one
 			// We check $earnRule['credits']['value'] to see how much credit we should give
 			$earn_rule = $earn_rules[0];
 
@@ -75,25 +77,37 @@ class CustomerSession
 				$result = $this->connection->apply_credits($uuid, $credits);
 
 				// // If result is false, log error
-				if ( ! $result) {
-					error_log("Failed to apply $credits credits to user $customer_id");
+				if (!$result) {
+					error_log("Failed to apply $credits credits to user $wp_user_id");
 				}
 			}
 		}
 	}
 
-	public function show_uuid_on_profile($user)
+	public function show_claimed_rewards_on_profile($user)
 	{
-		?>
-			<h3>Piggy</h3>
+		$reward_logs = $this->connection->get_user_reward_logs($user->ID);
 
+		?>
+			<h3>Piggy Claimed Rewards</h3>
 			<table class="form-table">
 				<tr>
-					<th><label for="piggy_uuid">Contact ID</label></th>
+					<th><label for="piggy_claimed_rewards">Claimed Rewards</label></th>
 					<td>
 						<?php
-						$uuid = get_user_meta($user->ID, 'piggy_uuid', true);
-						echo $uuid ? $uuid : '—';
+						if (!empty($reward_logs)) {
+							echo '<ul>';
+								foreach ($reward_logs as $log) {
+									echo '<li>';
+									echo 'Earn Rule ID: ' . esc_html($log['earn_rule_id']) . '<br>';
+									echo 'Credits: ' . esc_html($log['credits']) . '<br>';
+									echo 'Timestamp: ' . esc_html(date('Y-m-d H:i:s', (int)$log['timestamp']));
+									echo '</li>';
+								}
+							echo '</ul>';
+						} else {
+							echo 'No claimed rewards.';
+						}
 						?>
 					</td>
 				</tr>
@@ -101,16 +115,36 @@ class CustomerSession
 		<?php
 	}
 
-	public function sync_uuid_on_login( $user_login, $user )
+	public function show_uuid_on_profile($user)
+	{
+		?>
+		<h3>Piggy</h3>
+
+		<table class="form-table">
+			<tr>
+				<th><label for="piggy_uuid">Contact ID</label></th>
+				<td>
+					<?php
+					$uuid = $this->connection->get_contact_uuid_by_wp_id($user->ID);
+
+					echo $uuid ? $uuid : '—';
+					?>
+				</td>
+			</tr>
+		</table>
+		<?php
+	}
+
+	public function sync_uuid_on_login($user_login, $user)
 	{
 		$client = $this->connection->init_client();
 
-		if(!$client) {
+		if (!$client) {
 			return;
 		}
 
 		$user_id = $user->ID;
-		$uuid = get_user_meta($user_id, 'piggy_uuid', true);
+		$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
 
 		if (!$uuid) {
 			$email = $user->user_email;
@@ -119,32 +153,27 @@ class CustomerSession
 				return;
 			}
 
-			$contact = $this->connection->create_contact( $email );
+			$contact = $this->connection->create_contact($email);
 
-			if( ! $contact ) {
+			if (!$contact) {
 				return;
 			}
 
 			$uuid = $contact['uuid'];
 
-			update_user_meta($user_id, 'piggy_uuid', $uuid);
+			$this->connection->update_user_meta_uuid($uuid, $user_id);
 			$this->update_piggy_contact($uuid, $user_id);
 		} else {
 			$this->update_piggy_contact($uuid, $user_id);
 		}
 	}
 
-	private function update_piggy_contact( $uuid, $user_id )
+	private function update_piggy_contact($uuid, $user_id)
 	{
 		$attributes = [
 			'wp_user_id' => $user_id,
 		];
 
-		return $this->connection->update_contact( $uuid, $attributes );
-	}
-
-	private function apply_credits( $uuid, $credits )
-	{
-		// return $this->connection->apply_credits( $uuid, $credits );
+		return $this->connection->update_contact($uuid, $attributes);
 	}
 }

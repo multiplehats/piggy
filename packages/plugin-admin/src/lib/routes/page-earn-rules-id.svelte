@@ -140,7 +140,7 @@
 
 				{#if $rule?.type?.value === 'PLACE_ORDER'}
 					<EarnRulePlaceOrder bind:minimumOrderAmount={$rule.minimumOrderAmount} />
-				{:else if $rule?.type.value === 'LIKE_ON_FACEBOOK' || $rule?.type.value === 'FOLLOW_ON_INSTAGRAM'}
+				{:else if $rule?.type.value === 'LIKE_ON_FACEBOOK' || $rule?.type.value === 'FOLLOW_ON_INSTAGRAM' || $rule?.type.value === 'FOLLOW_ON_TIKTOK'}
 					<EarnRuleSocial bind:socialHandle={$rule.socialHandle} />
 				{/if}
 			</div>

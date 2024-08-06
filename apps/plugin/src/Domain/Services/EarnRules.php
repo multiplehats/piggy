@@ -35,6 +35,22 @@ class EarnRules {
 	}
 
 	/**
+	 * Get an earn rule by its ID.
+	 *
+	 * @param int $id Earn Rule ID.
+	 * @return array|null
+	 */
+	public function get_by_id($id) {
+		$post = get_post($id);
+
+		if (empty($post)) {
+			return null;
+		}
+
+		return $this->get_formatted_post($post);
+	}
+
+	/**
 	 * Convert a Earn Rule post into an object suitable for a WP REST API response.
 	 *
 	 * @param \WP_Post $post Earn Rule post object.

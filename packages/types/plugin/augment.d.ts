@@ -8,6 +8,13 @@ import type {
 import { EarnRuleValueItem, SpendRuleValueItem } from './settings/adminTypes';
 
 interface PiggyData {
+	claimedRewards:
+		| {
+				earn_rule_id: string;
+				credits: string;
+				timestamp: number;
+		  }[]
+		| null;
 	contact: {
 		uuid: string;
 		email: string;
@@ -79,6 +86,7 @@ declare global {
 
 		// WP Fetch middleware config
 		piggyMiddlewareConfig: {
+			userId: number;
 			loggedIn: boolean;
 			siteLanguage: string;
 			languages: string[];

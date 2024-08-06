@@ -655,6 +655,9 @@ importers:
       bits-ui:
         specifier: ^0.5.7
         version: 0.5.7(svelte@4.2.1)
+      clsx:
+        specifier: ^2.0.0
+        version: 2.0.0
       codemirror:
         specifier: ^6.0.1
         version: 6.0.1(@lezer/common@1.1.0)
