@@ -8,11 +8,13 @@ import type {
 import { EarnRuleValueItem, SpendRuleValueItem } from './settings/adminTypes';
 
 interface PiggyData {
-	claimedRewards: {
-		earn_rule_id: string;
-		credits: string;
-		timestamp: number;
-	}[];
+	claimedRewards:
+		| {
+				earn_rule_id: string;
+				credits: string;
+				timestamp: number;
+		  }[]
+		| null;
 	contact: {
 		uuid: string;
 		email: string;
