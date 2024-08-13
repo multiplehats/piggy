@@ -645,16 +645,16 @@
 		},
 		{
 			"name": "piggy/piggy-php-sdk",
-			"version": "3.5.0",
+			"version": "3.7.1",
 			"source": {
 				"type": "git",
 				"url": "https://github.com/Piggy-Loyalty/piggy-php-sdk.git",
-				"reference": "73f4c7f927282f5a78a6cbba21688318481c0f76"
+				"reference": "68d4f0eb7684b5a8992b9c68330284152021383b"
 			},
 			"dist": {
 				"type": "zip",
-				"url": "https://api.github.com/repos/Piggy-Loyalty/piggy-php-sdk/zipball/73f4c7f927282f5a78a6cbba21688318481c0f76",
-				"reference": "73f4c7f927282f5a78a6cbba21688318481c0f76",
+				"url": "https://api.github.com/repos/Piggy-Loyalty/piggy-php-sdk/zipball/68d4f0eb7684b5a8992b9c68330284152021383b",
+				"reference": "68d4f0eb7684b5a8992b9c68330284152021383b",
 				"shasum": ""
 			},
 			"require": {
@@ -673,7 +673,7 @@
 					"src/helpers.php"
 				],
 				"psr-4": {
-					"PiggyWP\\Api\\": "src/"
+					"Piggy\\Api\\": "src/"
 				}
 			},
 			"notification-url": "https://packagist.org/downloads/",
@@ -697,9 +697,9 @@
 			"description": "php sdk piggy",
 			"support": {
 				"issues": "https://github.com/Piggy-Loyalty/piggy-php-sdk/issues",
-				"source": "https://github.com/Piggy-Loyalty/piggy-php-sdk/tree/3.5.0"
+				"source": "https://github.com/Piggy-Loyalty/piggy-php-sdk/tree/3.7.1"
 			},
-			"time": "2024-05-08T09:21:37+00:00"
+			"time": "2024-07-23T13:49:26+00:00"
 		},
 		{
 			"name": "psr/http-client",
