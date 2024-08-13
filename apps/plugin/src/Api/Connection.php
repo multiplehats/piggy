@@ -1,13 +1,14 @@
 <?php
 namespace PiggyWP\Api;
 
+use Exception;
 use Piggy\Api\RegisterClient;
 use Piggy\Api\ApiClient;
 use Piggy\Api\Models\Loyalty\Rewards\Reward;
 use Piggy\Api\Models\Contacts\Contact;
+use Piggy\Api\Models\CustomAttributes\CustomAttribute;
 use Piggy\Api\Models\Shops\Shop;
 use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
-use PiggyWP\Settings;
 
 class Connection {
 	/**
@@ -170,11 +171,6 @@ class Connection {
 			return null;
 		}
 
-		// This throws an error, but we need to check if the attribute exists first, then create it.
-		// THis probably should be moved to the onboarding or api key setup process.
-
-		// $attributes_list = CustomAttribute::list(["entity" => "contact"]);
-		// $result = CustomAttribute::create(["entity" => "contact", "name" => "wp_user_id", "label" => "WordPress User ID", "type" => "text" ]);
 		$contact = Contact::update( $id, [ "attributes" => $attributes ] );
 
 		if( ! $contact ) {
@@ -182,6 +178,80 @@ class Connection {
 		}
 
 		return $this->format_contact( $contact );
+	}
+
+	private function attribute_exists($attributes_list, $name) {
+		foreach ($attributes_list as $attribute) {
+			if ($attribute->getName() === $name) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function getAttributeLabel($name) {
+		$labels = [
+			"wp_user_id" => "WordPress User ID",
+			"wp_wc_total_spent" => "WooCommerce Total Spent",
+			"wp_wc_orders_count" => "WooCommerce Orders Count",
+			"wp_create_date" => "WordPress Create Date",
+			"wp_wc_last_order_amount" => "WooCommerce Last Order Amount",
+			"wp_wc_last_order_date" => "WooCommerce Last Order Date"
+		];
+		return $labels[$name] ?? ucfirst(str_replace('_', ' ', $name));
+	}
+
+	private function get_shop_currency() {
+		if (function_exists('get_woocommerce_currency')) {
+			return get_woocommerce_currency();
+		}
+		return 'EUR'; // Default to EUR if WooCommerce is not active
+	}
+
+	private function get_wordpress_user_data($user_id) {
+		if (!function_exists('wc_get_customer_total_spent') || !function_exists('wc_get_customer_order_count')) {
+			return [
+				'total_spent' => 0,
+				'orders_count' => 0,
+				'create_date' => '',
+				'last_order_amount' => 0,
+				'last_order_date' => '',
+			];
+		}
+
+		$user = get_user_by('id', $user_id);
+		if (!$user) {
+			return null;
+		}
+
+		$total_spent = wc_get_customer_total_spent($user_id);
+		$orders_count = wc_get_customer_order_count($user_id);
+		$create_date = $user->user_registered;
+
+		// Get the last order
+		$customer_orders = wc_get_orders(array(
+			'customer' => $user_id,
+			'limit' => 1,
+			'orderby' => 'date',
+			'order' => 'DESC',
+		));
+
+		$last_order_amount = 0;
+		$last_order_date = '';
+
+		if (!empty($customer_orders)) {
+			$last_order = $customer_orders[0];
+			$last_order_amount = $last_order->get_total();
+			$last_order_date = $last_order->get_date_created()->format('Y-m-d H:i:s');
+		}
+
+		return [
+			'total_spent' => (float)$total_spent,
+			'orders_count' => (int)$orders_count,
+			'create_date' => $create_date,
+			'last_order_amount' => (float)$last_order_amount,
+			'last_order_date' => $last_order_date,
+		];
 	}
 
 	/**
@@ -403,5 +473,178 @@ class Connection {
 		$inserted = $wpdb->insert($table_name, $reward_log);
 
 		return $inserted !== false;
+	}
+
+	/**
+	 * Sync user attributes with Piggy.
+	 *
+	 * @param int $user_id
+	 * @param string $uuid
+	 * @return bool|array
+	 */
+	public function sync_user_attributes($user_id, $uuid)
+	{
+		try {
+			$user = get_userdata($user_id);
+
+			if (!$user) {
+				return false;
+			}
+
+			$attributes = $this->get_user_attributes($user_id);
+
+			$update_result = $this->update_contact($uuid, $attributes);
+
+			return $update_result;
+		} catch (Exception $e) {
+			error_log("Exception in sync_user_attributes: " . $e->getMessage());
+			error_log("Stack trace: " . $e->getTraceAsString());
+			return false;
+		}
+	}
+
+	/**
+	 * Get user attributes for Piggy.
+	 *
+	 * @param int $user_id
+	 * @return array
+	 */
+	public function get_user_attributes($user_id)
+	{
+		try {
+			$user = get_userdata($user_id);
+			$attributes = [
+				'wp_user_id' => $user_id,
+				'firstname' => $user->first_name,
+				'lastname' => $user->last_name,
+			];
+
+			$wc_attributes = $this->get_woocommerce_user_data($user_id);
+
+			$attributes = array_merge($attributes, $wc_attributes);
+
+			$this->ensure_custom_attributes_exist();
+
+			return $attributes;
+		} catch (Exception $e) {
+			error_log("Exception in get_user_attributes: " . $e->getMessage());
+			error_log("Stack trace: " . $e->getTraceAsString());
+			return [];
+		}
+	}
+
+	/**
+	 * Get WooCommerce user data.
+	 *
+	 * @param int $user_id
+	 * @return array
+	 */
+	private function get_woocommerce_user_data($user_id) {
+		if (!function_exists('wc_get_customer_total_spent') || !function_exists('wc_get_customer_order_count')) {
+			return [
+				'wp_wc_total_spent_' . strtolower(get_woocommerce_currency()) => 0,
+				'wp_wc_orders_count' => 0,
+				'wp_create_date' => '',
+				'wp_wc_last_order_amount_' . strtolower(get_woocommerce_currency()) => 0,
+				'wp_wc_last_order_date' => '',
+			];
+		}
+
+		$user = get_user_by('id', $user_id);
+		if (!$user) {
+			return null;
+		}
+
+		$total_spent = wc_get_customer_total_spent($user_id);
+		$orders_count = wc_get_customer_order_count($user_id);
+		$create_date = $user->user_registered;
+
+		// Get the last order
+		$customer_orders = wc_get_orders(array(
+			'customer' => $user_id,
+			'limit' => 1,
+			'orderby' => 'date',
+			'order' => 'DESC',
+		));
+
+		$last_order_amount = 0;
+		$last_order_date = '';
+
+		if (!empty($customer_orders)) {
+			$last_order = $customer_orders[0];
+			$last_order_amount = $last_order->get_total();
+			$last_order_date = $last_order->get_date_created()->format('Y-m-d H:i:s');
+		}
+
+		$currency = strtolower(get_woocommerce_currency());
+
+		return [
+			'wp_wc_total_spent_' . $currency => (float)$total_spent,
+			'wp_wc_orders_count' => (int)$orders_count,
+			'wp_create_date' => $create_date,
+			'wp_wc_last_order_amount_' . $currency => (float)$last_order_amount,
+			'wp_wc_last_order_date' => $last_order_date,
+		];
+	}
+
+	/**
+	 * Ensure custom attributes exist in Piggy.
+	 */
+	public function ensure_custom_attributes_exist()
+	{
+		$client = $this->init_client();
+
+		if (!$client) {
+			return;
+		}
+
+		$attributes_list = CustomAttribute::list(["entity" => "contact"]);
+
+		// Get the shop currency
+		$currency = get_woocommerce_currency();
+
+		$required_attributes = [
+				[
+					"name" => "wp_user_id",
+					"label" => "WordPress User ID",
+					"type" => "number"
+				],
+				[
+					"name" => "wp_wc_total_spent_" . strtolower($currency),
+					"label" => "WooCommerce Total Spent (" . $currency . ")",
+					"type" => "float"
+				],
+				[
+					"name" => "wp_wc_orders_count",
+					"label" => "WooCommerce Orders Count",
+					"type" => "number"
+				],
+				[
+					"name" => "wp_create_date",
+					"label" => "WordPress Create Date",
+					"type" => "date_time"
+				],
+				[
+					"name" => "wp_wc_last_order_amount_" . strtolower($currency),
+					"label" => "WooCommerce Last Order Amount (" . $currency . ")",
+					"type" => "float"
+				],
+				[
+					"name" => "wp_wc_last_order_date",
+					"label" => "WooCommerce Last Order Date",
+					"type" => "date_time"
+				]
+			];
+
+		foreach($required_attributes as $attr) {
+			if (!$this->attribute_exists($attributes_list, $attr['name'])) {
+				CustomAttribute::create([
+					"entity" => "contact",
+					"name" => $attr['name'],
+					"label" => $attr['label'],
+					"type" => $attr['type']
+				]);
+			}
+		}
 	}
 }

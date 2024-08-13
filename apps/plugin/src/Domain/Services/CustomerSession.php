@@ -35,7 +35,9 @@ class CustomerSession
 		add_action('edit_user_profile', [$this, 'show_uuid_on_profile']);
 		add_action('show_user_profile', [$this, 'show_claimed_rewards_on_profile']);
 		add_action('edit_user_profile', [$this, 'show_claimed_rewards_on_profile']);
-		add_action('wp_login', [$this, 'sync_uuid_on_login'], 10, 2);
+		add_action('wp_login', [$this, 'sync_attributes_on_login'], 10, 2);
+		add_action('wp_logout', [$this, 'sync_attributes_on_logout']);
+		add_action('woocommerce_order_status_completed', [$this, 'sync_attributes_on_order_completed'], 10, 1);
 	}
 
 	public function handle_customer_creation($wp_user_id, $new_customer_data, $password_generated)
@@ -61,7 +63,7 @@ class CustomerSession
 		$uuid = $contact['uuid'];
 
 		$this->connection->update_user_meta_uuid($uuid, $wp_user_id);
-		$this->update_piggy_contact($uuid, $wp_user_id);
+		$this->sync_user_attributes($wp_user_id, $uuid);
 
 		// Fetch and log earn rules of type 'CREATE_ACCOUNT'
 		$earn_rules = $this->earn_rules->get_earn_rules_by_type('CREATE_ACCOUNT');
@@ -135,7 +137,7 @@ class CustomerSession
 		<?php
 	}
 
-	public function sync_uuid_on_login($user_login, $user)
+	public function sync_attributes_on_login($user_login, $user)
 	{
 		$client = $this->connection->init_client();
 
@@ -162,18 +164,48 @@ class CustomerSession
 			$uuid = $contact['uuid'];
 
 			$this->connection->update_user_meta_uuid($uuid, $user_id);
-			$this->update_piggy_contact($uuid, $user_id);
-		} else {
-			$this->update_piggy_contact($uuid, $user_id);
 		}
+
+		$this->sync_user_attributes($user_id, $uuid);
 	}
 
-	private function update_piggy_contact($uuid, $user_id)
+	public function sync_attributes_on_logout()
 	{
-		$attributes = [
-			'wp_user_id' => $user_id,
-		];
+		$user_id = get_current_user_id();
 
-		return $this->connection->update_contact($uuid, $attributes);
+		if (!$user_id) {
+			return;
+		}
+
+		$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
+
+		if (!$uuid) {
+			return;
+		}
+
+		$this->sync_user_attributes($user_id, $uuid);
+	}
+
+	public function sync_attributes_on_order_completed($order_id)
+	{
+		$order = wc_get_order($order_id);
+		$user_id = $order->get_user_id();
+
+		if (!$user_id) {
+			return;
+		}
+
+		$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
+
+		if (!$uuid) {
+			return;
+		}
+
+		$this->sync_user_attributes($user_id, $uuid);
+	}
+
+	private function sync_user_attributes($user_id, $uuid)
+	{
+		return $this->connection->sync_user_attributes($user_id, $uuid);
 	}
 }
