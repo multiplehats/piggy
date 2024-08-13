@@ -137,6 +137,12 @@ class CustomerSession
 		<?php
 	}
 
+	public function update_last_login($user_id) {
+		$last_login = current_time('mysql');
+		update_user_meta($user_id, 'piggy_last_login', $last_login);
+		return $last_login;
+	}
+
 	public function sync_attributes_on_login($user_login, $user)
 	{
 		$client = $this->connection->init_client();
@@ -165,6 +171,8 @@ class CustomerSession
 
 			$this->connection->update_user_meta_uuid($uuid, $user_id);
 		}
+
+		$this->update_last_login($user_id);
 
 		$this->sync_user_attributes($user_id, $uuid);
 	}

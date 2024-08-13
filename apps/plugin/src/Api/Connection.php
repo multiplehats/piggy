@@ -189,71 +189,6 @@ class Connection {
 		return false;
 	}
 
-	private function getAttributeLabel($name) {
-		$labels = [
-			"wp_user_id" => "WordPress User ID",
-			"wp_wc_total_spent" => "WooCommerce Total Spent",
-			"wp_wc_orders_count" => "WooCommerce Orders Count",
-			"wp_create_date" => "WordPress Create Date",
-			"wp_wc_last_order_amount" => "WooCommerce Last Order Amount",
-			"wp_wc_last_order_date" => "WooCommerce Last Order Date"
-		];
-		return $labels[$name] ?? ucfirst(str_replace('_', ' ', $name));
-	}
-
-	private function get_shop_currency() {
-		if (function_exists('get_woocommerce_currency')) {
-			return get_woocommerce_currency();
-		}
-		return 'EUR'; // Default to EUR if WooCommerce is not active
-	}
-
-	private function get_wordpress_user_data($user_id) {
-		if (!function_exists('wc_get_customer_total_spent') || !function_exists('wc_get_customer_order_count')) {
-			return [
-				'total_spent' => 0,
-				'orders_count' => 0,
-				'create_date' => '',
-				'last_order_amount' => 0,
-				'last_order_date' => '',
-			];
-		}
-
-		$user = get_user_by('id', $user_id);
-		if (!$user) {
-			return null;
-		}
-
-		$total_spent = wc_get_customer_total_spent($user_id);
-		$orders_count = wc_get_customer_order_count($user_id);
-		$create_date = $user->user_registered;
-
-		// Get the last order
-		$customer_orders = wc_get_orders(array(
-			'customer' => $user_id,
-			'limit' => 1,
-			'orderby' => 'date',
-			'order' => 'DESC',
-		));
-
-		$last_order_amount = 0;
-		$last_order_date = '';
-
-		if (!empty($customer_orders)) {
-			$last_order = $customer_orders[0];
-			$last_order_amount = $last_order->get_total();
-			$last_order_date = $last_order->get_date_created()->format('Y-m-d H:i:s');
-		}
-
-		return [
-			'total_spent' => (float)$total_spent,
-			'orders_count' => (int)$orders_count,
-			'create_date' => $create_date,
-			'last_order_amount' => (float)$last_order_amount,
-			'last_order_date' => $last_order_date,
-		];
-	}
-
 	/**
 	 * Get the Shops response.
 	 *
@@ -517,6 +452,10 @@ class Connection {
 				'wp_user_id' => $user_id,
 				'firstname' => $user->first_name,
 				'lastname' => $user->last_name,
+				'wp_user_role' => implode(', ', $user->roles),
+				'wp_account_age_days' => floor((time() - strtotime($user->user_registered)) / (60 * 60 * 24)),
+				'wp_last_login' => get_user_meta($user_id, 'piggy_last_login', true) ?: '',
+				'wp_post_count' => count_user_posts($user_id),
 			];
 
 			$wc_attributes = $this->get_woocommerce_user_data($user_id);
@@ -541,25 +480,18 @@ class Connection {
 	 */
 	private function get_woocommerce_user_data($user_id) {
 		if (!function_exists('wc_get_customer_total_spent') || !function_exists('wc_get_customer_order_count')) {
-			return [
-				'wp_wc_total_spent_' . strtolower(get_woocommerce_currency()) => 0,
-				'wp_wc_orders_count' => 0,
-				'wp_create_date' => '',
-				'wp_wc_last_order_amount_' . strtolower(get_woocommerce_currency()) => 0,
-				'wp_wc_last_order_date' => '',
-			];
+			return $this->get_default_wc_attributes();
 		}
 
 		$user = get_user_by('id', $user_id);
 		if (!$user) {
-			return null;
+			return $this->get_default_wc_attributes();
 		}
 
 		$total_spent = wc_get_customer_total_spent($user_id);
 		$orders_count = wc_get_customer_order_count($user_id);
 		$create_date = $user->user_registered;
 
-		// Get the last order
 		$customer_orders = wc_get_orders(array(
 			'customer' => $user_id,
 			'limit' => 1,
@@ -577,6 +509,7 @@ class Connection {
 		}
 
 		$currency = strtolower(get_woocommerce_currency());
+		$first_order_date = $this->get_first_order_date($user_id);
 
 		return [
 			'wp_wc_total_spent_' . $currency => (float)$total_spent,
@@ -584,7 +517,77 @@ class Connection {
 			'wp_create_date' => $create_date,
 			'wp_wc_last_order_amount_' . $currency => (float)$last_order_amount,
 			'wp_wc_last_order_date' => $last_order_date,
+			'wp_wc_average_order_value_' . $currency => $orders_count > 0 ? round($total_spent / $orders_count, 2) : 0,
+			'wp_wc_first_order_date' => $first_order_date,
+			'wp_wc_product_categories_purchased' => $this->get_purchased_categories($user_id),
+			'wp_wc_total_products_purchased' => $this->get_total_products_purchased($user_id),
 		];
+	}
+
+	private function get_default_wc_attributes() {
+		$currency = strtolower(get_woocommerce_currency());
+		return [
+			'wp_wc_total_spent_' . $currency => 0,
+			'wp_wc_orders_count' => 0,
+			'wp_create_date' => '',
+			'wp_wc_last_order_amount_' . $currency => 0,
+			'wp_wc_last_order_date' => '',
+			'wp_wc_average_order_value_' . $currency => 0,
+			'wp_wc_first_order_date' => '',
+			'wp_wc_product_categories_purchased' => '',
+			'wp_wc_total_products_purchased' => 0,
+		];
+	}
+
+	private function get_first_order_date($user_id) {
+		$customer_orders = wc_get_orders(array(
+			'customer' => $user_id,
+			'limit' => 1,
+			'orderby' => 'date',
+			'order' => 'ASC',
+		));
+
+		if (!empty($customer_orders)) {
+			$first_order = $customer_orders[0];
+			return $first_order->get_date_created()->format('Y-m-d H:i:s');
+		}
+
+		return '';
+	}
+
+	private function get_purchased_categories($user_id) {
+		$categories = array();
+		$customer_orders = wc_get_orders(array('customer' => $user_id));
+
+		foreach ($customer_orders as $order) {
+			foreach ($order->get_items() as $item) {
+				$product = $item->get_product();
+				if ($product) {
+					$product_categories = $product->get_category_ids();
+					$categories = array_merge($categories, $product_categories);
+				}
+			}
+		}
+
+		$category_names = array_map(function($cat_id) {
+			$term = get_term_by('id', $cat_id, 'product_cat');
+			return $term ? $term->name : '';
+		}, array_unique($categories));
+
+		return implode(', ', array_filter($category_names));
+	}
+
+	private function get_total_products_purchased($user_id) {
+		$total_products = 0;
+		$customer_orders = wc_get_orders(array('customer' => $user_id));
+
+		foreach ($customer_orders as $order) {
+			foreach ($order->get_items() as $item) {
+				$total_products += $item->get_quantity();
+			}
+		}
+
+		return $total_products;
 	}
 
 	/**
@@ -599,42 +602,24 @@ class Connection {
 		}
 
 		$attributes_list = CustomAttribute::list(["entity" => "contact"]);
-
-		// Get the shop currency
-		$currency = get_woocommerce_currency();
+		$currency = strtolower(get_woocommerce_currency());
 
 		$required_attributes = [
-				[
-					"name" => "wp_user_id",
-					"label" => "WordPress User ID",
-					"type" => "number"
-				],
-				[
-					"name" => "wp_wc_total_spent_" . strtolower($currency),
-					"label" => "WooCommerce Total Spent (" . $currency . ")",
-					"type" => "float"
-				],
-				[
-					"name" => "wp_wc_orders_count",
-					"label" => "WooCommerce Orders Count",
-					"type" => "number"
-				],
-				[
-					"name" => "wp_create_date",
-					"label" => "WordPress Create Date",
-					"type" => "date_time"
-				],
-				[
-					"name" => "wp_wc_last_order_amount_" . strtolower($currency),
-					"label" => "WooCommerce Last Order Amount (" . $currency . ")",
-					"type" => "float"
-				],
-				[
-					"name" => "wp_wc_last_order_date",
-					"label" => "WooCommerce Last Order Date",
-					"type" => "date_time"
-				]
-			];
+			["name" => "wp_user_id", "label" => "WordPress User ID", "type" => "number"],
+			["name" => "wp_user_role", "label" => "WordPress User Role", "type" => "text"],
+			["name" => "wp_account_age_days", "label" => "WordPress Account Age (Days)", "type" => "number"],
+			["name" => "wp_last_login", "label" => "WordPress Last Login", "type" => "date_time"],
+			["name" => "wp_post_count", "label" => "WordPress Post Count", "type" => "number"],
+			["name" => "wp_wc_total_spent_" . $currency, "label" => "WooCommerce Total Spent (" . strtoupper($currency) . ")", "type" => "float"],
+			["name" => "wp_wc_orders_count", "label" => "WooCommerce Orders Count", "type" => "number"],
+			["name" => "wp_create_date", "label" => "WordPress Create Date", "type" => "date_time"],
+			["name" => "wp_wc_last_order_amount_" . $currency, "label" => "WooCommerce Last Order Amount (" . strtoupper($currency) . ")", "type" => "float"],
+			["name" => "wp_wc_last_order_date", "label" => "WooCommerce Last Order Date", "type" => "date_time"],
+			["name" => "wp_wc_average_order_value_" . $currency, "label" => "WooCommerce Average Order Value (" . strtoupper($currency) . ")", "type" => "float"],
+			["name" => "wp_wc_first_order_date", "label" => "WooCommerce First Order Date", "type" => "date_time"],
+			["name" => "wp_wc_product_categories_purchased", "label" => "WooCommerce Product Categories Purchased", "type" => "text"],
+			["name" => "wp_wc_total_products_purchased", "label" => "WooCommerce Total Products Purchased", "type" => "number"],
+		];
 
 		foreach($required_attributes as $attr) {
 			if (!$this->attribute_exists($attributes_list, $attr['name'])) {
