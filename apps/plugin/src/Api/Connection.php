@@ -161,23 +161,32 @@ class Connection {
 	public function update_contact( string $id, array $attributes ) {
 		$client = $this->init_client();
 
-		if( ! $client ) {
+		if (!$client) {
+			error_log("Failed to initialize client in update_contact");
 			return null;
 		}
 
-		$contact = Contact::get( $id );
+		try {
+			$contact = Contact::get($id);
 
-		if( ! $contact ) {
+			if (!$contact) {
+				error_log("Contact not found for ID: $id");
+				return null;
+			}
+
+			$contact = Contact::update($id, ["attributes" => $attributes]);
+
+			if (!$contact) {
+				error_log("Failed to update contact for ID: $id");
+				return null;
+			}
+
+			return $this->format_contact($contact);
+		} catch (Exception $e) {
+			error_log("Error updating contact $id: " . $e->getMessage());
+			error_log("Attributes: " . print_r($attributes, true));
 			return null;
 		}
-
-		$contact = Contact::update( $id, [ "attributes" => $attributes ] );
-
-		if( ! $contact ) {
-			return null;
-		}
-
-		return $this->format_contact( $contact );
 	}
 
 	private function attribute_exists($attributes_list, $name) {
@@ -542,7 +551,7 @@ class Connection {
 			'wp_wc_last_order_date' => '',
 			'wp_wc_average_order_value_' . $currency => 0,
 			'wp_wc_first_order_date' => '',
-			'wp_wc_product_categories_purchased' => '',
+			'wp_wc_product_categories_purchased' => [],
 			'wp_wc_total_products_purchased' => 0,
 		];
 	}
@@ -563,7 +572,8 @@ class Connection {
 		return '';
 	}
 
-	private function get_purchased_categories($user_id) {
+	private function get_purchased_categories($user_id)
+	{
 		$categories = array();
 		$customer_orders = wc_get_orders(array('customer' => $user_id));
 
@@ -577,12 +587,7 @@ class Connection {
 			}
 		}
 
-		$category_names = array_map(function($cat_id) {
-			$term = get_term_by('id', $cat_id, 'product_cat');
-			return $term ? $term->name : '';
-		}, array_unique($categories));
-
-		return implode(', ', array_filter($category_names));
+		return array_unique($categories);
 	}
 
 	private function get_total_products_purchased($user_id) {
@@ -606,10 +611,17 @@ class Connection {
 		$client = $this->init_client();
 
 		if (!$client) {
+			error_log("Failed to initialize client in ensure_custom_attributes_exist");
 			return;
 		}
 
-		$attributes_list = CustomAttribute::list(["entity" => "contact"]);
+		try {
+			$attributes_list = CustomAttribute::list(["entity" => "contact"]);
+		} catch (Exception $e) {
+			error_log("Error fetching custom attributes: " . $e->getMessage());
+			return;
+		}
+
 		$currency = strtolower(get_woocommerce_currency());
 
 		$required_attributes = [
@@ -625,19 +637,45 @@ class Connection {
 			["name" => "wp_wc_last_order_date", "label" => "WooCommerce Last Order Date", "type" => "date_time"],
 			["name" => "wp_wc_average_order_value_" . $currency, "label" => "WooCommerce Average Order Value (" . strtoupper($currency) . ")", "type" => "float"],
 			["name" => "wp_wc_first_order_date", "label" => "WooCommerce First Order Date", "type" => "date_time"],
-			["name" => "wp_wc_product_categories_purchased", "label" => "WooCommerce Product Categories Purchased", "type" => "text"],
+			["name" => "wp_wc_product_categories_purchased", "label" => "WooCommerce Product Categories Purchased", "type" => "multi_select"],
 			["name" => "wp_wc_total_products_purchased", "label" => "WooCommerce Total Products Purchased", "type" => "number"],
 		];
 
 		foreach($required_attributes as $attr) {
 			if (!$this->attribute_exists($attributes_list, $attr['name'])) {
-				CustomAttribute::create([
+				$attribute_data = [
 					"entity" => "contact",
 					"name" => $attr['name'],
 					"label" => $attr['label'],
 					"type" => $attr['type']
-				]);
+				];
+
+				if ($attr['name'] === 'wp_wc_product_categories_purchased') {
+					$attribute_data['options'] = $this->get_product_categories_options();
+				}
+
+				try {
+					CustomAttribute::create($attribute_data);
+				} catch (Exception $e) {
+					error_log("Error creating custom attribute {$attr['name']}: " . $e->getMessage());
+					error_log("Attribute data: " . print_r($attribute_data, true));
+				}
 			}
 		}
+	}
+
+	private function get_product_categories_options()
+	{
+		$categories = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => false]);
+		$options = [];
+
+		foreach ($categories as $category) {
+			$options[] = [
+				'label' => $category->name,
+				'value' => $category->term_id
+			];
+		}
+
+		return $options;
 	}
 }
