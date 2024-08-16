@@ -298,30 +298,38 @@ class Connection {
 		return $rewards;
 	}
 
-	public function apply_credits( string $contact_uuid, int $credits ) {
+	public function apply_credits(string $contact_uuid, ?int $credits = null, ?float $unit_value = null, ?string $unit_name = null) {
 		$client = $this->init_client();
-
-		if( ! $client ) {
-			return false;
-		}
+		if (!$client) return false;
 
 		$shop_uuid = get_option('piggy_shop_uuid', null);
+		if (!$shop_uuid) return false;
 
-		if ( ! $shop_uuid ) {
-			return false;
-		}
-
-		$reception = CreditReception::create( [
+		$params = [
 			'shop_uuid' => $shop_uuid,
 			'contact_uuid' => $contact_uuid,
-			'credits' => $credits,
-		] );
+		];
 
-		if( ! $reception ) {
+		if ($credits !== null) {
+			$params['credits'] = $credits;
+		}
+
+		if ($unit_value !== null) {
+			$params['unit_value'] = $unit_value;
+		}
+
+		if ($unit_name !== null) {
+			$params['unit_name'] = $unit_name;
+		}
+
+		// Ensure that either credits or unit_value is set
+		if (!isset($params['credits']) && !isset($params['unit_value'])) {
 			return false;
 		}
 
-		return $reception;
+		$reception = CreditReception::create($params);
+
+		return $reception ?: false;
 	}
 
 	/**
