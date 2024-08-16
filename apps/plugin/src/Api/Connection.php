@@ -162,7 +162,6 @@ class Connection {
 		$client = $this->init_client();
 
 		if (!$client) {
-			error_log("Failed to initialize client in update_contact");
 			return null;
 		}
 
@@ -170,21 +169,17 @@ class Connection {
 			$contact = Contact::get($id);
 
 			if (!$contact) {
-				error_log("Contact not found for ID: $id");
 				return null;
 			}
 
 			$contact = Contact::update($id, ["attributes" => $attributes]);
 
 			if (!$contact) {
-				error_log("Failed to update contact for ID: $id");
 				return null;
 			}
 
 			return $this->format_contact($contact);
 		} catch (Exception $e) {
-			error_log("Error updating contact $id: " . $e->getMessage());
-			error_log("Attributes: " . print_r($attributes, true));
 			return null;
 		}
 	}
@@ -449,8 +444,6 @@ class Connection {
 
 			return $update_result;
 		} catch (Exception $e) {
-			error_log("Exception in sync_user_attributes: " . $e->getMessage());
-			error_log("Stack trace: " . $e->getTraceAsString());
 			return false;
 		}
 	}
@@ -483,8 +476,6 @@ class Connection {
 
 			return $attributes;
 		} catch (Exception $e) {
-			error_log("Exception in get_user_attributes: " . $e->getMessage());
-			error_log("Stack trace: " . $e->getTraceAsString());
 			return [];
 		}
 	}
@@ -611,14 +602,12 @@ class Connection {
 		$client = $this->init_client();
 
 		if (!$client) {
-			error_log("Failed to initialize client in ensure_custom_attributes_exist");
 			return;
 		}
 
 		try {
 			$attributes_list = CustomAttribute::list(["entity" => "contact"]);
 		} catch (Exception $e) {
-			error_log("Error fetching custom attributes: " . $e->getMessage());
 			return;
 		}
 
@@ -657,8 +646,7 @@ class Connection {
 				try {
 					CustomAttribute::create($attribute_data);
 				} catch (Exception $e) {
-					error_log("Error creating custom attribute {$attr['name']}: " . $e->getMessage());
-					error_log("Attribute data: " . print_r($attribute_data, true));
+					return;
 				}
 			}
 		}
