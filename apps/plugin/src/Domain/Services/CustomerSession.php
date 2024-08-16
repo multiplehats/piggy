@@ -210,6 +210,20 @@ class CustomerSession
 		}
 
 		$this->sync_user_attributes($user_id, $uuid);
+
+		// Apply credits based on PLACE_ORDER earn rule
+		$order_total = $order->get_total();
+		$applicable_rule = $this->earn_rules->get_applicable_place_order_rule($order_total);
+
+		if ($applicable_rule) {
+			// Note: We don't apply the credits from the rule in WordPress.
+			// Instead, this is managed by a rule in the Piggy dashboard.
+			$result = $this->connection->apply_credits($uuid, null, $order_total, 'purchase_amount');
+
+			if (!$result) {
+				error_log("Failed to apply credits to user $user_id for order $order_id");
+			}
+		}
 	}
 
 	private function sync_user_attributes($user_id, $uuid)

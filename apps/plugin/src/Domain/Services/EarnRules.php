@@ -273,4 +273,32 @@ class EarnRules {
 
 		return apply_filters('piggy_earn_rule_svg', $svg, $type);
 	}
+
+	/**
+	 * Get the applicable PLACE_ORDER earn rule for a given order amount.
+	 *
+	 * @param float $order_amount The order amount in the store's currency.
+	 * @return array|null The applicable earn rule, or null if none found.
+	 */
+	public function get_applicable_place_order_rule($order_amount) {
+		$place_order_rules = $this->get_earn_rules_by_type('PLACE_ORDER');
+
+		if (!$place_order_rules) {
+			return null;
+		}
+
+		$applicable_rule = null;
+		$highest_minimum = 0;
+
+		foreach ($place_order_rules as $rule) {
+			$minimum_order_amount = $rule['minimumOrderAmount']['value'] ?? 0;
+
+			if ($order_amount >= $minimum_order_amount && $minimum_order_amount > $highest_minimum) {
+				$applicable_rule = $rule;
+				$highest_minimum = $minimum_order_amount;
+			}
+		}
+
+		return $applicable_rule;
+	}
 }
