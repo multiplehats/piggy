@@ -9,8 +9,8 @@ use PiggyWP\Domain\Services\SpendRules as SpendRulesService;
  *
  * @internal
  */
-class SpendRulesSchema extends AbstractSchema {
-	/**a
+class SpendRulesSyncSchema extends AbstractSchema {
+	/**
 	 * The Earn Rules service.
 	 *
 	 * @var SpendRulesService
@@ -22,18 +22,14 @@ class SpendRulesSchema extends AbstractSchema {
 	 *
 	 * @var string
 	 */
-	protected $title = 'spend-rules';
+	protected $title = 'spend-rules-sync';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'spend-rules';
-
-	public function __construct() {
-		$this->spend_rules_service = new SpendRulesService();
-	}
+	const IDENTIFIER = 'spend-rules-sync';
 
 	/**
 	 * API key schema properties.
@@ -96,6 +92,6 @@ class SpendRulesSchema extends AbstractSchema {
 	 * @return array
 	 */
 	public function get_item_response($post) {
-		return $this->spend_rules_service->get_formatted_post( $post );
+		return $this->spend_rules_service->get_formatted_post($post);
 	}
 }
