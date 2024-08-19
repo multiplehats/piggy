@@ -1,0 +1,317 @@
+<?php
+
+namespace PiggyWP\Domain\Services;
+
+/**
+ * Class SpendRules
+ */
+class SpendRules
+{
+	private function get_post_meta_data($post_id, $key, $fallback_value = null)
+	{
+		$value = get_post_meta($post_id, $key, true);
+		return empty($value) ? $fallback_value : $value;
+	}
+
+	public function get_spend_rules_by_type($type, $post_status = ['publish'])
+	{
+		$args = [
+			'post_type' => 'piggy_spend_rule',
+			'post_status' => $post_status,
+			'meta_query' => [
+				[
+					'key' => '_piggy_spend_rule_type',
+					'value' => $type,
+				],
+			],
+		];
+
+		$posts = get_posts($args);
+
+		if (empty($posts)) {
+			return null;
+		}
+
+		$posts = array_map([$this, 'get_formatted_post'], $posts);
+
+		return $posts;
+	}
+
+	/**
+	 * Get a spend rule by its ID.
+	 *
+	 * @param int $id Spend Rule ID.
+	 * @return array|null
+	 */
+	public function get_by_id($id)
+	{
+		$post = get_post($id);
+
+		if (empty($post)) {
+			return null;
+		}
+
+		return $this->get_formatted_post($post);
+	}
+
+	/**
+	 * Convert a Spend Rule post into an object suitable for a WP REST API response.
+	 *
+	 * @param \WP_Post $post Spend Rule post object.
+	 * @return array
+	 */
+	public function get_formatted_post($post)
+	{
+		$type = $this->get_post_meta_data($post->ID, '_piggy_spend_rule_type', null);
+
+		$spend_rule = [
+			'id' => (int) $post->ID,
+			'createdAt' => $post->post_date,
+			'updatedAt' => $post->post_modified,
+			'status' => [
+				'id' => 'status',
+				'label' => __('Status', 'piggy'),
+				'default' => 'publish',
+				'value' => $post->post_status,
+				'options' => [
+					'publish' => ['label' => __('Active', 'piggy')],
+					'draft' => ['label' => __('Inactive', 'piggy')],
+				],
+				'type' => 'select',
+				'description' => __('Set the status of the rule. Inactive spend rules will not be displayed to users.', 'piggy'),
+			],
+			'title' => [
+				'id' => 'title',
+				'label' => __('Title', 'piggy'),
+				'default' => null,
+				'value' => $post->post_title,
+				'type' => 'text',
+				'description' => __('This is not displayed to the user and is only used for internal reference.', 'piggy'),
+			],
+			'type' => [
+				'id' => 'type',
+				'label' => __('Type', 'piggy'),
+				'default' => 'PRODUCT_DISCOUNT',
+				'value' => $type,
+				'type' => 'select',
+				'options' => [
+					'PRODUCT_DISCOUNT' => ['label' => __('Product discount', 'piggy')],
+					'ORDER_DISCOUNT' => ['label' => __('Order discount', 'piggy')],
+					'FREE_SHIPPING' => ['label' => __('Free shipping', 'piggy')],
+				],
+				'description' => __('The type of spend rule.', 'piggy'),
+			],
+			'startsAt' => [
+				'id' => 'starts_at',
+				'label' => __('Starts at', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_starts_at', null),
+				'type' => 'date',
+				'description' => __('Optional date for when the rule should start.', 'piggy'),
+			],
+			'expiresAt' => [
+				'id' => 'expires_at',
+				'label' => __('Expires at', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_expires_at', null),
+				'type' => 'date',
+				'description' => __('Optional date for when the rule should expire.', 'piggy'),
+			],
+			'completed' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_completed', null),
+			'creditCost' => [
+				'id' => 'credit_cost',
+				'label' => __('Credit cost', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_credit_cost', null),
+				'type' => 'number',
+				'description' => __('The amount of credits it will cost to redeem the reward.', 'piggy'),
+			],
+			'selectedReward' => [
+				'id' => 'selected_reward',
+				'label' => __('Selected reward', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_selected_reward', null),
+				'type' => 'text',
+				'description' => __('The reward that is selected for the spend rule.', 'piggy'),
+			],
+			'description' => [
+				'id' => 'description',
+				'label' => __('Description', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_description', null),
+				'type' => 'translatable_text',
+				'description' => $this->get_description_placeholder($type),
+			],
+			'instructions' => [
+				'id' => 'instructions',
+				'label' => __('Instructions', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_instructions', null),
+				'type' => 'translatable_text',
+				'description' => $this->get_instructions_placeholder($type),
+			],
+			'fulfillment' => [
+				'id' => 'fulfillment',
+				'label' => __('Fulfillment description', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_fulfillment', null),
+				'type' => 'translatable_text',
+				'description' => $this->get_fulfillment_placeholder($type),
+			],
+			'piggyRewardUuid' => [
+				'id' => 'piggy_reward_uuid',
+				'label' => __('Piggy Reward UUID', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_reward_uuid', null),
+				'type' => 'text',
+				'description' => __('The UUID of the corresponding Piggy reward.', 'piggy'),
+			],
+		];
+
+		$spend_rule['label'] = [
+			'id' => 'label',
+			'label' => __('Label', 'piggy'),
+			'default' => $this->get_default_label($type),
+			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label', $this->get_default_label($type)),
+			'type' => 'translatable_text',
+			'description' => $this->get_label_description($type),
+		];
+
+		if (in_array($type, ['PRODUCT_DISCOUNT', 'ORDER_DISCOUNT'])) {
+			$spend_rule['discountValue'] = [
+				'id' => 'discount_value',
+				'label' => __('Discount value', 'piggy'),
+				'default' => 10,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_value', null),
+				'type' => 'number',
+				'description' => __('The value of the discount.', 'piggy'),
+			];
+
+			$spend_rule['discountType'] = [
+				'id' => 'discount_type',
+				'label' => __('Discount type', 'piggy'),
+				'default' => 'percentage',
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_type', 'percentage'),
+				'type' => 'select',
+				'options' => [
+					'percentage' => ['label' => __('Percentage', 'piggy')],
+					'fixed' => ['label' => __('Fixed amount', 'piggy')],
+				],
+				'description' => __('The type of discount.', 'piggy'),
+			];
+		}
+
+		if ($type === 'ORDER_DISCOUNT') {
+			$spend_rule['minimumPurchaseAmount'] = [
+				'id' => 'minimum_purchase_amount',
+				'label' => __('Minimum purchase amount', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_minimum_purchase_amount', null),
+				'type' => 'number',
+				'description' => __('The minimum purchase amount required to redeem the reward.', 'piggy'),
+			];
+		}
+
+		return $spend_rule;
+	}
+
+	private function get_label_description($type)
+	{
+		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
+		return sprintf(__("The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'piggy'), $placeholders);
+	}
+
+	private function get_default_label($type)
+	{
+		return [
+			'en_US' => 'Unlock {{discount}} for {{points}} {{pointsCurrency}}'
+		];
+	}
+
+	private function get_description_placeholder($type)
+	{
+		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
+		return sprintf(__("Add a description of the reward. Available placeholders: %s", 'piggy'), $placeholders);
+	}
+
+	private function get_instructions_placeholder($type)
+	{
+		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
+		return sprintf(__("Add instructions on how to redeem the reward. Available placeholders: %s", 'piggy'), $placeholders);
+	}
+
+	private function get_fulfillment_placeholder($type)
+	{
+		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
+		return sprintf(__("Add instructions on how fulfillment will be handled. Available placeholders: %s", 'piggy'), $placeholders);
+	}
+
+	/**
+	 * Get the applicable spend rule for a given credit amount.
+	 *
+	 * @param int $credit_amount The available credit amount.
+	 * @return array|null The applicable spend rule, or null if none found.
+	 */
+	public function get_applicable_spend_rule($credit_amount)
+	{
+		$spend_rules = $this->get_spend_rules_by_type(null); // Get all spend rules
+
+		if (!$spend_rules) {
+			return null;
+		}
+
+		$applicable_rule = null;
+		$highest_credit_cost = 0;
+
+		foreach ($spend_rules as $rule) {
+			$credit_cost = $rule['creditCost']['value'] ?? PHP_INT_MAX;
+
+			if ($credit_amount >= $credit_cost && $credit_cost > $highest_credit_cost) {
+				$applicable_rule = $rule;
+				$highest_credit_cost = $credit_cost;
+			}
+		}
+
+		return $applicable_rule;
+	}
+
+	public function create_or_update_spend_rule_from_reward($reward) {
+		$existing_rule = $this->get_spend_rule_by_piggy_uuid($reward['uuid']);
+
+		$post_data = array(
+			'post_type' => 'piggy_spend_rule',
+			'post_title' => $reward['title'],
+			'post_status' => $reward['active'] ? 'publish' : 'draft',
+			'meta_input' => array(
+				'_piggy_spend_rule_type' => $reward['type'],
+				'_piggy_spend_rule_credit_cost' => $reward['requiredCredits'],
+				'_piggy_reward_uuid' => $reward['uuid'],
+				// Add other relevant fields from the reward
+			)
+		);
+
+		if ($existing_rule) {
+			$post_data['ID'] = $existing_rule['id'];
+			wp_update_post($post_data);
+		} else {
+			wp_insert_post($post_data);
+		}
+	}
+
+	private function get_spend_rule_by_piggy_uuid($uuid) {
+		$args = array(
+			'post_type' => 'piggy_spend_rule',
+			'meta_key' => '_piggy_reward_uuid',
+			'meta_value' => $uuid,
+			'posts_per_page' => 1,
+		);
+
+		$posts = get_posts($args);
+
+		if (!empty($posts)) {
+			return $this->get_formatted_post($posts[0]);
+		}
+
+		return null;
+	}
+}
