@@ -1,13 +1,23 @@
 <?php
 namespace PiggyWP;
 
+use PiggyWP\Api\Connection;
+
 final class PostTypeController {
 	const PREFIX = 'piggy';
+
+	/**
+	 * The Connection instance.
+	 *
+	 * @var Connection
+	 */
+	private $connection;
 
 	/**
 	 * Constructor.
 	 */
 	public function __construct() {
+		$this->connection = new Connection();
 		$this->init();
 	}
 
@@ -17,6 +27,8 @@ final class PostTypeController {
 	protected function init() {
 		add_action('init', array($this, 'register_earn_rules_post_type'));
 		add_action('init', array($this, 'register_spend_rules_post_type'));
+		add_action('init', array($this, 'schedule_daily_reward_sync'));
+		add_action('piggy_daily_reward_sync', array($this, 'sync_rewards_cron'));
 	}
 
 	/**
@@ -38,16 +50,16 @@ final class PostTypeController {
 			'parent_item_colon'     => __('Parent Earn Rules:', 'piggy'),
 			'not_found'             => __('No earn rules found.', 'piggy'),
 			'not_found_in_trash'    => __('No earn rules found in Trash.', 'piggy'),
-			'featured_image'        => _x('Earn Rule Cover Image', 'Overrides the “Featured Image” phrase for this post type. Added in 4.3', 'piggy'),
-			'set_featured_image'    => _x('Set cover image', 'Overrides the “Set featured image” phrase for this post type. Added in 4.3', 'piggy'),
-			'remove_featured_image' => _x('Remove cover image', 'Overrides the “Remove featured image” phrase for this post type. Added in 4.3', 'piggy'),
-			'use_featured_image'    => _x('Use as cover image', 'Overrides the “Use as featured image” phrase for this post type. Added in 4.3', 'piggy'),
-			'archives'              => _x('Earn Rule archives', 'The post type archive label used in nav menus. Default “Post Archives”. Added in 4.4', 'piggy'),
-			'insert_into_item'      => _x('Insert into earn rule', 'Overrides the “Insert into post”/”Insert into page” phrase (used when inserting media into a post). Added in 4.4', 'piggy'),
-			'uploaded_to_this_item' => _x('Uploaded to this earn rule', 'Overrides the “Uploaded to this post/page” phrase (used when viewing media attached to a post). Added in 4.4', 'piggy'),
-			'filter_items_list'     => _x('Filter earn rules list', 'Screen reader text for the filter links heading on the post type listing screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4', 'piggy'),
-			'items_list_navigation' => _x('Earn rules list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4', 'piggy'),
-			'items_list'            => _x('Earn rules list', 'Screen reader text for the items list heading on the post type listing screen. Default “Posts list”/”Pages list”. Added in 4.4', 'piggy'),
+			'featured_image'        => _x('Earn Rule Cover Image', 'Overrides the "Featured Image" phrase for this post type. Added in 4.3', 'piggy'),
+			'set_featured_image'    => _x('Set cover image', 'Overrides the "Set featured image" phrase for this post type. Added in 4.3', 'piggy'),
+			'remove_featured_image' => _x('Remove cover image', 'Overrides the "Remove featured image" phrase for this post type. Added in 4.3', 'piggy'),
+			'use_featured_image'    => _x('Use as cover image', 'Overrides the "Use as featured image" phrase for this post type. Added in 4.3', 'piggy'),
+			'archives'              => _x('Earn Rule archives', 'The post type archive label used in nav menus. Default "Post Archives". Added in 4.4', 'piggy'),
+			'insert_into_item'      => _x('Insert into earn rule', 'Overrides the "Insert into post"/"Insert into page" phrase (used when inserting media into a post). Added in 4.4', 'piggy'),
+			'uploaded_to_this_item' => _x('Uploaded to this earn rule', 'Overrides the "Uploaded to this post/page" phrase (used when viewing media attached to a post). Added in 4.4', 'piggy'),
+			'filter_items_list'     => _x('Filter earn rules list', 'Screen reader text for the filter links heading on the post type listing screen. Default "Filter posts list"/"Filter pages list". Added in 4.4', 'piggy'),
+			'items_list_navigation' => _x('Earn rules list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default "Posts list navigation"/"Pages list navigation". Added in 4.4', 'piggy'),
+			'items_list'            => _x('Earn rules list', 'Screen reader text for the items list heading on the post type listing screen. Default "Posts list"/"Pages list". Added in 4.4', 'piggy'),
 		);
 
 		$args = array(
@@ -84,16 +96,16 @@ final class PostTypeController {
 			'parent_item_colon'     => __('Parent Spend Rules:', 'piggy'),
 			'not_found'             => __('No spend rules found.', 'piggy'),
 			'not_found_in_trash'    => __('No spend rules found in Trash.', 'piggy'),
-			'featured_image'        => _x('Spend Rule Cover Image', 'Overrides the “Featured Image” phrase for this post type. Added in 4.3', 'piggy'),
-			'set_featured_image'    => _x('Set cover image', 'Overrides the “Set featured image” phrase for this post type. Added in 4.3', 'piggy'),
-			'remove_featured_image' => _x('Remove cover image', 'Overrides the “Remove featured image” phrase for this post type. Added in 4.3', 'piggy'),
-			'use_featured_image'    => _x('Use as cover image', 'Overrides the “Use as featured image” phrase for this post type. Added in 4.3', 'piggy'),
-			'archives'              => _x('Spend Rule archives', 'The post type archive label used in nav menus. Default “Post Archives”. Added in 4.4', 'piggy'),
-			'insert_into_item'      => _x('Insert into spend rule', 'Overrides the “Insert into post”/”Insert into page” phrase (used when inserting media into a post). Added in 4.4', 'piggy'),
-			'uploaded_to_this_item' => _x('Uploaded to this spend rule', 'Overrides the “Uploaded to this post/page” phrase (used when viewing media attached to a post). Added in 4.4', 'piggy'),
-			'filter_items_list'     => _x('Filter spend rules list', 'Screen reader text for the filter links heading on the post type listing screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4', 'piggy'),
-			'items_list_navigation' => _x('Spend rules list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4', 'piggy'),
-			'items_list'            => _x('Spend rules list', 'Screen reader text for the items list heading on the post type listing screen. Default “Posts list”/”Pages list”. Added in 4.4', 'piggy'),
+			'featured_image'        => _x('Spend Rule Cover Image', 'Overrides the "Featured Image" phrase for this post type. Added in 4.3', 'piggy'),
+			'set_featured_image'    => _x('Set cover image', 'Overrides the "Set featured image" phrase for this post type. Added in 4.3', 'piggy'),
+			'remove_featured_image' => _x('Remove cover image', 'Overrides the "Remove featured image" phrase for this post type. Added in 4.3', 'piggy'),
+			'use_featured_image'    => _x('Use as cover image', 'Overrides the "Use as featured image" phrase for this post type. Added in 4.3', 'piggy'),
+			'archives'              => _x('Spend Rule archives', 'The post type archive label used in nav menus. Default "Post Archives". Added in 4.4', 'piggy'),
+			'insert_into_item'      => _x('Insert into spend rule', 'Overrides the "Insert into post"/"Insert into page" phrase (used when inserting media into a post). Added in 4.4', 'piggy'),
+			'uploaded_to_this_item' => _x('Uploaded to this spend rule', 'Overrides the "Uploaded to this post/page" phrase (used when viewing media attached to a post). Added in 4.4', 'piggy'),
+			'filter_items_list'     => _x('Filter spend rules list', 'Screen reader text for the filter links heading on the post type listing screen. Default "Filter posts list"/"Filter pages list". Added in 4.4', 'piggy'),
+			'items_list_navigation' => _x('Spend rules list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default "Posts list navigation"/"Pages list navigation". Added in 4.4', 'piggy'),
+			'items_list'            => _x('Spend rules list', 'Screen reader text for the items list heading on the post type listing screen. Default "Posts list"/"Pages list". Added in 4.4', 'piggy'),
 		);
 
 		$args = array(
@@ -112,5 +124,15 @@ final class PostTypeController {
 		);
 
 		register_post_type(self::PREFIX . '_spend_rule', $args);
+	}
+
+	public function schedule_daily_reward_sync() {
+		if (!wp_next_scheduled('piggy_daily_reward_sync')) {
+			wp_schedule_event(time(), 'daily', 'piggy_daily_reward_sync');
+		}
+	}
+
+	public function sync_rewards_cron() {
+		$this->connection->sync_rewards_with_spend_rules();
 	}
 }
