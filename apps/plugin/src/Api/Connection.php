@@ -666,4 +666,28 @@ class Connection {
 
 		return $options;
 	}
+
+	public function sync_rewards_with_spend_rules() {
+		$client = $this->init_client();
+		if (!$client) {
+			return false;
+		}
+
+		$rewards = $this->get_rewards();
+		if (!$rewards) {
+			return false;
+		}
+
+		$spend_rules_service = new \PiggyWP\Domain\Services\SpendRules();
+
+		foreach ($rewards as $reward) {
+			$spend_rules_service->create_or_update_spend_rule_from_reward($reward);
+		}
+
+		return true;
+	}
+
+	public function manual_sync_rewards() {
+		return $this->sync_rewards_with_spend_rules();
+	}
 }
