@@ -191,6 +191,22 @@ export class SettingsAdminService {
 		return data;
 	}
 
+	async syncRewards(): Promise<{ ok: true }> {
+		const { data, error } = await api.get<{ ok: true }>(`/piggy/v1/spend-rules-sync`, {
+			cache: 'no-store'
+		});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, 'No data returned', 'No data returned');
+		}
+
+		return data;
+	}
+
 	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
 		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
 			`/piggy/v1/spend-rules/?id=${id}`,

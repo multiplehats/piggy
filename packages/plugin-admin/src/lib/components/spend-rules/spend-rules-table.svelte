@@ -14,6 +14,7 @@
 	import { QueryKeys } from '$lib/utils/query-keys';
 	import { getStatusText } from '$lib/utils/status-text';
 	import { WalletMinimal } from 'lucide-svelte';
+	import toast from 'svelte-french-toast';
 	import { useNavigate } from 'svelte-navigator';
 	import type { SpendRuleType } from '@piggy/types/plugin/settings/adminTypes';
 
@@ -39,6 +40,15 @@
 			}
 		)
 	);
+	const mutateSync = createMutation({
+		mutationFn: () => service.syncRewards(),
+		mutationKey: ['spend-rules-sync'],
+		onSuccess: () => {
+			$query.refetch();
+
+			toast.success(__('Synced rewards'));
+		}
+	});
 
 	const ruleTypes = [
 		{ label: __('Product discount', 'piggy'), value: 'PRODUCT_DISCOUNT' },
@@ -109,71 +119,9 @@
 						{__('View in Piggy')}
 					</Button>
 
-					<Dialog.Root>
-						<Dialog.Trigger class={buttonVariants({ variant: 'default', size: 'sm' })}>
-							{__('Add spend rule')}
-						</Dialog.Trigger>
-
-						<Dialog.Content>
-							<Dialog.Header>
-								<Dialog.Title>
-									{__('Add spend rule')}
-								</Dialog.Title>
-							</Dialog.Header>
-
-							<form on:submit={handleCreateRule}>
-								<div class="grid gap-4 py-4">
-									<div class="grid gap-3">
-										<Label for="title">
-											{__('Title (Only visible to you)')}
-
-											{#if titleError}
-												<div class="text-red-600 mt-2">{titleError}</div>
-											{/if}
-										</Label>
-										<Input class="col-span-3" name="title" bind:value={title} />
-									</div>
-
-									<div class="grid gap-3">
-										<Label for="ruleType">
-											{__('Rule type')}
-
-											{#if ruleTypeError}
-												<div class="text-red-600 mt-2">{ruleTypeError}</div>
-											{/if}
-										</Label>
-
-										<Select.Root name="ruleType" items={ruleTypes} bind:selected>
-											<Select.Trigger class="w-[180px]">
-												<Select.Value placeholder={__('Select type')} />
-											</Select.Trigger>
-											<Select.Content>
-												<Select.Group>
-													<Select.Label>
-														{__('Select type')}
-													</Select.Label>
-
-													{#each ruleTypes as type}
-														<Select.Item value={type.value} label={type.label}>
-															{type.label}
-														</Select.Item>
-													{/each}
-												</Select.Group>
-											</Select.Content>
-
-											<Select.Input name="ruleType" />
-										</Select.Root>
-									</div>
-								</div>
-
-								<Dialog.Footer>
-									<Button type="submit">
-										{__('Create')}
-									</Button>
-								</Dialog.Footer>
-							</form>
-						</Dialog.Content>
-					</Dialog.Root>
+					<Button size="sm" target="_blank" on:click={() => $mutateSync.mutate()}>
+						{__('Sync rewards')}
+					</Button>
 				</div>
 			</Card.Header>
 
