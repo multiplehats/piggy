@@ -18,13 +18,16 @@ class SpendRules
 		$args = [
 			'post_type' => 'piggy_spend_rule',
 			'post_status' => $post_status,
-			'meta_query' => [
+		];
+
+		if($type) {
+			$args['meta_query'] = [
 				[
 					'key' => '_piggy_spend_rule_type',
 					'value' => $type,
 				],
-			],
-		];
+			];
+		}
 
 		$posts = get_posts($args);
 
@@ -298,7 +301,7 @@ class SpendRules
 		}
 	}
 
-	private function get_spend_rule_by_piggy_uuid($uuid) {
+	public function get_spend_rule_by_piggy_uuid($uuid) {
 		$args = array(
 			'post_type' => 'piggy_spend_rule',
 			'meta_key' => '_piggy_reward_uuid',

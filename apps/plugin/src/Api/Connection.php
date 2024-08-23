@@ -9,6 +9,7 @@ use Piggy\Api\Models\Contacts\Contact;
 use Piggy\Api\Models\CustomAttributes\CustomAttribute;
 use Piggy\Api\Models\Shops\Shop;
 use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
+use PiggyWP\Domain\Services\SpendRules;
 
 class Connection {
 	/**
@@ -17,6 +18,13 @@ class Connection {
 	 * @var RegisterClient
 	 */
 	protected $client;
+
+	/**
+	 * SpendRules service instance.
+	 *
+	 * @var SpendRules
+	 */
+	protected $spend_rules_service;
 
 	/**
 	 * Constructor.
@@ -29,6 +37,8 @@ class Connection {
 		} else {
 			$this->client = null;
 		}
+
+		$this->spend_rules_service = new SpendRules();
 	}
 
 	/**
@@ -674,14 +684,42 @@ class Connection {
 		}
 
 		$rewards = $this->get_rewards();
+
 		if (!$rewards) {
 			return false;
 		}
 
-		$spend_rules_service = new \PiggyWP\Domain\Services\SpendRules();
 
+
+		// Fetch all current spend rules from CPT.
+		$existing_spend_rules = $this->spend_rules_service->get_spend_rules_by_type(null);
+
+		// Filter out posts that don't have the 'piggyRewardUuid' meta field or have an empty 'piggyRewardUuid' value, and delete them.
+		$existing_spend_rules = array_filter($existing_spend_rules, function ($rule) {
+			if (!isset($rule['piggyRewardUuid']) || empty($rule['piggyRewardUuid']['value'])) {
+				wp_delete_post($rule['id'], true);
+				return false;
+			}
+			return true;
+		});
+
+		// Identify Piggy UUIDs in CPT that are not in the current Piggy rewards list.
+		$piggy_reward_uuids = array_column($rewards, 'uuid');
+		$cpt_reward_uuids = array_map(function ($rule) {
+			return $rule['piggyRewardUuid']['value'];
+		}, $existing_spend_rules);
+
+
+		// Delete spend rules that are not in the current Piggy rewards list, including those that have an empty 'piggyRewardUuid' value.
+		foreach ($existing_spend_rules as $rule) {
+			if (!in_array($rule['piggyRewardUuid']['value'], $piggy_reward_uuids)) {
+				wp_delete_post($rule['id'], true);
+			}
+		}
+
+		// Sync Piggy rewards with CPT (add/update).
 		foreach ($rewards as $reward) {
-			$spend_rules_service->create_or_update_spend_rule_from_reward($reward);
+			$this->spend_rules_service->create_or_update_spend_rule_from_reward($reward);
 		}
 
 		return true;
