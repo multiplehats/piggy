@@ -689,8 +689,6 @@ class Connection {
 			return false;
 		}
 
-
-
 		// Fetch all current spend rules from CPT.
 		$existing_spend_rules = $this->spend_rules_service->get_spend_rules_by_type(null);
 
@@ -719,7 +717,12 @@ class Connection {
 
 		// Sync Piggy rewards with CPT (add/update).
 		foreach ($rewards as $reward) {
-			$this->spend_rules_service->create_or_update_spend_rule_from_reward($reward);
+			$this->spend_rules_service->create_or_update_spend_rule_from_reward([
+				'title' => $reward['title'],
+				'requiredCredits' => $reward['requiredCredits'],
+				'type' => 'ORDER_DISCOUNT',
+				'uuid' => $reward['uuid'],
+			]);
 		}
 
 		return true;

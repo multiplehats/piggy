@@ -133,6 +133,19 @@
 
 					<Card.Content>
 						<div class="grid gap-6">
+							<!-- type-->
+							<SettingsSelect
+								{...$rule.type}
+								bind:value={$rule.type.value}
+								items={Object.entries($rule.type.options).map(([value, { label: name }]) => {
+									console.log('item', value, name);
+									return {
+										value,
+										name
+									};
+								})}
+							/>
+
 							<SpendRuleRewardSelect bind:selectedReward={$rule.selectedReward} />
 
 							<SettingsInput {...$rule.title} bind:value={$rule.title.value} />
@@ -154,7 +167,11 @@
 								bind:value={$rule.fulfillment.value}
 							/>
 
-							<SettingsInput {...$rule.creditCost} bind:value={$rule.creditCost.value} />
+							<SettingsInput
+								{...$rule.creditCost}
+								readonly={true}
+								bind:value={$rule.creditCost.value}
+							/>
 
 							{#if ($rule?.type?.value === 'PRODUCT_DISCOUNT' || $rule?.type?.value === 'ORDER_DISCOUNT') && $rule?.discountType && $rule?.discountValue}
 								<SpendRuleProductDiscountFields
