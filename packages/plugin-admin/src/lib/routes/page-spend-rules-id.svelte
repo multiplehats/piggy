@@ -5,8 +5,9 @@
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import SettingsSelect from '$lib/components/settings-select.svelte';
 	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
+	import SpendRuleFreeProductFields from '$lib/components/spend-rules/spend-rule-free-product-fields.svelte';
 	import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
-	import SpendRuleProductDiscountFields from '$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte';
+	import SpendRuleProductOrderDiscountFields from '$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte';
 	import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -173,19 +174,28 @@
 								bind:value={$rule.creditCost.value}
 							/>
 
-							{#if ($rule?.type?.value === 'PRODUCT_DISCOUNT' || $rule?.type?.value === 'ORDER_DISCOUNT') && $rule?.discountType && $rule?.discountValue}
-								<SpendRuleProductDiscountFields
+							{#if $rule?.type?.value === 'ORDER_DISCOUNT' && $rule?.discountType && $rule?.discountValue}
+								<SpendRuleProductOrderDiscountFields
 									bind:discountType={$rule.discountType}
 									bind:discountValue={$rule.discountValue}
 								/>
 							{/if}
+
+							{#if $rule?.type?.value === 'ORDER_DISCOUNT'}
+								<SettingsInput
+									{...$rule.minimumPurchaseAmount}
+									type="number"
+									attributes={{ min: 0 }}
+									bind:value={$rule.minimumPurchaseAmount.value}
+								></SettingsInput>
+							{/if}
+
+							{#if $rule?.type?.value === 'FREE_PRODUCT'}
+								<SpendRuleFreeProductFields />
+							{/if}
 						</div>
 					</Card.Content>
 				</Card.Root>
-
-				{#if $rule?.type?.value === 'ORDER_DISCOUNT'}
-					<SpendRuleOrderDiscountFields bind:minimumPurchaseAmount={$rule.minimumPurchaseAmount} />
-				{/if}
 			</div>
 
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
@@ -222,7 +232,8 @@
 					</Card.Content>
 				</Card.Root>
 
-				<Card.Root>
+				<!-- Disabled until this feature is implemented -->
+				<!-- <Card.Root>
 					<Card.Header>
 						<Card.Title>{__('Schedule', 'piggy')}</Card.Title>
 					</Card.Header>
@@ -241,7 +252,7 @@
 							/>
 						</div>
 					</Card.Content>
-				</Card.Root>
+				</Card.Root> -->
 			</div>
 		</div>
 

@@ -177,7 +177,7 @@ export type EarnRuleValueItem = z.infer<typeof zEarnRuleValueItem>;
 
 // Spent rules
 export const zSpendRuleType = z
-	.literal('PRODUCT_DISCOUNT')
+	.literal('FREE_PRODUCT')
 	.or(z.literal('ORDER_DISCOUNT'))
 	.or(z.literal('FREE_SHIPPING'));
 

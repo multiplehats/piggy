@@ -96,11 +96,11 @@ class SpendRules
 			'type' => [
 				'id' => 'type',
 				'label' => __('Type', 'piggy'),
-				'default' => 'PRODUCT_DISCOUNT',
+				'default' => 'FREE_PRODUCT',
 				'value' => $type,
 				'type' => 'select',
 				'options' => [
-					'PRODUCT_DISCOUNT' => ['label' => __('Product discount', 'piggy')],
+					'FREE_PRODUCT' => ['label' => __('Free product', 'piggy')],
 					'ORDER_DISCOUNT' => ['label' => __('Order discount', 'piggy')],
 					'FREE_SHIPPING' => ['label' => __('Free shipping', 'piggy')],
 				],
@@ -182,7 +182,7 @@ class SpendRules
 			'description' => $this->get_label_description($type),
 		];
 
-		if (in_array($type, ['PRODUCT_DISCOUNT', 'ORDER_DISCOUNT'])) {
+		if (in_array($type, ['FREE_PRODUCT', 'ORDER_DISCOUNT'])) {
 			$spend_rule['discountValue'] = [
 				'id' => 'discount_value',
 				'label' => __('Discount value', 'piggy'),
@@ -210,8 +210,8 @@ class SpendRules
 			$spend_rule['minimumPurchaseAmount'] = [
 				'id' => 'minimum_purchase_amount',
 				'label' => __('Minimum purchase amount', 'piggy'),
-				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_minimum_purchase_amount', null),
+				'default' => 0,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_minimum_purchase_amount', 0),
 				'type' => 'number',
 				'description' => __('The minimum purchase amount required to redeem the reward.', 'piggy'),
 			];
