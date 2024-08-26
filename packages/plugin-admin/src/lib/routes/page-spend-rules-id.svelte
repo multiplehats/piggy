@@ -181,7 +181,7 @@
 								/>
 							{/if}
 
-							{#if $rule?.type?.value === 'ORDER_DISCOUNT'}
+							{#if $rule?.type?.value === 'ORDER_DISCOUNT' || $rule?.type?.value === 'FREE_SHIPPING'}
 								<SettingsInput
 									{...$rule.minimumPurchaseAmount}
 									type="number"
