@@ -148,7 +148,7 @@
 
 							<SpendRuleRewardSelect bind:selectedReward={$rule.selectedReward} />
 
-							<SettingsInput {...$rule.title} bind:value={$rule.title.value} />
+							<SettingsInput {...$rule.title} bind:value={$rule.title.value} readonly={true} />
 
 							<SettingsTranslateableInput {...$rule.label} bind:value={$rule.label.value} />
 

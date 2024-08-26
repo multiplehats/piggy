@@ -2,6 +2,8 @@
 
 namespace PiggyWP\Domain\Services;
 
+use Error;
+
 /**
  * Class SpendRules
  */
@@ -127,7 +129,7 @@ class SpendRules
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_credit_cost', null),
 				'type' => 'number',
-				'description' => __('The amount of credits it will cost to redeem the reward.', 'piggy'),
+				'description' => __('The amount of credits it will cost to redeem the reward. This is managed in the Piggy dashboard.', 'piggy'),
 			],
 			'selectedReward' => [
 				'id' => 'selected_reward',
@@ -249,6 +251,41 @@ class SpendRules
 		return sprintf(__("Add instructions on how fulfillment will be handled. Available placeholders: %s", 'piggy'), $placeholders);
 	}
 
+	public function delete_spend_rule_by_piggy_uuid($uuid) {
+		$args = array(
+			'post_type' => 'piggy_spend_rule',
+			'meta_key' => '_piggy_reward_uuid',
+			'meta_value' => $uuid,
+			'posts_per_page' => 1,
+		);
+
+		$posts = get_posts($args);
+
+		if (!empty($posts)) {
+			wp_delete_post($posts[0]->ID);
+		}
+	}
+
+	public function get_all_spend_rules() {
+		$args = array(
+			'post_type' => 'piggy_spend_rule',
+			'posts_per_page' => -1,
+			'meta_key' => '_piggy_reward_uuid',
+		);
+
+		$posts = get_posts($args);
+
+		$spend_rules = array();
+		foreach ($posts as $post) {
+			$spend_rules[$post->ID] = array(
+				'ID' => $post->ID,
+				'_piggy_reward_uuid' => get_post_meta($post->ID, '_piggy_reward_uuid', true),
+			);
+		}
+
+		return $spend_rules;
+	}
+
 	/**
 	 * Get the applicable spend rule for a given credit amount.
 	 *
@@ -284,12 +321,11 @@ class SpendRules
 		$post_data = array(
 			'post_type' => 'piggy_spend_rule',
 			'post_title' => $reward['title'],
-			'post_status' => $reward['active'] ? 'publish' : 'draft',
+			'post_status' => $reward['active'],
 			'meta_input' => array(
 				'_piggy_spend_rule_type' => $reward['type'],
 				'_piggy_spend_rule_credit_cost' => $reward['requiredCredits'],
 				'_piggy_reward_uuid' => $reward['uuid'],
-				// Add other relevant fields from the reward
 			)
 		);
 
@@ -297,6 +333,8 @@ class SpendRules
 			$post_data['ID'] = $existing_rule['id'];
 			wp_update_post($post_data);
 		} else {
+			// New rules are always draft by default.
+			$post_data['post_status'] = 'draft';
 			wp_insert_post($post_data);
 		}
 	}
@@ -316,5 +354,60 @@ class SpendRules
 		}
 
 		return null;
+	}
+
+	public function delete_spend_rules_by_uuids($uuids_to_delete) {
+		foreach ($uuids_to_delete as $post_id => $uuid) {
+			wp_delete_post($post_id, true);
+		}
+	}
+
+	public function handle_duplicated_spend_rules($uuids) {
+		global $wpdb;
+		$table_name = $wpdb->postmeta;
+
+		foreach ($uuids as $uuid) {
+			$query = $wpdb->prepare(
+				"SELECT post_id FROM $table_name WHERE meta_key = '_piggy_reward_uuid' AND meta_value = %s ORDER BY post_id DESC",
+				$uuid
+			);
+			$post_ids = $wpdb->get_col($query);
+
+			if (count($post_ids) > 1) {
+				// Keep the most recent one (highest post_id), delete the rest
+				$keep_id = array_shift($post_ids);
+				foreach ($post_ids as $post_id) {
+					wp_delete_post($post_id, true);
+				}
+			}
+		}
+	}
+
+	public function delete_spend_rules_with_empty_uuid() {
+		$args = array(
+			'post_type' => 'piggy_spend_rule',
+			'posts_per_page' => -1,
+			'post_status' => array('publish', 'draft'),
+			'meta_query' => array(
+				'relation' => 'OR',
+				array(
+					'key' => '_piggy_reward_uuid',
+					'value' => '',
+					'compare' => '='
+				),
+				array(
+					'key' => '_piggy_reward_uuid',
+					'compare' => 'NOT EXISTS'
+				)
+			)
+		);
+
+		$posts = get_posts($args);
+
+		foreach ($posts as $post) {
+			wp_delete_post($post->ID, true);
+		}
+
+		return count($posts); // Return the number of deleted posts
 	}
 }
