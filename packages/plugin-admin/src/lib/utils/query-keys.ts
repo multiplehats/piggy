@@ -2,6 +2,7 @@ export const QueryKeys = {
 	settings: 'settings',
 	settingById: 'settingById',
 	earnRules: 'earnRules',
+	wcProducts: 'wcProducts',
 	earnRuleById: 'earnRuleById',
 	spendRules: 'spendRules',
 	spendRuleById: 'spendRuleById',

@@ -31,6 +31,22 @@ export class PiggyAdminService {
 		return data;
 	}
 
+	async searchProducts(term: string) {
+		const { data, error } = await api.get<GetRewardsResponse>(
+			`/piggy/private/wc-products?term=${term}`
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new PiggyApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new Error('No data returned');
+		}
+
+		return data;
+	}
+
 	async getRewards() {
 		const { data, error } = await api.get<GetRewardsResponse>('/piggy/private/rewards');
 

@@ -58,6 +58,7 @@ class RoutesController {
 				Routes\V1\Admin\Settings::IDENTIFIER => Routes\V1\Admin\Settings::class,
 				Routes\V1\Admin\Shops::IDENTIFIER => Routes\V1\Admin\Shops::class,
 				Routes\V1\Admin\Rewards::IDENTIFIER => Routes\V1\Admin\Rewards::class,
+				Routes\V1\WCProductsSearch::IDENTIFIER => Routes\V1\WCProductsSearch::class,
 			],
 		];
 	}
