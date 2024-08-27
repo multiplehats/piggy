@@ -13,7 +13,8 @@ export const zFieldTypes = z.enum([
 	'translatable_text',
 	'switch',
 	'earn_rules',
-	'date'
+	'date',
+	'products_select'
 ]);
 
 export const zSelectOptionsItem = z.object({ label: z.string() });
@@ -64,6 +65,19 @@ export const zMultiSelect = zSettingsBaseField.extend({
 	value: z.array(z.string()).or(z.tuple([]))
 });
 export type MultiSelect = z.infer<typeof zMultiSelect>;
+
+export const zProductsSelect = zSettingsBaseField.extend({
+	type: z.literal('products_select'),
+	value: z.array(z.string()).or(z.tuple([])),
+	options: z.array(
+		z.object({
+			id: z.string(),
+			title: z.string()
+		})
+	),
+	default: z.array(z.string()).or(z.tuple([]))
+});
+export type ProductsSelect = z.infer<typeof zProductsSelect>;
 
 export const zCheckboxesOptionsItem = z.object({
 	label: z.string(),
@@ -200,6 +214,7 @@ export const zSpendRuleValueItem = z.object({
 	expiresAt: zDate,
 	completed: z.boolean().nullable().optional(),
 	selectedReward: zText,
+	selectedProducts: zProductsSelect,
 	instructions: zTranslatableText,
 	creditCost: zNumber,
 	description: zTranslatableText,
