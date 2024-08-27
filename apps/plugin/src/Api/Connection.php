@@ -702,7 +702,8 @@ class Connection {
 				'requiredCredits' => $reward['requiredCredits'],
 				'type' => 'ORDER_DISCOUNT',
 				'uuid' => $reward['uuid'],
-				'active' => false
+				'active' => false,
+				'selectedReward' => $reward['uuid'],
 			];
 			$this->spend_rules_service->create_or_update_spend_rule_from_reward($mapped_reward);
 			$processed_uuids[] = $reward['uuid'];

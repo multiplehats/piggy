@@ -206,7 +206,7 @@ class SpendRules
 			];
 		}
 
-		if ($type === 'ORDER_DISCOUNT') {
+		if ($type === 'ORDER_DISCOUNT' || $type === 'FREE_SHIPPING') {
 			$spend_rule['minimumPurchaseAmount'] = [
 				'id' => 'minimum_purchase_amount',
 				'label' => __('Minimum purchase amount', 'piggy'),
@@ -326,6 +326,7 @@ class SpendRules
 				'_piggy_spend_rule_type' => $reward['type'],
 				'_piggy_spend_rule_credit_cost' => $reward['requiredCredits'],
 				'_piggy_reward_uuid' => $reward['uuid'],
+				'_piggy_spend_rule_selected_reward' => $reward['uuid'],
 			)
 		);
 

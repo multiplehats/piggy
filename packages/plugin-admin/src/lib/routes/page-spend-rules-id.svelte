@@ -57,23 +57,22 @@
 		if (!$rule) {
 			return;
 		}
-
+		console.log($rule);
 		$mutate.mutate({
 			id: $rule.id,
 			type: $rule.type.value,
+			title: $rule.title?.value ?? __('New rule', 'piggy'),
 			label: $rule.label.value,
 			status: $rule.status.value,
-			title: $rule.title?.value ?? __('New rule', 'piggy'),
-			startsAt: $rule.startsAt.value,
-			expiresAt: $rule.expiresAt.value,
-			selectedReward: $rule.selectedReward.value,
-			instructions: $rule.instructions.value,
-			creditCost: $rule.creditCost.value,
-			description: $rule.description.value,
-			fulfillment: $rule.fulfillment.value,
+			startsAt: $rule?.startsAt?.value,
+			expiresAt: $rule?.expiresAt?.value,
+			selectedReward: $rule?.selectedReward?.value,
+			instructions: $rule?.instructions?.value,
+			description: $rule?.description?.value,
+			fulfillment: $rule?.fulfillment?.value,
 			discountValue: $rule?.discountValue?.value,
-			discountType: $rule.discountType.value,
-			minimumPurchaseAmount: $rule.minimumPurchaseAmount.value
+			discountType: $rule?.discountType?.value,
+			minimumPurchaseAmount: $rule?.minimumPurchaseAmount?.value
 		});
 	}
 
@@ -139,7 +138,6 @@
 								{...$rule.type}
 								bind:value={$rule.type.value}
 								items={Object.entries($rule.type.options).map(([value, { label: name }]) => {
-									console.log('item', value, name);
 									return {
 										value,
 										name
@@ -181,7 +179,7 @@
 								/>
 							{/if}
 
-							{#if $rule?.type?.value === 'ORDER_DISCOUNT' || $rule?.type?.value === 'FREE_SHIPPING'}
+							{#if ($rule?.type?.value === 'ORDER_DISCOUNT' || $rule?.type?.value === 'FREE_SHIPPING') && $rule.minimumPurchaseAmount}
 								<SettingsInput
 									{...$rule.minimumPurchaseAmount}
 									type="number"
