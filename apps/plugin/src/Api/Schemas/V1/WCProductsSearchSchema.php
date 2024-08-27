@@ -21,10 +21,23 @@ class WCProductsSearchSchema extends AbstractSchema {
         ];
     }
 
-    public function get_item_response($item) {
+    /**
+     * Get the item response
+     *
+     * @param \WC_Product $product_object
+     * @return array
+     */
+    public function get_item_response($product_object) {
+        $formatted_name = $product_object->get_formatted_name();
+        $managing_stock = $product_object->managing_stock();
+
+        if ( ! wc_products_array_filter_readable( $product_object ) ) {
+            return [];
+        }
+
         return [
-            'id' => $item['id'],
-            'title' => $item['title'],
+            'id' => $product_object->get_id(),
+            'title' => $formatted_name,
         ];
     }
 }

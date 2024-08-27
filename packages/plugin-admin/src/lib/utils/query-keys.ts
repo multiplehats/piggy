@@ -13,6 +13,7 @@ export const QueryKeys = {
 
 export const MutationKeys = {
 	setApiKey: 'setApiKey',
+	searchProducts: 'searchProducts',
 	saveSettings: 'saveSettings',
 	upsertEarnRule: 'upsertEarnRule',
 	upsertSpendRule: 'upsertSpendRule'
