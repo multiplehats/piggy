@@ -82,7 +82,7 @@ class EarnRules {
 				'default' => null,
 				'value' => $post->post_title,
 				'type' => 'text',
-				'description' => __( 'This is not displayed to the user and is only used for internal reference. You can manage this in the Piggy dashboard.', 'piggy' ),
+				'description' => __('This is not displayed to the user and is only used for internal reference.', 'piggy'),
 			],
 			'type' => [
 				'id' => 'type',

@@ -11,13 +11,26 @@
 	import Check from 'lucide-svelte/icons/check';
 	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
 	import { tick } from 'svelte';
+	import type { SettingsLabelProps } from './settings-label';
+	import SettingsLabel from './settings-label/settings-label.svelte';
+
+	type $$Props = SettingsLabelProps & {
+		id: string;
+		label: string | undefined;
+		description?: string | undefined;
+		hideLabel?: boolean;
+		multiple?: boolean;
+		value: string[];
+	};
 
 	export let multiple = true;
 	export let id: string;
-	export let value: string | string[] | undefined = undefined;
+	export let value: string[] = [];
+	export { className as class };
 
 	const service = new PiggyAdminService();
 
+	let className: string | undefined = undefined;
 	let open = false;
 	let searchTerm = '';
 
@@ -31,7 +44,7 @@
 	const initialProductsQuery = createQuery({
 		queryKey: [QueryKeys.wcProducts, id, value],
 		queryFn: () => service.getInitialProducts(value),
-		enabled: !!value,
+		enabled: value.length > 0,
 		refetchOnWindowFocus: false
 	});
 
@@ -49,22 +62,22 @@
 
 	const onSelectProduct = (productId: string) => {
 		if (multiple) {
-			value = (value as string[])?.includes(productId)
-				? (value as string[]).filter((id) => id !== productId)
-				: [...((value as string[]) || []), productId];
+			value = value.includes(productId)
+				? value.filter((id) => id !== productId)
+				: [...value, productId];
 		} else {
-			value = value === productId ? undefined : productId;
+			value = value[0] === productId ? [] : [productId];
 		}
 
 		// Update selectedProducts immediately
 		const selectedProduct = displayedProducts.find((p) => p.id.toString() === productId);
 		if (selectedProduct) {
 			if (multiple) {
-				selectedProducts = (value as string[])?.includes(productId)
+				selectedProducts = value.includes(productId)
 					? [...selectedProducts, selectedProduct]
 					: selectedProducts.filter((p) => p.id.toString() !== productId);
 			} else {
-				selectedProducts = value ? [selectedProduct] : [];
+				selectedProducts = value.length > 0 ? [selectedProduct] : [];
 			}
 		}
 	};
@@ -79,56 +92,65 @@
 			: __('Select product(s)...');
 </script>
 
-<Popover.Root bind:open let:ids>
-	<Popover.Trigger asChild let:builder>
-		<Button
-			builders={[builder]}
-			variant="outline"
-			role="combobox"
-			aria-expanded={open}
-			class="w-[300px] justify-between max-w-sm text-ellipsis overflow-hidden"
-		>
-			{selectedValue}
-			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-		</Button>
-	</Popover.Trigger>
+<div class={cn('flex flex-col justify-between', className)}>
+	<SettingsLabel
+		label={$$props.label}
+		description={$$props.description}
+		hideLabel={$$props.hideLabel}
+		tooltip={$$props.tooltip}
+		{id}
+	/>
+	<Popover.Root bind:open let:ids>
+		<Popover.Trigger asChild let:builder>
+			<Button
+				builders={[builder]}
+				variant="outline"
+				role="combobox"
+				aria-expanded={open}
+				class="w-[300px] justify-between max-w-sm text-ellipsis overflow-hidden"
+			>
+				{selectedValue}
+				<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+			</Button>
+		</Popover.Trigger>
 
-	<Popover.Content class="w-[300px] p-0">
-		<Command.Root onKeydown={searchProductsDebounced} shouldFilter={false}>
-			<Command.Input placeholder={__('Search products...')} autocomplete="off" />
+		<Popover.Content class="w-[300px] p-0">
+			<Command.Root onKeydown={searchProductsDebounced} shouldFilter={false}>
+				<Command.Input placeholder={__('Search products...')} autocomplete="off" />
 
-			<Command.Empty>{__('No products found')}</Command.Empty>
-			<Command.Group>
-				{#if displayedProducts.length > 0}
-					{#each displayedProducts as product (product.id)}
-						<Command.Item
-							value={product.id.toString()}
-							onSelect={() => {
-								console.log('onSelectProduct', product.id.toString());
-								onSelectProduct(product.id.toString());
-								if (!multiple) {
-									closeAndFocusTrigger(ids.trigger);
-								}
-							}}
-						>
-							<Check
-								class={cn(
-									'mr-2 h-4 w-4',
-									multiple
-										? value?.includes(product.id.toString())
+				<Command.Empty>{__('No products found')}</Command.Empty>
+				<Command.Group>
+					{#if displayedProducts.length > 0}
+						{#each displayedProducts as product (product.id)}
+							<Command.Item
+								value={product.id.toString()}
+								onSelect={() => {
+									console.log('onSelectProduct', product.id.toString());
+									onSelectProduct(product.id.toString());
+									if (!multiple) {
+										closeAndFocusTrigger(ids.trigger);
+									}
+								}}
+							>
+								<Check
+									class={cn(
+										'mr-2 h-4 w-4',
+										multiple
+											? value?.includes(product.id.toString())
+												? 'opacity-100'
+												: 'opacity-0'
+											: value[0] === product.id.toString()
 											? 'opacity-100'
 											: 'opacity-0'
-										: value === product.id.toString()
-										? 'opacity-100'
-										: 'opacity-0'
-								)}
-							/>
+									)}
+								/>
 
-							{@html product.title}
-						</Command.Item>
-					{/each}
-				{/if}
-			</Command.Group>
-		</Command.Root>
-	</Popover.Content>
-</Popover.Root>
+								{@html product.title}
+							</Command.Item>
+						{/each}
+					{/if}
+				</Command.Group>
+			</Command.Root>
+		</Popover.Content>
+	</Popover.Root>
+</div>

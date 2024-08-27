@@ -92,6 +92,7 @@ class SpendRules extends AbstractRoute {
 			'discountValue' => $request->get_param( 'discountValue' ),
 			'discountType' => $request->get_param( 'discountType' ),
 			'minimumPurchaseAmount' => $request->get_param( 'minimumPurchaseAmount' ),
+			'selectedProducts' => $request->get_param( 'selectedProducts' ),
 		);
 
 		$post_data = array(
@@ -111,6 +112,7 @@ class SpendRules extends AbstractRoute {
 				'_piggy_spend_rule_discount_value' => $data['discountValue'],
 				'_piggy_spend_rule_discount_type' => $data['discountType'],
 				'_piggy_spend_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
+				'_piggy_spend_rule_selected_products' => $data['selectedProducts'],
 			)
 		);
 

@@ -91,7 +91,7 @@ class SpendRules
 				'default' => null,
 				'value' => $post->post_title,
 				'type' => 'text',
-				'description' => __('This is not displayed to the user and is only used for internal reference.', 'piggy'),
+				'description' => __( 'This is not displayed to the user and is only used for internal reference. You can manage this in the Piggy dashboard.', 'piggy' ),
 			],
 			'type' => [
 				'id' => 'type',
@@ -100,9 +100,9 @@ class SpendRules
 				'value' => $type,
 				'type' => 'select',
 				'options' => [
-					'FREE_PRODUCT' => ['label' => __('Free product', 'piggy')],
-					'ORDER_DISCOUNT' => ['label' => __('Order discount', 'piggy')],
-					'FREE_SHIPPING' => ['label' => __('Free shipping', 'piggy')],
+					'FREE_PRODUCT' => ['label' => __('Free / Discounted Product', 'piggy')],
+					'ORDER_DISCOUNT' => ['label' => __('Order Discount', 'piggy')],
+					'FREE_SHIPPING' => ['label' => __('Free Shipping', 'piggy')],
 				],
 				'description' => __('The type of spend rule.', 'piggy'),
 			],
@@ -181,6 +181,17 @@ class SpendRules
 			'type' => 'translatable_text',
 			'description' => $this->get_label_description($type),
 		];
+
+		if (in_array($type, ['FREE_PRODUCT'])) {
+			$spend_rule['selectedProducts'] = [
+				'id' => 'selected_products',
+				'label' => __('Selected products', 'piggy'),
+				'default' => [],
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_selected_products', []),
+				'type' => 'products_select',
+				'description' => __('The products that are selected for the spend rule.', 'piggy'),
+			];
+		}
 
 		if (in_array($type, ['FREE_PRODUCT', 'ORDER_DISCOUNT'])) {
 			$spend_rule['discountValue'] = [

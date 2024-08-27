@@ -1,9 +1,9 @@
 <?php
 
-namespace    PiggyWP\Api\Routes\V1;
+namespace  PiggyWP\Api\Routes\V1;
 
-use    PiggyWP\Api\Routes\V1\AbstractRoute;
-use    PiggyWP\Api\Routes\V1\Admin\Middleware;
+use PiggyWP\Api\Routes\V1\AbstractRoute;
+use PiggyWP\Api\Routes\V1\Admin\Middleware;
 use WP_REST_Request;
 
 class WCProductsSearch extends AbstractRoute
@@ -11,7 +11,7 @@ class WCProductsSearch extends AbstractRoute
     const IDENTIFIER = 'wc-products';
     const SCHEMA_TYPE = 'wc-products';
 
-    public    function get_path()
+    public function get_path()
     {
         return '/wc-products';
     }

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
 	import { __ } from '@wordpress/i18n';
-	import SettingsCalendar from '$lib/components/settings-calendar.svelte';
+	// import SettingsCalendar from '$lib/components/settings-calendar.svelte';
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import SettingsSelect from '$lib/components/settings-select.svelte';
 	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
 	import SpendRuleFreeProductFields from '$lib/components/spend-rules/spend-rule-free-product-fields.svelte';
-	import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
+	// import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
 	import SpendRuleProductOrderDiscountFields from '$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte';
 	import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -68,6 +68,7 @@
 			expiresAt: $rule?.expiresAt?.value,
 			selectedReward: $rule?.selectedReward?.value,
 			instructions: $rule?.instructions?.value,
+			selectedProducts: $rule?.selectedProducts?.value,
 			description: $rule?.description?.value,
 			fulfillment: $rule?.fulfillment?.value,
 			discountValue: $rule?.discountValue?.value,
@@ -81,6 +82,8 @@
 	}
 
 	$: ruleTypeLabel = $rule?.type?.options[$rule?.type?.value]?.label ?? '';
+
+	$: console.log($rule);
 </script>
 
 {#if $query.isLoading}
@@ -172,7 +175,7 @@
 								bind:value={$rule.creditCost.value}
 							/>
 
-							{#if $rule?.type?.value === 'ORDER_DISCOUNT' && $rule?.discountType && $rule?.discountValue}
+							{#if ($rule?.type?.value === 'ORDER_DISCOUNT' || $rule?.type?.value === 'FREE_PRODUCT') && $rule?.discountType && $rule?.discountValue}
 								<SpendRuleProductOrderDiscountFields
 									bind:discountType={$rule.discountType}
 									bind:discountValue={$rule.discountValue}
@@ -189,7 +192,7 @@
 							{/if}
 
 							{#if $rule?.type?.value === 'FREE_PRODUCT'}
-								<SpendRuleFreeProductFields />
+								<SpendRuleFreeProductFields selectedProducts={$rule.selectedProducts} />
 							{/if}
 						</div>
 					</Card.Content>
@@ -255,7 +258,7 @@
 		</div>
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
-			<Button size="sm">
+			<Button size="sm" on:click={handleSave}>
 				{__('Save rule', 'piggy')}
 			</Button>
 		</div>
