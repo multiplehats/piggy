@@ -48,6 +48,8 @@ class CustomerSession
 		add_action('woocommerce_applied_coupon', [$this, 'handle_applied_coupon'], 10, 1);
 		add_action('woocommerce_removed_coupon', [$this, 'handle_removed_coupon'], 10, 1);
 		add_action('woocommerce_before_calculate_totals', [$this, 'adjust_cart_item_prices'], 10, 1);
+		add_filter('woocommerce_product_get_sale_price', [$this, 'remove_sale_price_for_discounted_products'], 10, 2);
+		add_filter('woocommerce_product_get_price', [$this, 'adjust_price_for_discounted_products'], 10, 2);
 	}
 
 	/**
@@ -165,6 +167,14 @@ class CustomerSession
                     $discounted_price = max(0, $original_price - $discount_value);
                 }
 
+                // Instead of setting the price directly, use a filter
+                add_filter('woocommerce_product_get_price', function($price, $product) use ($discounted_price, $product_id) {
+                    if ($product->get_id() == $product_id) {
+                        return $discounted_price;
+                    }
+                    return $price;
+                }, 10, 2);
+
                 WC()->cart->add_to_cart($product_id, 1, 0, array(), array(
                     'piggy_discounted_product' => true,
                     'piggy_spend_rule_id' => $spend_rule['id'],
@@ -205,8 +215,12 @@ class CustomerSession
 		foreach ($cart->get_cart() as $cart_item) {
 			if (isset($cart_item['piggy_discounted_product'])) {
 				$cart_item['data']->set_price($cart_item['piggy_discounted_price']);
+				// Remove sale price to avoid sale badge
+				$cart_item['data']->set_sale_price('');
 			} elseif (isset($cart_item['piggy_discount'])) {
 				$cart_item['data']->set_price($cart_item['data']->get_price());
+				// Remove sale price to avoid sale badge
+				$cart_item['data']->set_sale_price('');
 			}
 		}
 	}
@@ -399,5 +413,31 @@ class CustomerSession
 	private function sync_user_attributes($user_id, $uuid)
 	{
 		return $this->connection->sync_user_attributes($user_id, $uuid);
+	}
+
+	public function remove_sale_price_for_discounted_products($sale_price, $product)
+	{
+		$cart = WC()->cart;
+		if ($cart) {
+			foreach ($cart->get_cart() as $cart_item) {
+				if (isset($cart_item['piggy_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
+					return '';
+				}
+			}
+		}
+		return $sale_price;
+	}
+
+	public function adjust_price_for_discounted_products($price, $product)
+	{
+		$cart = WC()->cart;
+		if ($cart) {
+			foreach ($cart->get_cart() as $cart_item) {
+				if (isset($cart_item['piggy_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
+					return $cart_item['piggy_discounted_price'];
+				}
+			}
+		}
+		return $price;
 	}
 }
