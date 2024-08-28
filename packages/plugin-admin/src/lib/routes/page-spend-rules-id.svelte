@@ -57,7 +57,7 @@
 		if (!$rule) {
 			return;
 		}
-		console.log($rule);
+
 		$mutate.mutate({
 			id: $rule.id,
 			type: $rule.type.value,

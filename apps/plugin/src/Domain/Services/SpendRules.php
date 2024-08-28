@@ -2,7 +2,6 @@
 
 namespace PiggyWP\Domain\Services;
 
-use Error;
 
 /**
  * Class SpendRules
@@ -434,8 +433,6 @@ class SpendRules
 	}
 
 	public function create_coupon_for_spend_rule( $formatted_spend_rule ) {
-		error_log('Creating coupon for spend rule: ' . print_r($formatted_spend_rule, true));
-
 		$coupon_code = wp_generate_uuid4();
 
 		$existing_coupon = new \WC_Coupon( $coupon_code );

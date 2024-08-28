@@ -9,6 +9,7 @@ use Piggy\Api\Models\Contacts\Contact;
 use Piggy\Api\Models\CustomAttributes\CustomAttribute;
 use Piggy\Api\Models\Shops\Shop;
 use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
+use Piggy\Api\Models\Loyalty\Receptions\RewardReception;
 use PiggyWP\Domain\Services\SpendRules;
 
 class Connection {
@@ -722,5 +723,30 @@ class Connection {
 
 	public function manual_sync_rewards() {
 		return $this->sync_rewards_with_spend_rules();
+	}
+
+	public function create_reward_reception($contact_uuid, $reward_uuid) {
+		$client = $this->init_client();
+		if (!$client) return false;
+
+		$shop_uuid = get_option('piggy_shop_uuid', null);
+
+		if (!$shop_uuid) {
+			error_log("Shop UUID not set. Unable to create Reward Reception.");
+			return;
+		}
+
+		try {
+			$reception = RewardReception::create([
+				"contact_uuid" => $contact_uuid,
+				"reward_uuid" => $reward_uuid,
+				"shop_uuid" => $shop_uuid
+			]);
+
+			return $reception ?: false;
+		} catch (Exception $e) {
+			error_log("Failed to create Reward Reception: " . $e->getMessage());
+			return false;
+		}
 	}
 }
