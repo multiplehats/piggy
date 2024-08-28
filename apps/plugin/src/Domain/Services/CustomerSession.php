@@ -146,45 +146,72 @@ class CustomerSession
         $discount_value = $spend_rule['discountValue']['value'] ?? 0;
 
         foreach ($selected_products as $product_id) {
+            $product = wc_get_product($product_id);
+            $original_price = $product->get_price();
+            $discounted_price = $this->calculate_discounted_price($original_price, $discount_type, $discount_value);
+
             // Check if the product is already in the cart
-            $product_in_cart = false;
-            foreach (WC()->cart->get_cart() as $cart_item) {
-                if ($cart_item['product_id'] == $product_id && isset($cart_item['piggy_discounted_product'])) {
-                    $product_in_cart = true;
-                    break;
-                }
-            }
+            $cart_item_key = $this->find_product_in_cart($product_id);
 
-            // If the product is not in the cart, add it
-            if (!$product_in_cart) {
-                $product = wc_get_product($product_id);
-                $original_price = $product->get_price();
-                $discounted_price = $original_price;
-
-                if ($discount_type === 'percentage') {
-                    $discounted_price = $original_price * (1 - $discount_value / 100);
-                } elseif ($discount_type === 'fixed') {
-                    $discounted_price = max(0, $original_price - $discount_value);
-                }
-
-                // Instead of setting the price directly, use a filter
-                add_filter('woocommerce_product_get_price', function($price, $product) use ($discounted_price, $product_id) {
-                    if ($product->get_id() == $product_id) {
-                        return $discounted_price;
-                    }
-                    return $price;
-                }, 10, 2);
-
-                WC()->cart->add_to_cart($product_id, 1, 0, array(), array(
-                    'piggy_discounted_product' => true,
-                    'piggy_spend_rule_id' => $spend_rule['id'],
-                    'piggy_original_price' => $original_price,
-                    'piggy_discounted_price' => $discounted_price
-                ));
+            if ($cart_item_key) {
+                // Product is already in the cart, update its price and quantity
+                $this->update_existing_cart_item($cart_item_key, $discounted_price, $spend_rule['id'], $original_price);
+            } else {
+                // Product is not in the cart, add it
+                $this->add_new_cart_item($product_id, $discounted_price, $spend_rule['id'], $original_price);
             }
         }
+    }
 
-		// \WC_AJAX::get_refreshed_fragments();
+    private function calculate_discounted_price($original_price, $discount_type, $discount_value)
+    {
+        if ($discount_type === 'percentage') {
+            return $original_price * (1 - $discount_value / 100);
+        } elseif ($discount_type === 'fixed') {
+            return max(0, $original_price - $discount_value);
+        }
+        return $original_price;
+    }
+
+    private function find_product_in_cart($product_id)
+    {
+        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+            if ($cart_item['product_id'] == $product_id) {
+                return $cart_item_key;
+            }
+        }
+        return false;
+    }
+
+    private function update_existing_cart_item($cart_item_key, $discounted_price, $spend_rule_id, $original_price)
+    {
+		$cart = WC()->cart;
+		$cart_item = $cart->get_cart_item($cart_item_key);
+
+		// Update the price
+		$cart_item['data']->set_price($discounted_price);
+
+		// Add Piggy-specific data
+		$cart_item['piggy_discounted_product'] = true;
+		$cart_item['piggy_spend_rule_id'] = $spend_rule_id;
+		$cart_item['piggy_original_price'] = $original_price;
+		$cart_item['piggy_discounted_price'] = $discounted_price;
+
+		// Set quantity to 1
+		$cart->set_quantity($cart_item_key, 1);
+
+		// Update the cart item
+		$cart->cart_contents[$cart_item_key] = $cart_item;
+    }
+
+    private function add_new_cart_item($product_id, $discounted_price, $spend_rule_id, $original_price)
+    {
+        WC()->cart->add_to_cart($product_id, 1, 0, array(), array(
+            'piggy_discounted_product' => true,
+            'piggy_spend_rule_id' => $spend_rule_id,
+            'piggy_original_price' => $original_price,
+            'piggy_discounted_price' => $discounted_price
+        ));
     }
 
     /**
@@ -217,6 +244,11 @@ class CustomerSession
 				$cart_item['data']->set_price($cart_item['piggy_discounted_price']);
 				// Remove sale price to avoid sale badge
 				$cart_item['data']->set_sale_price('');
+
+				// Ensure quantity is 1 for discounted products
+				if ($cart_item['quantity'] > 1) {
+					WC()->cart->set_quantity($cart_item['key'], 1);
+				}
 			} elseif (isset($cart_item['piggy_discount'])) {
 				$cart_item['data']->set_price($cart_item['data']->get_price());
 				// Remove sale price to avoid sale badge
