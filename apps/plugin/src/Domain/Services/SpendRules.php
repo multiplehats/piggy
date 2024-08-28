@@ -465,8 +465,13 @@ class SpendRules
 				break;
 		}
 
-		if (isset($spend_rule['minimumPurchaseAmount'])) {
-			$coupon->set_minimum_amount($spend_rule['minimumPurchaseAmount']['value']);
+		// Check for minimum purchase amount
+		if (isset($formatted_spend_rule['minimumPurchaseAmount']) &&
+			is_numeric($formatted_spend_rule['minimumPurchaseAmount']['value'])) {
+			$min_amount = floatval($formatted_spend_rule['minimumPurchaseAmount']['value']);
+			if ($min_amount > 0) {
+				$coupon->set_minimum_amount($min_amount);
+			}
 		}
 
 		$coupon->save();
