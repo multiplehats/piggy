@@ -2,7 +2,7 @@
 	import { pluginSettings } from '$lib/modules/settings';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
-	import DashboardRewardCard from './dashboard-reward-card.svelte';
+	import DashboardSpendRuleCard from './dashboard-spend-rule-card.svelte';
 
 	const spentRules = window.piggySpentRules;
 
@@ -25,7 +25,7 @@
 			<div class="piggy-dashboard-rewards__cards">
 				{#each spentRules as rule}
 					{#if rule.label.value}
-						<DashboardRewardCard {rule} />
+						<DashboardSpendRuleCard {rule} />
 					{/if}
 				{/each}
 			</div>

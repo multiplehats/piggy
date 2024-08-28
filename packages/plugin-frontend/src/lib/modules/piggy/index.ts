@@ -61,4 +61,21 @@ export class PiggyFrontendService {
 
 		return data;
 	}
+
+	async claimSpendRule(spendRuleId: number, userId?: number) {
+		const { data, error } = await api.post(`/piggy/v1/spend-rules-claim`, {
+			userId,
+			id: spendRuleId
+		});
+
+		if (error) {
+			if (error) {
+				throw new PiggyApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new Error('No data returned');
+		}
+
+		return data;
+	}
 }

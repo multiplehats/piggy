@@ -1,10 +1,14 @@
 <script lang="ts">
-	import { pluginSettings } from '$lib/modules/settings';
+	import { createMutation } from '@tanstack/svelte-query';
+	import { piggyService } from '$lib/config/services';
+	import { isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { MutationKeys } from '$lib/utils/query-keys';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { cubicOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
 	import { replaceStrings } from '@piggy/lib';
 	import type { SpendRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
+	import Button from './button/button.svelte';
 
 	export let rule: SpendRuleValueItem;
 
@@ -12,6 +16,15 @@
 		duration: 450,
 		easing: cubicOut
 	});
+
+	const claimSpendRuleMutation = createMutation({
+		mutationKey: [MutationKeys.claimSpendRule],
+		mutationFn: () => handleClaim(rule.id)
+	});
+
+	function handleClaim(id: number) {
+		return piggyService.claimSpendRule(id, window.piggyMiddlewareConfig.userId);
+	}
 
 	$: creditsName = getTranslatedText($pluginSettings.credits_name);
 	$: creditsAccumulated = window.piggyData.contact?.balance.credits ?? 0;
@@ -32,7 +45,7 @@
 		]);
 	}
 
-	function getDescription(text: string, credits: number | string) {
+	function getDescription(text: string, credits: number | string | null) {
 		if (!text) return '';
 
 		return replaceStrings(text, [
@@ -55,6 +68,8 @@
 			}
 		]);
 	}
+
+	$: console.log(rule);
 </script>
 
 <div class="piggy-dashboard-reward-card">
@@ -108,6 +123,25 @@
 						creditsRequired
 					)}
 				</p>
+			{/if}
+		</div>
+	{/if}
+
+	{#if isLoggedIn}
+		<div class="piggy-dashboard-earn-card__action">
+			<Button
+				loading={$claimSpendRuleMutation.isPending}
+				disabled={$claimSpendRuleMutation.isPending}
+				variant="primary"
+				on:click={() => $claimSpendRuleMutation.mutateAsync()}
+			>
+				Claim
+			</Button>
+
+			{#if $claimSpendRuleMutation.isError}
+				<div style="color: red; margin-top: 8px; font-size: 13px;">
+					{$claimSpendRuleMutation.error.message}
+				</div>
 			{/if}
 		</div>
 	{/if}

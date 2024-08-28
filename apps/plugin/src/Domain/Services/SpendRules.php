@@ -422,4 +422,55 @@ class SpendRules
 
 		return count($posts); // Return the number of deleted posts
 	}
+
+	public function get_spend_rule_by_id($id) {
+		$post = get_post($id);
+
+		if (!$post) {
+			return null;
+		}
+
+		return $this->get_formatted_post($post);
+	}
+
+	public function create_coupon_for_spend_rule( $formatted_spend_rule ) {
+		error_log('Creating coupon for spend rule: ' . print_r($formatted_spend_rule, true));
+
+		$coupon_code = wp_generate_uuid4();
+
+		$existing_coupon = new \WC_Coupon( $coupon_code );
+
+		if ($existing_coupon) {
+			$coupon_code = wp_generate_uuid4();
+		}
+
+		$coupon = new \WC_Coupon();
+		$coupon->set_code($coupon_code);
+		$coupon->set_description('Piggy Spend Rule: ' . $formatted_spend_rule['title']['value']);
+		$coupon->set_usage_limit(1);
+		$coupon->set_individual_use(true);
+
+		$coupon->add_meta_data('_piggy_spend_rule_coupon', 'true', true);
+		$coupon->add_meta_data('_piggy_spend_rule_id', $formatted_spend_rule['id'], true);
+
+		switch ($formatted_spend_rule['type']['value']) {
+			case 'FREE_PRODUCT':
+			case 'ORDER_DISCOUNT':
+				$coupon->set_amount(0);
+
+				break;
+
+			case 'FREE_SHIPPING':
+				$coupon->set_free_shipping(true);
+				break;
+		}
+
+		if (isset($spend_rule['minimumPurchaseAmount'])) {
+			$coupon->set_minimum_amount($spend_rule['minimumPurchaseAmount']['value']);
+		}
+
+		$coupon->save();
+
+		return $coupon_code;
+	}
 }

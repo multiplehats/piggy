@@ -53,6 +53,7 @@ class RoutesController {
 				Routes\V1\SpendRulesSync::IDENTIFIER => Routes\V1\SpendRulesSync::class,
 				Routes\V1\EarnRules::IDENTIFIER => Routes\V1\EarnRules::class,
 				ROutes\V1\SpendRules::IDENTIFIER => Routes\V1\SpendRules::class,
+				Routes\V1\SpendRulesClaim::IDENTIFIER => Routes\V1\SpendRulesClaim::class,
 			],
 			'private' => [
 				Routes\V1\Admin\Settings::IDENTIFIER => Routes\V1\Admin\Settings::class,
