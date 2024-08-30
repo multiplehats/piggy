@@ -96,6 +96,10 @@ class SpendRulesClaim extends AbstractRoute {
 			return new RouteException( 'spend-rules-claim', 'Spend rule not found', 404 );
 		}
 
+		if ( $rule['status']['value'] === 'draft' ) {
+			return new RouteException( 'spend-rules-claim', 'Spend rule is a draft', 400 );
+		}
+
 		// Get the contact UUID for the user
 		$contact_uuid = $connection->get_contact_uuid_by_wp_id( $user_id );
 
@@ -122,7 +126,6 @@ class SpendRulesClaim extends AbstractRoute {
 		if ( ! $coupon ) {
 			return new RouteException( 'spend-rules-claim', 'Failed to create coupon', 500 );
 		}
-
 
 		return [
 			'coupon' => $coupon,

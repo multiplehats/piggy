@@ -176,7 +176,7 @@ class SpendRules
 			'id' => 'label',
 			'label' => __('Label', 'piggy'),
 			'default' => $this->get_default_label($type),
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label', $this->get_default_label($type)),
+			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label'),
 			'type' => 'translatable_text',
 			'description' => $this->get_label_description($type),
 		];
@@ -239,7 +239,7 @@ class SpendRules
 	private function get_default_label($type)
 	{
 		return [
-			'en_US' => 'Unlock {{discount}} for {{points}} {{pointsCurrency}}'
+			'en_US' => 'Unlock {{ discount }} for {{ credits }} {{ credits_currency }}'
 		];
 	}
 

@@ -143,7 +143,7 @@ class SpendRules extends AbstractRoute {
 		$prepared_args = array(
 			'post_type' => 'piggy_spend_rule',
 			'posts_per_page' => -1,
-			'post_status' => array('publish', 'draft'),
+			'post_status' => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array('publish'),
 		);
 
 		$id = $request->get_param( 'id' );

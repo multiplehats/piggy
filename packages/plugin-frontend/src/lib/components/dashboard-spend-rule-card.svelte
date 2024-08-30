@@ -112,7 +112,7 @@
 		{/if}
 	</p>
 
-	{#if creditsRequired}
+	{#if creditsRequired && isLoggedIn}
 		<div class="piggy-dashboard-reward-card__progress">
 			<progress value={$progress} />
 

@@ -159,7 +159,7 @@ export class SettingsAdminService {
 	}
 
 	async getSpendRules(): Promise<GetSpendRulesResponse> {
-		const { data, error } = await api.get<GetSpendRulesResponse>('/piggy/v1/spend-rules', {
+		const { data, error } = await api.get<GetSpendRulesResponse>('/piggy/v1/spend-rules?status=draft,publish', {
 			cache: 'no-store'
 		});
 
