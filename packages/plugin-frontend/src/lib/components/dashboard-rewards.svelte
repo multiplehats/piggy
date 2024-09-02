@@ -14,7 +14,7 @@
 		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
 	}
 
-	$: filteredRules = spentRules?.filter((rule) => rule.label.value);
+	$: filteredRules = spentRules?.filter((rule) => rule.status.value === 'publish');
 </script>
 
 {#if filteredRules && filteredRules.length > 0}

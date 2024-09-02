@@ -181,51 +181,46 @@ class SpendRules
 			'description' => $this->get_label_description($type),
 		];
 
-		if (in_array($type, ['FREE_PRODUCT'])) {
-			$spend_rule['selectedProducts'] = [
-				'id' => 'selected_products',
-				'label' => __('Selected products', 'piggy'),
-				'default' => [],
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_selected_products', []),
-				'type' => 'products_select',
-				'description' => __('The products that are selected for the spend rule.', 'piggy'),
-			];
-		}
+		$spend_rule['selectedProducts'] = [
+			'id' => 'selected_products',
+			'label' => __('Selected products', 'piggy'),
+			'default' => [],
+			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_selected_products', []),
+			'type' => 'products_select',
+			'description' => __('The products that are selected for the spend rule.', 'piggy'),
+		];
 
-		if (in_array($type, ['FREE_PRODUCT', 'ORDER_DISCOUNT'])) {
-			$spend_rule['discountValue'] = [
-				'id' => 'discount_value',
-				'label' => __('Discount value', 'piggy'),
-				'default' => 10,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_value', null),
-				'type' => 'number',
-				'description' => __('The value of the discount.', 'piggy'),
-			];
+		$spend_rule['discountValue'] = [
+			'id' => 'discount_value',
+			'label' => __('Discount value', 'piggy'),
+			'default' => 10,
+			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_value', null),
+			'type' => 'number',
+			'description' => __('The value of the discount.', 'piggy'),
+		];
 
-			$spend_rule['discountType'] = [
-				'id' => 'discount_type',
-				'label' => __('Discount type', 'piggy'),
-				'default' => 'percentage',
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_type', 'percentage'),
-				'type' => 'select',
-				'options' => [
-					'percentage' => ['label' => __('Percentage', 'piggy')],
-					'fixed' => ['label' => __('Fixed amount', 'piggy')],
-				],
-				'description' => __('The type of discount.', 'piggy'),
-			];
-		}
+		$spend_rule['discountType'] = [
+			'id' => 'discount_type',
+			'label' => __('Discount type', 'piggy'),
+			'default' => 'percentage',
+			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_type', 'percentage'),
+			'type' => 'select',
+			'options' => [
+				'percentage' => ['label' => __('Percentage', 'piggy')],
+				'fixed' => ['label' => __('Fixed amount', 'piggy')],
+			],
+			'description' => __('The type of discount.', 'piggy'),
+		];
 
-		if ($type === 'ORDER_DISCOUNT' || $type === 'FREE_SHIPPING') {
-			$spend_rule['minimumPurchaseAmount'] = [
-				'id' => 'minimum_purchase_amount',
-				'label' => __('Minimum purchase amount', 'piggy'),
-				'default' => 0,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_minimum_purchase_amount', 0),
-				'type' => 'number',
-				'description' => __('The minimum purchase amount required to redeem the reward.', 'piggy'),
-			];
-		}
+		$spend_rule['minimumPurchaseAmount'] = [
+			'id' => 'minimum_purchase_amount',
+			'label' => __('Minimum purchase amount', 'piggy'),
+			'default' => 0,
+			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_minimum_purchase_amount', 0),
+			'type' => 'number',
+			'description' => __('The minimum purchase amount required to redeem the reward.', 'piggy'),
+		];
+
 
 		return $spend_rule;
 	}
@@ -432,7 +427,7 @@ class SpendRules
 		return $this->get_formatted_post($post);
 	}
 
-	public function create_coupon_for_spend_rule( $formatted_spend_rule ) {
+	public function create_coupon_for_spend_rule( $formatted_spend_rule, $user_id ) {
 		$coupon_code = wp_generate_uuid4();
 
 		$existing_coupon = new \WC_Coupon( $coupon_code );
@@ -449,6 +444,14 @@ class SpendRules
 
 		$coupon->add_meta_data('_piggy_spend_rule_coupon', 'true', true);
 		$coupon->add_meta_data('_piggy_spend_rule_id', $formatted_spend_rule['id'], true);
+
+		// Set the email restriction to the user who is redeeming the coupon
+		if( $user_id ) {
+			$user = get_user_by( 'id', $user_id );
+			$user_email = $user->user_email;
+
+			$coupon->set_email_restrictions( [ $user_email ] );
+		}
 
 		switch ($formatted_spend_rule['type']['value']) {
 			case 'FREE_PRODUCT':

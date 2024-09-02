@@ -121,7 +121,7 @@ class SpendRulesClaim extends AbstractRoute {
 		}
 
 		// If all is good, we create a coupon
-		$coupon = $spend_rules_service->create_coupon_for_spend_rule( $rule );
+		$coupon = $spend_rules_service->create_coupon_for_spend_rule( $rule, $user_id ); // Pass user ID
 
 		if ( ! $coupon ) {
 			return new RouteException( 'spend-rules-claim', 'Failed to create coupon', 500 );
