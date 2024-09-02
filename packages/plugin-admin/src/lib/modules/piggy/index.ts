@@ -31,6 +31,51 @@ export class PiggyAdminService {
 		return data;
 	}
 
+	async searchProducts(term: string) {
+		const { data, error } = await api.post<
+			{
+				id: number;
+				title: string;
+			}[]
+		>(`/piggy/private/wc-products`, {
+			term
+		});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new PiggyApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new Error('No data returned');
+		}
+
+		return data;
+	}
+
+	async getInitialProducts(ids: string | string[] | undefined) {
+		if (!ids) {
+			return [];
+		}
+
+		const idsParam = Array.isArray(ids) ? ids.join(',') : ids;
+		const { data, error } = await api.get<
+			{
+				id: number;
+				title: string;
+			}[]
+		>(`/piggy/private/wc-products?ids=${idsParam}`);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new PiggyApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new Error('No data returned');
+		}
+
+		return data;
+	}
+
 	async getRewards() {
 		const { data, error } = await api.get<GetRewardsResponse>('/piggy/private/rewards');
 

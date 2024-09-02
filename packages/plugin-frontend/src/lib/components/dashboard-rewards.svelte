@@ -2,7 +2,7 @@
 	import { pluginSettings } from '$lib/modules/settings';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
-	import DashboardRewardCard from './dashboard-reward-card.svelte';
+	import DashboardSpendRuleCard from './dashboard-spend-rule-card.svelte';
 
 	const spentRules = window.piggySpentRules;
 
@@ -13,25 +13,25 @@
 
 		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
 	}
+
+	$: filteredRules = spentRules?.filter((rule) => rule.label.value);
 </script>
 
-<div class="piggy-dashboard-rewards">
-	<div>
-		<h3 class="piggy-dashboard__header">
-			{getNavItemText(getTranslatedText($pluginSettings.dashboard_nav_rewards))}
-		</h3>
+{#if filteredRules && filteredRules.length > 0}
+	<div class="piggy-dashboard-rewards">
+		<div>
+			<h3 class="piggy-dashboard__header">
+				{getNavItemText(getTranslatedText($pluginSettings.dashboard_nav_rewards))}
+			</h3>
 
-		{#if spentRules}
 			<div class="piggy-dashboard-rewards__cards">
-				{#each spentRules as rule}
-					{#if rule.label.value}
-						<DashboardRewardCard {rule} />
-					{/if}
+				{#each filteredRules as rule}
+					<DashboardSpendRuleCard {rule} />
 				{/each}
 			</div>
-		{/if}
+		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	.piggy-dashboard-rewards {

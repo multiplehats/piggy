@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
 	import { __ } from '@wordpress/i18n';
-	import SettingsCalendar from '$lib/components/settings-calendar.svelte';
+	// import SettingsCalendar from '$lib/components/settings-calendar.svelte';
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import SettingsSelect from '$lib/components/settings-select.svelte';
 	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
-	import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
-	import SpendRuleProductDiscountFields from '$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte';
+	import SpendRuleFreeProductFields from '$lib/components/spend-rules/spend-rule-free-product-fields.svelte';
+	// import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
+	import SpendRuleProductOrderDiscountFields from '$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte';
 	import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -60,19 +61,19 @@
 		$mutate.mutate({
 			id: $rule.id,
 			type: $rule.type.value,
+			title: $rule.title?.value ?? __('New rule', 'piggy'),
 			label: $rule.label.value,
 			status: $rule.status.value,
-			title: $rule.title?.value ?? __('New rule', 'piggy'),
-			startsAt: $rule.startsAt.value,
-			expiresAt: $rule.expiresAt.value,
-			selectedReward: $rule.selectedReward.value,
-			instructions: $rule.instructions.value,
-			creditCost: $rule.creditCost.value,
-			description: $rule.description.value,
-			fulfillment: $rule.fulfillment.value,
+			startsAt: $rule?.startsAt?.value,
+			expiresAt: $rule?.expiresAt?.value,
+			selectedReward: $rule?.selectedReward?.value,
+			instructions: $rule?.instructions?.value,
+			selectedProducts: $rule?.selectedProducts?.value,
+			description: $rule?.description?.value,
+			fulfillment: $rule?.fulfillment?.value,
 			discountValue: $rule?.discountValue?.value,
-			discountType: $rule.discountType.value,
-			minimumPurchaseAmount: $rule.minimumPurchaseAmount.value
+			discountType: $rule?.discountType?.value,
+			minimumPurchaseAmount: $rule?.minimumPurchaseAmount?.value
 		});
 	}
 
@@ -81,6 +82,8 @@
 	}
 
 	$: ruleTypeLabel = $rule?.type?.options[$rule?.type?.value]?.label ?? '';
+
+	$: console.log($rule);
 </script>
 
 {#if $query.isLoading}
@@ -133,9 +136,21 @@
 
 					<Card.Content>
 						<div class="grid gap-6">
+							<!-- type-->
+							<SettingsSelect
+								{...$rule.type}
+								bind:value={$rule.type.value}
+								items={Object.entries($rule.type.options).map(([value, { label: name }]) => {
+									return {
+										value,
+										name
+									};
+								})}
+							/>
+
 							<SpendRuleRewardSelect bind:selectedReward={$rule.selectedReward} />
 
-							<SettingsInput {...$rule.title} bind:value={$rule.title.value} />
+							<SettingsInput {...$rule.title} bind:value={$rule.title.value} readonly={true} />
 
 							<SettingsTranslateableInput {...$rule.label} bind:value={$rule.label.value} />
 
@@ -154,21 +169,34 @@
 								bind:value={$rule.fulfillment.value}
 							/>
 
-							<SettingsInput {...$rule.creditCost} bind:value={$rule.creditCost.value} />
+							<SettingsInput
+								{...$rule.creditCost}
+								readonly={true}
+								bind:value={$rule.creditCost.value}
+							/>
 
-							{#if ($rule?.type?.value === 'PRODUCT_DISCOUNT' || $rule?.type?.value === 'ORDER_DISCOUNT') && $rule?.discountType && $rule?.discountValue}
-								<SpendRuleProductDiscountFields
+							{#if ($rule?.type?.value === 'ORDER_DISCOUNT' || $rule?.type?.value === 'FREE_PRODUCT') && $rule?.discountType && $rule?.discountValue}
+								<SpendRuleProductOrderDiscountFields
 									bind:discountType={$rule.discountType}
 									bind:discountValue={$rule.discountValue}
 								/>
 							{/if}
+
+							{#if ($rule?.type?.value === 'ORDER_DISCOUNT' || $rule?.type?.value === 'FREE_SHIPPING') && $rule.minimumPurchaseAmount}
+								<SettingsInput
+									{...$rule.minimumPurchaseAmount}
+									type="number"
+									attributes={{ min: 0 }}
+									bind:value={$rule.minimumPurchaseAmount.value}
+								></SettingsInput>
+							{/if}
+
+							{#if $rule?.type?.value === 'FREE_PRODUCT'}
+								<SpendRuleFreeProductFields selectedProducts={$rule.selectedProducts} />
+							{/if}
 						</div>
 					</Card.Content>
 				</Card.Root>
-
-				{#if $rule?.type?.value === 'ORDER_DISCOUNT'}
-					<SpendRuleOrderDiscountFields bind:minimumPurchaseAmount={$rule.minimumPurchaseAmount} />
-				{/if}
 			</div>
 
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
@@ -205,7 +233,8 @@
 					</Card.Content>
 				</Card.Root>
 
-				<Card.Root>
+				<!-- Disabled until this feature is implemented -->
+				<!-- <Card.Root>
 					<Card.Header>
 						<Card.Title>{__('Schedule', 'piggy')}</Card.Title>
 					</Card.Header>
@@ -224,12 +253,12 @@
 							/>
 						</div>
 					</Card.Content>
-				</Card.Root>
+				</Card.Root> -->
 			</div>
 		</div>
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
-			<Button size="sm">
+			<Button size="sm" on:click={handleSave}>
 				{__('Save rule', 'piggy')}
 			</Button>
 		</div>

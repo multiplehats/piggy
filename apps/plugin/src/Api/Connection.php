@@ -9,6 +9,7 @@ use Piggy\Api\Models\Contacts\Contact;
 use Piggy\Api\Models\CustomAttributes\CustomAttribute;
 use Piggy\Api\Models\Shops\Shop;
 use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
+use Piggy\Api\Models\Loyalty\Receptions\RewardReception;
 use PiggyWP\Domain\Services\SpendRules;
 
 class Connection {
@@ -684,48 +685,68 @@ class Connection {
 		}
 
 		$rewards = $this->get_rewards();
-
 		if (!$rewards) {
 			return false;
 		}
 
+		// Fetch all current spend rules from CPT
+		$current_spend_rules = $this->spend_rules_service->get_all_spend_rules();
 
+		// Collect existing Piggy UUIDs from CPT
+		$existing_uuids = array_column($current_spend_rules, '_piggy_reward_uuid', 'ID');
 
-		// Fetch all current spend rules from CPT.
-		$existing_spend_rules = $this->spend_rules_service->get_spend_rules_by_type(null);
-
-		// Filter out posts that don't have the 'piggyRewardUuid' meta field or have an empty 'piggyRewardUuid' value, and delete them.
-		$existing_spend_rules = array_filter($existing_spend_rules, function ($rule) {
-			if (!isset($rule['piggyRewardUuid']) || empty($rule['piggyRewardUuid']['value'])) {
-				wp_delete_post($rule['id'], true);
-				return false;
-			}
-			return true;
-		});
-
-		// Identify Piggy UUIDs in CPT that are not in the current Piggy rewards list.
-		$piggy_reward_uuids = array_column($rewards, 'uuid');
-		$cpt_reward_uuids = array_map(function ($rule) {
-			return $rule['piggyRewardUuid']['value'];
-		}, $existing_spend_rules);
-
-
-		// Delete spend rules that are not in the current Piggy rewards list, including those that have an empty 'piggyRewardUuid' value.
-		foreach ($existing_spend_rules as $rule) {
-			if (!in_array($rule['piggyRewardUuid']['value'], $piggy_reward_uuids)) {
-				wp_delete_post($rule['id'], true);
-			}
-		}
-
-		// Sync Piggy rewards with CPT (add/update).
+		// Sync Piggy rewards with CPT (add/update)
+		$processed_uuids = [];
 		foreach ($rewards as $reward) {
-			$this->spend_rules_service->create_or_update_spend_rule_from_reward($reward);
+			$mapped_reward = [
+				'title' => $reward['title'],
+				'requiredCredits' => $reward['requiredCredits'],
+				'type' => 'ORDER_DISCOUNT',
+				'uuid' => $reward['uuid'],
+				'active' => false,
+				'selectedReward' => $reward['uuid'],
+			];
+			$this->spend_rules_service->create_or_update_spend_rule_from_reward($mapped_reward);
+			$processed_uuids[] = $reward['uuid'];
 		}
+
+		// Delete spend rules that no longer exist in Piggy
+		$uuids_to_delete = array_diff($existing_uuids, $processed_uuids);
+		$this->spend_rules_service->delete_spend_rules_by_uuids($uuids_to_delete);
+		$this->spend_rules_service->delete_spend_rules_with_empty_uuid();
+
+		// Handle duplicated UUIDs
+		$this->spend_rules_service->handle_duplicated_spend_rules($processed_uuids);
 
 		return true;
 	}
 
 	public function manual_sync_rewards() {
 		return $this->sync_rewards_with_spend_rules();
+	}
+
+	public function create_reward_reception($contact_uuid, $reward_uuid) {
+		$client = $this->init_client();
+		if (!$client) return false;
+
+		$shop_uuid = get_option('piggy_shop_uuid', null);
+
+		if (!$shop_uuid) {
+			error_log("Shop UUID not set. Unable to create Reward Reception.");
+			return;
+		}
+
+		try {
+			$reception = RewardReception::create([
+				"contact_uuid" => $contact_uuid,
+				"reward_uuid" => $reward_uuid,
+				"shop_uuid" => $shop_uuid
+			]);
+
+			return $reception ?: false;
+		} catch (Exception $e) {
+			error_log("Failed to create Reward Reception: " . $e->getMessage());
+			return false;
+		}
 	}
 }

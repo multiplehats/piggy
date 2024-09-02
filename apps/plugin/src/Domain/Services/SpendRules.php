@@ -2,6 +2,7 @@
 
 namespace PiggyWP\Domain\Services;
 
+
 /**
  * Class SpendRules
  */
@@ -89,18 +90,18 @@ class SpendRules
 				'default' => null,
 				'value' => $post->post_title,
 				'type' => 'text',
-				'description' => __('This is not displayed to the user and is only used for internal reference.', 'piggy'),
+				'description' => __( 'This is not displayed to the user and is only used for internal reference. You can manage this in the Piggy dashboard.', 'piggy' ),
 			],
 			'type' => [
 				'id' => 'type',
 				'label' => __('Type', 'piggy'),
-				'default' => 'PRODUCT_DISCOUNT',
+				'default' => 'FREE_PRODUCT',
 				'value' => $type,
 				'type' => 'select',
 				'options' => [
-					'PRODUCT_DISCOUNT' => ['label' => __('Product discount', 'piggy')],
-					'ORDER_DISCOUNT' => ['label' => __('Order discount', 'piggy')],
-					'FREE_SHIPPING' => ['label' => __('Free shipping', 'piggy')],
+					'FREE_PRODUCT' => ['label' => __('Free / Discounted Product', 'piggy')],
+					'ORDER_DISCOUNT' => ['label' => __('Order Discount', 'piggy')],
+					'FREE_SHIPPING' => ['label' => __('Free Shipping', 'piggy')],
 				],
 				'description' => __('The type of spend rule.', 'piggy'),
 			],
@@ -127,7 +128,7 @@ class SpendRules
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_credit_cost', null),
 				'type' => 'number',
-				'description' => __('The amount of credits it will cost to redeem the reward.', 'piggy'),
+				'description' => __('The amount of credits it will cost to redeem the reward. This is managed in the Piggy dashboard.', 'piggy'),
 			],
 			'selectedReward' => [
 				'id' => 'selected_reward',
@@ -175,12 +176,23 @@ class SpendRules
 			'id' => 'label',
 			'label' => __('Label', 'piggy'),
 			'default' => $this->get_default_label($type),
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label', $this->get_default_label($type)),
+			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label'),
 			'type' => 'translatable_text',
 			'description' => $this->get_label_description($type),
 		];
 
-		if (in_array($type, ['PRODUCT_DISCOUNT', 'ORDER_DISCOUNT'])) {
+		if (in_array($type, ['FREE_PRODUCT'])) {
+			$spend_rule['selectedProducts'] = [
+				'id' => 'selected_products',
+				'label' => __('Selected products', 'piggy'),
+				'default' => [],
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_selected_products', []),
+				'type' => 'products_select',
+				'description' => __('The products that are selected for the spend rule.', 'piggy'),
+			];
+		}
+
+		if (in_array($type, ['FREE_PRODUCT', 'ORDER_DISCOUNT'])) {
 			$spend_rule['discountValue'] = [
 				'id' => 'discount_value',
 				'label' => __('Discount value', 'piggy'),
@@ -204,12 +216,12 @@ class SpendRules
 			];
 		}
 
-		if ($type === 'ORDER_DISCOUNT') {
+		if ($type === 'ORDER_DISCOUNT' || $type === 'FREE_SHIPPING') {
 			$spend_rule['minimumPurchaseAmount'] = [
 				'id' => 'minimum_purchase_amount',
 				'label' => __('Minimum purchase amount', 'piggy'),
-				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_minimum_purchase_amount', null),
+				'default' => 0,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_minimum_purchase_amount', 0),
 				'type' => 'number',
 				'description' => __('The minimum purchase amount required to redeem the reward.', 'piggy'),
 			];
@@ -227,7 +239,7 @@ class SpendRules
 	private function get_default_label($type)
 	{
 		return [
-			'en_US' => 'Unlock {{discount}} for {{points}} {{pointsCurrency}}'
+			'en_US' => 'Unlock {{ discount }} for {{ credits }} {{ credits_currency }}'
 		];
 	}
 
@@ -247,6 +259,41 @@ class SpendRules
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
 		return sprintf(__("Add instructions on how fulfillment will be handled. Available placeholders: %s", 'piggy'), $placeholders);
+	}
+
+	public function delete_spend_rule_by_piggy_uuid($uuid) {
+		$args = array(
+			'post_type' => 'piggy_spend_rule',
+			'meta_key' => '_piggy_reward_uuid',
+			'meta_value' => $uuid,
+			'posts_per_page' => 1,
+		);
+
+		$posts = get_posts($args);
+
+		if (!empty($posts)) {
+			wp_delete_post($posts[0]->ID);
+		}
+	}
+
+	public function get_all_spend_rules() {
+		$args = array(
+			'post_type' => 'piggy_spend_rule',
+			'posts_per_page' => -1,
+			'meta_key' => '_piggy_reward_uuid',
+		);
+
+		$posts = get_posts($args);
+
+		$spend_rules = array();
+		foreach ($posts as $post) {
+			$spend_rules[$post->ID] = array(
+				'ID' => $post->ID,
+				'_piggy_reward_uuid' => get_post_meta($post->ID, '_piggy_reward_uuid', true),
+			);
+		}
+
+		return $spend_rules;
 	}
 
 	/**
@@ -284,12 +331,12 @@ class SpendRules
 		$post_data = array(
 			'post_type' => 'piggy_spend_rule',
 			'post_title' => $reward['title'],
-			'post_status' => $reward['active'] ? 'publish' : 'draft',
+			'post_status' => $reward['active'],
 			'meta_input' => array(
 				'_piggy_spend_rule_type' => $reward['type'],
 				'_piggy_spend_rule_credit_cost' => $reward['requiredCredits'],
 				'_piggy_reward_uuid' => $reward['uuid'],
-				// Add other relevant fields from the reward
+				'_piggy_spend_rule_selected_reward' => $reward['uuid'],
 			)
 		);
 
@@ -297,6 +344,8 @@ class SpendRules
 			$post_data['ID'] = $existing_rule['id'];
 			wp_update_post($post_data);
 		} else {
+			// New rules are always draft by default.
+			$post_data['post_status'] = 'draft';
 			wp_insert_post($post_data);
 		}
 	}
@@ -316,5 +365,114 @@ class SpendRules
 		}
 
 		return null;
+	}
+
+	public function delete_spend_rules_by_uuids($uuids_to_delete) {
+		foreach ($uuids_to_delete as $post_id => $uuid) {
+			wp_delete_post($post_id, true);
+		}
+	}
+
+	public function handle_duplicated_spend_rules($uuids) {
+		global $wpdb;
+		$table_name = $wpdb->postmeta;
+
+		foreach ($uuids as $uuid) {
+			$query = $wpdb->prepare(
+				"SELECT post_id FROM $table_name WHERE meta_key = '_piggy_reward_uuid' AND meta_value = %s ORDER BY post_id DESC",
+				$uuid
+			);
+			$post_ids = $wpdb->get_col($query);
+
+			if (count($post_ids) > 1) {
+				// Keep the most recent one (highest post_id), delete the rest
+				$keep_id = array_shift($post_ids);
+				foreach ($post_ids as $post_id) {
+					wp_delete_post($post_id, true);
+				}
+			}
+		}
+	}
+
+	public function delete_spend_rules_with_empty_uuid() {
+		$args = array(
+			'post_type' => 'piggy_spend_rule',
+			'posts_per_page' => -1,
+			'post_status' => array('publish', 'draft'),
+			'meta_query' => array(
+				'relation' => 'OR',
+				array(
+					'key' => '_piggy_reward_uuid',
+					'value' => '',
+					'compare' => '='
+				),
+				array(
+					'key' => '_piggy_reward_uuid',
+					'compare' => 'NOT EXISTS'
+				)
+			)
+		);
+
+		$posts = get_posts($args);
+
+		foreach ($posts as $post) {
+			wp_delete_post($post->ID, true);
+		}
+
+		return count($posts); // Return the number of deleted posts
+	}
+
+	public function get_spend_rule_by_id($id) {
+		$post = get_post($id);
+
+		if (!$post) {
+			return null;
+		}
+
+		return $this->get_formatted_post($post);
+	}
+
+	public function create_coupon_for_spend_rule( $formatted_spend_rule ) {
+		$coupon_code = wp_generate_uuid4();
+
+		$existing_coupon = new \WC_Coupon( $coupon_code );
+
+		if ($existing_coupon) {
+			$coupon_code = wp_generate_uuid4();
+		}
+
+		$coupon = new \WC_Coupon();
+		$coupon->set_code($coupon_code);
+		$coupon->set_description('Piggy Spend Rule: ' . $formatted_spend_rule['title']['value']);
+		$coupon->set_usage_limit(1);
+		$coupon->set_individual_use(true);
+
+		$coupon->add_meta_data('_piggy_spend_rule_coupon', 'true', true);
+		$coupon->add_meta_data('_piggy_spend_rule_id', $formatted_spend_rule['id'], true);
+
+		switch ($formatted_spend_rule['type']['value']) {
+			case 'FREE_PRODUCT':
+			case 'ORDER_DISCOUNT':
+				$coupon->set_amount(0);
+
+				break;
+
+			case 'FREE_SHIPPING':
+				$coupon->set_free_shipping(true);
+				break;
+		}
+
+		// Check for minimum purchase amount
+		if (isset($formatted_spend_rule['minimumPurchaseAmount']) &&
+			is_numeric($formatted_spend_rule['minimumPurchaseAmount']['value'])) {
+			$min_amount = floatval($formatted_spend_rule['minimumPurchaseAmount']['value']);
+			if ($min_amount > 0) {
+				$coupon->set_minimum_amount($min_amount);
+			}
+		}
+
+		$coupon->save();
+
+		return $coupon_code;
 	}
 }

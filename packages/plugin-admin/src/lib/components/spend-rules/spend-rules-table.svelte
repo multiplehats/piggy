@@ -2,21 +2,15 @@
 	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
 	import { __ } from '@wordpress/i18n';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import * as Select from '$lib/components/ui/select';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { SettingsAdminService } from '$lib/modules/settings';
-	import { upsertSpendRuleMutationConfig } from '$lib/modules/settings/mutations';
 	import { QueryKeys } from '$lib/utils/query-keys';
 	import { getStatusText } from '$lib/utils/status-text';
 	import { WalletMinimal } from 'lucide-svelte';
 	import toast from 'svelte-french-toast';
 	import { useNavigate } from 'svelte-navigator';
-	import type { SpendRuleType } from '@piggy/types/plugin/settings/adminTypes';
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
@@ -27,63 +21,18 @@
 		queryFn: async () => await service.getSpendRules(),
 		refetchOnWindowFocus: true
 	});
-	const mutate = createMutation(
-		upsertSpendRuleMutationConfig(
-			client,
-			{},
-			{
-				onSuccessCb: (spendRule) => {
-					$query.refetch();
-
-					navigate(`spend-rules/${spendRule.id}`);
-				}
-			}
-		)
-	);
 	const mutateSync = createMutation({
-		mutationFn: () => service.syncRewards(),
+		mutationFn: () =>
+			toast.promise(service.syncRewards(), {
+				loading: __('Syncing rewards...'),
+				success: __('Rewards synced'),
+				error: __('Failed to sync rewards')
+			}),
 		mutationKey: ['spend-rules-sync'],
 		onSuccess: () => {
 			$query.refetch();
-
-			toast.success(__('Synced rewards'));
 		}
 	});
-
-	const ruleTypes = [
-		{ label: __('Product discount', 'piggy'), value: 'PRODUCT_DISCOUNT' },
-		{ label: __('Order discount', 'piggy'), value: 'ORDER_DISCOUNT' },
-		{ label: __('Free shipping', 'piggy'), value: 'FREE_SHIPPING' }
-	] satisfies { label: string; value: SpendRuleType }[];
-
-	let title: string | undefined = undefined;
-	let selected: (typeof ruleTypes)[number] | undefined = undefined;
-	let titleError = '';
-	let ruleTypeError = '';
-
-	function validateForm() {
-		titleError = title ? '' : __('Title is required.');
-		ruleTypeError = selected ? '' : __('Rule type is required.');
-	}
-
-	function handleCreateRule(event: Event) {
-		event.preventDefault();
-		validateForm();
-
-		if (!title || !selected || ruleTypeError) {
-			return;
-		}
-
-		console.log('Creating rule', title, selected);
-
-		if (!titleError && !ruleTypeError) {
-			$mutate.mutate({
-				title,
-				type: selected.value,
-				status: 'draft'
-			});
-		}
-	}
 </script>
 
 {#if $query?.data}

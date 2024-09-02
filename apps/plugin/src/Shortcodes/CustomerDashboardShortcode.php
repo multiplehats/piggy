@@ -16,9 +16,7 @@ class CustomerDashboardShortcode extends AbstractShortcode {
 		return array();
 	}
 
-	public function init_hooks() {
-		add_filter( 'woocommerce_add_to_cart_fragments', array( $this, 'fragments' ) );
-	}
+	public function init_hooks() {}
 
 	/**
 	 * Sets the shortcode default attributes.

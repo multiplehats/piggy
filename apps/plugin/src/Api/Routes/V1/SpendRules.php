@@ -87,12 +87,12 @@ class SpendRules extends AbstractRoute {
 			'completed' => $request->get_param( 'completed' ),
 			'selectedReward' => $request->get_param( 'selectedReward' ),
 			'instructions' => $request->get_param( 'instructions' ),
-			'creditCost' => $request->get_param( 'creditCost' ),
 			'description' => $request->get_param( 'description' ),
 			'fulfillment' => $request->get_param( 'fulfillment' ),
 			'discountValue' => $request->get_param( 'discountValue' ),
 			'discountType' => $request->get_param( 'discountType' ),
 			'minimumPurchaseAmount' => $request->get_param( 'minimumPurchaseAmount' ),
+			'selectedProducts' => $request->get_param( 'selectedProducts' ),
 		);
 
 		$post_data = array(
@@ -107,12 +107,12 @@ class SpendRules extends AbstractRoute {
 				'_piggy_spend_rule_completed' => $data['completed'],
 				'_piggy_spend_rule_selected_reward' => $data['selectedReward'],
 				'_piggy_spend_rule_instructions' => $data['instructions'],
-				'_piggy_spend_rule_credit_cost' => $data['creditCost'],
 				'_piggy_spend_rule_description' => $data['description'],
 				'_piggy_spend_rule_fulfillment' => $data['fulfillment'],
 				'_piggy_spend_rule_discount_value' => $data['discountValue'],
 				'_piggy_spend_rule_discount_type' => $data['discountType'],
 				'_piggy_spend_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
+				'_piggy_spend_rule_selected_products' => $data['selectedProducts'],
 			)
 		);
 
@@ -143,7 +143,7 @@ class SpendRules extends AbstractRoute {
 		$prepared_args = array(
 			'post_type' => 'piggy_spend_rule',
 			'posts_per_page' => -1,
-			'post_status' => array('publish', 'draft'),
+			'post_status' => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array('publish'),
 		);
 
 		$id = $request->get_param( 'id' );

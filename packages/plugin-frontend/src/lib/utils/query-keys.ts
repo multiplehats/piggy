@@ -1,5 +1,6 @@
 export const QueryKeys = {} as const;
 
 export const MutationKeys = {
-	claimReward: 'claimReward'
+	claimReward: 'claimReward',
+	claimSpendRule: 'claimSpendRule'
 } as const;

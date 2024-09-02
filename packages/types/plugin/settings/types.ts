@@ -127,6 +127,7 @@ export const zPluginSpendRuleItemValues = transformSchema(
 		status: true,
 		type: true,
 		title: true,
+		selectedProducts: true,
 		startsAt: true,
 		expiresAt: true,
 		selectedReward: true,
