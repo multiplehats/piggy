@@ -71,6 +71,8 @@ class Coupons extends AbstractRoute {
             return new RouteException( 'no_user_id', 'User ID is required', 400 );
         }
 
+        error_log( print_r( $user_id, true ) );
+
         $spend_rules_service = new SpendRules();
         $coupons = $spend_rules_service->get_coupons_by_user_id( $user_id );
 
@@ -82,8 +84,6 @@ class Coupons extends AbstractRoute {
 		}
 
 		$response = rest_ensure_response( $response_objects );
-
-        error_log( print_r( $response, true ) );
 
 		return $response;
     }

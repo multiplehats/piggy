@@ -9,7 +9,7 @@
 	const query = createQuery({
 		queryKey: [QueryKeys.coupons],
 		retry: false,
-		queryFn: async () => await apiService.getCoupons(1),
+		queryFn: async () => await apiService.getCoupons(window.piggyMiddlewareConfig.userId),
 		refetchOnWindowFocus: true
 	});
 
