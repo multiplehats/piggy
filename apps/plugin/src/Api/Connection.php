@@ -736,17 +736,12 @@ class Connection {
 			return;
 		}
 
-		try {
-			$reception = RewardReception::create([
-				"contact_uuid" => $contact_uuid,
-				"reward_uuid" => $reward_uuid,
-				"shop_uuid" => $shop_uuid
-			]);
+		$reception = RewardReception::create([
+			"contact_uuid" => $contact_uuid,
+			"reward_uuid" => $reward_uuid,
+			"shop_uuid" => $shop_uuid
+		]);
 
-			return $reception ?: false;
-		} catch (Exception $e) {
-			error_log("Failed to create Reward Reception: " . $e->getMessage());
-			return false;
-		}
+		return $reception ?: false;
 	}
 }

@@ -114,17 +114,29 @@ class SpendRulesClaim extends AbstractRoute {
 		}
 
 		// Create a Reward Reception
-		$reception = $connection->create_reward_reception( $contact_uuid, $reward_uuid );
+		try {
+			$reception = $connection->create_reward_reception( $contact_uuid, $reward_uuid );
+		} catch (\Throwable $th) {
+			error_log('checking');
+			error_log( $th->getMessage() );
+
+			// If the message sdtars with "You have insufficient credits" we return a 400
+			if ( strpos( $th->getMessage(), 'You have insufficient credits' ) !== false ) {
+				throw new RouteException( 'spend-rules-claim', 'Insufficient credits', 400);
+			}
+
+			throw new RouteException( 'spend-rules-claim', 'Failed to create Reward Reception', 500 );
+		}
 
 		if ( ! $reception ) {
-			return new RouteException( 'spend-rules-claim', 'Failed to create Reward Reception', 500 );
+			throw new RouteException( 'spend-rules-claim', 'Failed to create Reward Reception', 500 );
 		}
 
 		// If all is good, we create a coupon
 		$coupon = $spend_rules_service->create_coupon_for_spend_rule( $rule, $user_id ); // Pass user ID
 
 		if ( ! $coupon ) {
-			return new RouteException( 'spend-rules-claim', 'Failed to create coupon', 500 );
+			throw new RouteException( 'spend-rules-claim', 'Failed to create coupon', 500 );
 		}
 
 		return [
