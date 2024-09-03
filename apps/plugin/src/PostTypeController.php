@@ -28,7 +28,7 @@ final class PostTypeController {
 		add_action('init', array($this, 'register_earn_rules_post_type'));
 		add_action('init', array($this, 'register_spend_rules_post_type'));
 		add_action('init', array($this, 'schedule_daily_reward_sync'));
-		add_action('piggy_daily_reward_sync', array($this, 'sync_rewards_cron'));
+		// add_action('piggy_daily_reward_sync', array($this, 'sync_rewards_cron'));
 	}
 
 	/**

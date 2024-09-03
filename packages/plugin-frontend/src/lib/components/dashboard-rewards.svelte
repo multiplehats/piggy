@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pluginSettings } from '$lib/modules/settings';
+	import { creditsName, pluginSettings } from '$lib/modules/settings';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
 	import DashboardSpendRuleCard from './dashboard-spend-rule-card.svelte';
@@ -9,12 +9,12 @@
 	function getNavItemText(text?: string) {
 		if (!text) return '';
 
-		const creditsName = getTranslatedText($pluginSettings.credits_name);
-
-		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
+		return replaceStrings(text, [{ '{{credits_currency}}': $creditsName ?? '' }]);
 	}
 
-	$: filteredRules = spentRules?.filter((rule) => rule.status.value === 'publish');
+	$: filteredRules = spentRules?.filter(
+		(rule) => rule.status.value === 'publish' && rule.label.value
+	);
 </script>
 
 {#if filteredRules && filteredRules.length > 0}

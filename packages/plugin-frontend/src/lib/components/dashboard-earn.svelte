@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pluginSettings } from '$lib/modules/settings';
+	import { creditsName, pluginSettings } from '$lib/modules/settings';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
 	import DashboardEarnCard from './dashboard-earn-card.svelte';
@@ -9,9 +9,7 @@
 	function getNavItemText(text?: string) {
 		if (!text) return '';
 
-		const creditsName = getTranslatedText($pluginSettings.credits_name);
-
-		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
+		return replaceStrings(text, [{ '{{credits_currency}}': $creditsName ?? '' }]);
 	}
 </script>
 

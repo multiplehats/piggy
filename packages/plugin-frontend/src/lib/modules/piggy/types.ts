@@ -1,3 +1,5 @@
+import type { SpendRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
+
 export interface Shop {
 	uuid: string;
 	name: string;
@@ -17,5 +19,12 @@ export interface Rewards {
 		type: string;
 	};
 }
+
+export interface Coupon {
+	code: string;
+	spend_rule: SpendRuleValueItem;
+}
+
+export type GetCouponsResponse = Coupon[];
 
 export type GetRewardsResponse = Rewards[];

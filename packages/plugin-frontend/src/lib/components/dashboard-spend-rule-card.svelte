@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { createMutation } from '@tanstack/svelte-query';
 	import { piggyService } from '$lib/config/services';
-	import { isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { creditsName, isLoggedIn, pluginSettings } from '$lib/modules/settings';
 	import { MutationKeys } from '$lib/utils/query-keys';
-	import { getTranslatedText } from '$lib/utils/translated-text';
+	import { getSpendRuleLabel, getTranslatedText } from '$lib/utils/translated-text';
+	import Gift from 'lucide-svelte/icons/gift';
 	import { cubicOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
 	import { replaceStrings } from '@piggy/lib';
@@ -26,7 +27,6 @@
 		return piggyService.claimSpendRule(id, window.piggyMiddlewareConfig.userId);
 	}
 
-	$: creditsName = getTranslatedText($pluginSettings.credits_name);
 	$: creditsAccumulated = window.piggyData.contact?.balance.credits ?? 0;
 	$: creditsRequired = rule.creditCost.value;
 	$: if (creditsRequired) {
@@ -38,7 +38,7 @@
 
 		return replaceStrings(text, [
 			{
-				'{{ credits_currency }}': creditsName ?? '',
+				'{{ credits_currency }}': $creditsName ?? '',
 				'{{ credits }}': credits?.toString() ?? '0',
 				'{{ discount }}': rule.discountValue?.value?.toString() ?? '0'
 			}
@@ -50,7 +50,7 @@
 
 		return replaceStrings(text, [
 			{
-				'{{ credits_currency }}': creditsName ?? '',
+				'{{ credits_currency }}': $creditsName ?? '',
 				'{{ credits }}': credits?.toString() ?? '0',
 				'{{ discount }}': rule.discountValue?.value?.toString() ?? '0'
 			}
@@ -63,7 +63,7 @@
 		return replaceStrings(text, [
 			{
 				'{{ credits }}': creditsAccumulated?.toString() ?? '0',
-				'{{ credits_currency }}': creditsName ?? '',
+				'{{ credits_currency }}': $creditsName ?? '',
 				'{{ credits_required }}': creditsRecuired?.toString() ?? '0'
 			}
 		]);
@@ -81,28 +81,17 @@
 	{/if}
 
 	<div class="piggy-dashboard-reward-card__icon">
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="48"
-			height="48"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			class="widget__icons-color"
-			><path d="M3 8m0 1a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1z"
-			></path><path d="M12 8l0 13"></path><path d="M19 12v7a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-7"
-			></path><path
-				d="M7.5 8a2.5 2.5 0 0 1 0 -5a4.8 8 0 0 1 4.5 5a4.8 8 0 0 1 4.5 -5a2.5 2.5 0 0 1 0 5"
-			></path></svg
-		>
+		<Gift size={48} />
 	</div>
 
 	<h4 class="piggy-dashboard-reward-card__header">
 		{#if rule.label.value}
-			{getLabel(getTranslatedText(rule.label.value), 0)}
+			{getSpendRuleLabel(
+				getTranslatedText(rule.label.value),
+				rule.creditCost.value,
+				$creditsName,
+				rule.discountValue?.value
+			)}
 		{/if}
 	</h4>
 
@@ -150,6 +139,10 @@
 <style>
 	.piggy-dashboard-reward-card {
 		position: relative;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
 		background-color: var(--piggy-dashboard-card-background-color, #fff);
 		padding: 24px;
 		text-align: center;
@@ -158,6 +151,10 @@
 			0 0 #0000,
 			0 1px 3px 0 rgb(0 0 0 / 0.1),
 			0 1px 2px -1px rgb(0 0 0 / 0.1);
+	}
+
+	.piggy-dashboard-earn-card__action {
+		margin-top: 12px;
 	}
 
 	.piggy-dashboard-reward-card__badge {

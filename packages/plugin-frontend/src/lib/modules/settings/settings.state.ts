@@ -1,3 +1,4 @@
+import { getTranslatedText } from '$lib/utils/translated-text';
 import { derived, writable } from 'svelte/store';
 import type { IWooSettings, PluginOptionsFrontend } from '@piggy/types/plugin';
 
@@ -6,6 +7,10 @@ export const currentLanguage = window?.piggyMiddlewareConfig?.currentLanguage ||
 export const pluginSettings = writable<PluginOptionsFrontend>();
 
 export const isLoggedIn = window.piggyMiddlewareConfig.loggedIn;
+
+export const creditsName = derived(pluginSettings, ($pluginSettings) => {
+	return getTranslatedText($pluginSettings.credits_name);
+});
 
 // WC Settings
 

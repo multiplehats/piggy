@@ -445,11 +445,11 @@ class SpendRules
 		$coupon->add_meta_data('_piggy_spend_rule_coupon', 'true', true);
 		$coupon->add_meta_data('_piggy_spend_rule_id', $formatted_spend_rule['id'], true);
 
-		// Set the email restriction to the user who is redeeming the coupon
 		if( $user_id ) {
 			$user = get_user_by( 'id', $user_id );
 			$user_email = $user->user_email;
 
+			$coupon->add_meta_data('_piggy_user_id', $user_id, true);
 			$coupon->set_email_restrictions( [ $user_email ] );
 		}
 
@@ -477,5 +477,47 @@ class SpendRules
 		$coupon->save();
 
 		return $coupon_code;
+	}
+
+	/**
+	 * Query coupons by user ID.
+	 *
+	 * @param int $user_id The user ID.
+	 * @return array The list of coupons associated with the user ID.
+	 */
+	public function get_coupons_by_user_id($user_id)
+	{
+		$args = [
+			'post_type' => 'shop_coupon',
+			'posts_per_page' => -1,
+			'meta_query' => [
+				[
+					'key' => '_piggy_user_id',
+					'value' => $user_id,
+					'compare' => '='
+				]
+			]
+		];
+
+		$coupons = get_posts($args);
+
+		$coupon_codes = [];
+
+		foreach ($coupons as $coupon) {
+			// Tie back to the spend rule
+			$spend_rule_id = get_post_meta($coupon->ID, '_piggy_spend_rule_id', true);
+			$spend_rule = $this->get_spend_rule_by_id($spend_rule_id);
+
+			if( !$spend_rule ) {
+				continue;
+			}
+
+			$coupon_codes[] = array(
+				'code' => $coupon->post_title,
+				'spend_rule' => $spend_rule,
+			);
+		}
+
+		return $coupon_codes;
 	}
 }

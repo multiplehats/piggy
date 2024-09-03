@@ -40,6 +40,7 @@ class SchemaController {
 				Schemas\V1\Admin\ShopsSchema::IDENTIFIER => Schemas\V1\Admin\ShopsSchema::class,
 				Schemas\V1\Admin\RewardsSchema::IDENTIFIER => Schemas\V1\Admin\RewardsSchema::class,
 				Schemas\V1\SpendRulesClaimSchema::IDENTIFIER => Schemas\V1\SpendRulesClaimSchema::class,
+				Schemas\V1\CouponsSchema::IDENTIFIER => Schemas\V1\CouponsSchema::class,
 			],
 		];
 	}
