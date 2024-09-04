@@ -68,7 +68,7 @@ class Coupons extends AbstractRoute {
         $user_id = $request->get_param( 'userId' );
 
         if ( ! $user_id ) {
-            return new RouteException( 'no_user_id', 'User ID is required', 400 );
+            throw new RouteException( 'no_user_id', 'User ID is required', 400 );
         }
 
         error_log( print_r( $user_id, true ) );
