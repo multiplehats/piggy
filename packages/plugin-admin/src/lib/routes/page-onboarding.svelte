@@ -22,7 +22,7 @@
 				const isLastStep = onboarding.isLastStep();
 
 				if (isLastStep) {
-					navigate('/', {
+					navigate('/general', {
 						state: {
 							onboarding: 'complete'
 						}
