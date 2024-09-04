@@ -95,7 +95,7 @@ class EarnRules {
 					'FOLLOW_ON_TIKTOK' => [ 'label' => __( 'Follow on TikTok', 'piggy' ) ],
 					'FOLLOW_ON_INSTAGRAM' => [ 'label' => __( 'Follow on Instagram', 'piggy' ) ],
 					'PLACE_ORDER' => [ 'label' => __( 'Place an order', 'piggy' ) ],
-					'CELEBRATE_BIRTHDAY' => [ 'label' => __( 'Celebrate your birthday', 'piggy' ) ],
+					// 'CELEBRATE_BIRTHDAY' => [ 'label' => __( 'Celebrate your birthday', 'piggy' ) ],
 					'CREATE_ACCOUNT' => [ 'label' => __( 'Create an account', 'piggy' ) ],
 				],
 				'description' => __( 'The type of earn rule.', 'piggy' ),

@@ -45,7 +45,7 @@
 		{ label: __('Follow on TikTok', 'piggy'), value: 'FOLLOW_ON_TIKTOK' },
 		{ label: __('Follow on Instagram', 'piggy'), value: 'FOLLOW_ON_INSTAGRAM' },
 		{ label: __('Place an order', 'piggy'), value: 'PLACE_ORDER' },
-		{ label: __('Celebrate your birthday', 'piggy'), value: 'CELEBRATE_BIRTHDAY' },
+		// { label: __('Celebrate your birthday', 'piggy'), value: 'CELEBRATE_BIRTHDAY' },
 		{ label: __('Create an account', 'piggy'), value: 'CREATE_ACCOUNT' }
 	] satisfies { label: string; value: EarnRuleType }[];
 
@@ -58,7 +58,7 @@
 		'LIKE_ON_FACEBOOK',
 		'FOLLOW_ON_TIKTOK',
 		'FOLLOW_ON_INSTAGRAM',
-		'CELEBRATE_BIRTHDAY',
+		// 'CELEBRATE_BIRTHDAY',
 		'CREATE_ACCOUNT'
 	] as const;
 
