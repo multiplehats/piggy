@@ -81,36 +81,36 @@ class SpendRulesClaim extends AbstractRoute {
 
 		if ( ! $id ) {
 			error_log('Spend rule ID is required');
-			return new RouteException( 'spend-rules-claim', 'Spend rule ID is required', 400 );
+			throw new RouteException( 'spend-rules-claim', 'Spend rule ID is required', 400 );
 		}
 
 		if ( ! $user_id ) {
 			error_log('User ID is required');
-			return new RouteException( 'spend-rules-claim', 'User ID is required', 400 );
+			throw new RouteException( 'spend-rules-claim', 'User ID is required', 400 );
 		}
 
 		$rule = $spend_rules_service->get_spend_rule_by_id( $id );
 
 		if ( ! $rule ) {
 			error_log('Spend rule not found');
-			return new RouteException( 'spend-rules-claim', 'Spend rule not found', 404 );
+			throw new RouteException( 'spend-rules-claim', 'Spend rule not found', 404 );
 		}
 
 		if ( $rule['status']['value'] === 'draft' ) {
-			return new RouteException( 'spend-rules-claim', 'Spend rule is a draft', 400 );
+			throw new RouteException( 'spend-rules-claim', 'Spend rule is a draft', 400 );
 		}
 
 		// Get the contact UUID for the user
 		$contact_uuid = $connection->get_contact_uuid_by_wp_id( $user_id );
 
 		if ( ! $contact_uuid ) {
-			return new RouteException( 'spend-rules-claim', 'User not found in Piggy', 404 );
+			throw new RouteException( 'spend-rules-claim', 'User not found in Piggy', 404 );
 		}
 
 		$reward_uuid = $rule['piggyRewardUuid']['value'];
 
 		if ( ! $reward_uuid ) {
-			return new RouteException( 'spend-rules-claim', 'Reward UUID not found for this spend rule', 404 );
+			throw new RouteException( 'spend-rules-claim', 'Reward UUID not found for this spend rule', 404 );
 		}
 
 		// Create a Reward Reception

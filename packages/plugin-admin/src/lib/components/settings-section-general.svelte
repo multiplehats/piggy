@@ -33,7 +33,7 @@
 		{:else if $query.isError}
 			<p>Error: {$query.error.message}</p>
 		{:else if $query.isSuccess && $settingsState}
-			<div class="pb-4">
+			<div class="pb-4 gap-y-2 grid grid-cols-1">
 				<SettingsApiKey />
 			</div>
 

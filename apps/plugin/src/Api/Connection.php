@@ -410,7 +410,7 @@ class Connection {
 		return $reward_logs;
 	}
 
-	/**
+		/**
 	 * Add an entry to the user's reward logs
 	 *
 	 * @param int $wp_user_id
@@ -433,7 +433,6 @@ class Connection {
 
 		return $inserted !== false;
 	}
-
 
 	public function sync_rewards_with_spend_rules() {
 		$client = $this->init_client();

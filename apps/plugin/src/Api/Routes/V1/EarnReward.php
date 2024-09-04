@@ -73,31 +73,39 @@ class EarnReward extends AbstractRoute {
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
-		try {
-			$data = array(
-				'earn_rule_id' => $request->get_param( 'earnRuleId' ),
-				'user_id' => $request->get_param( 'userId' ) ?? get_current_user_id(),
-			);
+		$data = array(
+			'earn_rule_id' => $request->get_param( 'earnRuleId' ),
+			'user_id' => $request->get_param( 'userId' ) ?? get_current_user_id(),
+		);
 
-			$earn_rules_service = new EarnRulesService();
-			$post = $earn_rules_service->get_by_id( $data['earn_rule_id'] );
+		$earn_rules_service = new EarnRulesService();
+		$post = $earn_rules_service->get_by_id( $data['earn_rule_id'] );
 
-			if( ! $post ) {
-				throw new RouteException( 'earn-rule-not-found', 'Earn rule not found', 404 );
-			}
-
-			$piggy_uuid = $this->connection->get_contact_uuid_by_wp_id( $data['user_id'] );
-
-			$credits = $post['credits']['value'] ?? 0;
-
-			$this->connection->apply_credits( $piggy_uuid, $credits );
-			$this->connection->add_reward_log($data['user_id'], $data['earn_rule_id'], $credits);
-
-			$data     = $this->prepare_item_for_response( $data, $request );
-			$response = $this->prepare_response_for_collection( $data );
-		} catch (\Throwable $th) {
-			return new RouteException( 'earn-reward-failed', 'Failed to earn reward', 500 );
+		if( ! $post ) {
+			throw new RouteException( 'earn-rule-not-found', 'Earn rule not found', 404 );
 		}
+
+		// Check if the rule is claimable only once and if the user has already claimed it
+		if ($earn_rules_service->is_rule_claimable_once($data['earn_rule_id'])) {
+			error_log('is_rule_claimable_once');
+			error_log($earn_rules_service->is_rule_claimable_once($data['earn_rule_id']));
+			if ($earn_rules_service->has_user_claimed_rule($data['user_id'], $data['earn_rule_id'])) {
+				error_log('has_user_claimed_rule');
+				error_log($earn_rules_service->has_user_claimed_rule($data['user_id'], $data['earn_rule_id']));
+				throw new RouteException( 'earn-rule-already-claimed', 'This earn rule has already been claimed', 400 );
+			}
+		}
+
+		$piggy_uuid = $this->connection->get_contact_uuid_by_wp_id( $data['user_id'] );
+
+		$credits = $post['credits']['value'] ?? 0;
+
+		$this->connection->apply_credits( $piggy_uuid, $credits );
+
+		$this->connection->add_reward_log($data['user_id'], $data['earn_rule_id'], $credits);
+
+		$data     = $this->prepare_item_for_response( $data, $request );
+		$response = $this->prepare_response_for_collection( $data );
 
 		return rest_ensure_response( $response );
 	}
