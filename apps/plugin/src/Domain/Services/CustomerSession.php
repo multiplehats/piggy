@@ -2,9 +2,11 @@
 
 namespace PiggyWP\Domain\Services;
 
+use Piggy\Api\Models\CustomAttributes\CustomAttribute;
 use PiggyWP\Api\Connection;
 use PiggyWP\Domain\Services\EarnRules;
 use PiggyWP\Domain\Services\SpendRules;
+use PiggyWP\Utils\Logger;
 
 /**
  * Class CustomerSession
@@ -27,6 +29,11 @@ class CustomerSession
 	private $spend_rules;
 
 	/**
+	 * @var Logger
+	 */
+	private $logger;
+
+	/**
 	 * CustomerSession constructor.
 	 *
 	 * @param Connection $connection
@@ -36,6 +43,7 @@ class CustomerSession
 		$this->connection = $connection;
 		$this->earn_rules = $earn_rules;
 		$this->spend_rules = $spend_rules;
+		$this->logger = new Logger();
 
 		add_action('woocommerce_created_customer', [$this, 'handle_customer_creation'], 10, 3);
 		add_action('show_user_profile', [$this, 'show_uuid_on_profile']);
@@ -105,7 +113,7 @@ class CustomerSession
 	private function apply_discount_to_cart($spend_rule)
 	{
 		$discount_type = $spend_rule['discount_type']['value'];
-		error_log('Applying discount to cart: ' . print_r($spend_rule, true));
+
 		$discount_amount = $spend_rule['discountAmount']['value'] ?? 0;
 
 		foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
@@ -259,25 +267,36 @@ class CustomerSession
 
 	public function handle_customer_creation($wp_user_id, $new_customer_data, $password_generated)
 	{
+		$this->logger->info("Handling customer creation for user ID: $wp_user_id");
+
+
 		$client = $this->connection->init_client();
 
 		if (!$client) {
+			$this->logger->error("Failed to initialize client for user ID: $wp_user_id");
+
 			return;
 		}
 
 		$email = $new_customer_data['user_email'];
 
 		if (!$email) {
+			$this->logger->error("No email provided for user ID: $wp_user_id");
+
 			return;
 		}
 
 		$contact = $this->connection->create_contact($email);
 
 		if (!$contact) {
+			$this->logger->error("Failed to create contact for user ID: $wp_user_id, email: $email");
+
 			return;
 		}
 
 		$uuid = $contact['uuid'];
+
+		$this->logger->info("Created contact with UUID: $uuid for user ID: $wp_user_id");
 
 		$this->connection->update_user_meta_uuid($uuid, $wp_user_id);
 		$this->sync_user_attributes($wp_user_id, $uuid);
@@ -292,11 +311,14 @@ class CustomerSession
 			if ($earn_rule['credits']['value'] > 0) {
 				$credits = $earn_rule['credits']['value'];
 
+				$this->logger->info("Applying $credits credits to user $wp_user_id");
+
 				$result = $this->connection->apply_credits($uuid, $credits);
 
-				// // If result is false, log error
 				if (!$result) {
-					error_log("Failed to apply $credits credits to user $wp_user_id");
+					$this->logger->error("Failed to apply $credits credits to user $wp_user_id");
+				} else {
+					$this->logger->info("Successfully applied $credits credits to user $wp_user_id");
 				}
 			}
 		}
@@ -437,15 +459,248 @@ class CustomerSession
 			$result = $this->connection->apply_credits($uuid, null, $order_total, 'purchase_amount');
 
 			if (!$result) {
-				error_log("Failed to apply credits to user $user_id for order $order_id");
+				$this->logger->error("Failed to apply credits to user $user_id for order $order_id");
 			}
 		}
 	}
 
 	private function sync_user_attributes($user_id, $uuid)
 	{
-		return $this->connection->sync_user_attributes($user_id, $uuid);
+		try {
+			$user = get_userdata($user_id);
+
+			if (!$user) {
+				throw new \Exception('User not found');
+			}
+
+			$attributes = $this->get_user_attributes($user_id);
+
+			$update_result = $this->connection->update_contact($uuid, $attributes);
+
+			return $update_result;
+		} catch (\Exception $e) {
+			$this->logger->error("Failed to sync user attributes: " . $e->getMessage());
+
+			return false;
+		}
 	}
+
+	/**
+	 * Get user attributes for Piggy.
+	 *
+	 * @param int $user_id
+	 * @return array
+	 */
+	protected function get_user_attributes($user_id)
+	{
+		$user = get_userdata($user_id);
+		$attributes = [
+			'wp_user_id' => $user_id,
+			'firstname' => $user->first_name,
+			'lastname' => $user->last_name,
+			'wp_user_role' => implode(', ', $user->roles),
+			'wp_account_age_days' => floor((time() - strtotime($user->user_registered)) / (60 * 60 * 24)),
+			'wp_last_login' => get_user_meta($user_id, 'piggy_last_login', true) ?: '',
+			'wp_post_count' => count_user_posts($user_id),
+		];
+
+		$wc_attributes = $this->get_woocommerce_user_data($user_id);
+
+		$attributes = array_merge($attributes, $wc_attributes);
+
+		$this->ensure_custom_attributes_exist();
+
+		return $attributes;
+	}
+
+	/**
+	 * Ensure custom attributes exist in Piggy.
+	 */
+	public function ensure_custom_attributes_exist()
+	{
+		$client = $this->connection->init_client();
+
+		if (!$client) {
+			return;
+		}
+
+		$attributes_list = CustomAttribute::list(["entity" => "contact"]);
+
+		$currency = strtolower(get_woocommerce_currency());
+
+		$required_attributes = [
+			["name" => "wp_user_id", "label" => "WordPress User ID", "type" => "number"],
+			["name" => "wp_user_role", "label" => "WordPress User Role", "type" => "text"],
+			["name" => "wp_account_age_days", "label" => "WordPress Account Age (Days)", "type" => "number"],
+			["name" => "wp_last_login", "label" => "WordPress Last Login", "type" => "date_time"],
+			["name" => "wp_post_count", "label" => "WordPress Post Count", "type" => "number"],
+			["name" => "wp_wc_total_spent_" . $currency, "label" => "WooCommerce Total Spent (" . strtoupper($currency) . ")", "type" => "float"],
+			["name" => "wp_wc_orders_count", "label" => "WooCommerce Orders Count", "type" => "number"],
+			["name" => "wp_create_date", "label" => "WordPress Create Date", "type" => "date_time"],
+			["name" => "wp_wc_last_order_amount_" . $currency, "label" => "WooCommerce Last Order Amount (" . strtoupper($currency) . ")", "type" => "float"],
+			["name" => "wp_wc_last_order_date", "label" => "WooCommerce Last Order Date", "type" => "date_time"],
+			["name" => "wp_wc_average_order_value_" . $currency, "label" => "WooCommerce Average Order Value (" . strtoupper($currency) . ")", "type" => "float"],
+			["name" => "wp_wc_first_order_date", "label" => "WooCommerce First Order Date", "type" => "date_time"],
+			["name" => "wp_wc_product_categories_purchased", "label" => "WooCommerce Product Categories Purchased", "type" => "multi_select"],
+			["name" => "wp_wc_total_products_purchased", "label" => "WooCommerce Total Products Purchased", "type" => "number"],
+		];
+
+		foreach($required_attributes as $attr) {
+			if (!$this->attribute_exists($attributes_list, $attr['name'])) {
+				$attribute_data = [
+					"entity" => "contact",
+					"name" => $attr['name'],
+					"label" => $attr['label'],
+					"type" => $attr['type']
+				];
+
+				if ($attr['name'] === 'wp_wc_product_categories_purchased') {
+					$attribute_data['options'] = $this->get_product_categories_options();
+				}
+
+				CustomAttribute::create($attribute_data);
+			}
+		}
+	}
+
+	private function attribute_exists($attributes_list, $name) {
+		foreach ($attributes_list as $attribute) {
+			if ($attribute->getName() === $name) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function get_product_categories_options()
+	{
+		$categories = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => false]);
+		$options = [];
+
+		foreach ($categories as $category) {
+			$options[] = [
+				'label' => $category->name,
+				'value' => $category->term_id
+			];
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Get WooCommerce user data.
+	 *
+	 * @param int $user_id
+	 * @return array
+	 */
+	private function get_woocommerce_user_data($user_id) {
+		if (!function_exists('wc_get_customer_total_spent') || !function_exists('wc_get_customer_order_count')) {
+			return $this->get_default_wc_attributes();
+		}
+
+		$user = get_user_by('id', $user_id);
+		if (!$user) {
+			return $this->get_default_wc_attributes();
+		}
+
+		$total_spent = wc_get_customer_total_spent($user_id);
+		$orders_count = wc_get_customer_order_count($user_id);
+		$create_date = $user->user_registered;
+
+		$customer_orders = wc_get_orders(array(
+			'customer' => $user_id,
+			'limit' => 1,
+			'orderby' => 'date',
+			'order' => 'DESC',
+		));
+
+		$last_order_amount = 0;
+		$last_order_date = '';
+
+		if (!empty($customer_orders)) {
+			$last_order = $customer_orders[0];
+			$last_order_amount = $last_order->get_total();
+			$last_order_date = $last_order->get_date_created()->format('Y-m-d H:i:s');
+		}
+
+		$currency = strtolower(get_woocommerce_currency());
+		$first_order_date = $this->get_first_order_date($user_id);
+
+		return [
+			'wp_wc_total_spent_' . $currency => (float)$total_spent,
+			'wp_wc_orders_count' => (int)$orders_count,
+			'wp_create_date' => $create_date,
+			'wp_wc_last_order_amount_' . $currency => (float)$last_order_amount,
+			'wp_wc_last_order_date' => $last_order_date,
+			'wp_wc_average_order_value_' . $currency => $orders_count > 0 ? round($total_spent / $orders_count, 2) : 0,
+			'wp_wc_first_order_date' => $first_order_date,
+			'wp_wc_product_categories_purchased' => $this->get_purchased_categories($user_id),
+			'wp_wc_total_products_purchased' => $this->get_total_products_purchased($user_id),
+		];
+	}
+
+	private function get_default_wc_attributes() {
+		$currency = strtolower(get_woocommerce_currency());
+		return [
+			'wp_wc_total_spent_' . $currency => 0,
+			'wp_wc_orders_count' => 0,
+			'wp_create_date' => '',
+			'wp_wc_last_order_amount_' . $currency => 0,
+			'wp_wc_last_order_date' => '',
+			'wp_wc_average_order_value_' . $currency => 0,
+			'wp_wc_first_order_date' => '',
+			'wp_wc_product_categories_purchased' => [],
+			'wp_wc_total_products_purchased' => 0,
+		];
+	}
+
+	private function get_first_order_date($user_id) {
+		$customer_orders = wc_get_orders(array(
+			'customer' => $user_id,
+			'limit' => 1,
+			'orderby' => 'date',
+			'order' => 'ASC',
+		));
+
+		if (!empty($customer_orders)) {
+			$first_order = $customer_orders[0];
+			return $first_order->get_date_created()->format('Y-m-d H:i:s');
+		}
+
+		return '';
+	}
+
+	private function get_purchased_categories($user_id)
+	{
+		$categories = array();
+		$customer_orders = wc_get_orders(array('customer' => $user_id));
+
+		foreach ($customer_orders as $order) {
+			foreach ($order->get_items() as $item) {
+				$product = $item->get_product();
+				if ($product) {
+					$product_categories = $product->get_category_ids();
+					$categories = array_merge($categories, $product_categories);
+				}
+			}
+		}
+
+		return array_unique($categories);
+	}
+
+	private function get_total_products_purchased($user_id) {
+		$total_products = 0;
+		$customer_orders = wc_get_orders(array('customer' => $user_id));
+
+		foreach ($customer_orders as $order) {
+			foreach ($order->get_items() as $item) {
+				$total_products += $item->get_quantity();
+			}
+		}
+
+		return $total_products;
+	}
+
 
 	public function remove_sale_price_for_discounted_products($sale_price, $product)
 	{
