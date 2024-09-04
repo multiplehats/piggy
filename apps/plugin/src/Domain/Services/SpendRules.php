@@ -2,12 +2,23 @@
 
 namespace PiggyWP\Domain\Services;
 
+use PiggyWP\Utils\Logger;
 
 /**
  * Class SpendRules
  */
 class SpendRules
 {
+	/**
+	 * @var Logger
+	 */
+	private $logger;
+
+	public function __construct()
+	{
+		$this->logger = new Logger();
+	}
+
 	private function get_post_meta_data($post_id, $key, $fallback_value = null)
 	{
 		$value = get_post_meta($post_id, $key, true);
@@ -372,6 +383,8 @@ class SpendRules
 		global $wpdb;
 		$table_name = $wpdb->postmeta;
 
+		$this->logger->info("Handling duplicated spend rules for UUIDs: " . implode(', ', $uuids));
+
 		foreach ($uuids as $uuid) {
 			$query = $wpdb->prepare(
 				"SELECT post_id FROM $table_name WHERE meta_key = '_piggy_reward_uuid' AND meta_value = %s ORDER BY post_id DESC",
@@ -380,13 +393,17 @@ class SpendRules
 			$post_ids = $wpdb->get_col($query);
 
 			if (count($post_ids) > 1) {
-				// Keep the most recent one (highest post_id), delete the rest
 				$keep_id = array_shift($post_ids);
+				$this->logger->info("Keeping spend rule with post ID: $keep_id for UUID: $uuid");
+
 				foreach ($post_ids as $post_id) {
+					$this->logger->info("Deleting duplicate spend rule with post ID: $post_id for UUID: $uuid");
 					wp_delete_post($post_id, true);
 				}
 			}
 		}
+
+		$this->logger->info("Finished handling duplicated spend rules");
 	}
 
 	public function delete_spend_rules_with_empty_uuid() {

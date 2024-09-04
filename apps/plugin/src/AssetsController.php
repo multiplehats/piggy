@@ -6,6 +6,7 @@ use PiggyWP\Api\Connection;
 use PiggyWP\Settings;
 use PiggyWP\Assets\Api as AssetApi;
 use PiggyWP\Utils\Common;
+use PiggyWP\Utils\Logger;
 use WP_REST_Request;
 use WP_Post;
 
@@ -56,6 +57,13 @@ final class AssetsController
 	public $plugin_screen_hook_suffix = '';
 
 	/**
+	 * Logger.
+	 *
+	 * @var Logger
+	 */
+	private $logger;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param AssetApi $asset_api Asset API interface for various asset registration.
@@ -68,6 +76,7 @@ final class AssetsController
 		$this->settings = $settings;
 		$this->connection = $connection;
 		$this->init();
+		$this->logger = new Logger();
 	}
 
 	/**
@@ -96,72 +105,76 @@ final class AssetsController
 	 */
 	public function enqueue_frontend()
 	{
-		$this->assets_api->register_script(
-			self::APP_HANDLE,
-			'frontend',
-			'ts/frontend/index.ts',
-			['wp-api-fetch', 'wp-i18n', 'wp-a11y', 'wp-keycodes', 'wp-html-entities']
-		);
+		$has_api_key = $this->connection->has_api_key();
 
-		if (wp_script_is(self::APP_HANDLE, 'enqueued')) {
-			$settings = rawurlencode(wp_json_encode($this->get_plugin_settings()));
-			$earn_rules = rawurlencode(wp_json_encode($this->get_earn_rules_config()));
-			$spend_rules = rawurlencode(wp_json_encode($this->get_spend_rules_config()));
-
-			$coupons = rawurlencode(wp_json_encode($this->get_coupons_by_user_id(get_current_user_id())));
-
-			$this->assets_api->add_inline_script(
+		if ($has_api_key) {
+			$this->assets_api->register_script(
 				self::APP_HANDLE,
-				"window.piggyConfig = JSON.parse(decodeURIComponent('" . esc_js($settings) . "'));",
-				'before'
+				'frontend',
+				'ts/frontend/index.ts',
+				['wp-api-fetch', 'wp-i18n', 'wp-a11y', 'wp-keycodes', 'wp-html-entities']
 			);
 
-			$this->assets_api->add_inline_script(
-				self::APP_HANDLE,
-				"window.piggyEarnRules = JSON.parse(decodeURIComponent('" . esc_js($earn_rules) . "'));",
-				'before'
-			);
+			if (wp_script_is(self::APP_HANDLE, 'enqueued') ) {
+				$settings = rawurlencode(wp_json_encode($this->get_plugin_settings()));
+				$earn_rules = rawurlencode(wp_json_encode($this->get_earn_rules_config()));
+				$spend_rules = rawurlencode(wp_json_encode($this->get_spend_rules_config()));
 
-			$this->assets_api->add_inline_script(
-				self::APP_HANDLE,
-				"window.piggySpentRules = JSON.parse(decodeURIComponent('" . esc_js($spend_rules) . "'));",
-				'before'
-			);
+				$coupons = rawurlencode(wp_json_encode($this->get_coupons_by_user_id(get_current_user_id())));
 
-			$this->assets_api->add_inline_script(
-				self::APP_HANDLE,
-				"window.piggyCoupons = JSON.parse(decodeURIComponent('" . esc_js($coupons) . "'));",
-				'before'
-			);
-
-			$this->initialize_core_data();
-
-			$wc_settings = rawurlencode(wp_json_encode($this->wc_settings_data));
-			$this->assets_api->add_inline_script(
-				self::APP_HANDLE,
-				"window.piggyWcSettings = JSON.parse(decodeURIComponent('" . esc_js($wc_settings) . "'));",
-				'before'
-			);
-
-			$this->assets_api->add_inline_script(
-				self::APP_HANDLE,
-				$this->get_middleware_config(),
-				'before'
-			);
-
-			$piggy_data = $this->get_piggy_data();
-			if ($piggy_data) {
 				$this->assets_api->add_inline_script(
 					self::APP_HANDLE,
-					$piggy_data,
+					"window.piggyConfig = JSON.parse(decodeURIComponent('" . esc_js($settings) . "'));",
 					'before'
 				);
-			}
 
-			wp_add_inline_style(
-				self::APP_HANDLE,
-				$this->get_dynamic_css()
-			);
+				$this->assets_api->add_inline_script(
+					self::APP_HANDLE,
+					"window.piggyEarnRules = JSON.parse(decodeURIComponent('" . esc_js($earn_rules) . "'));",
+					'before'
+				);
+
+				$this->assets_api->add_inline_script(
+					self::APP_HANDLE,
+					"window.piggySpentRules = JSON.parse(decodeURIComponent('" . esc_js($spend_rules) . "'));",
+					'before'
+				);
+
+				$this->assets_api->add_inline_script(
+					self::APP_HANDLE,
+					"window.piggyCoupons = JSON.parse(decodeURIComponent('" . esc_js($coupons) . "'));",
+					'before'
+				);
+
+				$this->initialize_core_data();
+
+				$wc_settings = rawurlencode(wp_json_encode($this->wc_settings_data));
+				$this->assets_api->add_inline_script(
+					self::APP_HANDLE,
+					"window.piggyWcSettings = JSON.parse(decodeURIComponent('" . esc_js($wc_settings) . "'));",
+					'before'
+				);
+
+				$this->assets_api->add_inline_script(
+					self::APP_HANDLE,
+					$this->get_middleware_config(),
+					'before'
+				);
+
+				$piggy_data = $this->get_piggy_data();
+				if ($piggy_data) {
+					$this->assets_api->add_inline_script(
+						self::APP_HANDLE,
+						$piggy_data,
+						'before'
+					);
+				}
+
+				wp_add_inline_style(
+					self::APP_HANDLE,
+					$this->get_dynamic_css()
+				);
+			}
 		}
 	}
 
@@ -227,9 +240,11 @@ final class AssetsController
 	{
 		$all_languages = Common::get_languages();
 		$current_language = Common::get_current_language();
+		$api_key_set = $this->connection->has_api_key();
 
 		return "
             window.piggyMiddlewareConfig = {
+				apiKeySet: " . json_encode($api_key_set) . ",
 				loggedIn: " . json_encode(is_user_logged_in()) . ",
 				userId: " . json_encode(get_current_user_id()) . ",
                 siteLanguage: '" . esc_js(get_bloginfo('language')) . "',
@@ -251,6 +266,8 @@ final class AssetsController
 		$client = $this->connection->init_client();
 
 		if ($client === null) {
+			$this->logger->error("Failed to initialize client");
+
 			return null;
 		}
 

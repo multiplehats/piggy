@@ -8,7 +8,6 @@
 	import { settingsState } from '$lib/stores/settings';
 	import { QueryKeys } from '$lib/utils/query-keys';
 	import SettingsCombobox from '../settings-combobox.svelte';
-	import SettingsSection from '../ui/settings-section/settings-section.svelte';
 
 	export let isLoading = false;
 
@@ -28,31 +27,26 @@
 	}
 </script>
 
-<SettingsSection title={__('Connect to Piggy', 'piggy')}>
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-		<SettingsInput
-			label={$settingsState.api_key.label}
-			description={$settingsState.api_key.description}
-			id={$settingsState.api_key.id}
-			bind:value={$settingsState.api_key.value}
-			class="font-mono"
-			on:change={({ currentTarget }) => $saveSettingsMutation.mutate(settingsState)}
-		/>
+<SettingsInput
+	label={$settingsState.api_key.label}
+	description={$settingsState.api_key.description}
+	id={$settingsState.api_key.id}
+	bind:value={$settingsState.api_key.value}
+	on:change={({ currentTarget }) => $saveSettingsMutation.mutate(settingsState)}
+/>
 
-		{#if $query.data?.value}
-			<SettingsCombobox
-				items={$shopQuery?.data
-					? $shopQuery.data.map((shop) => ({
-							label: shop.name,
-							value: shop.uuid
-					  }))
-					: []}
-				itemName="shop"
-				label={$settingsState.shop_uuid.label}
-				description={$settingsState.shop_uuid.description}
-				id={$settingsState.shop_uuid.id}
-				bind:value={$settingsState.shop_uuid.value}
-			/>
-		{/if}
-	</div>
-</SettingsSection>
+{#if $query.data?.value}
+	<SettingsCombobox
+		items={$shopQuery?.data
+			? $shopQuery.data.map((shop) => ({
+					label: shop.name,
+					value: shop.uuid
+			  }))
+			: []}
+		itemName="shop"
+		label={$settingsState.shop_uuid.label}
+		description={$settingsState.shop_uuid.description}
+		id={$settingsState.shop_uuid.id}
+		bind:value={$settingsState.shop_uuid.value}
+	/>
+{/if}

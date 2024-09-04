@@ -8,6 +8,7 @@
 	import '@piggy/tailwind-config/global.postcss';
 	import { __ } from '@wordpress/i18n';
 	import toast from 'svelte-french-toast';
+	import { Alert } from './components/ui/alert';
 	import PageEarnRulesId from './routes/page-earn-rules-id.svelte';
 	import PageLoyaltyProgram from './routes/page-loyalty-program.svelte';
 	import PageOnboarding from './routes/page-onboarding.svelte';
@@ -32,6 +33,17 @@
 <QueryClientProvider client={queryClient}>
 	<Router {history}>
 		<Layout>
+			{#if !window.piggyMiddlewareConfig.apiKeySet}
+				<Alert
+					class="mb-8"
+					description={__(
+						"You haven't set up your API key yet. Please set it up to continue.",
+						'piggy'
+					)}
+					type="error"
+				></Alert>
+			{/if}
+
 			<!-- Render the Home component at / -->
 			<Route path="/" component={PageGeneralSettings} />
 

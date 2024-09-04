@@ -5,6 +5,7 @@
 	import type { GetSpendRuleByIdResponse } from '$lib/modules/settings/types';
 	import { QueryKeys } from '$lib/utils/query-keys';
 	import SettingsCombobox from '../settings-combobox.svelte';
+	import { Alert } from '../ui/alert';
 
 	export let selectedReward: GetSpendRuleByIdResponse[0]['selectedReward'];
 
@@ -19,18 +20,27 @@
 	$: filteredRewards = $query.data?.filter((reward) => reward.attributes.pre_redeemable === true);
 </script>
 
-{#if filteredRewards}
-	<SettingsCombobox
-		items={filteredRewards
-			? filteredRewards.map((reward) => ({
-					label: reward.title,
-					value: reward.uuid
-			  }))
-			: []}
-		itemName={__('Reward', 'piggy')}
-		label={selectedReward.label}
-		description={selectedReward.description}
-		id={selectedReward.id}
-		bind:value={selectedReward.value}
+{#if $query.isLoading}
+	<p>Loading...</p>
+{:else if $query.isError}
+	<Alert
+		description={__(`Error retrieving rewards: ${$query.error.message}`, 'piggy')}
+		type="error"
 	/>
+{:else if $query.isSuccess}
+	{#if filteredRewards}
+		<SettingsCombobox
+			items={filteredRewards
+				? filteredRewards.map((reward) => ({
+						label: reward.title,
+						value: reward.uuid
+				  }))
+				: []}
+			itemName={__('Reward', 'piggy')}
+			label={selectedReward.label}
+			description={selectedReward.description}
+			id={selectedReward.id}
+			bind:value={selectedReward.value}
+		/>
+	{/if}
 {/if}
