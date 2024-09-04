@@ -90,3 +90,5 @@ export class PiggyAdminService {
 		return data;
 	}
 }
+
+export const piggyAdminService = new PiggyAdminService();

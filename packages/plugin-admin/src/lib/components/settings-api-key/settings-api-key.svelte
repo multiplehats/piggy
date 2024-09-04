@@ -2,7 +2,7 @@
 	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
 	import { __ } from '@wordpress/i18n';
 	import SettingsInput from '$lib/components/settings-input.svelte';
-	import { getShopsQueryConfig } from '$lib/modules/piggy/queries';
+	import { piggyAdminService } from '$lib/modules/piggy';
 	import { saveSettingsMutationConfig } from '$lib/modules/settings/mutations';
 	import { getSettingByIdQueryConfig } from '$lib/modules/settings/queries';
 	import { settingsState } from '$lib/stores/settings';
@@ -13,7 +13,12 @@
 
 	const client = useQueryClient();
 	const query = createQuery(getSettingByIdQueryConfig('api_key'));
-	const shopQuery = createQuery(getShopsQueryConfig());
+	const shopQuery = createQuery({
+		queryKey: [QueryKeys.piggyShops],
+		retry: false,
+		queryFn: async () => await piggyAdminService.getShops(),
+		refetchOnWindowFocus: true
+	});
 	const saveSettingsMutation = createMutation(
 		saveSettingsMutationConfig(client, {
 			onSuccess: async () => {
