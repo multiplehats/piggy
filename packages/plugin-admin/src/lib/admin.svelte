@@ -33,7 +33,7 @@
 	<Router {history}>
 		<Layout>
 			<!-- Render the Home component at / -->
-			<Route path="/" component={PageHome} />
+			<Route path="/" component={PageGeneralSettings} />
 
 			<!-- Render the General Settings component at /general -->
 			<Route path="general" component={PageGeneralSettings} />
