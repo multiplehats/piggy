@@ -273,7 +273,7 @@ class CustomerSession
 		$client = $this->connection->init_client();
 
 		if (!$client) {
-			$this->logger->error("Failed to initialize client for user ID: $wp_user_id");
+			$this->logger->error("Failed to initialize client");
 
 			return;
 		}
@@ -386,6 +386,8 @@ class CustomerSession
 		$client = $this->connection->init_client();
 
 		if (!$client) {
+			$this->logger->error("Failed to initialize client");
+
 			return;
 		}
 
@@ -521,6 +523,8 @@ class CustomerSession
 		$client = $this->connection->init_client();
 
 		if (!$client) {
+			$this->logger->error("Failed to initialize client");
+
 			return;
 		}
 

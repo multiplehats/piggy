@@ -6,6 +6,7 @@ use PiggyWP\Api\Connection;
 use PiggyWP\Settings;
 use PiggyWP\Assets\Api as AssetApi;
 use PiggyWP\Utils\Common;
+use PiggyWP\Utils\Logger;
 use WP_REST_Request;
 use WP_Post;
 
@@ -56,6 +57,13 @@ final class AssetsController
 	public $plugin_screen_hook_suffix = '';
 
 	/**
+	 * Logger.
+	 *
+	 * @var Logger
+	 */
+	private $logger;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param AssetApi $asset_api Asset API interface for various asset registration.
@@ -68,6 +76,7 @@ final class AssetsController
 		$this->settings = $settings;
 		$this->connection = $connection;
 		$this->init();
+		$this->logger = new Logger();
 	}
 
 	/**
@@ -251,6 +260,8 @@ final class AssetsController
 		$client = $this->connection->init_client();
 
 		if ($client === null) {
+			$this->logger->error("Failed to initialize client");
+
 			return null;
 		}
 
