@@ -14,12 +14,15 @@
 		queryKey: [QueryKeys.piggyRewards],
 		queryFn: async () => await service.getRewards()
 	});
+
+	// filter on attributes.pre_redeemable === true
+	$: filteredRewards = $query.data?.filter((reward) => reward.attributes.pre_redeemable === true);
 </script>
 
-{#if $query.data}
+{#if filteredRewards}
 	<SettingsCombobox
-		items={$query?.data
-			? $query.data.map((reward) => ({
+		items={filteredRewards
+			? filteredRewards.map((reward) => ({
 					label: reward.title,
 					value: reward.uuid
 			  }))
