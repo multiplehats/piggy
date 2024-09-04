@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createMutation } from '@tanstack/svelte-query';
 	import { piggyService } from '$lib/config/services';
-	import { isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { creditsName, isLoggedIn } from '$lib/modules/settings';
 	import { MutationKeys } from '$lib/utils/query-keys';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import CheckCircle from 'lucide-svelte/icons/badge-check';
@@ -52,12 +52,11 @@
 	function getLabel(text: string, credits: number | string) {
 		if (!text) return '';
 
-		const creditsName = getTranslatedText($pluginSettings.credits_name);
 		const handle = earnRule.socialHandle.value;
 
 		return replaceStrings(text, [
 			{
-				'{{ credits_currency }}': creditsName ?? '',
+				'{{ credits_currency }}': $creditsName ?? '',
 				'{{ credits }}': credits?.toString() ?? '0',
 				'{{ handle }}': handle ? `@${handle}` : ''
 			}

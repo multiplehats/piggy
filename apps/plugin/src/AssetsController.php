@@ -108,6 +108,8 @@ final class AssetsController
 			$earn_rules = rawurlencode(wp_json_encode($this->get_earn_rules_config()));
 			$spend_rules = rawurlencode(wp_json_encode($this->get_spend_rules_config()));
 
+			$coupons = rawurlencode(wp_json_encode($this->get_coupons_by_user_id(get_current_user_id())));
+
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
 				"window.piggyConfig = JSON.parse(decodeURIComponent('" . esc_js($settings) . "'));",
@@ -123,6 +125,12 @@ final class AssetsController
 			$this->assets_api->add_inline_script(
 				self::APP_HANDLE,
 				"window.piggySpentRules = JSON.parse(decodeURIComponent('" . esc_js($spend_rules) . "'));",
+				'before'
+			);
+
+			$this->assets_api->add_inline_script(
+				self::APP_HANDLE,
+				"window.piggyCoupons = JSON.parse(decodeURIComponent('" . esc_js($coupons) . "'));",
 				'before'
 			);
 
@@ -325,6 +333,18 @@ final class AssetsController
 		if (isset($data['code'])) {
 			return null;
 		}
+
+		return $data;
+	}
+
+	protected function get_coupons_by_user_id($user_id)
+	{
+		$request = new WP_REST_Request('GET', '/piggy/v1/coupons');
+		$request->set_param('userId', $user_id);
+
+		$response = rest_do_request($request);
+		$server = rest_get_server();
+		$data = $server->response_to_data($response, false);
 
 		return $data;
 	}

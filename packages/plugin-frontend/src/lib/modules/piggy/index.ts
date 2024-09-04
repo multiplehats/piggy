@@ -1,5 +1,5 @@
 import { api } from '@piggy/lib';
-import type { GetRewardsResponse, GetShopsResponse } from './types';
+import type { GetCouponsResponse, GetRewardsResponse, GetShopsResponse } from './types';
 
 export class PiggyApiError extends Error {
 	status: number;
@@ -45,6 +45,16 @@ export class PiggyFrontendService {
 		return data;
 	}
 
+	async getCoupons(userId?: number) {
+		const { data, error } = await api.get<GetCouponsResponse>(`/piggy/v1/coupons?userId=${userId}`);
+
+		if (error) {
+			throw new PiggyApiError(error.status, error.statusText, error.data);
+		}
+
+		return data;
+	}
+
 	async claimReward(earnRuleId: number, userId?: number) {
 		const { data, error } = await api.post('/piggy/v1/earn-reward', {
 			userId,
@@ -79,3 +89,5 @@ export class PiggyFrontendService {
 		return data;
 	}
 }
+
+export const apiService = new PiggyFrontendService();

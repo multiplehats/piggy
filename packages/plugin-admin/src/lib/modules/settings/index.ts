@@ -159,9 +159,12 @@ export class SettingsAdminService {
 	}
 
 	async getSpendRules(): Promise<GetSpendRulesResponse> {
-		const { data, error } = await api.get<GetSpendRulesResponse>('/piggy/v1/spend-rules?status=draft,publish', {
-			cache: 'no-store'
-		});
+		const { data, error } = await api.get<GetSpendRulesResponse>(
+			'/piggy/v1/spend-rules?status=draft,publish',
+			{
+				cache: 'no-store'
+			}
+		);
 
 		if (error ?? !data) {
 			if (error) {
@@ -209,7 +212,7 @@ export class SettingsAdminService {
 
 	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
 		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
-			`/piggy/v1/spend-rules/?id=${id}`,
+			`/piggy/v1/spend-rules/?id=${id}&status=publish,draft`,
 			{
 				cache: 'no-store'
 			}

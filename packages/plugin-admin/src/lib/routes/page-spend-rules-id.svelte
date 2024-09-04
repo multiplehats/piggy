@@ -191,7 +191,7 @@
 								></SettingsInput>
 							{/if}
 
-							{#if $rule?.type?.value === 'FREE_PRODUCT'}
+							{#if $rule?.type?.value === 'FREE_PRODUCT' && $rule?.selectedProducts?.value}
 								<SpendRuleFreeProductFields selectedProducts={$rule.selectedProducts} />
 							{/if}
 						</div>

@@ -115,9 +115,7 @@ apiFetch.use(wcStoreApiNonceMiddleware);
 apiFetch.setNonce = setNonce;
 
 updateNonce(
-	// @ts-expect-error - TODO: Add augment
 	window.piggyMiddlewareConfig.storeApiNonce,
-	// @ts-expect-error - TODO: Add augment
 	window.piggyMiddlewareConfig.wcStoreApiNonceTimestamp
 );
 
@@ -139,6 +137,31 @@ const request = async <T = unknown>(
 }> => {
 	return apiFetch<T>({ path, method, data, ...options })
 		.then((data) => {
+			// In case someone accidentally returns a RouteException instead of throwing it.
+			if (
+				(
+					data as {
+						error_code: string;
+					}
+				)?.error_code
+			) {
+				const error = data as {
+					error_code: string;
+					additional_data?: {
+						message?: string;
+					};
+				};
+
+				return {
+					data: null,
+					error: {
+						status: 200,
+						statusText: error.error_code,
+						data: error?.additional_data?.message ?? 'Unknown error'
+					}
+				};
+			}
+
 			return {
 				data: data,
 				error: null
