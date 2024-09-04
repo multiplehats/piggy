@@ -117,9 +117,6 @@ class SpendRulesClaim extends AbstractRoute {
 		try {
 			$reception = $connection->create_reward_reception( $contact_uuid, $reward_uuid );
 		} catch (\Throwable $th) {
-			error_log('checking');
-			error_log( $th->getMessage() );
-
 			// If the message sdtars with "You have insufficient credits" we return a 400
 			if ( strpos( $th->getMessage(), 'You have insufficient credits' ) !== false ) {
 				throw new RouteException( 'spend-rules-claim', 'Insufficient credits', 400);
