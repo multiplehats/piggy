@@ -77,7 +77,7 @@ export const zBasePluginOptions = z.object({
 		__('At least one must be selected.', 'mycred')
 	),
 	reward_order_parts: adminFields.zCheckboxes,
-	marketing_consent_subscription: adminFields.zSelect,
+	marketing_consent_subscription: adminFields.zSwitch,
 	earn_rules: adminFields.zEarnRules,
 	dashboard_title_logged_in: adminFields.zTranslatableText,
 	dashboard_title_logged_out: adminFields.zTranslatableText,

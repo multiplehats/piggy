@@ -94,18 +94,10 @@
 				bind:value={$settingsState.reward_order_parts.value}
 			/> -->
 
-			<SettingsSelect
+			<SettingsSwitch
 				class="py-4"
 				{...$settingsState.marketing_consent_subscription}
 				bind:value={$settingsState.marketing_consent_subscription.value}
-				items={Object.entries($settingsState.marketing_consent_subscription.options).map(
-					([value, { label: name }]) => {
-						return {
-							value,
-							name
-						};
-					}
-				)}
 			/>
 		{/if}
 	</div>
