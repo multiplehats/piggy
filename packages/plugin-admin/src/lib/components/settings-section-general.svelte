@@ -44,7 +44,7 @@
 				bind:value={$settingsState.credits_spend_rule_progress.value}
 			/>
 
-			<div class="py-4">
+			<!-- <div class="py-4">
 				<SettingsSwitch
 					{...$settingsState.include_guests}
 					bind:value={$settingsState.include_guests.value}
@@ -62,15 +62,15 @@
 						></Alert>
 					</div>
 				{/if}
-			</div>
+			</div> -->
 
-			<SettingsCheckboxes
+			<!-- <SettingsCheckboxes
 				class="py-4"
 				{...$settingsState.reward_order_statuses}
 				bind:value={$settingsState.reward_order_statuses.value}
-			/>
+			/> -->
 
-			<div class="py-4">
+			<!-- <div class="py-4">
 				<SettingsCheckboxes
 					{...$settingsState.withdraw_order_statuses}
 					bind:value={$settingsState.withdraw_order_statuses.value}
@@ -86,13 +86,13 @@
 						class="mt-4"
 					></Alert>
 				{/if}
-			</div>
+			</div> -->
 
-			<SettingsCheckboxes
+			<!-- <SettingsCheckboxes
 				class="py-4"
 				{...$settingsState.reward_order_parts}
 				bind:value={$settingsState.reward_order_parts.value}
-			/>
+			/> -->
 
 			<SettingsSelect
 				class="py-4"

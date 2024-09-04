@@ -179,7 +179,7 @@
 					</Card.Content>
 				</Card.Root>
 
-				<Card.Root>
+				<!-- <Card.Root>
 					<Card.Header>
 						<Card.Title>{__('Schedule', 'piggy')}</Card.Title>
 					</Card.Header>
@@ -198,7 +198,7 @@
 							/>
 						</div>
 					</Card.Content>
-				</Card.Root>
+				</Card.Root> -->
 			</div>
 		</div>
 

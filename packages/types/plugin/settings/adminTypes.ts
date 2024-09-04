@@ -157,7 +157,7 @@ export const zEarnRuleType = z
 	.literal('LIKE_ON_FACEBOOK')
 	.or(z.literal('FOLLOW_ON_TIKTOK'))
 	.or(z.literal('PLACE_ORDER'))
-	.or(z.literal('CELEBRATE_BIRTHDAY'))
+	// .or(z.literal('CELEBRATE_BIRTHDAY'))
 	.or(z.literal('FOLLOW_ON_INSTAGRAM'))
 	.or(z.literal('CREATE_ACCOUNT'));
 
