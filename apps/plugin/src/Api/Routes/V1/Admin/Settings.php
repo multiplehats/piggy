@@ -82,21 +82,9 @@ class Settings extends AbstractRoute {
 			return rest_ensure_response( null );
 		}
 
-		foreach( $settings as $setting ) {
-			$value = $setting['value'];
+		$result = $this->settings->update_settings($settings);
 
-			if( $setting['type'] === 'translatable_text' && is_array( $value ) ) {
-				$value = json_encode( $value );
-			}
-
-			if( $setting['type'] === 'checkboxes' && is_array( $value ) ) {
-				$value = json_encode( $value );
-			}
-
-			update_option( 'piggy_' . $setting['id'], $value );
-		}
-
-		return rest_ensure_response( true );
+		return rest_ensure_response( $result );
 	}
 
 	/**
@@ -108,30 +96,21 @@ class Settings extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
-		$all_settings = $this->settings->get_all_settings();
-
-		// Remove "api_key" from settings if user is not an admin.
-		if( ! current_user_can( 'manage_options' ) ) {
-			$all_settings = array_filter($all_settings, function($setting) {
-				return $setting['id'] !== 'api_key';
-			});
-		}
 
 		if( $id ) {
-			$item = array_filter($all_settings, function($setting) use ($id) {
-				return $setting['id'] === $id;
-			});
+			$setting = $this->settings->get_setting_by_id($id);
 
-			if( ! $item ) {
+			if( ! $setting ) {
 				return rest_ensure_response( null );
 			}
 
-			$item = reset( $item );
+			$setting = $this->prepare_item_for_response( $setting, $request );
 
-			$settings = $this->prepare_item_for_response( $item, $request );
-
-			return rest_ensure_response( $settings );
+			return rest_ensure_response( $setting );
 		}
+
+		$include_api_key = current_user_can( 'manage_options' );
+		$all_settings = $this->settings->get_all_settings_with_values($include_api_key);
 
 		// Returns settings as an object rather than an array.
 		// This makes it easier to work with in the front-end.

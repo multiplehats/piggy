@@ -222,4 +222,88 @@ class Settings {
 	public function get_settings_page_slug(): string {
 		return 'piggy--settings';
 	}
+
+	/**
+	 * Get all settings with their current values.
+	 *
+	 * @param bool $include_api_key Whether to include the API key in the settings.
+	 * @return array
+	 */
+	public function get_all_settings_with_values($include_api_key = true) {
+		$all_settings = $this->get_all_settings();
+
+		if (!$include_api_key) {
+			$all_settings = array_filter($all_settings, function($setting) {
+				return $setting['id'] !== 'api_key';
+			});
+		}
+
+		foreach ($all_settings as &$setting) {
+			$setting = $this->get_setting_with_value($setting);
+		}
+
+		return $all_settings;
+	}
+
+	/**
+	 * Get a specific setting with its current value.
+	 *
+	 * @param string $id The setting ID.
+	 * @return array|null
+	 */
+	public function get_setting_by_id($id) {
+		$all_settings = $this->get_all_settings();
+		$setting = current(array_filter($all_settings, function($setting) use ($id) {
+			return $setting['id'] === $id;
+		}));
+
+		return $setting ? $this->get_setting_with_value($setting) : null;
+	}
+
+	/**
+	 * Get a setting with its current value.
+	 *
+	 * @param array $setting The setting array.
+	 * @return array
+	 */
+	private function get_setting_with_value($setting) {
+		$default = isset($setting['default']) ? $setting['default'] : null;
+		$id = $setting['id'];
+
+		$setting['value'] = get_option('piggy_' . $id, $default);
+
+		if ($setting['type'] === 'translatable_text' && is_string($setting['value'])) {
+			$setting['value'] = json_decode($setting['value'], true);
+		}
+
+		if ($setting['type'] === 'checkboxes' && is_string($setting['value'])) {
+			$setting['value'] = json_decode($setting['value'], true);
+		}
+
+		return $setting;
+	}
+
+	/**
+	 * Update multiple settings.
+	 *
+	 * @param array $settings An array of settings to update.
+	 * @return bool
+	 */
+	public function update_settings($settings) {
+		foreach ($settings as $setting) {
+			$value = $setting['value'];
+
+			if ($setting['type'] === 'translatable_text' && is_array($value)) {
+				$value = json_encode($value);
+			}
+
+			if ($setting['type'] === 'checkboxes' && is_array($value)) {
+				$value = json_encode($value);
+			}
+
+			update_option('piggy_' . $setting['id'], $value);
+		}
+
+		return true;
+	}
 }
