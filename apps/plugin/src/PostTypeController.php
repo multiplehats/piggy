@@ -67,7 +67,7 @@ final class PostTypeController {
 			'public'             => true,
 			'publicly_queryable' => true,
 			'show_ui'            => true,
-			'show_in_menu'       => true,
+			'show_in_menu'       => false, // Change this to false
 			'query_var'          => true,
 			'rewrite'            => array('slug' => self::PREFIX . '_earn_rule'),
 			'capability_type'    => 'post',
@@ -113,7 +113,7 @@ final class PostTypeController {
 			'public'             => true,
 			'publicly_queryable' => true,
 			'show_ui'            => true,
-			'show_in_menu'       => true,
+			'show_in_menu'       => false, // Change this to false
 			'query_var'          => true,
 			'rewrite'            => array('slug' => self::PREFIX . '_spend_rule'),
 			'capability_type'    => 'post',
