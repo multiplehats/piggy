@@ -91,4 +91,4 @@ export class PiggyAdminService {
 	}
 }
 
-export const piggyAdminService = new PiggyAdminService();
+export const service = new PiggyAdminService();

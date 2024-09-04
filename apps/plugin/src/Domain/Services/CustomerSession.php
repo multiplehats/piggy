@@ -315,6 +315,8 @@ class CustomerSession
 
 				$result = $this->connection->apply_credits($uuid, $credits);
 
+				$this->connection->add_reward_log($wp_user_id, $earn_rule['id'], $credits);
+
 				if (!$result) {
 					$this->logger->error("Failed to apply $credits credits to user $wp_user_id");
 				} else {
@@ -462,7 +464,13 @@ class CustomerSession
 
 			if (!$result) {
 				$this->logger->error("Failed to apply credits to user $user_id for order $order_id");
+
+				return;
 			}
+
+			$credits = $result->getCredits();
+
+			$this->connection->add_reward_log($user_id, $applicable_rule['id'], $credits);
 		}
 	}
 

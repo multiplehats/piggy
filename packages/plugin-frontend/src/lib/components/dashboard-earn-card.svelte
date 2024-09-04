@@ -17,9 +17,11 @@
 		'FOLLOW_ON_TIKTOK'
 	] as EarnRuleType[];
 
+	const claimableOnceTypes = [...socialTypes, 'CREATE_ACCOUNT'];
+
 	const claimRewardMutation = createMutation({
 		mutationKey: [MutationKeys.claimReward],
-		mutationFn: () => handleClaim(earnRule.id),
+		mutationFn: () => piggyService.claimReward(earnRule.id, window.piggyMiddlewareConfig.userId),
 		onSuccess: () => {
 			const handle = earnRule.socialHandle.value;
 
@@ -45,10 +47,6 @@
 		}
 	}
 
-	function handleClaim(id: number) {
-		return piggyService.claimReward(id, window.piggyMiddlewareConfig.userId);
-	}
-
 	function getLabel(text: string, credits: number | string) {
 		if (!text) return '';
 
@@ -64,8 +62,9 @@
 	}
 
 	$: isSocial = socialTypes.includes(earnRule.type.value);
+	$: isClaimableOnce = claimableOnceTypes.includes(earnRule.type.value);
 	$: hasClaimed = window.piggyData.claimedRewards?.find(
-		(reward) => reward.earn_rule_id === earnRule.id.toString()
+		(reward) => reward.earn_rule_id === earnRule.id.toString() && isClaimableOnce
 	);
 </script>
 

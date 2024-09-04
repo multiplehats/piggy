@@ -301,4 +301,40 @@ class EarnRules {
 
 		return $applicable_rule;
 	}
+
+    /**
+     * Check if a user has already claimed a specific earn rule.
+     *
+     * @param int $user_id The user ID.
+     * @param int $earn_rule_id The earn rule ID.
+     * @return bool
+     */
+    public function has_user_claimed_rule($user_id, $earn_rule_id) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'piggy_reward_logs';
+
+		$result = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name WHERE wp_user_id = %d AND earn_rule_id = %d",
+            $user_id,
+            $earn_rule_id
+        ));
+
+        return $result > 0;
+    }
+
+    /**
+     * Check if an earn rule is claimable only once.
+     *
+     * @param int $earn_rule_id The earn rule ID.
+     * @return bool
+     */
+    public function is_rule_claimable_once($earn_rule_id) {
+        $rule = $this->get_by_id($earn_rule_id);
+        if (!$rule) {
+            return false;
+        }
+
+        $once_only_types = ['LIKE_ON_FACEBOOK', 'FOLLOW_ON_TIKTOK', 'FOLLOW_ON_INSTAGRAM', 'CREATE_ACCOUNT'];
+        return in_array($rule['type']['value'], $once_only_types);
+    }
 }
