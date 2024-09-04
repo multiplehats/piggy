@@ -8,6 +8,7 @@
 	import { settingsState } from '$lib/stores/settings';
 	import { QueryKeys } from '$lib/utils/query-keys';
 	import { noCheckboxSelected } from '$lib/utils/settings-utils';
+	import SettingsApiKey from './settings-api-key/settings-api-key.svelte';
 	import SettingsCheckboxes from './settings-checkboxes.svelte';
 	import SettingsSelect from './settings-select.svelte';
 	import SettingsSwitch from './settings-switch.svelte';
@@ -32,8 +33,12 @@
 		{:else if $query.isError}
 			<p>Error: {$query.error.message}</p>
 		{:else if $query.isSuccess && $settingsState}
+			<div class="pb-4">
+				<SettingsApiKey />
+			</div>
+
 			<SettingsTranslateableInput
-				class="pb-4"
+				class="py-4"
 				{...$settingsState.credits_name}
 				bind:value={$settingsState.credits_name.value}
 			/>

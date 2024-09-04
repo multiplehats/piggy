@@ -61,6 +61,12 @@ class Connection {
 		return $api_key;
 	}
 
+	public function has_api_key() {
+		$api_key = $this->get_api_key();
+
+		return $api_key !== null && $api_key !== '';
+	}
+
 	/**
 	 * Get the Piggy Register Client instance.
 	 *
