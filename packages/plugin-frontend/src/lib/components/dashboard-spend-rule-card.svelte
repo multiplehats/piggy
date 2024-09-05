@@ -124,7 +124,7 @@
 				variant="primary"
 				on:click={() => $claimSpendRuleMutation.mutateAsync()}
 			>
-				Claim
+				{getTranslatedText($pluginSettings.dashboard_spend_cta)}
 			</Button>
 
 			{#if $claimSpendRuleMutation.isError}

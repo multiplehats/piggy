@@ -115,7 +115,7 @@ class Settings {
 			'default'  => 'off'
 		);
 
-		// Customer Dashboard related settings.
+
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_in',
 			'default'  => array(
@@ -193,6 +193,26 @@ class Settings {
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Activity navigation item', 'piggy' ),
+		);
+
+		$settings[] = array(
+			'id'       => 'dashboard_earn_cta',
+			'default'  => array(
+				'en_US' => __( 'Claim reward', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Claim reward button', 'piggy' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to claim their reward.', 'piggy' ),
+		);
+
+		$settings[] = array(
+			'id'       => 'dashboard_spend_cta',
+			'default'  => array(
+				'en_US' => __( 'Unlock', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Spend credits button', 'piggy' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to spend their credits.', 'piggy' ),
 		);
 
 		/**

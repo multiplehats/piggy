@@ -9,6 +9,7 @@
 	import { __ } from '@wordpress/i18n';
 	import toast from 'svelte-french-toast';
 	import { Alert } from './components/ui/alert';
+	import PageDashboardSettings from './routes/page-dashboard-settings.svelte';
 	import PageEarnRulesId from './routes/page-earn-rules-id.svelte';
 	import PageLoyaltyProgram from './routes/page-loyalty-program.svelte';
 	import PageOnboarding from './routes/page-onboarding.svelte';
@@ -49,6 +50,9 @@
 
 			<!-- Render the General Settings component at /general -->
 			<Route path="general" component={PageGeneralSettings} />
+
+			<!-- Render the Dashboard Settings component at /dashboard -->
+			<Route path="dashboard" component={PageDashboardSettings} />
 
 			<!-- Render the Onboarding component at /onboarding -->
 			<Route path="onboarding" component={PageOnboarding} />
