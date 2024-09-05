@@ -84,7 +84,7 @@
 				class="py-4"
 				{...$settingsState.dashboard_spend_cta}
 				bind:value={$settingsState.dashboard_spend_cta.value}
-			/>dot
+			/>
 		</div>
 	{/if}
 </SettingsSection>
