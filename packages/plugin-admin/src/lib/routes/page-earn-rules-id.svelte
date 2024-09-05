@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
-	import { __ } from '@wordpress/i18n';
+	import { __, sprintf } from '@wordpress/i18n';
 	import EarnRulePlaceOrder from '$lib/components/earn-rules/earn-rule-place-order.svelte';
 	import EarnRuleSocial from '$lib/components/earn-rules/earn-rule-social.svelte';
 	import SettingsCalendar from '$lib/components/settings-calendar.svelte';
 	import SettingsInput from '$lib/components/settings-input.svelte';
 	import SettingsSelect from '$lib/components/settings-select.svelte';
 	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
+	import { Alert } from '$lib/components/ui/alert';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -125,6 +126,18 @@
 
 					<Card.Content>
 						<div class="grid gap-6">
+							{#if $rule.type.value === 'PLACE_ORDER'}
+								<Alert title={__('Credit Calculation', 'piggy')} type="info">
+									{@html sprintf(
+										__(
+											'These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href="%s" class="underline" target="_blank" rel="noopener noreferrer">Piggy Dashboard</a>.',
+											'piggy'
+										),
+										'https://business.piggy.eu/loyalty/1/rules'
+									)}
+								</Alert>
+							{/if}
+
 							<div class="grid gap-3">
 								<SettingsInput {...$rule.title} bind:value={$rule.title.value} />
 							</div>

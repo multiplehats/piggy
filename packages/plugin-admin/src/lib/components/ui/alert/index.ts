@@ -2,7 +2,7 @@ import Root from './alert.svelte';
 
 interface Props {
 	title?: string | undefined;
-	description: string;
+	description?: string | undefined;
 	type: 'success' | 'info' | 'warning' | 'error';
 	class?: string;
 }

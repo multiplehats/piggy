@@ -11,9 +11,9 @@
 	let className: $$Props['class'] = undefined;
 
 	export { className as class };
-	export let description: $$Props['description'];
-	export let title: $$Props['title'];
-	export let type: $$Props['type'];
+	export let description: $$Props['description'] = undefined;
+	export let title: $$Props['title'] = undefined;
+	export let type: $$Props['type'] = 'info';
 </script>
 
 <div
@@ -67,7 +67,11 @@
 				)}
 			>
 				<p>
-					{description}
+					{#if description}
+						{description}
+					{:else}
+						<slot />
+					{/if}
 				</p>
 			</div>
 		</div>
