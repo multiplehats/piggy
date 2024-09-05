@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createMutation } from '@tanstack/svelte-query';
 	import { piggyService } from '$lib/config/services';
-	import { creditsName, isLoggedIn } from '$lib/modules/settings';
+	import { creditsName, isLoggedIn, pluginSettings } from '$lib/modules/settings';
 	import { MutationKeys } from '$lib/utils/query-keys';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import CheckCircle from 'lucide-svelte/icons/badge-check';
@@ -89,7 +89,7 @@
 						variant="primary"
 						on:click={() => $claimRewardMutation.mutateAsync()}
 					>
-						Claim
+						{getTranslatedText($pluginSettings.dashboard_earn_cta)}
 					</Button>
 
 					{#if $claimRewardMutation.isError}

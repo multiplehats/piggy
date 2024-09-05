@@ -86,7 +86,9 @@ export const zBasePluginOptions = z.object({
 	dashboard_nav_coupons: adminFields.zTranslatableText,
 	dashboard_nav_earn: adminFields.zTranslatableText,
 	dashboard_nav_rewards: adminFields.zTranslatableText,
-	dashboard_nav_activity: adminFields.zTranslatableText
+	dashboard_nav_activity: adminFields.zTranslatableText,
+	dashboard_earn_cta: adminFields.zTranslatableText,
+	dashboard_spend_cta: adminFields.zTranslatableText
 });
 
 /**

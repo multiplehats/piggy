@@ -8,6 +8,11 @@ export const headerLinks = [
 		type: 'link'
 	},
 	{
+		href: '/dashboard',
+		label: __('Dashboard', 'piggy'),
+		type: 'link'
+	},
+	{
 		href: '/loyalty-program',
 		label: __('Loyalty Program', 'piggy'),
 		type: 'link'
