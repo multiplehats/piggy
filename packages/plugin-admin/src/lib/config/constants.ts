@@ -7,14 +7,15 @@ export const headerLinks = [
 		label: __('General', 'piggy'),
 		type: 'link'
 	},
-	{
-		href: '/dashboard',
-		label: __('Dashboard', 'piggy'),
-		type: 'link'
-	},
+
 	{
 		href: '/loyalty-program',
 		label: __('Loyalty Program', 'piggy'),
+		type: 'link'
+	},
+	{
+		href: '/dashboard',
+		label: __('Custonmer Dashboard settings', 'piggy'),
 		type: 'link'
 	}
 ] as HeaderLinkProps[];
