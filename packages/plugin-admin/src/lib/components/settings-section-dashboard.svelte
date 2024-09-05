@@ -2,16 +2,10 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { __ } from '@wordpress/i18n';
 	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
-	import { Alert } from '$lib/components/ui/alert';
 	import { SettingsSection } from '$lib/components/ui/settings-section';
 	import { SettingsAdminService } from '$lib/modules/settings';
 	import { settingsState } from '$lib/stores/settings';
 	import { QueryKeys } from '$lib/utils/query-keys';
-	import { noCheckboxSelected } from '$lib/utils/settings-utils';
-	import SettingsApiKey from './settings-api-key/settings-api-key.svelte';
-	import SettingsCheckboxes from './settings-checkboxes.svelte';
-	import SettingsSelect from './settings-select.svelte';
-	import SettingsSwitch from './settings-switch.svelte';
 
 	const service = new SettingsAdminService();
 	const query = createQuery({
@@ -90,7 +84,7 @@
 				class="py-4"
 				{...$settingsState.dashboard_spend_cta}
 				bind:value={$settingsState.dashboard_spend_cta.value}
-			/>
+			/>dot
 		</div>
 	{/if}
 </SettingsSection>
