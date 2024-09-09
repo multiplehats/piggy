@@ -500,4 +500,49 @@ class Connection {
 
 		return $reception ?: false;
 	}
+
+	public function refund_credits($credit_reception_uuid, $refund_amount, $original_amount)
+	{
+		$client = $this->init_client();
+		if (!$client) {
+			return false;
+		}
+
+		try {
+			// First, reverse the original credit reception
+			$reverse_result = CreditReception::reverse($credit_reception_uuid);
+
+			if (!$reverse_result) {
+				$this->logger->error("Failed to reverse original credit reception: $credit_reception_uuid");
+				return false;
+			}
+
+			// Calculate the refund percentage
+			$refund_percentage = $refund_amount / $original_amount;
+
+			// Get the original credits from the reversed transaction
+			$original_credits = $reverse_result->getCredits();
+
+			// Calculate the credits to refund
+			$credits_to_refund = round($original_credits * $refund_percentage);
+
+			// Create a new credit reception with negative credits for the refund
+			$refund_result = CreditReception::create([
+				'contact_uuid' => $reverse_result->getContact()->getUuid(),
+				'credits' => -$credits_to_refund,
+				'unit_name' => 'refund_amount',
+				'unit_value' => $refund_amount
+			]);
+
+			if (!$refund_result) {
+				$this->logger->error("Failed to create refund credit reception for: $credit_reception_uuid");
+				return false;
+			}
+
+			return $refund_result;
+		} catch (\Exception $e) {
+			$this->logger->error("Error refunding credits: " . $e->getMessage());
+			return false;
+		}
+	}
 }
