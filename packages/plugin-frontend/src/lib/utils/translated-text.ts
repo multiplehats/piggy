@@ -9,15 +9,28 @@ export function getSpendRuleLabel(
 	text: string,
 	credits: number | null,
 	creditsName: string,
-	discount: number | null
+	discount: number | null,
+	discountType: 'percentage' | 'fixed'
 ) {
 	if (!text) return '';
+
+	const getDiscountType = () => {
+		if (discountType === 'percentage') {
+			return `${discount}%`;
+		} else if (discountType === 'fixed') {
+			const currency = window.piggyWcSettings.currency.symbol;
+
+			return `${currency}${discount}`;
+		}
+
+		return `${discount}`;
+	};
 
 	return replaceStrings(text, [
 		{
 			'{{ credits_currency }}': creditsName ?? '',
 			'{{ credits }}': credits?.toString() ?? '0',
-			'{{ discount }}': discount?.toString() ?? '0'
+			'{{ discount }}': getDiscountType()
 		}
 	]);
 }

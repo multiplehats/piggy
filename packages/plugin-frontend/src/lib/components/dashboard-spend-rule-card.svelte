@@ -33,18 +33,6 @@
 		progress.set(creditsAccumulated / creditsRequired);
 	}
 
-	function getLabel(text: string, credits: number | string) {
-		if (!text) return '';
-
-		return replaceStrings(text, [
-			{
-				'{{ credits_currency }}': $creditsName ?? '',
-				'{{ credits }}': credits?.toString() ?? '0',
-				'{{ discount }}': rule.discountValue?.value?.toString() ?? '0'
-			}
-		]);
-	}
-
 	function getDescription(text: string, credits: number | string | null) {
 		if (!text) return '';
 
@@ -68,12 +56,9 @@
 			}
 		]);
 	}
-
-	$: console.log(rule);
 </script>
 
 <div class="piggy-dashboard-reward-card">
-	<!-- Credits required badge-->
 	{#if creditsRequired}
 		<div class="piggy-dashboard-reward-card__badge">
 			{creditsRequired}
@@ -90,7 +75,8 @@
 				getTranslatedText(rule.label.value),
 				rule.creditCost.value,
 				$creditsName,
-				rule.discountValue?.value
+				rule.discountValue.value,
+				rule.discountType.value
 			)}
 		{/if}
 	</h4>
