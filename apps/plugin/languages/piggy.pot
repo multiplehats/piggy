@@ -1,0 +1,1197 @@
+# Copyright (C) 2024 Piggy, Chris Jayden
+# This file is distributed under the same license as the Piggy - Loyalty & Marketing plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Piggy - Loyalty & Marketing 0.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/piggy\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-09-10T10:41:26+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: piggy\n"
+
+#. Plugin Name of the plugin
+#: piggy.php
+msgid "Piggy - Loyalty & Marketing"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: piggy.php
+msgid "https://github.com/woocommerce/woocommerce-gutenberg-products-block"
+msgstr ""
+
+#. Description of the plugin
+#: piggy.php
+msgid "Customer loyalty & Email marketing that works in-store and online."
+msgstr ""
+
+#. Author of the plugin
+#: piggy.php
+msgid "Piggy, Chris Jayden"
+msgstr ""
+
+#. Author URI of the plugin
+#: piggy.php
+msgid "https://piggy.com"
+msgstr ""
+
+#: src/Api/Routes/V1/AbstractRoute.php:89
+#: src/Api/Routes/V1/AbstractRoute.php:94
+msgid "Invalid API Key"
+msgstr ""
+
+#: src/Api/Routes/V1/AbstractRoute.php:204
+#: src/Api/Routes/V1/AbstractRoute.php:217
+#: src/Api/Routes/V1/AbstractRoute.php:230
+#: src/Api/Routes/V1/AbstractRoute.php:243
+msgid "Method not implemented"
+msgstr ""
+
+#: src/Api/Routes/V1/AbstractRoute.php:298
+msgid "Scope under which the request is made; determines fields present in response."
+msgstr ""
+
+#: src/Api/Routes/V1/Admin/Middleware.php:22
+#: src/Api/Routes/V1/Admin/Middleware.php:44
+msgid "You are not allowed to make this request. Please make sure you are logged in."
+msgstr ""
+
+#: src/Api/Routes/V1/Admin/Settings.php:50
+msgid "Settings"
+msgstr ""
+
+#: src/Api/Routes/V1/Admin/Settings.php:61
+msgid "Setting ID"
+msgstr ""
+
+#: src/Api/Routes/V1/Coupons.php:51
+msgid "User ID"
+msgstr ""
+
+#: src/Api/Routes/V1/EarnReward.php:52
+#: src/Api/Schemas/V1/EarnRewardSchema.php:48
+msgid "The Earn Rule ID"
+msgstr ""
+
+#: src/Api/Routes/V1/EarnReward.php:57
+#: src/Api/Schemas/V1/EarnRewardSchema.php:53
+msgid "The Customer ID"
+msgstr ""
+
+#: src/Api/Routes/V1/EarnRules.php:50
+msgid "Earn rules"
+msgstr ""
+
+#: src/Api/Routes/V1/EarnRules.php:61
+msgid "Earn rule ID"
+msgstr ""
+
+#: src/Api/Routes/V1/EarnRules.php:123
+msgid "Failed to save earn rule"
+msgstr ""
+
+#: src/Api/Routes/V1/SpendRules.php:50
+msgid "Spend rules"
+msgstr ""
+
+#: src/Api/Routes/V1/SpendRules.php:61
+msgid "Spend rule ID"
+msgstr ""
+
+#: src/Api/Routes/V1/SpendRules.php:127
+msgid "Failed to save spend rule"
+msgstr ""
+
+#: src/Api/Routes/V1/WCProductsSearch.php:34
+msgid "Search term"
+msgstr ""
+
+#: src/Api/Routes/V1/WCProductsSearch.php:38
+msgid "Limit"
+msgstr ""
+
+#: src/Api/Routes/V1/WCProductsSearch.php:42
+msgid "Include IDs"
+msgstr ""
+
+#: src/Api/Routes/V1/WCProductsSearch.php:49
+msgid "Exclude IDs"
+msgstr ""
+
+#. translators: %s: extension namespace
+#: src/Api/Schemas/ExtendSchema.php:319
+#: src/Api/Schemas/ExtendSchema.php:327
+msgid "Extension data registered by %s"
+msgstr ""
+
+#: src/Api/Schemas/V1/AbstractSchema.php:322
+msgid "Currency code (in ISO format) for returned prices."
+msgstr ""
+
+#: src/Api/Schemas/V1/AbstractSchema.php:328
+msgid "Currency symbol for the currency which can be used to format returned prices."
+msgstr ""
+
+#: src/Api/Schemas/V1/AbstractSchema.php:334
+msgid "Currency minor unit (number of digits after the decimal separator) for returned prices."
+msgstr ""
+
+#: src/Api/Schemas/V1/AbstractSchema.php:340
+msgid "Decimal separator for the currency which can be used to format returned prices."
+msgstr ""
+
+#: src/Api/Schemas/V1/AbstractSchema.php:346
+msgid "Thousand separator for the currency which can be used to format returned prices."
+msgstr ""
+
+#: src/Api/Schemas/V1/AbstractSchema.php:352
+#: src/Api/Schemas/V1/AbstractSchema.php:358
+msgid "Price prefix for the currency which can be used to format returned prices."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/RewardsSchema.php:34
+msgid "The reward's unique id."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/RewardsSchema.php:39
+msgid "The reward's name."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/RewardsSchema.php:44
+msgid "The reward's required credits."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/RewardsSchema.php:49
+msgid "The reward's type."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/RewardsSchema.php:54
+msgid "The reward's active status."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/RewardsSchema.php:59
+msgid "The reward's attributes."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/SettingsSchema.php:34
+msgid "Reward order statuses."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/SettingsSchema.php:40
+msgid "Pending payment."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/SettingsSchema.php:44
+msgid "On hold."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/SettingsSchema.php:48
+msgid "Processing."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/SettingsSchema.php:52
+msgid "Completed."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/ShopsSchema.php:34
+msgid "The shops's unique id."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/ShopsSchema.php:39
+msgid "The shops's name."
+msgstr ""
+
+#: src/Api/Schemas/V1/CouponsSchema.php:35
+msgid "List of coupon codes"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:47
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:42
+#: src/Api/Schemas/V1/SpendRulesSchema.php:46
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:42
+msgid "Unique identifier for the rule"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:51
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:46
+#: src/Api/Schemas/V1/SpendRulesSchema.php:50
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:46
+msgid "Status of the rule"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:55
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:50
+#: src/Api/Schemas/V1/SpendRulesSchema.php:54
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:50
+msgid "Title of the rule"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:59
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:54
+#: src/Api/Schemas/V1/SpendRulesSchema.php:58
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:54
+msgid "Date rule was created."
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:63
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:58
+#: src/Api/Schemas/V1/SpendRulesSchema.php:62
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:58
+msgid "Date rule was last updated."
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:67
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:62
+#: src/Api/Schemas/V1/SpendRulesSchema.php:66
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:62
+msgid "Description of the rule"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:71
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:66
+#: src/Api/Schemas/V1/SpendRulesSchema.php:70
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:66
+msgid "Type of the rule"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:75
+msgid "Piggy tier UUIDs that rule is applicable to."
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:79
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:70
+#: src/Api/Schemas/V1/SpendRulesSchema.php:74
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:70
+msgid "Date rule starts."
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:83
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:74
+#: src/Api/Schemas/V1/SpendRulesSchema.php:78
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:74
+msgid "Date rule expires."
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:87
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:78
+#: src/Api/Schemas/V1/SpendRulesSchema.php:82
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:78
+msgid "Whether rule has been completed."
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:91
+msgid "Credits awarded for completing the rule"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:95
+msgid "URL of the social network."
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:99
+msgid "Collection IDs that are excluded from the rule"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:103
+msgid "Product IDs that are excluded from the rule"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:107
+msgid "Minimum order subtotal in cents."
+msgstr ""
+
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:82
+#: src/Api/Schemas/V1/SpendRulesSchema.php:86
+#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:82
+msgid "Credit cost to redeem the reward"
+msgstr ""
+
+#: src/Api/Schemas/V1/WCProductsSearchSchema.php:14
+msgid "Unique identifier for the product or variation"
+msgstr ""
+
+#: src/Api/Schemas/V1/WCProductsSearchSchema.php:18
+msgid "Title of the product or variation"
+msgstr ""
+
+#. translators: %s: Required WooCommerce version
+#: src/Domain/Bootstrap.php:150
+msgid "The Piggy plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce."
+msgstr ""
+
+#. translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command.
+#: src/Domain/Bootstrap.php:210
+msgid "Piggy requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes."
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:69
+#: src/Domain/Services/SpendRules.php:88
+#: dist/admin/assets/index-de422258.js:1
+msgid "Status"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:73
+#: src/Domain/Services/SpendRules.php:92
+#: dist/admin/assets/index-de422258.js:1
+msgid "Active"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:74
+#: src/Domain/Services/SpendRules.php:93
+#: dist/admin/assets/index-de422258.js:1
+msgid "Inactive"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:77
+msgid "Set the status of the rule. Inactive earn rules will not be displayed to users."
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:81
+#: src/Domain/Services/SpendRules.php:100
+#: dist/admin/assets/index-de422258.js:1
+msgid "Title"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:85
+msgid "This is not displayed to the user and is only used for internal reference."
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:89
+#: src/Domain/Services/SpendRules.php:108
+msgid "Type"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:94
+#: dist/admin/assets/index-de422258.js:1
+msgid "Like on Facebook"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:95
+#: dist/admin/assets/index-de422258.js:1
+msgid "Follow on TikTok"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:96
+#: dist/admin/assets/index-de422258.js:1
+msgid "Follow on Instagram"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:97
+#: dist/admin/assets/index-de422258.js:1
+msgid "Place an order"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:99
+#: dist/admin/assets/index-de422258.js:1
+msgid "Create an account"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:101
+msgid "The type of earn rule."
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:106
+#: src/Domain/Services/SpendRules.php:121
+msgid "Starts at"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:110
+#: src/Domain/Services/SpendRules.php:125
+msgid "Optional date for when the rule should start."
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:114
+#: src/Domain/Services/SpendRules.php:129
+msgid "Expires at"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:118
+#: src/Domain/Services/SpendRules.php:133
+msgid "Optional date for when the rule should expire."
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:123
+msgid "Minimum order amount"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:127
+msgid "The minimum order amount required to satisfy the rule"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:135
+#: src/Settings.php:47
+msgid "Credits"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:139
+msgid "The number of credits awarded for completing this action."
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:159
+#: src/Domain/Services/SpendRules.php:188
+msgid "Label"
+msgstr ""
+
+#. translators: %s: a list of placeholders
+#: src/Domain/Services/EarnRules.php:187
+#: src/Domain/Services/SpendRules.php:242
+msgid "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:195
+msgid "Follow us on Facebook and earn {{ credits }} {{ credits_currency }}"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:198
+msgid "Follow us on TikTok and earn {{ credits }} {{ credits_currency }}"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:201
+msgid "Follow us on Instagram and earn {{ credits }} {{ credits_currency }}"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:204
+msgid "For every order you place, you earn {{ credits }} {{ credits_currency }}"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:207
+msgid "On your birthday, you earn {{ credits }} {{ credits_currency }}"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:210
+msgid "Create an account and earn {{ credits }} {{ credits_currency }}"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:222
+msgid "Facebook handle"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:224
+msgid "TikTok handle"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:226
+msgid "Instagram handle"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:228
+msgid "Social network handle"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:235
+msgid "The handle of the Facebook account (without the @) that the user must like"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:237
+msgid "The handle of the TikTok account (without the @) that the user must follow"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:239
+msgid "The handle of the Instagram account (without the @) that the user must follow"
+msgstr ""
+
+#: src/Domain/Services/EarnRules.php:241
+msgid "The handle of the social network account that the user must like or follow"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:96
+msgid "Set the status of the rule. Inactive spend rules will not be displayed to users."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:104
+msgid "This is not displayed to the user and is only used for internal reference. You can manage this in the Piggy dashboard."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:113
+msgid "Free / Discounted Product"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:114
+msgid "Order Discount"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:115
+msgid "Free Shipping"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:117
+msgid "The type of spend rule."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:138
+msgid "Credit cost"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:142
+msgid "The amount of credits it will cost to redeem the reward. This is managed in the Piggy dashboard."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:146
+msgid "Selected reward"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:150
+msgid "The reward that is selected for the spend rule."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:154
+msgid "Description"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:162
+msgid "Instructions"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:170
+msgid "Fulfillment description"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:178
+msgid "Piggy Reward UUID"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:182
+msgid "The UUID of the corresponding Piggy reward."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:197
+msgid "Selected products"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:201
+msgid "The products that are selected for the spend rule."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:206
+msgid "Discount value"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:210
+msgid "The value of the discount."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:215
+msgid "Discount type"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:220
+msgid "Percentage"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:221
+msgid "Fixed amount"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:223
+msgid "The type of discount."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:228
+msgid "Minimum purchase amount"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:232
+msgid "The minimum purchase amount required to redeem the reward."
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:255
+msgid "Add a description of the reward. Available placeholders: %s"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:261
+msgid "Add instructions on how to redeem the reward. Available placeholders: %s"
+msgstr ""
+
+#: src/Domain/Services/SpendRules.php:267
+msgid "Add instructions on how fulfillment will be handled. Available placeholders: %s"
+msgstr ""
+
+#: src/Integrations/IntegrationRegistry.php:35
+msgid "Integration registry requires an identifier."
+msgstr ""
+
+#. translators: %s: Integration name.
+#: src/Integrations/IntegrationRegistry.php:68
+msgid "\"%s\" is already registered."
+msgstr ""
+
+#. translators: %s: Integration name.
+#: src/Integrations/IntegrationRegistry.php:99
+msgid "Integration \"%s\" is not registered."
+msgstr ""
+
+#: src/PostTypeController.php:39
+msgctxt "Post type general name"
+msgid "Earn Rules"
+msgstr ""
+
+#: src/PostTypeController.php:40
+msgctxt "Post type singular name"
+msgid "Earn Rule"
+msgstr ""
+
+#: src/PostTypeController.php:41
+msgctxt "Admin Menu text"
+msgid "Earn Rules"
+msgstr ""
+
+#: src/PostTypeController.php:42
+msgctxt "Add New on Toolbar"
+msgid "Earn Rule"
+msgstr ""
+
+#: src/PostTypeController.php:43
+#: src/PostTypeController.php:89
+msgid "Add New"
+msgstr ""
+
+#: src/PostTypeController.php:44
+msgid "Add New Earn Rule"
+msgstr ""
+
+#: src/PostTypeController.php:45
+msgid "New Earn Rule"
+msgstr ""
+
+#: src/PostTypeController.php:46
+msgid "Edit Earn Rule"
+msgstr ""
+
+#: src/PostTypeController.php:47
+msgid "View Earn Rule"
+msgstr ""
+
+#: src/PostTypeController.php:48
+msgid "All Earn Rules"
+msgstr ""
+
+#: src/PostTypeController.php:49
+msgid "Search Earn Rules"
+msgstr ""
+
+#: src/PostTypeController.php:50
+msgid "Parent Earn Rules:"
+msgstr ""
+
+#: src/PostTypeController.php:51
+msgid "No earn rules found."
+msgstr ""
+
+#: src/PostTypeController.php:52
+msgid "No earn rules found in Trash."
+msgstr ""
+
+#: src/PostTypeController.php:53
+msgctxt "Overrides the \"Featured Image\" phrase for this post type. Added in 4.3"
+msgid "Earn Rule Cover Image"
+msgstr ""
+
+#: src/PostTypeController.php:54
+#: src/PostTypeController.php:100
+msgctxt "Overrides the \"Set featured image\" phrase for this post type. Added in 4.3"
+msgid "Set cover image"
+msgstr ""
+
+#: src/PostTypeController.php:55
+#: src/PostTypeController.php:101
+msgctxt "Overrides the \"Remove featured image\" phrase for this post type. Added in 4.3"
+msgid "Remove cover image"
+msgstr ""
+
+#: src/PostTypeController.php:56
+#: src/PostTypeController.php:102
+msgctxt "Overrides the \"Use as featured image\" phrase for this post type. Added in 4.3"
+msgid "Use as cover image"
+msgstr ""
+
+#: src/PostTypeController.php:57
+msgctxt "The post type archive label used in nav menus. Default \"Post Archives\". Added in 4.4"
+msgid "Earn Rule archives"
+msgstr ""
+
+#: src/PostTypeController.php:58
+msgctxt "Overrides the \"Insert into post\"/\"Insert into page\" phrase (used when inserting media into a post). Added in 4.4"
+msgid "Insert into earn rule"
+msgstr ""
+
+#: src/PostTypeController.php:59
+msgctxt "Overrides the \"Uploaded to this post/page\" phrase (used when viewing media attached to a post). Added in 4.4"
+msgid "Uploaded to this earn rule"
+msgstr ""
+
+#: src/PostTypeController.php:60
+msgctxt "Screen reader text for the filter links heading on the post type listing screen. Default \"Filter posts list\"/\"Filter pages list\". Added in 4.4"
+msgid "Filter earn rules list"
+msgstr ""
+
+#: src/PostTypeController.php:61
+msgctxt "Screen reader text for the pagination heading on the post type listing screen. Default \"Posts list navigation\"/\"Pages list navigation\". Added in 4.4"
+msgid "Earn rules list navigation"
+msgstr ""
+
+#: src/PostTypeController.php:62
+msgctxt "Screen reader text for the items list heading on the post type listing screen. Default \"Posts list\"/\"Pages list\". Added in 4.4"
+msgid "Earn rules list"
+msgstr ""
+
+#: src/PostTypeController.php:85
+msgctxt "Post type general name"
+msgid "Spend Rules"
+msgstr ""
+
+#: src/PostTypeController.php:86
+msgctxt "Post type singular name"
+msgid "Spend Rule"
+msgstr ""
+
+#: src/PostTypeController.php:87
+msgctxt "Admin Menu text"
+msgid "Spend Rules"
+msgstr ""
+
+#: src/PostTypeController.php:88
+msgctxt "Add New on Toolbar"
+msgid "Spend Rule"
+msgstr ""
+
+#: src/PostTypeController.php:90
+msgid "Add New Spend Rule"
+msgstr ""
+
+#: src/PostTypeController.php:91
+msgid "New Spend Rule"
+msgstr ""
+
+#: src/PostTypeController.php:92
+msgid "Edit Spend Rule"
+msgstr ""
+
+#: src/PostTypeController.php:93
+msgid "View Spend Rule"
+msgstr ""
+
+#: src/PostTypeController.php:94
+msgid "All Spend Rules"
+msgstr ""
+
+#: src/PostTypeController.php:95
+msgid "Search Spend Rules"
+msgstr ""
+
+#: src/PostTypeController.php:96
+msgid "Parent Spend Rules:"
+msgstr ""
+
+#: src/PostTypeController.php:97
+msgid "No spend rules found."
+msgstr ""
+
+#: src/PostTypeController.php:98
+msgid "No spend rules found in Trash."
+msgstr ""
+
+#: src/PostTypeController.php:99
+msgctxt "Overrides the \"Featured Image\" phrase for this post type. Added in 4.3"
+msgid "Spend Rule Cover Image"
+msgstr ""
+
+#: src/PostTypeController.php:103
+msgctxt "The post type archive label used in nav menus. Default \"Post Archives\". Added in 4.4"
+msgid "Spend Rule archives"
+msgstr ""
+
+#: src/PostTypeController.php:104
+msgctxt "Overrides the \"Insert into post\"/\"Insert into page\" phrase (used when inserting media into a post). Added in 4.4"
+msgid "Insert into spend rule"
+msgstr ""
+
+#: src/PostTypeController.php:105
+msgctxt "Overrides the \"Uploaded to this post/page\" phrase (used when viewing media attached to a post). Added in 4.4"
+msgid "Uploaded to this spend rule"
+msgstr ""
+
+#: src/PostTypeController.php:106
+msgctxt "Screen reader text for the filter links heading on the post type listing screen. Default \"Filter posts list\"/\"Filter pages list\". Added in 4.4"
+msgid "Filter spend rules list"
+msgstr ""
+
+#: src/PostTypeController.php:107
+msgctxt "Screen reader text for the pagination heading on the post type listing screen. Default \"Posts list navigation\"/\"Pages list navigation\". Added in 4.4"
+msgid "Spend rules list navigation"
+msgstr ""
+
+#: src/PostTypeController.php:108
+msgctxt "Screen reader text for the items list heading on the post type listing screen. Default \"Posts list\"/\"Pages list\". Added in 4.4"
+msgid "Spend rules list"
+msgstr ""
+
+#: src/Settings.php:16
+msgid "Quick actions"
+msgstr ""
+
+#: src/Settings.php:20
+msgid "Enable plugin"
+msgstr ""
+
+#: src/Settings.php:21
+msgid "If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable Piggy without deactivating the entire plugin."
+msgstr ""
+
+#: src/Settings.php:27
+msgid "Delete plugin settings upon deactivation"
+msgstr ""
+
+#: src/Settings.php:28
+msgid "This will delete all plugins settings upon deactivation. Use with caution!"
+msgstr ""
+
+#: src/Settings.php:34
+msgid "API Key"
+msgstr ""
+
+#: src/Settings.php:35
+msgid "Enter your API key here."
+msgstr ""
+
+#: src/Settings.php:41
+msgid "Shop ID"
+msgstr ""
+
+#: src/Settings.php:42
+msgid "Select the shop you want to connect to."
+msgstr ""
+
+#: src/Settings.php:50
+msgid "Credits name"
+msgstr ""
+
+#: src/Settings.php:51
+msgid "The name of the credits in your shop."
+msgstr ""
+
+#: src/Settings.php:56
+msgid "You have {{ credits }} {{ credits_currency }} out of {{ credits_required }}"
+msgstr ""
+
+#: src/Settings.php:59
+msgid "Credits balance"
+msgstr ""
+
+#: src/Settings.php:61
+msgid "The format of the credits balance message that will be displayed to the user. The following placeholders can be used: %s"
+msgstr ""
+
+#: src/Settings.php:67
+msgid "Include guests"
+msgstr ""
+
+#: src/Settings.php:68
+msgid "Include customers without an account (guests) in your loyalty program."
+msgstr ""
+
+#: src/Settings.php:73
+msgid "Reward order statuses"
+msgstr ""
+
+#: src/Settings.php:74
+msgid "Reward customers when the financial status of the order is one of the following"
+msgstr ""
+
+#: src/Settings.php:77
+#: src/Settings.php:90
+msgid "Pending payment"
+msgstr ""
+
+#: src/Settings.php:77
+#: src/Settings.php:90
+msgid "The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action."
+msgstr ""
+
+#: src/Settings.php:86
+msgid "Withdraw credits order statuses"
+msgstr ""
+
+#: src/Settings.php:87
+msgid "Withdraw credits from customers when the order financial status is one of the following"
+msgstr ""
+
+#: src/Settings.php:99
+msgid "Reward order parts"
+msgstr ""
+
+#: src/Settings.php:100
+msgid "Reward customers for the following parts of an order"
+msgstr ""
+
+#: src/Settings.php:103
+msgid "Subtotal"
+msgstr ""
+
+#: src/Settings.php:103
+msgid "The total amount of the order before taxes and shipping."
+msgstr ""
+
+#: src/Settings.php:104
+msgid "Shipping"
+msgstr ""
+
+#: src/Settings.php:104
+msgid "The cost of shipping the order."
+msgstr ""
+
+#: src/Settings.php:105
+msgid "Tax"
+msgstr ""
+
+#: src/Settings.php:105
+msgid "The amount of tax on the order."
+msgstr ""
+
+#: src/Settings.php:106
+msgid "Discount"
+msgstr ""
+
+#: src/Settings.php:106
+msgid "The amount of discount on the order."
+msgstr ""
+
+#: src/Settings.php:113
+msgid "Marketing consent subscription"
+msgstr ""
+
+#: src/Settings.php:114
+msgid "Opt-in users to receive marketing emails."
+msgstr ""
+
+#: src/Settings.php:122
+msgid "You have {{ credits }} {{ credits_currency }}"
+msgstr ""
+
+#: src/Settings.php:125
+msgid "Title (Logged in)"
+msgstr ""
+
+#. translators: %s: a list of placeholders
+#: src/Settings.php:127
+msgid "The title that will be displayed on the dashboard when the user is logged in. You can use the following placeholders: %s"
+msgstr ""
+
+#: src/Settings.php:133
+msgid "Join our Loyalty Program and get rewarded when you shop with us. Get your first {{ credits }} {{ credits_currency }} when you sign up now"
+msgstr ""
+
+#: src/Settings.php:136
+msgid "Title (Logged out)"
+msgstr ""
+
+#. translators: %s: a list of placeholders
+#: src/Settings.php:138
+msgid "The title that will be displayed on the dashboard when the user is logged out. You can use the following placeholders: %s"
+msgstr ""
+
+#: src/Settings.php:144
+msgid "Join now"
+msgstr ""
+
+#: src/Settings.php:147
+msgid "Join program button"
+msgstr ""
+
+#: src/Settings.php:148
+msgid "The text that will be displayed on the button that allows users to join the loyalty program."
+msgstr ""
+
+#: src/Settings.php:154
+msgid "Log in"
+msgstr ""
+
+#: src/Settings.php:157
+msgid "Log in button"
+msgstr ""
+
+#: src/Settings.php:158
+msgid "The text that will be displayed on the button that allows users to log in."
+msgstr ""
+
+#: src/Settings.php:164
+msgid "Your coupons"
+msgstr ""
+
+#: src/Settings.php:167
+msgid "Coupons navigation item"
+msgstr ""
+
+#: src/Settings.php:173
+msgid "Earn {{ credits_currency }}"
+msgstr ""
+
+#: src/Settings.php:176
+msgid "Earn navigation item"
+msgstr ""
+
+#: src/Settings.php:177
+msgid "The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s"
+msgstr ""
+
+#: src/Settings.php:183
+msgid "Rewards"
+msgstr ""
+
+#: src/Settings.php:186
+msgid "Rewards navigation item"
+msgstr ""
+
+#: src/Settings.php:192
+msgid "Your activity"
+msgstr ""
+
+#: src/Settings.php:195
+msgid "Activity navigation item"
+msgstr ""
+
+#: src/Settings.php:201
+msgid "Claim reward"
+msgstr ""
+
+#: src/Settings.php:204
+msgid "Claim reward button"
+msgstr ""
+
+#: src/Settings.php:205
+msgid "The text that will be displayed on the button that allows users to claim their reward."
+msgstr ""
+
+#: src/Settings.php:211
+msgid "Unlock"
+msgstr ""
+
+#: src/Settings.php:214
+msgid "Spend credits button"
+msgstr ""
+
+#: src/Settings.php:215
+msgid "The text that will be displayed on the button that allows users to spend their credits."
+msgstr ""
+
+#: src/Shortcodes/AbstractShortcode.php:56
+msgid "Shortcode name is required."
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "General"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Loyalty Program"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Custonmer Dashboard settings"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Save"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Select a language"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Languages"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Settings saved updated"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Earn rule saved"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Select an option"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Rule settings"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "The amount of credits customers will earn will be calculated based on the rules you have set up in the Piggy Dashboard."
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Save rule"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Credit Calculation"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href=\"%s\" class=\"underline\" target=\"_blank\" rel=\"noopener noreferrer\">Piggy Dashboard</a>."
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Details"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "New rule"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Create rules that reward customers with credits when they perform certain actions. For example, you can reward customers with credits when they create an account or place an order."
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Created at"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Create and manage spend rules to allow customers to spend their credits."
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Existing Piggy user?"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Connect your account to get started."
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "New to Piggy?"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Create a new account to get started."
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Connect to Piggy"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Back"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Save and continue"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "Reward"
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "You haven't set up your API key yet. Please set it up to continue."
+msgstr ""
+
+#: dist/admin/assets/index-de422258.js:1
+msgid "There was an unknown error."
+msgstr ""

@@ -13,7 +13,7 @@
 		}
 	],
 	"private": true,
-	"version": "2.0.4",
+	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
 		"clean": "rm -rf .turbo node_modules",
@@ -30,7 +30,6 @@
 		"package-plugin": "rimraf piggy.zip && ./bin/build-plugin-zip.sh",
 		"package-plugin:dev": "rimraf piggy.zip && ./bin/build-plugin-zip.sh -d",
 		"package-plugin:zip-only": "rimraf piggy.zip && ./bin/build-plugin-zip.sh -z",
-		"package-plugin:deploy": "pnpm package-plugin:zip-only",
 		"lint-php": "composer run-script phpcs ./src",
 		"lint-php-fix": "composer run-script phpcbf ./src",
 		"lint": "eslint \"./src/**/*.{js,cjs,mjs,ts,tsx,md,json}\"",

@@ -28,7 +28,7 @@ const initialSteps: Step[] = [
 		id: 'welcome',
 		title: 'Welcome',
 		href: '/onboarding?step=welcome',
-		status: 'completed',
+		status: 'current',
 		showActions: false,
 		component: OnboardingAccount,
 		initialising: false
@@ -37,7 +37,7 @@ const initialSteps: Step[] = [
 		id: 'connect-account',
 		title: 'Connect account',
 		href: '/onboarding?step=connect-account',
-		status: 'completed',
+		status: 'upcoming',
 		showActions: true,
 		component: OnboardingConnectAccount,
 		initialising: false
@@ -46,7 +46,7 @@ const initialSteps: Step[] = [
 		id: 'general-settings',
 		title: 'General settings',
 		href: '/onboarding?step=general-settings',
-		status: 'current',
+		status: 'upcoming',
 		showActions: true,
 		component: OnboardingGeneralSettings,
 		initialising: false

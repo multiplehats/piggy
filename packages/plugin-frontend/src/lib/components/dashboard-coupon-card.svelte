@@ -99,9 +99,9 @@
 			0 1px 2px -1px rgb(0 0 0 / 0.1);
 	}
 
-	.piggy-dashboard-coupon-card__action {
+	/* .piggy-dashboard-coupon-card__action {
 		margin-top: 12px;
-	}
+	} */
 
 	.coupon-input {
 		display: flex;
