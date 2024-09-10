@@ -92,7 +92,12 @@ class EarnReward extends AbstractRoute {
 			}
 		}
 
-		$piggy_uuid = $this->connection->get_contact_uuid_by_wp_id( $data['user_id'] );
+		// Get the Piggy UUID for the user, if not found, create a new contact
+		$piggy_uuid = $this->connection->get_contact_uuid_by_wp_id( $data['user_id'], true );
+
+		if(!$piggy_uuid) {
+			throw new RouteException( 'earn-rule-uuid-null', 'There is no Piggy UUID for this suer.', 400 );
+		}
 
 		$credits = $post['credits']['value'] ?? 0;
 

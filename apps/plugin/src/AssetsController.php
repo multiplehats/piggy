@@ -241,12 +241,14 @@ final class AssetsController
 		$all_languages = Common::get_languages();
 		$current_language = Common::get_current_language();
 		$api_key_set = $this->connection->has_api_key();
+		$user_id = get_current_user_id();
 
 		return "
             window.piggyMiddlewareConfig = {
 				apiKeySet: " . json_encode($api_key_set) . ",
 				loggedIn: " . json_encode(is_user_logged_in()) . ",
-				userId: " . json_encode(get_current_user_id()) . ",
+				userId: " . json_encode($user_id) . ",
+				hasPiggyUuid: " . json_encode(get_user_meta( $user_id, 'piggy_uuid', true)) . ",
                 siteLanguage: '" . esc_js(get_bloginfo('language')) . "',
                 currentLanguage: '" . esc_js($current_language) . "',
                 languages: " . wp_json_encode($all_languages) . ",
