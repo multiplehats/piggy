@@ -56,6 +56,19 @@ class Bootstrap {
 
 		if ( $this->has_core_dependencies() ) {
 			/**
+			 * Declare support for HPOS (High-Performance Order Storage)
+			 */
+			add_action( 'before_woocommerce_init', function() {
+				if( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+					\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+						'custom_order_tables',
+						__FILE__,
+						true
+					);
+				}
+			} );
+
+			/**
 			 * Piggy depends on the WooCommerce Blocks plugin (also included in WooCommerce core as of 6.4).
 			 */
 			add_action(
