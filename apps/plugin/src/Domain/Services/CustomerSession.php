@@ -58,6 +58,7 @@ class CustomerSession
 		add_action('woocommerce_before_calculate_totals', [$this, 'adjust_cart_item_prices'], 10, 1);
 		add_filter('woocommerce_product_get_sale_price', [$this, 'remove_sale_price_for_discounted_products'], 10, 2);
 		add_filter('woocommerce_product_get_price', [$this, 'adjust_price_for_discounted_products'], 10, 2);
+		add_action('woocommerce_order_refunded', [$this, 'handle_order_refunded'], 10, 2);
 	}
 
 	/**
@@ -455,7 +456,7 @@ class CustomerSession
 
 		// Apply credits based on PLACE_ORDER earn rule
 		$order_total = $order->get_total();
-		$applicable_rule = $this->earn_rules->get_applicable_place_order_rule($order_total);
+		$applicable_rule = $this->earn_rules->get_applicable_place_order_rule( $order_total );
 
 		if ($applicable_rule) {
 			// Note: We don't apply the credits from the rule in WordPress.
@@ -469,6 +470,14 @@ class CustomerSession
 			}
 
 			$credits = $result->getCredits();
+			$result_uuid = $result->getUuid();
+
+			// Save the result UUID in the order meta
+			$order->update_meta_data('_piggy_earn_rule_credit_transaction_uuid', $result_uuid);
+			// Save the total credits isssued
+			$order->update_meta_data('_piggy_earn_rule_credits_issued', $credits);
+
+			$order->save();
 
 			$this->connection->add_reward_log($user_id, $applicable_rule['id'], $credits);
 		}
@@ -738,5 +747,38 @@ class CustomerSession
 			}
 		}
 		return $price;
+	}
+
+	public function handle_order_refunded($order_id, $refund_id)
+	{
+		$order = wc_get_order($order_id);
+		if (!$order) {
+			return;
+		}
+
+		$credit_transaction_uuid = $order->get_meta('_piggy_earn_rule_credit_transaction_uuid');
+		$original_credits = $order->get_meta('_piggy_earn_rule_credits_issued');
+
+		if (!$credit_transaction_uuid) {
+			$this->logger->error("No Piggy credit transaction UUID found for order $order_id");
+			return;
+		}
+
+		$refund = new \WC_Order_Refund($refund_id);
+		$refund_amount = $refund->get_amount();
+		$original_amount = $order->get_total();
+		$is_full_refund = $refund_amount >= $original_amount;
+		$refund_type = $is_full_refund ? "full" : "partial";
+
+		if ($is_full_refund) {
+			$result = $this->connection->refund_credits_full($credit_transaction_uuid);
+
+			if($result) {
+				$this->logger->info("Successfully processed $refund_type refund for credit transaction UUID $credit_transaction_uuid for order $order_id");
+			}
+		} else {
+			// Partial refunds are not yet supported.
+			$this->logger->warn('Partial refunds are not supported yet');
+		}
 	}
 }

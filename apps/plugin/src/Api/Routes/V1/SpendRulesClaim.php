@@ -80,19 +80,16 @@ class SpendRulesClaim extends AbstractRoute {
 		$user_id = $request->get_param( 'userId' );
 
 		if ( ! $id ) {
-			error_log('Spend rule ID is required');
 			throw new RouteException( 'spend-rules-claim', 'Spend rule ID is required', 400 );
 		}
 
 		if ( ! $user_id ) {
-			error_log('User ID is required');
 			throw new RouteException( 'spend-rules-claim', 'User ID is required', 400 );
 		}
 
 		$rule = $spend_rules_service->get_spend_rule_by_id( $id );
 
 		if ( ! $rule ) {
-			error_log('Spend rule not found');
 			throw new RouteException( 'spend-rules-claim', 'Spend rule not found', 404 );
 		}
 
