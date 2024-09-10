@@ -87,11 +87,7 @@ class EarnReward extends AbstractRoute {
 
 		// Check if the rule is claimable only once and if the user has already claimed it
 		if ($earn_rules_service->is_rule_claimable_once($data['earn_rule_id'])) {
-			error_log('is_rule_claimable_once');
-			error_log($earn_rules_service->is_rule_claimable_once($data['earn_rule_id']));
 			if ($earn_rules_service->has_user_claimed_rule($data['user_id'], $data['earn_rule_id'])) {
-				error_log('has_user_claimed_rule');
-				error_log($earn_rules_service->has_user_claimed_rule($data['user_id'], $data['earn_rule_id']));
 				throw new RouteException( 'earn-rule-already-claimed', 'This earn rule has already been claimed', 400 );
 			}
 		}
