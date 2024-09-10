@@ -14,14 +14,8 @@ class Installer {
 	 * Initialize class features.
 	 */
 	public function init() {
-		add_action( 'admin_init', array( $this, 'install' ) );
-	}
-
-	/**
-	 * Installation tasks ran on admin_init callback.
-	 */
-	public function install() {
-		$this->maybe_create_tables();
+		add_action( 'admin_init', array( $this, 'maybe_create_tables' ) );
+		add_action( 'admin_init', array( $this, 'maybe_redirect_to_onboarding' ) );
 	}
 
 	/**
@@ -125,5 +119,13 @@ class Installer {
 				echo '</p></div>';
 			}
 		);
+	}
+
+	public function maybe_redirect_to_onboarding() {
+		if ( get_option( 'piggy_first_activation', false ) === false ) {
+			update_option( 'piggy_first_activation', true );
+			wp_redirect( admin_url( 'admin.php?page=piggy#/onboarding' ) );
+			exit;
+		}
 	}
 }
