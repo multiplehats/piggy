@@ -3,7 +3,6 @@
 	"description": "Piggy plugin.",
 	"homepage": "https://piggy.com/",
 	"type": "wordpress-plugin",
-	"version": "2.0.4",
 	"keywords": [
 		"woocommerce"
 	],
