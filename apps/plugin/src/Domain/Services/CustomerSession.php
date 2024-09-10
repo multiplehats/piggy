@@ -473,7 +473,10 @@ class CustomerSession
 			$result_uuid = $result->getUuid();
 
 			// Save the result UUID in the order meta
-			$order->update_meta_data('_piggy_credit_transaction_uuid', $result_uuid);
+			$order->update_meta_data('_piggy_earn_rule_credit_transaction_uuid', $result_uuid);
+			// Save the total credits isssued
+			$order->update_meta_data('_piggy_earn_rule_credits_issued', $credits);
+
 			$order->save();
 
 			$this->connection->add_reward_log($user_id, $applicable_rule['id'], $credits);
@@ -753,7 +756,9 @@ class CustomerSession
 			return;
 		}
 
-		$credit_transaction_uuid = $order->get_meta('_piggy_credit_transaction_uuid');
+		$credit_transaction_uuid = $order->get_meta('_piggy_earn_rule_credit_transaction_uuid');
+		$original_credits = $order->get_meta('_piggy_earn_rule_credits_issued');
+
 		if (!$credit_transaction_uuid) {
 			$this->logger->error("No Piggy credit transaction UUID found for order $order_id");
 			return;
@@ -762,17 +767,18 @@ class CustomerSession
 		$refund = new \WC_Order_Refund($refund_id);
 		$refund_amount = $refund->get_amount();
 		$original_amount = $order->get_total();
+		$is_full_refund = $refund_amount >= $original_amount;
+		$refund_type = $is_full_refund ? "full" : "partial";
 
-		$result = $this->connection->refund_credits($credit_transaction_uuid, $refund_amount, $original_amount);
+		if ($is_full_refund) {
+			$result = $this->connection->refund_credits_full($credit_transaction_uuid);
 
-		if (!$result) {
-			$this->logger->error("Failed to refund credits for credit transaction UUID $credit_transaction_uuid for order $order_id");
+			if($result) {
+				$this->logger->info("Successfully processed $refund_type refund for credit transaction UUID $credit_transaction_uuid for order $order_id");
+			}
 		} else {
-			$this->logger->info("Successfully refunded credits for credit transaction UUID $credit_transaction_uuid for order $order_id");
-
-			// Save the refund credit transaction UUID
-			$order->update_meta_data('_piggy_refund_credit_transaction_uuid', $result->getUuid());
-			$order->save();
+			// Partial refunds are not yet supported.
+			$this->logger->warn('Partial refunds are not supported yet');
 		}
 	}
 }
