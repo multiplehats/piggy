@@ -31,6 +31,14 @@ if ( ! defined( 'PIGGY_VERSION' ) ) {
 	define( 'PIGGY_VERSION', '2.0.0' );
 }
 
+/**
+ * Declare support for HPOS (High-Performance Order Storage)
+ */
+add_action('before_woocommerce_init', function(){
+	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	}
+});
 
 /**
  * Whether notices must be displayed in the current page (plugins and WooCommerce pages).
