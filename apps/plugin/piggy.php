@@ -32,6 +32,25 @@ if ( ! defined( 'PIGGY_VERSION' ) ) {
 }
 
 /**
+ * Temporary solution to update the plugin using WPLatest Updater until
+ * we release the plugin in the WordPress repository.
+ */
+add_action('init', function() {
+	// Check if PIGGY_WP_UPDATER_SECRET is set
+	if ( ! defined( 'PIGGY_WP_UPDATER_SECRET' ) ) {
+		return;
+	}
+
+	$options = array(
+		'file'   => __FILE__,
+		'id'     => 'plugin_t7jfygltvh47e88f6c6nfubb',
+		'secret' => PIGGY_WP_UPDATER_SECRET,
+	);
+
+	new \WPLatest\Updater\PluginUpdater($options);
+});
+
+/**
  * Declare support for HPOS (High-Performance Order Storage)
  */
 add_action('before_woocommerce_init', function(){
