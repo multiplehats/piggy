@@ -212,7 +212,7 @@ class EarnRules {
 		}
 
 		return array(
-			'en_US' => $default
+			'default' => $default
 		);
 	}
 

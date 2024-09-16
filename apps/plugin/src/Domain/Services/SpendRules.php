@@ -245,7 +245,7 @@ class SpendRules
 	private function get_default_label($type)
 	{
 		return [
-			'en_US' => 'Unlock {{ discount }} for {{ credits }} {{ credits_currency }}'
+			'default' => 'Unlock {{ discount }} for {{ credits }} {{ credits_currency }}'
 		];
 	}
 
