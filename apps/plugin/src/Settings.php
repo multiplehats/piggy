@@ -50,6 +50,7 @@ class Settings {
 			'label'    => __( 'Credits name', 'piggy' ),
 			'description' => __( 'The name of the credits in your shop.', 'piggy' ),
 		);
+
 		$settings[] = array(
 			'id'       => 'credits_spend_rule_progress',
 			'default'  => array(
@@ -114,8 +115,6 @@ class Settings {
 			'description' => __( 'Opt-in users to receive marketing emails.', 'piggy' ),
 			'default'  => 'off'
 		);
-
-
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_in',
 			'default'  => array(
@@ -126,7 +125,6 @@ class Settings {
 			/* translators: %s: a list of placeholders */
 			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged in. You can use the following placeholders: %s', 'piggy' ), '{{ credits }} {{ credits_currency }}' ),
 		);
-
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_out',
 			'default'  => array(
@@ -137,7 +135,6 @@ class Settings {
 			/* translators: %s: a list of placeholders */
 			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged out. You can use the following placeholders: %s', 'piggy' ), '{{ credits }} {{ credits_currency }}' ),
 		);
-
 		$settings[] = array(
 			'id'       => 'dashboard_join_cta',
 			'default'  => array(
@@ -147,7 +144,6 @@ class Settings {
 			'label'    => __( 'Join program button', 'piggy' ),
 			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'piggy' ),
 		);
-
 		$settings[] = array(
 			'id'       => 'dashboard_login_cta',
 			'default'  => array(
@@ -157,7 +153,6 @@ class Settings {
 			'label'    => __( 'Log in button', 'piggy' ),
 			'description' => __( 'The text that will be displayed on the button that allows users to log in.', 'piggy' ),
 		);
-
 		$settings[] = array(
 			'id'       => 'dashboard_nav_coupons',
 			'default'  => array(
@@ -166,7 +161,22 @@ class Settings {
 			'type'     => 'translatable_text',
 			'label'    => __( 'Coupons navigation item', 'piggy' ),
 		);
-
+		$settings[] = array(
+			'id'       => 'dashboard_nav_coupons_empty_state',
+			'default'  => array(
+				'default' => __( 'You don\'t have any coupons yet.', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Coupons empty state', 'piggy' ),
+		);
+		$settings[] = array(
+			'id'       => 'dashboard_coupons_loading_state',
+			'default'  => array(
+				'default' => __( 'Loading your coupons...', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Coupons loading state', 'piggy' ),
+		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_earn',
 			'default'  => array(
@@ -176,7 +186,6 @@ class Settings {
 			'label'    => __( 'Earn navigation item', 'piggy' ),
 			'description' => sprintf( __( 'The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s', 'piggy' ), '{{ credits_currency }}' ),
 		);
-
 		$settings[] = array(
 			'id'       => 'dashboard_nav_rewards',
 			'default'  => array(
@@ -185,7 +194,6 @@ class Settings {
 			'type'     => 'translatable_text',
 			'label'    => __( 'Rewards navigation item', 'piggy' ),
 		);
-
 		$settings[] = array(
 			'id'       => 'dashboard_nav_activity',
 			'default'  => array(
@@ -194,7 +202,6 @@ class Settings {
 			'type'     => 'translatable_text',
 			'label'    => __( 'Activity navigation item', 'piggy' ),
 		);
-
 		$settings[] = array(
 			'id'       => 'dashboard_earn_cta',
 			'default'  => array(
@@ -204,7 +211,6 @@ class Settings {
 			'label'    => __( 'Claim reward button', 'piggy' ),
 			'description' => __( 'The text that will be displayed on the button that allows users to claim their reward.', 'piggy' ),
 		);
-
 		$settings[] = array(
 			'id'       => 'dashboard_spend_cta',
 			'default'  => array(

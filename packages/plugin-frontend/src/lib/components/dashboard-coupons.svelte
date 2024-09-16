@@ -31,7 +31,7 @@
 
 	{#if $query.isLoading}
 		<div class="piggy-dashboard-coupons__loading">
-			<p>Loading...</p>
+			<p>{$pluginSettings?.dashboard_coupons_loading_state?.[currentLanguage]}</p>
 		</div>
 	{/if}
 
@@ -48,7 +48,7 @@
 			</div>
 		{:else}
 			<div class="piggy-dashboard-coupons__empty">
-				<p>You don't have any coupons yet.</p>
+				<p>{$pluginSettings?.dashboard_nav_coupons_empty_state?.[currentLanguage]}</p>
 			</div>
 		{/if}
 	{/if}
