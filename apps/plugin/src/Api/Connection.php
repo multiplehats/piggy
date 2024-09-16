@@ -499,19 +499,6 @@ class Connection {
 		return $sale_price;
 	}
 
-	public function adjust_price_for_discounted_products($price, $product)
-	{
-		$cart = WC()->cart;
-		if ($cart) {
-			foreach ($cart->get_cart() as $cart_item) {
-				if (isset($cart_item['piggy_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
-					return $cart_item['piggy_discounted_price'];
-				}
-			}
-		}
-		return $price;
-	}
-
 	/**
 	 * Get user attributes for Piggy.
 	 *
