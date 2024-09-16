@@ -73,7 +73,7 @@ if [ -z "$NO_CHECKS" ]; then
 fi
 
 # Add version to composer.json
-perl -i -pe "s/\"type\":*.+/\"type\":\"wordpress-plugin\",\n\t\"version\": \"${VERSION}\",/" composer.json
+# perl -i -pe "s/\"type\":*.+/\"type\":\"wordpress-plugin\",\n\t\"version\": \"${VERSION}\",/" composer.json
 
 # Add version to plugin header
 perl -i -pe "s/Version:.*$/Version: ${VERSION}/" piggy.php
@@ -107,6 +107,7 @@ fi
 
 # Generate the plugin zip file.
 status "Creating archive... 🎁"
+rm -rf zip-file  # Remove existing zip-file directory
 mkdir zip-file
 mkdir zip-file/build
 sh "$CURR_DIR/bin/copy-plugin-files.sh" "$CURR_DIR" "$CURR_DIR/zip-file"
