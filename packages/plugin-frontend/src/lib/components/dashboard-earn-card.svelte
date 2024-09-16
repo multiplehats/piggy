@@ -11,6 +11,8 @@
 
 	export let earnRule: EarnRuleValueItem;
 
+	let socialLinkToOpen: string | null = null;
+
 	const socialTypes = [
 		'LIKE_ON_FACEBOOK',
 		'FOLLOW_ON_INSTAGRAM',
@@ -24,12 +26,8 @@
 		mutationFn: () => piggyService.claimReward(earnRule.id, window.piggyMiddlewareConfig.userId),
 		onSuccess: () => {
 			const handle = earnRule.socialHandle.value;
-
-			if (!handle) return;
-
-			const socialLink = getSocialLink(earnRule.type.value, handle);
-			if (socialLink) {
-				window.open(socialLink, '_blank');
+			if (handle) {
+				socialLinkToOpen = getSocialLink(earnRule.type.value, handle);
 			}
 		}
 	});
@@ -61,6 +59,15 @@
 		]);
 	}
 
+	function handleClaimAndOpenLink() {
+		$claimRewardMutation.mutateAsync().then(() => {
+			if (socialLinkToOpen) {
+				window.open(socialLinkToOpen, '_blank');
+				socialLinkToOpen = null;
+			}
+		});
+	}
+
 	$: isSocial = socialTypes.includes(earnRule.type.value);
 	$: isClaimableOnce = claimableOnceTypes.includes(earnRule.type.value);
 	$: hasClaimed = window.piggyData.claimedRewards?.find(
@@ -87,7 +94,7 @@
 						loading={$claimRewardMutation.isPending}
 						disabled={$claimRewardMutation.isPending}
 						variant="primary"
-						on:click={() => $claimRewardMutation.mutateAsync()}
+						on:click={handleClaimAndOpenLink}
 					>
 						{getTranslatedText($pluginSettings.dashboard_earn_cta)}
 					</Button>
@@ -99,7 +106,7 @@
 					{/if}
 				{:else}
 					<CheckCircle size="24" color="#3da121" />
-				{/if}
+					{/if}
 			</div>
 		{/if}
 	</div>
