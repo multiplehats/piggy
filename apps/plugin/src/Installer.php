@@ -15,7 +15,7 @@ class Installer {
 	 */
 	public function init() {
 		add_action( 'admin_init', array( $this, 'maybe_create_tables' ) );
-		add_action( 'admin_init', array( $this, 'maybe_redirect_to_onboarding' ) );
+		// add_action( 'admin_init', array( $this, 'maybe_redirect_to_onboarding' ) );
 	}
 
 	/**

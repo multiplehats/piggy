@@ -109,7 +109,7 @@ class Bootstrap {
 			$this->container->get( Installer::class )->init();
 			$this->container->get( AssetsController::class );
 			$this->container->get( PostTypeController::class );
-			$this->container->get(RedirectController::class)->init();
+			// $this->container->get(RedirectController::class)->init();
 		}
 		$this->container->get( CustomerDashboardShortcode::class )->init();
 		$this->container->get( CustomerSession::class );
