@@ -2,7 +2,20 @@ import { currentLanguage } from '$lib/modules/settings';
 import { replaceStrings } from '@piggy/lib';
 
 export function getTranslatedText(tx: Record<string, string> | null): string {
-	return tx?.[currentLanguage] ?? tx?.[Object.keys(tx)[0]] ?? '';
+	if (!tx) return '';
+
+	// Try to get the translation for the current language
+	if (tx[currentLanguage]) {
+		return tx[currentLanguage];
+	}
+
+	// If not found, try to get the 'default' translation
+	if (tx['default']) {
+		return tx['default'];
+	}
+
+	// If 'default' is not available, fall back to the first available translation
+	return tx[Object.keys(tx)[0]] ?? '';
 }
 
 export function getSpendRuleLabel(

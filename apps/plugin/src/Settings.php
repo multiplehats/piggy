@@ -145,6 +145,23 @@ class Settings {
 			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'piggy' ),
 		);
 		$settings[] = array(
+			'id'       => 'dashboard_title_join_program',
+			'default'  => array(
+				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us.', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Title (Join program)', 'piggy' ),
+		);
+		$settings[] = array(
+			'id'       => 'dashboard_join_program_cta',
+			'default'  => array(
+				'default' => __( 'Join program', 'piggy' ),
+			),
+			'type'     => 'translatable_text',
+			'label'    => __( 'Join program button', 'piggy' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'piggy' ),
+		);
+		$settings[] = array(
 			'id'       => 'dashboard_login_cta',
 			'default'  => array(
 				'default' => __( 'Log in', 'piggy' ),

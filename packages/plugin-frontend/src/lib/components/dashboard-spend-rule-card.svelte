@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createMutation } from '@tanstack/svelte-query';
 	import { piggyService } from '$lib/config/services';
-	import { creditsName, isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { creditsName, hasPiggyAccount, isLoggedIn, pluginSettings } from '$lib/modules/settings';
 	import { MutationKeys } from '$lib/utils/query-keys';
 	import { getSpendRuleLabel, getTranslatedText } from '$lib/utils/translated-text';
 	import Gift from 'lucide-svelte/icons/gift';
@@ -102,7 +102,7 @@
 		</div>
 	{/if}
 
-	{#if isLoggedIn}
+	{#if isLoggedIn && hasPiggyAccount}
 		<div class="piggy-dashboard-earn-card__action">
 			<Button
 				loading={$claimSpendRuleMutation.isPending}

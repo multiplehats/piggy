@@ -82,6 +82,8 @@ export const zBasePluginOptions = z.object({
 	dashboard_title_logged_in: adminFields.zTranslatableText,
 	dashboard_title_logged_out: adminFields.zTranslatableText,
 	dashboard_join_cta: adminFields.zTranslatableText,
+	dashboard_join_program_cta: adminFields.zTranslatableText,
+	dashboard_title_join_program: adminFields.zTranslatableText,
 	dashboard_login_cta: adminFields.zTranslatableText,
 	dashboard_nav_coupons: adminFields.zTranslatableText,
 	dashboard_nav_coupons_empty_state: adminFields.zTranslatableText,

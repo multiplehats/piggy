@@ -72,6 +72,18 @@ export class PiggyFrontendService {
 		return data;
 	}
 
+	async joinProgram(userId: number) {
+		const { data, error } = await api.post('/piggy/v1/join-program?g', {
+			userId
+		});
+
+		if (error) {
+			throw new PiggyApiError(error.status, error.statusText, error.data);
+		}
+
+		return data;
+	}
+
 	async claimSpendRule(spendRuleId: number, userId?: number) {
 		const { data, error } = await api.post(`/piggy/v1/spend-rules-claim`, {
 			userId,

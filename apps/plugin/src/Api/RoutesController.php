@@ -55,6 +55,7 @@ class RoutesController {
 				Routes\V1\SpendRules::IDENTIFIER => Routes\V1\SpendRules::class,
 				Routes\V1\SpendRulesClaim::IDENTIFIER => Routes\V1\SpendRulesClaim::class,
 				Routes\V1\Coupons::IDENTIFIER => Routes\V1\Coupons::class,
+				Routes\V1\JoinProgram::IDENTIFIER => Routes\V1\JoinProgram::class,
 			],
 			'private' => [
 				Routes\V1\Admin\Settings::IDENTIFIER => Routes\V1\Admin\Settings::class,
