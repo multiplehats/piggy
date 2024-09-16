@@ -22,7 +22,7 @@
 	const saveSettingsMutation = createMutation(
 		saveSettingsMutationConfig(client, {
 			onSuccess: async () => {
-				await client.invalidateQueries({ queryKey: [QueryKeys.piggyShops] });
+				await client.invalidateQueries({ queryKey: [QueryKeys.settings] });
 			}
 		})
 	);
@@ -32,15 +32,15 @@
 	}
 </script>
 
-{#if $query.data?.value}
-	<SettingsInput
-		label={$settingsState.api_key.label}
-		description={$settingsState.api_key.description}
-		id={$settingsState.api_key.id}
-		bind:value={$settingsState.api_key.value}
-		on:change={({ currentTarget }) => $saveSettingsMutation.mutate(settingsState)}
-	/>
+<SettingsInput
+	label={$settingsState.api_key.label}
+	description={$settingsState.api_key.description}
+	id={$settingsState.api_key.id}
+	bind:value={$settingsState.api_key.value}
+	on:change={({ currentTarget }) => $saveSettingsMutation.mutate(settingsState)}
+/>
 
+{#if $shopQuery?.data}
 	<SettingsCombobox
 		items={$shopQuery?.data
 			? $shopQuery.data.map((shop) => ({
