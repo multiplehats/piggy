@@ -59,6 +59,18 @@
 
 			<SettingsTranslateableInput
 				class="py-4"
+				{...$settingsState.dashboard_nav_coupons_empty_state}
+				bind:value={$settingsState.dashboard_nav_coupons_empty_state.value}
+			/>
+
+			<SettingsTranslateableInput
+				class="py-4"
+				{...$settingsState.dashboard_coupons_loading_state}
+				bind:value={$settingsState.dashboard_coupons_loading_state.value}
+			/>
+
+			<SettingsTranslateableInput
+				class="py-4"
 				{...$settingsState.dashboard_nav_earn}
 				bind:value={$settingsState.dashboard_nav_earn.value}
 			/>
