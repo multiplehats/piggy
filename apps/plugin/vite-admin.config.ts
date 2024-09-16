@@ -24,19 +24,6 @@ const config = {
 			}
 		}
 	},
-	optimizeDeps: {
-		exclude: [
-			'codemirror',
-			'@codemirror/language-javascript',
-			'@codemirror/state',
-			'@codemirror/theme-one-dark',
-			'@codemirror/lint',
-			'@codemirror/language',
-			'@codemirror/view',
-			'@codemirror/autocomplete',
-			'eslint-linter-browserify'
-		]
-	},
 	plugins: [
 		v4wp({
 			input: 'ts/admin/index.ts',

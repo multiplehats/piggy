@@ -3,6 +3,7 @@ namespace PiggyWP\Api\Schemas\V1;
 
 use PiggyWP\Api\SchemaController;
 use PiggyWP\Api\Schemas\ExtendSchema;
+use PiggyWP\Settings;
 
 /**
  * AbstractSchema class.
@@ -32,6 +33,13 @@ abstract class AbstractSchema {
 	protected $controller;
 
 	/**
+	 * Settings instance.
+	 *
+	 * @var Settings
+	 */
+	protected $settings;
+
+	/**
 	 * Extending key that gets added to endpoint.
 	 *
 	 * @var string
@@ -44,9 +52,10 @@ abstract class AbstractSchema {
 	 * @param ExtendSchema     $extend Rest Extending instance.
 	 * @param SchemaController $controller Schema Controller instance.
 	 */
-	public function __construct( ExtendSchema $extend, SchemaController $controller ) {
+	public function __construct( ExtendSchema $extend, SchemaController $controller, Settings $settings ) {
 		$this->extend     = $extend;
 		$this->controller = $controller;
+		$this->settings = $settings;
 	}
 
 	/**

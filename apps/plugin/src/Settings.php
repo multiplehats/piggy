@@ -258,11 +258,7 @@ class Settings {
 			});
 		}
 
-		foreach ($all_settings as &$setting) {
-			$setting = $this->get_setting_with_value($setting);
-		}
-
-		return $all_settings;
+		return array_map([$this, 'get_setting_with_value'], $all_settings);
 	}
 
 	/**
@@ -301,6 +297,26 @@ class Settings {
 		}
 
 		return $setting;
+	}
+
+	/**
+	 * Get route response for all settings.
+	 *
+	 * @param bool $include_api_key Whether to include the API key in the response.
+	 * @return array
+	 */
+	public function get_route_response($include_api_key = true) {
+		return $this->get_all_settings_with_values($include_api_key);
+	}
+
+	/**
+	 * Get item response for a specific setting.
+	 *
+	 * @param string $id The setting ID.
+	 * @return array|null
+	 */
+	public function get_item_response($id) {
+		return $this->get_setting_by_id($id);
 	}
 
 	/**

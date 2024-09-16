@@ -32,15 +32,15 @@
 	}
 </script>
 
-<SettingsInput
-	label={$settingsState.api_key.label}
-	description={$settingsState.api_key.description}
-	id={$settingsState.api_key.id}
-	bind:value={$settingsState.api_key.value}
-	on:change={({ currentTarget }) => $saveSettingsMutation.mutate(settingsState)}
-/>
-
 {#if $query.data?.value}
+	<SettingsInput
+		label={$settingsState.api_key.label}
+		description={$settingsState.api_key.description}
+		id={$settingsState.api_key.id}
+		bind:value={$settingsState.api_key.value}
+		on:change={({ currentTarget }) => $saveSettingsMutation.mutate(settingsState)}
+	/>
+
 	<SettingsCombobox
 		items={$shopQuery?.data
 			? $shopQuery.data.map((shop) => ({

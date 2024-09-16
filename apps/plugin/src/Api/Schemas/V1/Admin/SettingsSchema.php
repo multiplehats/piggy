@@ -61,19 +61,8 @@ class SettingsSchema extends AbstractSchema {
 	 *
 	 * @return string
 	 */
-	public function get_item_response( $item ) {
-		$default = isset( $item['default'] ) ? $item['default'] : null;
-		$id = $item['id'];
-
-		$item['value'] = get_option('piggy_' . $id, $default);
-
-		if( $item['type'] === 'translatable_text' && is_string($item['value']) ) {
-			$item['value'] = json_decode($item['value'], true);
-		}
-
-		if( $item['type'] === 'checkboxes' && is_string($item['value']) ) {
-			$item['value'] = json_decode($item['value'], true);
-		}
+	public function get_item_response( $id ) {
+		return $this->settings->get_item_response($id);
 
 		return $item;
 	}

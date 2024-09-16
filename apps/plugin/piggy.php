@@ -4,7 +4,7 @@
  * Plugin Name: Piggy - Loyalty & Marketing
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
- * Version: 0.0.1
+ * Version: 0.0.2
  * Author: Piggy, Chris Jayden
  * Author URI: https://piggy.com
  * Text Domain: piggy

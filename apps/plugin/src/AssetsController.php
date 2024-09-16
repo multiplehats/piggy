@@ -110,8 +110,8 @@ final class AssetsController
 		if ($has_api_key) {
 			$this->assets_api->register_script(
 				self::APP_HANDLE,
-				'frontend',
 				'ts/frontend/index.ts',
+				'frontend',
 				['wp-api-fetch', 'wp-i18n', 'wp-a11y', 'wp-keycodes', 'wp-html-entities']
 			);
 
@@ -191,8 +191,8 @@ final class AssetsController
 
 		$this->assets_api->register_script(
 			self::ADMIN_APP_HANDLE,
-			'admin',
 			'ts/admin/index.ts',
+			'admin',
 			['wp-api-fetch', 'wp-i18n', 'wp-a11y', 'wp-keycodes', 'wp-hooks']
 		);
 
@@ -296,18 +296,16 @@ final class AssetsController
 	 */
 	protected function get_plugin_settings()
 	{
-		$request = new WP_REST_Request('GET', '/piggy/private/settings');
-		$response = rest_do_request($request);
-		$server = rest_get_server();
-		$data = $server->response_to_data($response, false);
+		$settings = $this->settings->get_all_settings_with_values(false); // false to exclude API key
 
-		if ( ! $data ) {
+		if (!$settings) {
 			return null;
 		}
 
-		return array_map(function ($item) {
-			return $item['value'];
-		}, $data);
+		return array_reduce($settings, function ($carry, $item) {
+			$carry[$item['id']] = $item['value'];
+			return $carry;
+		}, []);
 	}
 
 	/**

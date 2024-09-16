@@ -72,10 +72,12 @@ final class Api {
 			SchemaController::class,
 			function ( $container ) {
 				return new SchemaController(
-					$container->get( ExtendSchema::class )
+					$container->get( ExtendSchema::class ),
+					$container->get( Settings::class )
 				);
 			}
 		);
+
 		$container->register(
 			ExtendSchema::class,
 			function ( $container ) {

@@ -128,7 +128,7 @@ class Api {
 	 * @param array  $dependencies  Optional. An array of registered script handles this script depends on. Default empty array.
 	 * @param bool   $has_i18n      Optional. Whether to add a script translation call to this file. Default: true.
 	 */
-	public function register_script( $handle, $folder = 'frontend', $relative_entry, $dependencies = [], $has_i18n = true ) {
+	public function register_script( $handle, $relative_entry, $folder = 'frontend', $dependencies = [], $has_i18n = true ) {
 		/**
 		 * Filters the list of script dependencies.
 		 *

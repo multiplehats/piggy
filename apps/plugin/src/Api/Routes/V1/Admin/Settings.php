@@ -104,8 +104,6 @@ class Settings extends AbstractRoute {
 				return rest_ensure_response( null );
 			}
 
-			$setting = $this->prepare_item_for_response( $setting, $request );
-
 			return rest_ensure_response( $setting );
 		}
 
@@ -116,7 +114,7 @@ class Settings extends AbstractRoute {
 		// This makes it easier to work with in the front-end.
 		$return = [];
 		foreach ( $all_settings as $item ) {
-			$data = $this->prepare_item_for_response( $item, $request );
+			$data = $this->prepare_item_for_response( $item['id'], $request );
 			$return[$item['id']] = $this->prepare_response_for_collection( $data );
 		}
 

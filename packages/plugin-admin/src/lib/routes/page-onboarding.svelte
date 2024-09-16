@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { createMutation, useQueryClient } from '@tanstack/svelte-query';
+	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
 	import OnboardingActions from '$lib/components/onboarding/onboarding-actions.svelte';
 	import OnboardingSteps from '$lib/components/onboarding/onboarding-steps.svelte';
 	import SettingsLogo from '$lib/components/settings-logo.svelte';
+	import { SettingsAdminService } from '$lib/modules/settings';
 	import { saveSettingsMutationConfig } from '$lib/modules/settings/mutations';
 	import { onboardingSteps, useOnboarding } from '$lib/stores/onboarding';
 	import { settingsState } from '$lib/stores/settings';
@@ -14,6 +15,7 @@
 	const navigate = useNavigate();
 	const onboarding = useOnboarding();
 	const client = useQueryClient();
+	const service = new SettingsAdminService();
 	const saveSettingsMutation = createMutation(
 		saveSettingsMutationConfig(client, {
 			onSuccess: async () => {
@@ -36,6 +38,16 @@
 			}
 		})
 	);
+	const query = createQuery({
+		queryKey: [QueryKeys.settings],
+		retry: false,
+		queryFn: async () => await service.getAllSettings(),
+		refetchOnWindowFocus: true
+	});
+
+	$: if ($query.data && $query.isSuccess) {
+		settingsState.set($query.data);
+	}
 
 	function handleSubmit(
 		e: SubmitEvent & {

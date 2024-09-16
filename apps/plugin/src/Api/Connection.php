@@ -747,7 +747,8 @@ class Connection {
 		$shop_uuid = get_option('piggy_shop_uuid', null);
 
 		if (!$shop_uuid) {
-			error_log("Shop UUID not set. Unable to create Reward Reception.");
+			$this->logger->error("Shop UUID not set. Unable to create Reward Reception.");
+
 			return;
 		}
 

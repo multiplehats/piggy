@@ -2,6 +2,7 @@
 namespace PiggyWP\Api;
 
 use PiggyWP\Api\Schemas\ExtendSchema;
+use PiggyWP\Settings;
 
 /**
  * SchemaController class.
@@ -16,6 +17,14 @@ class SchemaController {
 	protected $schemas = [];
 
 	/**
+	 * Settings
+	 *
+	 * @var Settings
+	 */
+	protected $settings;
+
+
+	/**
 	 * Piggy Rest Extending instance
 	 *
 	 * @var ExtendSchema
@@ -27,8 +36,10 @@ class SchemaController {
 	 *
 	 * @param ExtendSchema $extend Rest Extending instance.
 	 */
-	public function __construct( ExtendSchema $extend ) {
+	public function __construct( ExtendSchema $extend, Settings $settings ) {
 		$this->extend  = $extend;
+		$this->settings = $settings;
+
 		$this->schemas = [
 			'v1' => [
 				Schemas\V1\EarnRewardSchema::IDENTIFIER => Schemas\V1\EarnRewardSchema::class,
@@ -61,6 +72,6 @@ class SchemaController {
 			throw new \Exception( "{$name} v{$version} schema does not exist" );
 		}
 
-		return new $schema( $this->extend, $this );
+		return new $schema( $this->extend, $this, $this->settings );
 	}
 }
