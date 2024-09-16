@@ -13,16 +13,7 @@ const analyze = process.env.ANALYZE === 'true';
 
 const config = {
 	build: {
-		sourcemap: process.env.NODE_ENV === 'production' ? false : true,
-		rollupOptions: {
-			output: {
-				manualChunks(id: string) {
-					if (id.includes('codemirror') || id.includes('code-mirror')) {
-						return 'codemirror';
-					}
-				}
-			}
-		}
+		sourcemap: process.env.NODE_ENV === 'production' ? false : true
 	},
 	plugins: [
 		v4wp({
