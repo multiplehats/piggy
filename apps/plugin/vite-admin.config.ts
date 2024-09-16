@@ -12,9 +12,7 @@ const env = process.env.NODE_ENV;
 const analyze = process.env.ANALYZE === 'true';
 
 const config = {
-	build: {
-		sourcemap: process.env.NODE_ENV === 'production' ? false : true
-	},
+	build: { sourcemap: false },
 	plugins: [
 		v4wp({
 			input: 'ts/admin/index.ts',

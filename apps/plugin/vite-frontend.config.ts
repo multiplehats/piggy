@@ -12,7 +12,7 @@ const analyze = process.env.ANALYZE === 'true';
 
 const config = {
 	build: {
-		sourcemap: process.env.NODE_ENV === 'production' ? false : true,
+		sourcemap: false,
 		rollupOptions: {
 			output: {
 				manualChunks(id: string) {

@@ -9,6 +9,7 @@ node_modules
 /vendor/
 /composer.phar
 *.zip
+/zip-file
 
 # testing
 coverage
