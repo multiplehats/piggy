@@ -122,7 +122,9 @@ class Installer {
 	}
 
 	public function maybe_redirect_to_onboarding() {
-		if ( get_option( 'piggy_first_activation', false ) === false ) {
+		$api_key = get_option('piggy_api_key', null);
+
+		if ( get_option( 'piggy_first_activation', false ) === false && $api_key !== null && $api_key !== '' ) {
 			update_option( 'piggy_first_activation', true );
 			wp_redirect( admin_url( 'admin.php?page=piggy#/onboarding' ) );
 			exit;
