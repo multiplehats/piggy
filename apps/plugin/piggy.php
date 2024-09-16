@@ -42,7 +42,7 @@ add_action('init', function() {
 		'id'     => 'plugin_t7jfygltvh47e88f6c6nfubb',
 	);
 
-	new \WPLatest\Updater\PluginUpdater($options);
+	// new WPLatest\Updater\PluginUpdater($options);
 });
 
 /**
