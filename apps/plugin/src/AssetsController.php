@@ -97,6 +97,15 @@ final class AssetsController
 			'99.999'
 		);
 
+		add_submenu_page(
+			'piggy',
+			'Onboarding',
+			'Onboarding',
+			'manage_options',
+			'admin.php?page=piggy#/onboarding',
+			''
+		);
+
 		add_action('admin_enqueue_scripts', [$this, 'enqueue_admin'], 100);
 	}
 

@@ -99,11 +99,11 @@
 				bind:value={$settingsState.reward_order_parts.value}
 			/> -->
 
-			<SettingsSwitch
+			<!-- <SettingsSwitch
 				class="py-4"
 				{...$settingsState.marketing_consent_subscription}
 				bind:value={$settingsState.marketing_consent_subscription.value}
-			/>
+			/> -->
 		{/if}
 	</div>
 </SettingsSection>
