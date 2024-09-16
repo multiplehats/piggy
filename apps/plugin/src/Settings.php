@@ -44,7 +44,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'credits_name',
 			'default'  => array(
-				'en_US' => __( 'Credits', 'piggy' ),
+				'default' => __( 'Credits', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Credits name', 'piggy' ),
@@ -53,7 +53,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'credits_spend_rule_progress',
 			'default'  => array(
-				'en_US' => __( 'You have {{ credits }} {{ credits_currency }} out of {{ credits_required }}', 'piggy' ),
+				'default' => __( 'You have {{ credits }} {{ credits_currency }} out of {{ credits_required }}', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Credits balance', 'piggy' ),
@@ -119,7 +119,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_in',
 			'default'  => array(
-				'en_US' => __( 'You have {{ credits }} {{ credits_currency }}', 'piggy' ),
+				'default' => __( 'You have {{ credits }} {{ credits_currency }}', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Title (Logged in)', 'piggy' ),
@@ -130,7 +130,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_out',
 			'default'  => array(
-				'en_US' => __( 'Join our Loyalty Program and get rewarded when you shop with us. Get your first {{ credits }} {{ credits_currency }} when you sign up now', 'piggy' ),
+				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us. Get your first {{ credits }} {{ credits_currency }} when you sign up now', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Title (Logged out)', 'piggy' ),
@@ -141,7 +141,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_join_cta',
 			'default'  => array(
-				'en_US' => __( 'Join now', 'piggy' ),
+				'default' => __( 'Join now', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Join program button', 'piggy' ),
@@ -151,7 +151,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_login_cta',
 			'default'  => array(
-				'en_US' => __( 'Log in', 'piggy' ),
+				'default' => __( 'Log in', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Log in button', 'piggy' ),
@@ -161,7 +161,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_nav_coupons',
 			'default'  => array(
-				'en_US' => __( 'Your coupons', 'piggy' ),
+				'default' => __( 'Your coupons', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Coupons navigation item', 'piggy' ),
@@ -170,7 +170,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_nav_earn',
 			'default'  => array(
-				'en_US' => __( 'Earn {{ credits_currency }}', 'piggy' ),
+				'default' => __( 'Earn {{ credits_currency }}', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Earn navigation item', 'piggy' ),
@@ -180,7 +180,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_nav_rewards',
 			'default'  => array(
-				'en_US' => __( 'Rewards', 'piggy' ),
+				'default' => __( 'Rewards', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Rewards navigation item', 'piggy' ),
@@ -189,7 +189,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_nav_activity',
 			'default'  => array(
-				'en_US' => __( 'Your activity', 'piggy' ),
+				'default' => __( 'Your activity', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Activity navigation item', 'piggy' ),
@@ -198,7 +198,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_earn_cta',
 			'default'  => array(
-				'en_US' => __( 'Claim reward', 'piggy' ),
+				'default' => __( 'Claim reward', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Claim reward button', 'piggy' ),
@@ -208,7 +208,7 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'dashboard_spend_cta',
 			'default'  => array(
-				'en_US' => __( 'Unlock', 'piggy' ),
+				'default' => __( 'Unlock', 'piggy' ),
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Spend credits button', 'piggy' ),

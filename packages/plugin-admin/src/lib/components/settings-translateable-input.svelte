@@ -26,13 +26,19 @@
 		label: language
 	})) as Selected<string>[];
 
-	let selected = items.find((item) => item.value === currentLanguage);
+	let selected = items.find((item) => item.value === currentLanguage) || items[0];
 	let inputValue: string | undefined = undefined;
 	let isFocused = false;
 
 	const updateInputValue = () => {
 		if (selected && value) {
-			inputValue = value[selected.value];
+			if (Object.keys(value).length === 0) {
+				// If no values are set, use an empty string
+				inputValue = '';
+			} else {
+				// Use the selected language value, or the first available language value
+				inputValue = value[selected.value] || Object.values(value)[0] || '';
+			}
 		}
 	};
 
@@ -44,11 +50,20 @@
 		const target = event?.target as HTMLInputElement;
 		const inputVal = target.value as string;
 
-		if (selected && inputVal) {
+		if (selected && inputVal !== undefined) {
 			value = {
 				...value,
 				[selected.value]: inputVal
 			};
+
+			// If this is the first value being set, update all languages
+			if (Object.keys(value).length === 1) {
+				for (const lang of languages) {
+					if (lang !== selected.value) {
+						value[lang] = inputVal;
+					}
+				}
+			}
 		}
 	}
 
