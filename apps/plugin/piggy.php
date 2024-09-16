@@ -15,6 +15,7 @@
  * Requires Plugins: woocommerce
  * WC requires at least: 6.9
  * WC tested up to: 8.8.3
+ * Update URI:  https://wplatest.co
  *
  * @package Piggy
  */
@@ -36,15 +37,9 @@ if ( ! defined( 'PIGGY_VERSION' ) ) {
  * we release the plugin in the WordPress repository.
  */
 add_action('init', function() {
-	// Check if PIGGY_WP_UPDATER_SECRET is set
-	if ( ! defined( 'PIGGY_WP_UPDATER_SECRET' ) ) {
-		return;
-	}
-
 	$options = array(
 		'file'   => __FILE__,
 		'id'     => 'plugin_t7jfygltvh47e88f6c6nfubb',
-		'secret' => PIGGY_WP_UPDATER_SECRET,
 	);
 
 	new \WPLatest\Updater\PluginUpdater($options);
