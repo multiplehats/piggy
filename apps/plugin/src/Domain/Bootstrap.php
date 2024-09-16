@@ -15,6 +15,7 @@ use PiggyWP\Domain\Services\SpendRules;
 use PiggyWP\PostTypeController;
 use PiggyWP\Settings;
 use PiggyWP\Shortcodes\CustomerDashboardShortcode;
+use PiggyWP\RedirectController;
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -108,6 +109,7 @@ class Bootstrap {
 			$this->container->get( Installer::class )->init();
 			$this->container->get( AssetsController::class );
 			$this->container->get( PostTypeController::class );
+			$this->container->get(RedirectController::class)->init();
 		}
 		$this->container->get( CustomerDashboardShortcode::class )->init();
 		$this->container->get( CustomerSession::class );
@@ -231,6 +233,12 @@ class Bootstrap {
 			Settings::class,
 			function ( Container $container ) {
 				return new Settings();
+			}
+		);
+		$this->container->register(
+			RedirectController::class,
+			function () {
+				return new RedirectController();
 			}
 		);
 		$this->container->register(
