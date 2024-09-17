@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createMutation } from '@tanstack/svelte-query';
 	import { piggyService } from '$lib/config/services';
-	import { creditsName, isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { creditsName, hasPiggyAccount, isLoggedIn, pluginSettings } from '$lib/modules/settings';
 	import { MutationKeys } from '$lib/utils/query-keys';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import CheckCircle from 'lucide-svelte/icons/badge-check';
@@ -87,7 +87,7 @@
 			{/if}
 		</h4>
 
-		{#if isLoggedIn && isSocial}
+		{#if isLoggedIn && isSocial && hasPiggyAccount}
 			<div class="piggy-dashboard-earn-card__action">
 				{#if !hasClaimed}
 					<Button
@@ -106,7 +106,7 @@
 					{/if}
 				{:else}
 					<CheckCircle size="24" color="#3da121" />
-					{/if}
+				{/if}
 			</div>
 		{/if}
 	</div>

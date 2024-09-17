@@ -3,6 +3,7 @@
 	import { apiService } from '$lib/modules/piggy';
 	import { currentLanguage, pluginSettings } from '$lib/modules/settings';
 	import { QueryKeys } from '$lib/utils/query-keys';
+	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
 	import DashboardCouponCard from './dashboard-coupon-card.svelte';
 
@@ -20,18 +21,34 @@
 
 		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
 	}
+
+	$: console.log($pluginSettings);
+	$: console.log(currentLanguage);
+	$: console.log($pluginSettings?.dashboard_nav_coupons);
+	$: console.log(
+		'dashboard_nav_coupons',
+		$pluginSettings?.dashboard_nav_coupons?.[currentLanguage]
+	);
+	$: console.log(
+		'dashboard_nav_coupons_empty_state',
+		$pluginSettings?.dashboard_nav_coupons_empty_state?.[currentLanguage]
+	);
+	$: console.log(
+		'dashboard_coupons_loading_state',
+		$pluginSettings?.dashboard_coupons_loading_state?.[currentLanguage]
+	);
 </script>
 
 <div class="piggy-dashboard-coupons">
 	<div>
 		<h3 class="piggy-dashboard__header">
-			{getNavItemText($pluginSettings?.dashboard_nav_coupons?.[currentLanguage])}
+			{getNavItemText(getTranslatedText($pluginSettings?.dashboard_nav_coupons))}
 		</h3>
 	</div>
 
 	{#if $query.isLoading}
 		<div class="piggy-dashboard-coupons__loading">
-			<p>{$pluginSettings?.dashboard_coupons_loading_state?.[currentLanguage]}</p>
+			<p>{getTranslatedText($pluginSettings?.dashboard_coupons_loading_state)}</p>
 		</div>
 	{/if}
 
@@ -48,7 +65,9 @@
 			</div>
 		{:else}
 			<div class="piggy-dashboard-coupons__empty">
-				<p>{$pluginSettings?.dashboard_nav_coupons_empty_state?.[currentLanguage]}</p>
+				<p>
+					{getTranslatedText($pluginSettings?.dashboard_nav_coupons_empty_state)}
+				</p>
 			</div>
 		{/if}
 	{/if}

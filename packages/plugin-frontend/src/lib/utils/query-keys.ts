@@ -4,5 +4,6 @@ export const QueryKeys = {
 
 export const MutationKeys = {
 	claimReward: 'claimReward',
-	claimSpendRule: 'claimSpendRule'
+	claimSpendRule: 'claimSpendRule',
+	joinProgram: 'joinProgram'
 } as const;

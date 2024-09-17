@@ -1,12 +1,23 @@
 <script lang="ts">
+	import { createMutation } from '@tanstack/svelte-query';
 	import { Button } from '$lib/components/button/index.js';
-	import { isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { piggyService } from '$lib/config/services';
+	import { hasPiggyAccount, isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { MutationKeys } from '$lib/utils/query-keys';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import BadgeEuro from 'lucide-svelte/icons/badge-euro';
 	import BarChart from 'lucide-svelte/icons/bar-chart';
 	import ShoppingBag from 'lucide-svelte/icons/shopping-bag';
 	import Tag from 'lucide-svelte/icons/tag';
 	import { replaceStrings } from '@piggy/lib';
+
+	const joinProgramMutation = createMutation({
+		mutationKey: [MutationKeys.joinProgram],
+		mutationFn: () => piggyService.joinProgram(window.piggyMiddlewareConfig.userId),
+		onSuccess: () => {
+			location.reload();
+		}
+	});
 
 	const navItems = [
 		{
@@ -62,15 +73,25 @@
 			}
 		};
 	}
+
+	function handleJoinProgram() {
+		$joinProgramMutation.mutate();
+	}
+
+	$: isContactNull = isLoggedIn && !hasPiggyAccount;
 </script>
 
 <section>
 	<h2 class="piggy-dashboard__header">
 		{#if isLoggedIn}
-			{getHeaderTitle(
-				getTranslatedText($pluginSettings.dashboard_title_logged_in),
-				window.piggyData.contact?.balance.credits ?? 0
-			)}
+			{#if isContactNull}
+				{getTranslatedText($pluginSettings.dashboard_title_join_program)}
+			{:else}
+				{getHeaderTitle(
+					getTranslatedText($pluginSettings.dashboard_title_logged_in),
+					window.piggyData.contact?.balance.credits ?? 0
+				)}
+			{/if}
 		{:else}
 			{getHeaderTitle(getTranslatedText($pluginSettings.dashboard_title_logged_out) ?? '', 400)}
 		{/if}
@@ -89,9 +110,25 @@
 				</Button>
 			{/if}
 		</div>
+	{:else if isContactNull}
+		<div class="piggy-dashboard__cta">
+			<Button
+				on:click={handleJoinProgram}
+				variant="primary"
+				loading={$joinProgramMutation.isPending}
+			>
+				{getTranslatedText($pluginSettings.dashboard_join_program_cta)}
+			</Button>
+
+			{#if $joinProgramMutation.isError}
+				<p class="piggy-dashboard__error">
+					{$joinProgramMutation.error.message}
+				</p>
+			{/if}
+		</div>
 	{/if}
 
-	{#if isLoggedIn}
+	{#if isLoggedIn && !isContactNull}
 		<nav class="piggy-dashboard__nav">
 			<ul class="piggy-dashboard__list">
 				{#each navItems as { icon, text, id }, i}

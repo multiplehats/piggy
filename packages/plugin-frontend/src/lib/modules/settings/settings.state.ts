@@ -8,6 +8,8 @@ export const pluginSettings = writable<PluginOptionsFrontend>();
 
 export const isLoggedIn = window.piggyMiddlewareConfig.loggedIn;
 
+export const hasPiggyAccount = window.piggyData.contact;
+
 export const creditsName = derived(pluginSettings, ($pluginSettings) => {
 	return getTranslatedText($pluginSettings.credits_name);
 });

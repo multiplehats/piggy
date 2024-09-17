@@ -47,6 +47,18 @@
 
 			<SettingsTranslateableInput
 				class="py-4"
+				{...$settingsState.dashboard_title_join_program}
+				bind:value={$settingsState.dashboard_title_join_program.value}
+			/>
+
+			<SettingsTranslateableInput
+				class="py-4"
+				{...$settingsState.dashboard_join_program_cta}
+				bind:value={$settingsState.dashboard_join_program_cta.value}
+			/>
+
+			<SettingsTranslateableInput
+				class="py-4"
 				{...$settingsState.dashboard_login_cta}
 				bind:value={$settingsState.dashboard_login_cta.value}
 			/>
