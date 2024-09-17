@@ -15,7 +15,7 @@ export const headerLinks = [
 	},
 	{
 		href: '/dashboard',
-		label: __('Custonmer Dashboard settings', 'piggy'),
+		label: __('Customer Dashboard settings', 'piggy'),
 		type: 'link'
 	}
 ] as HeaderLinkProps[];

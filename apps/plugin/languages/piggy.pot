@@ -1089,7 +1089,7 @@ msgid "Loyalty Program"
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
-msgid "Custonmer Dashboard settings"
+msgid "Customer Dashboard settings"
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
