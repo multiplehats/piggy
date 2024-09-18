@@ -10,7 +10,6 @@
 
 	const query = createQuery({
 		queryKey: [QueryKeys.contact],
-		retry: false,
 		queryFn: async () => await apiService.getContact()
 	});
 

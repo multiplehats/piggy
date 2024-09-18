@@ -1,4 +1,7 @@
-import type { SpendRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
+import type {
+	EarnRuleValueItem,
+	SpendRuleValueItem
+} from '@piggy/types/plugin/settings/adminTypes';
 
 export interface Shop {
 	uuid: string;
@@ -99,3 +102,11 @@ export type GetContactResponse = {
 	contact: Contact | null;
 	claimedRewards: ClaimedReward[];
 };
+
+export type EarnRule = EarnRuleValueItem;
+
+export type GetEarnRulesResponse = EarnRule[];
+
+export type SpendRule = SpendRuleValueItem;
+
+export type GetSpendRulesResponse = SpendRule[];

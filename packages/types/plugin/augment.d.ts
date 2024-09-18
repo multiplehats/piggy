@@ -13,7 +13,6 @@ declare global {
 		piggyConfig: PluginOptionsFrontend;
 		// WooCommerce settings
 		piggyWcSettings: IWooSettings;
-		piggyEarnRules: EarnRuleValueItem[] | null;
 		piggySpentRules: SpendRuleValueItem[] | null;
 
 		// WP Fetch middleware config

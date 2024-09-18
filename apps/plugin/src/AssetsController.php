@@ -7,7 +7,6 @@ use PiggyWP\Settings;
 use PiggyWP\Assets\Api as AssetApi;
 use PiggyWP\Utils\Common;
 use PiggyWP\Utils\Logger;
-use WP_REST_Request;
 use WP_Post;
 
 /**
@@ -126,32 +125,10 @@ final class AssetsController
 
 			if (wp_script_is(self::APP_HANDLE, 'enqueued') ) {
 				$settings = rawurlencode(wp_json_encode($this->get_plugin_settings()));
-				$earn_rules = rawurlencode(wp_json_encode($this->get_earn_rules_config()));
-				$spend_rules = rawurlencode(wp_json_encode($this->get_spend_rules_config()));
-
-				$coupons = rawurlencode(wp_json_encode($this->get_coupons_by_user_id(get_current_user_id())));
 
 				$this->assets_api->add_inline_script(
 					self::APP_HANDLE,
 					"window.piggyConfig = JSON.parse(decodeURIComponent('" . esc_js($settings) . "'));",
-					'before'
-				);
-
-				$this->assets_api->add_inline_script(
-					self::APP_HANDLE,
-					"window.piggyEarnRules = JSON.parse(decodeURIComponent('" . esc_js($earn_rules) . "'));",
-					'before'
-				);
-
-				$this->assets_api->add_inline_script(
-					self::APP_HANDLE,
-					"window.piggySpentRules = JSON.parse(decodeURIComponent('" . esc_js($spend_rules) . "'));",
-					'before'
-				);
-
-				$this->assets_api->add_inline_script(
-					self::APP_HANDLE,
-					"window.piggyCoupons = JSON.parse(decodeURIComponent('" . esc_js($coupons) . "'));",
 					'before'
 				);
 
@@ -275,65 +252,6 @@ final class AssetsController
 			$carry[$item['id']] = $item['value'];
 			return $carry;
 		}, []);
-	}
-
-	/**
-	 * Get earn rule config
-	 *
-	 * @return array|null
-	 */
-	protected function get_earn_rules_config()
-	{
-		$request = new WP_REST_Request('GET', '/piggy/v1/earn-rules');
-		$request->set_param('status', 'publish');
-
-		$response = rest_do_request($request);
-		$server = rest_get_server();
-		$data = $server->response_to_data($response, false);
-
-		if ( ! $data || ! is_array($data) ) {
-			return null;
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Get spend rule config
-	 *
-	 * @return array|null
-	 */
-	protected function get_spend_rules_config()
-	{
-		$request = new WP_REST_Request('GET', '/piggy/v1/spend-rules');
-		$request->set_param('status', 'publish');
-
-		$response = rest_do_request($request);
-		$server = rest_get_server();
-		$data = $server->response_to_data($response, false);
-
-		if ( ! $data || ! is_array($data) ) {
-			return null;
-		}
-
-		// If data is a 40x
-		if (isset($data['code'])) {
-			return null;
-		}
-
-		return $data;
-	}
-
-	protected function get_coupons_by_user_id($user_id)
-	{
-		$request = new WP_REST_Request('GET', '/piggy/v1/coupons');
-		$request->set_param('userId', $user_id);
-
-		$response = rest_do_request($request);
-		$server = rest_get_server();
-		$data = $server->response_to_data($response, false);
-
-		return $data;
 	}
 
 	/**

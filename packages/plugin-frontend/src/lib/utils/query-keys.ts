@@ -1,4 +1,6 @@
 export const QueryKeys = {
+	earnRules: 'earnRules',
+	spendRules: 'spendRules',
 	coupons: 'coupons',
 	contact: 'contact'
 } as const;
