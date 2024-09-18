@@ -8,7 +8,7 @@
 	import SpendRuleFreeProductFields from '$lib/components/spend-rules/spend-rule-free-product-fields.svelte';
 	// import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
 	import SpendRuleProductOrderDiscountFields from '$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte';
-	import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
+	// import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -66,7 +66,6 @@
 			status: $rule.status.value,
 			startsAt: $rule?.startsAt?.value,
 			expiresAt: $rule?.expiresAt?.value,
-			selectedReward: $rule?.selectedReward?.value,
 			instructions: $rule?.instructions?.value,
 			selectedProducts: $rule?.selectedProducts?.value,
 			description: $rule?.description?.value,
@@ -147,8 +146,6 @@
 									};
 								})}
 							/>
-
-							<SpendRuleRewardSelect bind:selectedReward={$rule.selectedReward} />
 
 							<SettingsInput {...$rule.title} bind:value={$rule.title.value} readonly={true} />
 
