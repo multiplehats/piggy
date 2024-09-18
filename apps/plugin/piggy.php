@@ -10,7 +10,7 @@
  * Text Domain: piggy
  * Requires at least: 5.9
  * Domain Path: /languages
- * Requires PHP: 7.4
+ * Requires PHP: 8.0
  * Requires PHP Architecture: 64 bits
  * Requires Plugins: woocommerce
  * WC requires at least: 6.9
