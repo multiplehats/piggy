@@ -282,26 +282,6 @@ class SpendRules
 		}
 	}
 
-	public function get_all_spend_rules() {
-		$args = array(
-			'post_type' => 'piggy_spend_rule',
-			'posts_per_page' => -1,
-			'meta_key' => '_piggy_reward_uuid',
-		);
-
-		$posts = get_posts($args);
-
-		$spend_rules = array();
-		foreach ($posts as $post) {
-			$spend_rules[$post->ID] = array(
-				'ID' => $post->ID,
-				'_piggy_reward_uuid' => get_post_meta($post->ID, '_piggy_reward_uuid', true),
-			);
-		}
-
-		return $spend_rules;
-	}
-
 	/**
 	 * Get the applicable spend rule for a given credit amount.
 	 *
@@ -331,27 +311,27 @@ class SpendRules
 		return $applicable_rule;
 	}
 
-	public function create_or_update_spend_rule_from_reward($reward) {
-		$existing_rule = $this->get_spend_rule_by_piggy_uuid($reward['uuid']);
-
+	public function create_or_update_spend_rule_from_reward($reward, $existing_post_id = null) {
 		$post_data = array(
 			'post_type' => 'piggy_spend_rule',
 			'post_title' => $reward['title'],
-			'post_status' => $reward['active'],
 			'meta_input' => array(
-				'_piggy_spend_rule_type' => $reward['type'],
 				'_piggy_spend_rule_credit_cost' => $reward['requiredCredits'],
 				'_piggy_reward_uuid' => $reward['uuid'],
 				'_piggy_spend_rule_selected_reward' => $reward['uuid'],
 			)
 		);
 
-		if ($existing_rule) {
-			$post_data['ID'] = $existing_rule['id'];
+		if ($existing_post_id) {
+			$post_data['ID'] = $existing_post_id;
 			wp_update_post($post_data);
 		} else {
 			// New rules are always draft by default.
 			$post_data['post_status'] = 'draft';
+
+			// _piggy_spend_rule_type
+			$post_data['meta_input']['_piggy_spend_rule_type'] = $reward['type'];
+
 			wp_insert_post($post_data);
 		}
 	}
