@@ -64,6 +64,9 @@
 			if (socialLinkToOpen) {
 				window.open(socialLinkToOpen, '_blank');
 				socialLinkToOpen = null;
+
+				// For now reload the page, until we have all calls client side.
+				location.reload();
 			}
 		});
 	}
