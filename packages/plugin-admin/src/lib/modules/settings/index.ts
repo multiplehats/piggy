@@ -126,9 +126,12 @@ export class SettingsAdminService {
 	}
 
 	async getEarnRules(): Promise<GetEarnRulesResponse> {
-		const { data, error } = await api.get<GetEarnRulesResponse>('/piggy/v1/earn-rules', {
-			cache: 'no-store'
-		});
+		const { data, error } = await api.get<GetEarnRulesResponse>(
+			'/piggy/v1/earn-rules?status=draft,publish',
+			{
+				cache: 'no-store'
+			}
+		);
 
 		if (error ?? !data) {
 			if (error) {
