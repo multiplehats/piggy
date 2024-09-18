@@ -9,9 +9,7 @@
 
 	const query = createQuery({
 		queryKey: [QueryKeys.coupons],
-		retry: false,
-		queryFn: async () => await apiService.getCoupons(window.piggyMiddlewareConfig.userId),
-		refetchOnWindowFocus: true
+		queryFn: async () => await apiService.getCoupons()
 	});
 
 	function getNavItemText(text?: string) {
@@ -21,22 +19,6 @@
 
 		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
 	}
-
-	$: console.log($pluginSettings);
-	$: console.log(currentLanguage);
-	$: console.log($pluginSettings?.dashboard_nav_coupons);
-	$: console.log(
-		'dashboard_nav_coupons',
-		$pluginSettings?.dashboard_nav_coupons?.[currentLanguage]
-	);
-	$: console.log(
-		'dashboard_nav_coupons_empty_state',
-		$pluginSettings?.dashboard_nav_coupons_empty_state?.[currentLanguage]
-	);
-	$: console.log(
-		'dashboard_coupons_loading_state',
-		$pluginSettings?.dashboard_coupons_loading_state?.[currentLanguage]
-	);
 </script>
 
 <div class="piggy-dashboard-coupons">

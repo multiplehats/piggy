@@ -1,5 +1,8 @@
 export const QueryKeys = {
-	coupons: 'coupons'
+	earnRules: 'earnRules',
+	spendRules: 'spendRules',
+	coupons: 'coupons',
+	contact: 'contact'
 } as const;
 
 export const MutationKeys = {

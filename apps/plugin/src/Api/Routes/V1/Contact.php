@@ -4,27 +4,26 @@ namespace PiggyWP\Api\Routes\V1;
 
 use PiggyWP\Api\Exceptions\RouteException;
 use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Domain\Services\SpendRules;
 
 /**
- * Coupons class.
+ * Contact class.
  *
  * @internal
  */
-class Coupons extends AbstractRoute {
+class Contact extends AbstractRoute {
     /**
      * The route identifier.
      *
      * @var string
      */
-    const IDENTIFIER = 'coupons';
+    const IDENTIFIER = 'contact';
 
     /**
      * The schema item identifier.
      *
      * @var string
      */
-    const SCHEMA_TYPE = 'coupons';
+    const SCHEMA_TYPE = 'contact';
 
     /**
      * Get the path of this REST route.
@@ -32,7 +31,7 @@ class Coupons extends AbstractRoute {
      * @return string
      */
     public function get_path() {
-        return '/coupons';
+        return '/contact';
     }
 
     /**
@@ -65,17 +64,14 @@ class Coupons extends AbstractRoute {
             throw new RouteException( 'no_user_id', 'User ID is required', 400 );
         }
 
-        $spend_rules_service = new SpendRules();
-        $coupons = $spend_rules_service->get_coupons_by_user_id( $user_id );
+		$uuid = get_user_meta( get_current_user_id(), 'piggy_uuid', true);
+		$contact = $uuid ? $this->connection->get_contact( $uuid ) : null;
+		$claimed_rewards = $uuid ? $this->connection->get_user_reward_logs( $user_id ) : null;
 
-        $response_objects = array();
-
-		foreach ( $coupons as $coupon ) {
-			$data               = $this->prepare_item_for_response( $coupon, $request );
-			$response_objects[] = $this->prepare_response_for_collection( $data );
-		}
-
-		$response = rest_ensure_response( $response_objects );
+		$response = rest_ensure_response( array(
+            'contact' => $contact,
+			'claimedRewards' => $claimed_rewards,
+        ) );
 
 		return $response;
     }

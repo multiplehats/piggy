@@ -7,9 +7,6 @@
 	import Gift from 'lucide-svelte/icons/gift';
 	import { onMount } from 'svelte';
 
-	// import { cartApiService } from '$lib/modules/cart';
-	// import Button from './button/button.svelte';
-
 	export let coupon: Coupon;
 
 	$: ({ spend_rule } = coupon);
@@ -52,7 +49,8 @@
 			getTranslatedText(spend_rule.label.value),
 			spend_rule.creditCost.value,
 			$creditsName,
-			spend_rule.discountValue?.value
+			spend_rule.discountValue?.value,
+			spend_rule.discountType.value
 		)}
 	</h4>
 

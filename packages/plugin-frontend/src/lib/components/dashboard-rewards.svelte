@@ -1,10 +1,16 @@
 <script lang="ts">
+	import { createQuery } from '@tanstack/svelte-query';
+	import { apiService } from '$lib/modules/piggy';
 	import { creditsName, pluginSettings } from '$lib/modules/settings';
+	import { QueryKeys } from '$lib/utils/query-keys';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
 	import DashboardSpendRuleCard from './dashboard-spend-rule-card.svelte';
 
-	const spentRules = window.piggySpentRules;
+	const query = createQuery({
+		queryKey: [QueryKeys.spendRules],
+		queryFn: async () => await apiService.getSpendRules()
+	});
 
 	function getNavItemText(text?: string) {
 		if (!text) return '';
@@ -12,7 +18,7 @@
 		return replaceStrings(text, [{ '{{credits_currency}}': $creditsName ?? '' }]);
 	}
 
-	$: filteredRules = spentRules?.filter(
+	$: filteredRules = $query.data?.filter(
 		(rule) => rule.status.value === 'publish' && rule.label.value
 	);
 </script>
@@ -25,9 +31,11 @@
 			</h3>
 
 			<div class="piggy-dashboard-rewards__cards">
-				{#each filteredRules as rule}
-					<DashboardSpendRuleCard {rule} />
-				{/each}
+				{#if filteredRules && filteredRules.length > 0}
+					{#each filteredRules as rule}
+						<DashboardSpendRuleCard {rule} />
+					{/each}
+				{/if}
 			</div>
 		</div>
 	</div>

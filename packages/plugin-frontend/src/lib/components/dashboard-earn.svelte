@@ -1,10 +1,16 @@
 <script lang="ts">
+	import { createQuery } from '@tanstack/svelte-query';
+	import { apiService } from '$lib/modules/piggy';
 	import { creditsName, pluginSettings } from '$lib/modules/settings';
+	import { QueryKeys } from '$lib/utils/query-keys';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import { replaceStrings } from '@piggy/lib';
 	import DashboardEarnCard from './dashboard-earn-card.svelte';
 
-	const earnRules = window.piggyEarnRules;
+	const query = createQuery({
+		queryKey: [QueryKeys.earnRules],
+		queryFn: async () => await apiService.getEarnRules()
+	});
 
 	function getNavItemText(text?: string) {
 		if (!text) return '';
@@ -19,9 +25,9 @@
 			{getNavItemText(getTranslatedText($pluginSettings.dashboard_nav_earn))}
 		</h3>
 
-		{#if earnRules}
+		{#if $query.data && $query.data.length > 0}
 			<div class="piggy-dashboard-earn__cards">
-				{#each earnRules as earnRule}
+				{#each $query.data as earnRule}
 					{#if earnRule.label.value}
 						<DashboardEarnCard {earnRule} />
 					{/if}

@@ -1,5 +1,12 @@
 import { api } from '@piggy/lib';
-import type { GetCouponsResponse, GetRewardsResponse, GetShopsResponse } from './types';
+import type {
+	GetContactResponse,
+	GetCouponsResponse,
+	GetEarnRulesResponse,
+	GetRewardsResponse,
+	GetShopsResponse,
+	GetSpendRulesResponse
+} from './types';
 
 export class PiggyApiError extends Error {
 	status: number;
@@ -46,7 +53,17 @@ export class PiggyFrontendService {
 	}
 
 	async getCoupons(userId?: number) {
-		const { data, error } = await api.get<GetCouponsResponse>(`/piggy/v1/coupons?userId=${userId}`);
+		const { data, error } = await api.get<GetCouponsResponse>(`/piggy/v1/coupons`);
+
+		if (error) {
+			throw new PiggyApiError(error.status, error.statusText, error.data);
+		}
+
+		return data;
+	}
+
+	async getContact() {
+		const { data, error } = await api.get<GetContactResponse>(`/piggy/v1/contact`);
 
 		if (error) {
 			throw new PiggyApiError(error.status, error.statusText, error.data);
@@ -67,6 +84,26 @@ export class PiggyFrontendService {
 			}
 
 			throw new Error('No data returned');
+		}
+
+		return data;
+	}
+
+	async getEarnRules() {
+		const { data, error } = await api.get<GetEarnRulesResponse>('/piggy/v1/earn-rules');
+
+		if (error) {
+			throw new PiggyApiError(error.status, error.statusText, error.data);
+		}
+
+		return data;
+	}
+
+	async getSpendRules() {
+		const { data, error } = await api.get<GetSpendRulesResponse>('/piggy/v1/spend-rules');
+
+		if (error) {
+			throw new PiggyApiError(error.status, error.statusText, error.data);
 		}
 
 		return data;

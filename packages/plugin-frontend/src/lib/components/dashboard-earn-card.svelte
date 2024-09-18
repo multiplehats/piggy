@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { createMutation } from '@tanstack/svelte-query';
+	import { createMutation, useQueryClient } from '@tanstack/svelte-query';
 	import { piggyService } from '$lib/config/services';
-	import { creditsName, hasPiggyAccount, isLoggedIn, pluginSettings } from '$lib/modules/settings';
-	import { MutationKeys } from '$lib/utils/query-keys';
+	import { creditsName, isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { contactStore, hasPiggyAccount } from '$lib/stores';
+	import { MutationKeys, QueryKeys } from '$lib/utils/query-keys';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import CheckCircle from 'lucide-svelte/icons/badge-check';
 	import { replaceStrings } from '@piggy/lib';
@@ -20,7 +21,7 @@
 	] as EarnRuleType[];
 
 	const claimableOnceTypes = [...socialTypes, 'CREATE_ACCOUNT'];
-
+	const queryClient = useQueryClient();
 	const claimRewardMutation = createMutation({
 		mutationKey: [MutationKeys.claimReward],
 		mutationFn: () => piggyService.claimReward(earnRule.id, window.piggyMiddlewareConfig.userId),
@@ -29,6 +30,8 @@
 			if (handle) {
 				socialLinkToOpen = getSocialLink(earnRule.type.value, handle);
 			}
+
+			queryClient.invalidateQueries({ queryKey: [QueryKeys.contact] });
 		}
 	});
 
@@ -64,16 +67,14 @@
 			if (socialLinkToOpen) {
 				window.open(socialLinkToOpen, '_blank');
 				socialLinkToOpen = null;
-
-				// For now reload the page, until we have all calls client side.
-				location.reload();
 			}
 		});
 	}
 
 	$: isSocial = socialTypes.includes(earnRule.type.value);
 	$: isClaimableOnce = claimableOnceTypes.includes(earnRule.type.value);
-	$: hasClaimed = window.piggyData.claimedRewards?.find(
+
+	$: hasClaimed = $contactStore?.claimedRewards?.find(
 		(reward) => reward.earn_rule_id === earnRule.id.toString() && isClaimableOnce
 	);
 </script>
@@ -90,7 +91,7 @@
 			{/if}
 		</h4>
 
-		{#if isLoggedIn && isSocial && hasPiggyAccount}
+		{#if isLoggedIn && isSocial && $hasPiggyAccount}
 			<div class="piggy-dashboard-earn-card__action">
 				{#if !hasClaimed}
 					<Button
