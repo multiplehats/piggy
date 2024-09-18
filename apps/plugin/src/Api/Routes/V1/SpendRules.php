@@ -61,6 +61,10 @@ class SpendRules extends AbstractRoute {
 						'description' => __( 'Spend rule ID', 'piggy' ),
 						'type'        => 'string',
 					],
+					'status' => [
+						'description' => __( 'Spend rule status', 'piggy' ),
+						'type'        => 'string',
+					],
 				],
 			],
 			'schema'      => [ $this->schema, 'get_public_item_schema' ],

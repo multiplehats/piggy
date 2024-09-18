@@ -325,6 +325,8 @@ final class AssetsController
 	protected function get_earn_rules_config()
 	{
 		$request = new WP_REST_Request('GET', '/piggy/v1/earn-rules');
+		$request->set_param('status', 'publish');
+
 		$response = rest_do_request($request);
 		$server = rest_get_server();
 		$data = $server->response_to_data($response, false);
@@ -344,7 +346,6 @@ final class AssetsController
 	protected function get_spend_rules_config()
 	{
 		$request = new WP_REST_Request('GET', '/piggy/v1/spend-rules');
-
 		$request->set_param('status', 'publish');
 
 		$response = rest_do_request($request);
