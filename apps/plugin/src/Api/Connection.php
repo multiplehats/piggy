@@ -486,18 +486,6 @@ class Connection {
 	}
 
 
-	public function remove_sale_price_for_discounted_products($sale_price, $product)
-	{
-		$cart = WC()->cart;
-		if ($cart) {
-			foreach ($cart->get_cart() as $cart_item) {
-				if (isset($cart_item['piggy_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
-					return '';
-				}
-			}
-		}
-		return $sale_price;
-	}
 
 	/**
 	 * Get user attributes for Piggy.
@@ -696,42 +684,79 @@ class Connection {
 	public function sync_rewards_with_spend_rules() {
 		$client = $this->init_client();
 		if (!$client) {
+			$this->logger->error("Failed to initialize client for reward sync");
 			return false;
 		}
 
 		$rewards = $this->get_rewards();
 		if (!$rewards) {
+			$this->logger->error("Failed to retrieve rewards from Piggy");
 			return false;
 		}
 
-		// Fetch all current spend rules from CPT
-		$current_spend_rules = $this->spend_rules_service->get_all_spend_rules();
+		$this->logger->info("Starting reward sync. Total rewards retrieved: " . count($rewards));
+
+		$prepared_args = array(
+			'post_type' => 'piggy_spend_rule',
+			'posts_per_page' => -1,
+			'post_status' => array('publish', 'draft', 'pending'),
+		);
+
+		$current_spend_rules = get_posts($prepared_args);
+		$this->logger->info("Current spend rules in WordPress: " . count($current_spend_rules));
+
 
 		// Collect existing Piggy UUIDs from CPT
 		$existing_uuids = array_column($current_spend_rules, '_piggy_reward_uuid', 'ID');
 
+
 		// Sync Piggy rewards with CPT (add/update)
 		$processed_uuids = [];
+		$updated_count = 0;
+		$created_count = 0;
+
 		foreach ($rewards as $reward) {
 			$mapped_reward = [
 				'title' => $reward['title'],
 				'requiredCredits' => $reward['requiredCredits'],
 				'type' => 'ORDER_DISCOUNT',
 				'uuid' => $reward['uuid'],
-				'active' => false,
+				'active' => $reward['active'],
 				'selectedReward' => $reward['uuid'],
 			];
-			$this->spend_rules_service->create_or_update_spend_rule_from_reward($mapped_reward);
+
+			// Check if the reward already exists in CPT
+			$existing_post_id = array_search($reward['uuid'], $existing_uuids);
+
+
+			if ($existing_post_id !== false) {
+				// Update existing spend rule
+				$this->logger->info("Updating existing spend rule: " . $existing_post_id . " (UUID: " . $reward['uuid'] . ")");
+
+				$this->spend_rules_service->create_or_update_spend_rule_from_reward($mapped_reward, $existing_post_id);
+				$updated_count++;
+			} else {
+				// Create new spend rule
+				$this->logger->info("Creating new spend rule for UUID: " . $reward['uuid']);
+
+				$this->spend_rules_service->create_or_update_spend_rule_from_reward($mapped_reward);
+				$created_count++;
+			}
+
 			$processed_uuids[] = $reward['uuid'];
 		}
 
 		// Delete spend rules that no longer exist in Piggy
 		$uuids_to_delete = array_diff($existing_uuids, $processed_uuids);
+		$delete_count = count($uuids_to_delete);
+		$this->logger->info("Deleting " . $delete_count . " spend rules that no longer exist in Piggy");
 		$this->spend_rules_service->delete_spend_rules_by_uuids($uuids_to_delete);
-		$this->spend_rules_service->delete_spend_rules_with_empty_uuid();
 
 		// Handle duplicated UUIDs
+		$this->logger->info("Handling any duplicated spend rules");
 		$this->spend_rules_service->handle_duplicated_spend_rules($processed_uuids);
+
+		$this->logger->info("Reward sync completed. Updated: $updated_count, Created: $created_count, Deleted: $delete_count");
 
 		return true;
 	}
