@@ -170,15 +170,6 @@ final class AssetsController
 					'before'
 				);
 
-				$piggy_data = $this->get_piggy_data();
-				if ($piggy_data) {
-					$this->assets_api->add_inline_script(
-						self::APP_HANDLE,
-						$piggy_data,
-						'before'
-					);
-				}
-
 				wp_add_inline_style(
 					self::APP_HANDLE,
 					$this->get_dynamic_css()
@@ -263,37 +254,6 @@ final class AssetsController
                 languages: " . wp_json_encode($all_languages) . ",
                 storeApiNonce: '" . esc_js(wp_create_nonce('wc_store_api')) . "',
                 wcStoreApiNonceTimestamp: '" . esc_js(time()) . "'
-            };
-        ";
-	}
-
-	/**
-	 * Get piggy data.
-	 *
-	 * @return string|null
-	 */
-	protected function get_piggy_data()
-	{
-		$client = $this->connection->init_client();
-
-		if ($client === null) {
-			$this->logger->error("Failed to initialize client");
-
-			return null;
-		}
-
-		$user_id = get_current_user_id();
-		$uuid = get_user_meta( get_current_user_id(), 'piggy_uuid', true);
-		$contact = $uuid ? $this->connection->get_contact( $uuid ) : null;
-		$shop_id = get_option('piggy_shop_uuid');
-		$shop = $shop_id ? $this->connection->get_shop( $shop_id ) : null;
-		$claimed_rewards = $uuid ? $this->connection->get_user_reward_logs( $user_id ) : null;
-
-		return "
-            window.piggyData = {
-                contact: " . wp_json_encode($contact) . ",
-                shop: " . wp_json_encode($shop) . ",
-				claimedRewards: " . wp_json_encode($claimed_rewards) . ",
             };
         ";
 	}

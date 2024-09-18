@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { createMutation } from '@tanstack/svelte-query';
 	import { piggyService } from '$lib/config/services';
-	import { creditsName, hasPiggyAccount, isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { creditsName, isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { contactStore, hasPiggyAccount } from '$lib/stores';
 	import { MutationKeys } from '$lib/utils/query-keys';
 	import { getSpendRuleLabel, getTranslatedText } from '$lib/utils/translated-text';
 	import Gift from 'lucide-svelte/icons/gift';
@@ -27,7 +28,7 @@
 		return piggyService.claimSpendRule(id, window.piggyMiddlewareConfig.userId);
 	}
 
-	$: creditsAccumulated = window.piggyData.contact?.balance.credits ?? 0;
+	$: creditsAccumulated = $contactStore?.contact?.balance?.credits ?? 0;
 	$: creditsRequired = rule.creditCost.value;
 	$: if (creditsRequired) {
 		progress.set(creditsAccumulated / creditsRequired);
@@ -102,7 +103,7 @@
 		</div>
 	{/if}
 
-	{#if isLoggedIn && hasPiggyAccount}
+	{#if isLoggedIn && $hasPiggyAccount}
 		<div class="piggy-dashboard-earn-card__action">
 			<Button
 				loading={$claimSpendRuleMutation.isPending}

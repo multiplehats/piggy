@@ -46,7 +46,7 @@ class EarnReward extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'permission_callback' => '__return_true',
 				'args'                => [
 					'earnRuleId' => [
 						'description' => __( 'The Earn Rule ID', 'piggy' ),

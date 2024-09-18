@@ -2,7 +2,8 @@
 	import { createMutation } from '@tanstack/svelte-query';
 	import { Button } from '$lib/components/button/index.js';
 	import { piggyService } from '$lib/config/services';
-	import { hasPiggyAccount, isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { isLoggedIn, pluginSettings } from '$lib/modules/settings';
+	import { contactStore, hasPiggyAccount } from '$lib/stores';
 	import { MutationKeys } from '$lib/utils/query-keys';
 	import { getTranslatedText } from '$lib/utils/translated-text';
 	import BadgeEuro from 'lucide-svelte/icons/badge-euro';
@@ -78,7 +79,7 @@
 		$joinProgramMutation.mutate();
 	}
 
-	$: isContactNull = isLoggedIn && !hasPiggyAccount;
+	$: isContactNull = isLoggedIn && !$hasPiggyAccount;
 </script>
 
 <section>
@@ -89,7 +90,7 @@
 			{:else}
 				{getHeaderTitle(
 					getTranslatedText($pluginSettings.dashboard_title_logged_in),
-					window.piggyData.contact?.balance.credits ?? 0
+					$contactStore?.contact?.balance?.credits ?? 0
 				)}
 			{/if}
 		{:else}

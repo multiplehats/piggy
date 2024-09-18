@@ -11,11 +11,8 @@
 	import { hooks } from '$lib/utils/hooks';
 	import { onMount } from 'svelte';
 	import type { IWooSettings, PluginOptionsFrontend } from '@piggy/types/plugin';
-	import DashboardHeaderPts from './components/dashboard-header-pts.svelte';
+	import Dashboard from './components/dashboard.svelte';
 	import './global.css';
-	import DashboardCoupons from './components/dashboard-coupons.svelte';
-	import DashboardEarn from './components/dashboard-earn.svelte';
-	import DashboardRewards from './components/dashboard-rewards.svelte';
 
 	export let wcSettings: IWooSettings;
 	export let pluginSettings: PluginOptionsFrontend;
@@ -56,10 +53,7 @@
 	{#if $settingsState}
 		{#if $settingsState.plugin_enable}
 			<div class="piggy-dashboard">
-				<DashboardHeaderPts />
-				<DashboardCoupons />
-				<DashboardEarn />
-				<DashboardRewards />
+				<Dashboard />
 			</div>
 		{/if}
 	{/if}
