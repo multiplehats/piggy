@@ -83,7 +83,7 @@ export function upsertEarnRuleMutationConfig(
 				opts.onMutateCb(earnRule);
 			}
 		},
-		onSuccess: (newRule) => {
+		onSuccess: async (newRule) => {
 			toast.success(__('Earn rule saved', 'piggy'));
 
 			if (opts.onSuccessCb) {

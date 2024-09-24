@@ -46,7 +46,7 @@
 			client,
 			{},
 			{
-				// onSuccessCb: () => navigate('/loyalty-program')
+				onSuccessCb: async () => await client.refetchQueries({ queryKey: [QueryKeys.earnRules] })
 			}
 		)
 	);
@@ -216,7 +216,7 @@
 		</div>
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
-			<Button size="sm">
+			<Button size="sm" on:click={handleSave}>
 				{__('Save rule', 'piggy')}
 			</Button>
 		</div>
