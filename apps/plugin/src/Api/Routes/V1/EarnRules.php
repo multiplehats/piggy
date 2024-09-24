@@ -148,6 +148,7 @@ class EarnRules extends AbstractRoute {
 
 		$id = $request->get_param( 'id' );
 
+
 		if($id) {
 			// Get a specific post id
 			$prepared_args['p'] = $id;

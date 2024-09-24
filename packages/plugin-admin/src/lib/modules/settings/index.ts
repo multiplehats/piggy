@@ -108,7 +108,7 @@ export class SettingsAdminService {
 
 	async getEarnRuleById({ id }: GetEarnRuleByIdParams): Promise<GetEarnRuleByIdResponse> {
 		const { data, error } = await api.get<GetEarnRuleByIdResponse>(
-			`/piggy/v1/earn-rules/?id=${id}`,
+			`/piggy/v1/earn-rules/?id=${id}&status=publish,draft`,
 			{
 				cache: 'no-store'
 			}
