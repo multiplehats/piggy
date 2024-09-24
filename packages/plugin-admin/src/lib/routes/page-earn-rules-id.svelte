@@ -46,7 +46,7 @@
 			client,
 			{},
 			{
-				onSuccessCb: async () => await client.refetchQueries({ queryKey: [QueryKeys.earnRules] })
+				onSuccessCb: () => client.refetchQueries({ queryKey: [QueryKeys.earnRules] })
 			}
 		)
 	);

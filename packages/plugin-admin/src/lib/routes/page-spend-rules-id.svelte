@@ -47,7 +47,7 @@
 			client,
 			{},
 			{
-				// onSuccessCb: () => navigate('/loyalty-program')
+				onSuccessCb: () => client.refetchQueries({ queryKey: [QueryKeys.spendRules] })
 			}
 		)
 	);
