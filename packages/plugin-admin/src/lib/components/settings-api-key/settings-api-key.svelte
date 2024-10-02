@@ -19,9 +19,9 @@
 		queryFn: async () => await service.getShops(),
 		refetchOnWindowFocus: true
 	});
-	const saveSettingsMutation = createMutation(
-		saveSettingsMutationConfig(client)
-	);
+	// const saveSettingsMutation = createMutation(
+	// 	saveSettingsMutationConfig(client)
+	// );
 
 	$: {
 		isLoading = $query.isLoading || $shopQuery.isLoading;
@@ -33,7 +33,6 @@
 	description={$settingsState.api_key.description}
 	id={$settingsState.api_key.id}
 	bind:value={$settingsState.api_key.value}
-	on:change={({ currentTarget }) => $saveSettingsMutation.mutate(settingsState)}
 />
 
 {#if $shopQuery?.data}
