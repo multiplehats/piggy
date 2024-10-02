@@ -20,11 +20,7 @@
 		refetchOnWindowFocus: true
 	});
 	const saveSettingsMutation = createMutation(
-		saveSettingsMutationConfig(client, {
-			onSuccess: async () => {
-				await client.invalidateQueries({ queryKey: [QueryKeys.settings] });
-			}
-		})
+		saveSettingsMutationConfig(client)
 	);
 
 	$: {
