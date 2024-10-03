@@ -98,9 +98,7 @@ const wcStoreApiNonceMiddleware: APIFetchMiddleware = (options, next) => {
 	if (isStoreApiRequest(options)) {
 		options = appendNonceHeader(options);
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 		if (Array.isArray(options?.data?.requests)) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
 			options.data.requests = options.data.requests.map(appendNonceHeader);
 		}
 	}
@@ -115,7 +113,9 @@ apiFetch.use(wcStoreApiNonceMiddleware);
 apiFetch.setNonce = setNonce;
 
 updateNonce(
+	// @ts-expect-error - Need to add this type.
 	window.piggyMiddlewareConfig.storeApiNonce,
+	// @ts-expect-error - Need to add this type.
 	window.piggyMiddlewareConfig.wcStoreApiNonceTimestamp
 );
 

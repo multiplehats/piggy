@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import process from "node:process";
 import { v4wp } from "@kucrut/vite-for-wp";
 import { wp_globals } from "@kucrut/vite-for-wp/utils";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
@@ -7,7 +8,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { type UserConfig, splitVendorChunkPlugin } from "vite";
 import { createBanner } from "./bin/assets-banner";
 
-const env = process.env.NODE_ENV;
+// const env = process.env.NODE_ENV;
 const analyze = process.env.ANALYZE === "true";
 
 const config = {

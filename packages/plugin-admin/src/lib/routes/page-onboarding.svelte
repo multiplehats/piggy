@@ -10,6 +10,7 @@
 	import { settingsState } from "$lib/stores/settings";
 	import { QueryKeys } from "$lib/utils/query-keys";
 
+	// eslint-disable-next-line no-unused-expressions
 	$$restProps;
 
 	const navigate = useNavigate();

@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import process from "node:process";
 import { v4wp } from "@kucrut/vite-for-wp";
 import { wp_globals } from "@kucrut/vite-for-wp/utils";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
@@ -9,7 +10,7 @@ import { splitVendorChunkPlugin } from "vite";
 import { imagetools } from "vite-imagetools";
 import { createBanner } from "./bin/assets-banner";
 
-const env = process.env.NODE_ENV;
+// const env = process.env.NODE_ENV;
 const analyze = process.env.ANALYZE === "true";
 
 const config = {
@@ -19,6 +20,7 @@ const config = {
 			input: "ts/admin/index.ts",
 			outDir: "dist/admin",
 		}),
+		// @ts-expect-error - Doesn't have the right types.
 		external_globals(wp_globals()),
 		imagetools(),
 		svelte({

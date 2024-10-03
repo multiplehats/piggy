@@ -53,7 +53,9 @@ export class PiggyFrontendService {
 	}
 
 	async getCoupons(userId?: number) {
-		const { data, error } = await api.get<GetCouponsResponse>(`/piggy/v1/coupons`);
+		const { data, error } = await api.get<GetCouponsResponse>(
+			`/piggy/v1/coupons?userId=${userId}`
+		);
 
 		if (error) {
 			throw new PiggyApiError(error.status, error.statusText, error.data);

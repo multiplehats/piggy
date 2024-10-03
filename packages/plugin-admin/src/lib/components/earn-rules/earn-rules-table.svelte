@@ -228,6 +228,7 @@
 								on:click={() => navigate(`earn-rules/${rule.id}`)}
 							>
 								<Table.Cell>
+									<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 									<div class="font-medium">{@html rule.title.value}</div>
 								</Table.Cell>
 

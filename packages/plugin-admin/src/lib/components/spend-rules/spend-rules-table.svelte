@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createMutation, createQuery, useQueryClient } from "@tanstack/svelte-query";
+	import { createMutation, createQuery } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
 	import { WalletMinimal } from "lucide-svelte";
 	import { useNavigate } from "svelte-navigator";
@@ -13,7 +13,7 @@
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
-	const client = useQueryClient();
+
 	const query = createQuery({
 		queryKey: [QueryKeys.spendRules],
 		retry: false,
@@ -94,6 +94,7 @@
 								on:click={() => navigate(`spend-rules/${rule.id}`)}
 							>
 								<Table.Cell>
+									<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 									<div class="font-medium">{@html rule.title.value}</div>
 								</Table.Cell>
 

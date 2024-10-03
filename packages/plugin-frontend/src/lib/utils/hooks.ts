@@ -5,24 +5,27 @@ import type { Callback } from "@wordpress/hooks";
  */
 type ActionHookName = "on.init";
 
-const ACTION_HOOK_NAMES: Record<ActionHookName, `on.${string}` | `do.${string}`> = {
+const _ACTION_HOOK_NAMES: Record<ActionHookName, `on.${string}` | `do.${string}`> = {
 	"on.init": "on.init",
 } as const;
 
-type ActionHookNames = keyof typeof ACTION_HOOK_NAMES;
+type ActionHookNames = keyof typeof _ACTION_HOOK_NAMES;
 
 const NAMESPACE = "piggy";
 
 export const hooks = {
 	doAction: (hookname: ActionHookNames, ...args: unknown[]) => {
+		// @ts-expect-error - This exists in the global scope.
 		window.wp.hooks.doAction(hookname, ...args);
 	},
 
 	addAction: (hookname: ActionHookNames, callback: Callback, priority?: number) => {
+		// @ts-expect-error - This exists in the global scope.
 		window.wp.hooks.addAction(hookname, NAMESPACE, callback, priority);
 	},
 
 	doingAction: (hookname: ActionHookNames) => {
+		// @ts-expect-error - This exists in the global scope.
 		return window.wp.hooks.doingAction(hookname);
 	},
 };

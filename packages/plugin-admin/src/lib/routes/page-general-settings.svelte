@@ -7,6 +7,7 @@
 	import { saveSettingsMutationConfig } from "$lib/modules/settings/mutations";
 	import { settingsState } from "$lib/stores/settings";
 
+	// eslint-disable-next-line no-unused-expressions
 	$$restProps;
 
 	const location = useLocation();

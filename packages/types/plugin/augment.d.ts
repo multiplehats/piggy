@@ -3,7 +3,7 @@ import type { IWooSettings, PluginOptionsFrontend } from "./settings";
 import type { SpendRuleValueItem } from "./settings/adminTypes";
 
 declare global {
-	interface Window {
+	type Window = {
 		// Frontend settings
 		piggyConfig: PluginOptionsFrontend;
 		// WooCommerce settings
@@ -21,14 +21,11 @@ declare global {
 			storeApiNonce: string;
 			wcStoreApiNonceTimestamp: string;
 		};
-		// Admin config
-		// piggyAdminConfig: PluginAdminConfig;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		wp: {
 			hooks: Hooks;
 			[other: string]: unknown;
 		};
-	}
+	};
 }
 
 export {};

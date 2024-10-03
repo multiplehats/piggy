@@ -18,7 +18,7 @@
 				await onSaved();
 				saved = true;
 				loading = false;
-			} catch (error) {
+			} finally {
 				loading = false;
 				saved = false;
 			}

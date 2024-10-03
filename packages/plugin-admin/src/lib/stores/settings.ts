@@ -1,6 +1,5 @@
 import { get, writable } from "svelte/store";
 import type { PluginOptionsAdmin, PluginOptionsAdminKeys } from "@piggy/types";
-import { zPluginOptionsAdmin } from "@piggy/types/plugin";
 import type { GetSettingsResponse } from "$lib/modules/settings/types";
 
 // Settings State
@@ -42,28 +41,4 @@ export function updateSettings({
 			settings: settingsState,
 		});
 	}
-}
-
-/**
- * Saves the settings by calling the API.
- */
-export function saveSettings() {
-	const settings = get(settingsState);
-
-	const validation = zPluginOptionsAdmin.safeParse(settings);
-
-	if (!validation.success) {
-		console.error(validation.error);
-
-		return;
-	}
-
-	// From the settings object, create an array of settings to save.
-	const settingsToSave = Object.entries(settings).reduce(
-		(acc, [key, value]) => {
-			acc[key] = value.value;
-			return acc;
-		},
-		{} as Record<string, unknown>
-	);
 }

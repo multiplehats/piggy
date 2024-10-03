@@ -23,16 +23,16 @@
 		value: string[];
 	};
 
-	export let multiple = true;
-	export let id: string;
-	export let value: string[] = [];
-	export { className as class };
-
 	const service = new PiggyAdminService();
 
 	let className: string | undefined = undefined;
 	let open = false;
 	let searchTerm = "";
+
+	export let multiple = true;
+	export let id: string;
+	export let value: string[] = [];
+	export { className as class };
 
 	function closeAndFocusTrigger(triggerId: string) {
 		open = false;
@@ -60,6 +60,15 @@
 	}
 	const searchProductsDebounced = debounce(searchProducts, 500);
 
+	$: selectedProducts = $initialProductsQuery.data || [];
+
+	$: displayedProducts = searchTerm ? $searchProductsMutation.data || [] : selectedProducts;
+
+	$: selectedValue =
+		selectedProducts.length > 0
+			? selectedProducts.map((p) => p.title).join(", ")
+			: __("Select product(s)...");
+
 	function onSelectProduct(productId: string) {
 		if (multiple) {
 			value = value.includes(productId)
@@ -81,15 +90,6 @@
 			}
 		}
 	}
-
-	$: selectedProducts = $initialProductsQuery.data || [];
-
-	$: displayedProducts = searchTerm ? $searchProductsMutation.data || [] : selectedProducts;
-
-	$: selectedValue =
-		selectedProducts.length > 0
-			? selectedProducts.map((p) => p.title).join(", ")
-			: __("Select product(s)...");
 </script>
 
 <div class={cn("flex flex-col justify-between", className)}>
@@ -125,7 +125,6 @@
 							<Command.Item
 								value={product.id.toString()}
 								onSelect={() => {
-									console.log("onSelectProduct", product.id.toString());
 									onSelectProduct(product.id.toString());
 									if (!multiple) {
 										closeAndFocusTrigger(ids.trigger);
@@ -144,7 +143,7 @@
 												: "opacity-0"
 									)}
 								/>
-
+								<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 								{@html product.title}
 							</Command.Item>
 						{/each}

@@ -25,7 +25,6 @@
 	});
 
 	const onPickerColorChanged = debounce((event: CustomEvent<{ value: string }>) => {
-		const previousValue = value;
 		value = event.detail.value;
 
 		if (!id) {
@@ -41,7 +40,6 @@
 	}, 75);
 
 	const onInputChange = debounce((event: Event) => {
-		const previousValue = value;
 		const _value = (event.target as HTMLInputElement).value;
 
 		if (!id) {

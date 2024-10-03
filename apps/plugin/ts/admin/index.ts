@@ -12,6 +12,7 @@ function mountFrontend() {
 			return;
 		}
 
+		// eslint-disable-next-line no-new
 		new Admin({
 			target: adminMount,
 		});

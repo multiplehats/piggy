@@ -13,7 +13,7 @@
 		role="list"
 		class="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0"
 	>
-		{#each $onboardingSteps as { id, title, status, href }, i}
+		{#each $onboardingSteps as { title, status }, i}
 			{@const isLastSteps = i === $onboardingSteps.length - 1}
 
 			<li class="relative md:flex md:flex-1">

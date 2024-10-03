@@ -10,15 +10,16 @@ export const OnboardingStepId = {
 	generalSettings: "general-settings",
 } as const;
 
-type OnboardingStepId = (typeof OnboardingStepId)[keyof typeof OnboardingStepId];
+type OnboardingStepIdType = (typeof OnboardingStepId)[keyof typeof OnboardingStepId];
 
 type Step = {
-	id: OnboardingStepId;
+	id: OnboardingStepIdType;
 	title: string;
 	href: string;
 	status: "completed" | "current" | "upcoming";
 	showActions: boolean;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+	// eslint-disable-next-line ts/no-explicit-any
 	component?: typeof SvelteComponent<any>;
 	initialising: boolean;
 };
@@ -55,15 +56,15 @@ const initialSteps: Step[] = [
 
 export const onboardingSteps = writable<Step[]>(initialSteps);
 
-const currentStepId = writable<OnboardingStepId>("welcome");
+const currentStepId = writable<OnboardingStepIdType>("welcome");
 
-function setStepStatus(stepId: OnboardingStepId, status: "completed" | "current" | "upcoming") {
+function setStepStatus(stepId: OnboardingStepIdType, status: "completed" | "current" | "upcoming") {
 	onboardingSteps.update((steps) => {
 		return steps.map((step) => (step.id === stepId ? { ...step, status } : step));
 	});
 }
 
-function findStepHref(stepId: OnboardingStepId): string {
+function findStepHref(stepId: OnboardingStepIdType): string {
 	const step = initialSteps.find((step) => step.id === stepId);
 	if (!step) {
 		throw new Error(`No href found for step: ${stepId}`);
@@ -71,17 +72,20 @@ function findStepHref(stepId: OnboardingStepId): string {
 	return step.href;
 }
 
-function goToStep(stepId: OnboardingStepId) {
+function goToStep(stepId: OnboardingStepIdType) {
 	currentStepId.set(stepId);
 	setStepStatus(stepId, "current");
 	return { href: findStepHref(stepId) };
 }
 
-function completeStep(stepId: OnboardingStepId) {
+function completeStep(stepId: OnboardingStepIdType) {
 	setStepStatus(stepId, "completed");
 }
 
-function completeAndNavigate(toCompleteStepId: OnboardingStepId, nextStepId: OnboardingStepId) {
+function completeAndNavigate(
+	toCompleteStepId: OnboardingStepIdType,
+	nextStepId: OnboardingStepIdType
+) {
 	completeStep(toCompleteStepId);
 	return goToStep(nextStepId);
 }
@@ -125,7 +129,7 @@ function nextStep() {
 	};
 }
 
-function setInitialising(stepId: OnboardingStepId, initialising: boolean) {
+function setInitialising(stepId: OnboardingStepIdType, initialising: boolean) {
 	onboardingSteps.update((steps) => {
 		return steps.map((step) => (step.id === stepId ? { ...step, initialising } : step));
 	});

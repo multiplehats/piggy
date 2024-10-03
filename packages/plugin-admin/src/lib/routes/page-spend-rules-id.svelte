@@ -81,8 +81,6 @@
 	}
 
 	$: ruleTypeLabel = $rule?.type?.options[$rule?.type?.value]?.label ?? "";
-
-	$: console.log($rule);
 </script>
 
 {#if $query.isLoading}
@@ -103,6 +101,7 @@
 			</Button>
 
 			<h1 class="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold sm:grow-0">
+				<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html $rule.title.value}
 			</h1>
 

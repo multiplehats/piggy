@@ -27,6 +27,7 @@ type HslaColor = {
 	a: number;
 };
 
+// eslint-disable-next-line regexp/no-unused-capturing-group
 export const isHex = (color: string): boolean => /^#([A-F0-9]{6}|[A-F0-9]{3})$/i.test(color);
 
 export function hexToRgba(hex: string): RgbaColor {

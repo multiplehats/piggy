@@ -27,6 +27,7 @@ function mountFrontend() {
 
 	if (frontendMounts.length > 0) {
 		Array.from(frontendMounts).forEach((frontendMount) => {
+			// eslint-disable-next-line no-new
 			new CustomerDashbaord({
 				target: frontendMount,
 				props: {

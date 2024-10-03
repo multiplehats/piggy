@@ -34,8 +34,6 @@
 		});
 	}, 100);
 
-	$: console.log($apiKeyQuery.data);
-
 	$: {
 		isLoading = $apiKeyQuery.isLoading || $shopQuery.isLoading;
 

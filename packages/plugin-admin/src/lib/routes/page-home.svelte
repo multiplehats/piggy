@@ -2,6 +2,7 @@
 	import { useLocation } from "svelte-navigator";
 	import { Alert } from "$lib/components/ui/alert";
 
+	// eslint-disable-next-line no-unused-expressions
 	$$restProps;
 
 	const location = useLocation();

@@ -71,8 +71,6 @@
 	}
 
 	$: if ($query.data && $query.isSuccess) {
-		console.log("Incoming data: ", $query.data);
-
 		rule.set($query.data);
 	}
 
@@ -93,6 +91,7 @@
 			</Button>
 
 			<h1 class="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold sm:grow-0">
+				<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html $rule.title.value}
 			</h1>
 
@@ -127,6 +126,7 @@
 						<div class="grid gap-6">
 							{#if $rule.type.value === "PLACE_ORDER"}
 								<Alert title={__("Credit Calculation", "piggy")} type="info">
+									<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 									{@html sprintf(
 										__(
 											'These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href="%s" class="underline" target="_blank" rel="noopener noreferrer">Piggy Dashboard</a>.',

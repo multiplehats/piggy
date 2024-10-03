@@ -13,7 +13,7 @@
 
 	onMount(() => {
 		// Close mobile menu when route changes.
-		location.subscribe((location) => {
+		location.subscribe(() => {
 			mobileMenuOpen = false;
 		});
 	});

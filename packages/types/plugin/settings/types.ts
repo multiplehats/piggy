@@ -13,10 +13,12 @@ function transformSchema<T extends z.ZodRawShape>(
 
 	// Iterate over each key in the original schema shape
 	for (const key in schema.shape) {
+		// eslint-disable-next-line no-prototype-builtins
 		if (schema.shape.hasOwnProperty(key)) {
 			const originalField = schema.shape[key as keyof T];
 
 			// Check if the field is a refinement and extract the inner type
+			// eslint-disable-next-line ts/no-explicit-any
 			const getInnerType = (field: any): any => {
 				if (field._def.typeName === "ZodEffects") {
 					return getInnerType(field._def.schema);

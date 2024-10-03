@@ -24,6 +24,8 @@
 		onError: (error) => {
 			if (error instanceof WooCommerceStoreApiError) {
 				const { message, status, statusText } = error;
+
+				console.error(message, status, statusText);
 			}
 		},
 	});

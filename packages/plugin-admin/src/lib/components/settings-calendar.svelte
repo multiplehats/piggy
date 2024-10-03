@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DateFormatter, type DateValue, parseAbsoluteToLocal } from "@internationalized/date";
+	import { type DateValue, parseAbsoluteToLocal } from "@internationalized/date";
 	import { __ } from "@wordpress/i18n";
 	import CalendarIcon from "lucide-svelte/icons/calendar";
 	import { onMount } from "svelte";
@@ -27,10 +27,6 @@
 
 	onMount(() => {
 		rawValue = value ? parseAbsoluteToLocal(value) : undefined;
-	});
-
-	const df = new DateFormatter("en-US", {
-		dateStyle: "long",
 	});
 </script>
 

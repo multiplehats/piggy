@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createQuery, useQueryClient } from "@tanstack/svelte-query";
+	import { createQuery } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
 	import SettingsCombobox from "../settings-combobox.svelte";
 	import { Alert } from "../ui/alert";
@@ -10,7 +10,7 @@
 	export let selectedReward: GetSpendRuleByIdResponse[0]["selectedReward"];
 
 	const service = new PiggyAdminService();
-	const client = useQueryClient();
+
 	const query = createQuery({
 		queryKey: [QueryKeys.piggyRewards],
 		queryFn: async () => await service.getRewards(),
