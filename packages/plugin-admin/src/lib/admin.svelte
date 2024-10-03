@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
-	import { __ } from '@wordpress/i18n';
-	import Layout from '$lib/components/layout-wrapper.svelte';
-	import PageGeneralSettings from '$lib/routes/page-general-settings.svelte';
-	import { history } from '$lib/utils/custom-history';
-	import { Route, Router } from 'svelte-navigator';
-	import PageDashboardSettings from './routes/page-dashboard-settings.svelte';
-	import PageEarnRulesId from './routes/page-earn-rules-id.svelte';
-	import PageLoyaltyProgram from './routes/page-loyalty-program.svelte';
-	import PageOnboarding from './routes/page-onboarding.svelte';
-	import PageSpendRulesId from './routes/page-spend-rules-id.svelte';
-	import '@piggy/tailwind-config/global.postcss';
+	import { MutationCache, QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
+	import { Route, Router } from "svelte-navigator";
+	import PageDashboardSettings from "./routes/page-dashboard-settings.svelte";
+	import PageEarnRulesId from "./routes/page-earn-rules-id.svelte";
+	import PageLoyaltyProgram from "./routes/page-loyalty-program.svelte";
+	import PageOnboarding from "./routes/page-onboarding.svelte";
+	import PageSpendRulesId from "./routes/page-spend-rules-id.svelte";
+	import { history } from "$lib/utils/custom-history";
+	import Layout from "$lib/components/layout-wrapper.svelte";
+	import PageGeneralSettings from "$lib/routes/page-general-settings.svelte";
+	import "@piggy/tailwind-config/global.postcss";
 
 	const mutationCache = new MutationCache();
 
@@ -18,9 +17,9 @@
 		mutationCache,
 		defaultOptions: {
 			queries: {
-				staleTime: 2 * 60 * 1000
-			}
-		}
+				staleTime: 2 * 60 * 1000,
+			},
+		},
 	});
 </script>
 

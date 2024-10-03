@@ -1,6 +1,6 @@
-import { __ } from '@wordpress/i18n';
-import { z } from 'zod';
-import * as adminFields from './adminTypes';
+import { __ } from "@wordpress/i18n";
+import { z } from "zod";
+import * as adminFields from "./adminTypes";
 
 /**
  * Transforms a Zod schema by extracting the `value` field from each property.
@@ -18,7 +18,7 @@ function transformSchema<T extends z.ZodRawShape>(
 
 			// Check if the field is a refinement and extract the inner type
 			const getInnerType = (field: any): any => {
-				if (field._def.typeName === 'ZodEffects') {
+				if (field._def.typeName === "ZodEffects") {
 					return getInnerType(field._def.schema);
 				}
 				return field;
@@ -29,11 +29,11 @@ function transformSchema<T extends z.ZodRawShape>(
 			// Safely checking if 'value' exists in 'refinedField.shape'
 			if (
 				refinedField &&
-				typeof refinedField === 'object' &&
-				'shape' in refinedField &&
-				typeof refinedField.shape === 'object' &&
+				typeof refinedField === "object" &&
+				"shape" in refinedField &&
+				typeof refinedField.shape === "object" &&
 				refinedField?.shape &&
-				'value' in refinedField.shape
+				"value" in refinedField.shape
 			) {
 				newShape[key as keyof T] = refinedField.shape.value as ExtractValue<T[keyof T]>;
 			} else {
@@ -48,11 +48,8 @@ function transformSchema<T extends z.ZodRawShape>(
 }
 
 // Utility type to extract the 'value' type from a Zod schema if it follows a specific pattern
-type ExtractValue<S> = S extends z.ZodObject<infer U>
-	? U extends { value: infer V }
-		? V
-		: never
-	: never;
+type ExtractValue<S> =
+	S extends z.ZodObject<infer U> ? (U extends { value: infer V } ? V : never) : never;
 
 /**
  * Options interface for both the frontend and admin.
@@ -67,12 +64,12 @@ export const zBasePluginOptions = z.object({
 	credits_spend_rule_progress: adminFields.zTranslatableText,
 	include_guests: adminFields.zSwitch,
 	reward_order_statuses: adminFields.zCheckboxes.refine(
-		({ value }) => Object.entries(value).some(([key, value]) => value === 'on'),
-		__('At least one must be selected.', 'mycred')
+		({ value }) => Object.entries(value).some(([_, value]) => value === "on"),
+		__("At least one must be selected.", "mycred")
 	),
 	withdraw_order_statuses: adminFields.zCheckboxes.refine(
-		({ value }) => Object.entries(value).some(([key, value]) => value === 'on'),
-		__('At least one must be selected.', 'mycred')
+		({ value }) => Object.entries(value).some(([_, value]) => value === "on"),
+		__("At least one must be selected.", "mycred")
 	),
 	reward_order_parts: adminFields.zCheckboxes,
 	marketing_consent_subscription: adminFields.zSwitch,
@@ -90,7 +87,7 @@ export const zBasePluginOptions = z.object({
 	dashboard_nav_rewards: adminFields.zTranslatableText,
 	dashboard_nav_activity: adminFields.zTranslatableText,
 	dashboard_earn_cta: adminFields.zTranslatableText,
-	dashboard_spend_cta: adminFields.zTranslatableText
+	dashboard_spend_cta: adminFields.zTranslatableText,
 });
 
 /**
@@ -99,7 +96,7 @@ export const zBasePluginOptions = z.object({
  */
 export const zPluginOptionsAdmin = zBasePluginOptions.extend({
 	api_key: adminFields.zApiKey,
-	shop_uuid: adminFields.zShopUuid
+	shop_uuid: adminFields.zShopUuid,
 });
 
 export type PluginOptionsAdmin = z.infer<typeof zPluginOptionsAdmin>;
@@ -120,7 +117,7 @@ export const zPluginEarnRuleItemValues = transformSchema(
 		expiresAt: true,
 		minimumOrderAmount: true,
 		socialHandle: true,
-		credits: true
+		credits: true,
 	})
 );
 export type PluginEarnRuleItemValues = z.infer<typeof zPluginEarnRuleItemValues>;
@@ -140,7 +137,7 @@ export const zPluginSpendRuleItemValues = transformSchema(
 		fulfillment: true,
 		discountType: true,
 		discountValue: true,
-		minimumPurchaseAmount: true
+		minimumPurchaseAmount: true,
 	})
 );
 export type PluginSpendRuleItemValues = z.infer<typeof zPluginSpendRuleItemValues>;
@@ -159,16 +156,16 @@ export type PluginOptionsFrontend = z.infer<typeof zPluginOptionsFrontend>;
  *
  * @deprecated This is deprecated and should not be used.
  */
-export interface PluginAdminConfig {
+export type PluginAdminConfig = {
 	nonce: string;
 	nonceTimestamp: string;
 	ajaxUrl: string;
 	siteName: string;
-}
+};
 
 // WC Settings: Window object.
 
-export interface WooCommerceSiteCurrency {
+export type WooCommerceSiteCurrency = {
 	// The ISO code for the currency.
 	code: string;
 	// The precision (decimal places).
@@ -183,18 +180,18 @@ export interface WooCommerceSiteCurrency {
 	thousandSeparator: string;
 	// The format string use for displaying an amount in this currency.
 	priceFormat: string;
-}
+};
 
-type SymbolPosition = 'left' | 'left_space' | 'right' | 'right_space';
+type SymbolPosition = "left" | "left_space" | "right" | "right_space";
 
-export interface WooCommerceSiteLocale {
+export type WooCommerceSiteLocale = {
 	// The locale string for the current site.
 	siteLocale: string;
 	// The locale string for the current user.
 	userLocale: string;
 	// An array of short weekday strings in the current user's locale.
 	weekdaysShort: string[];
-}
+};
 
 type wcConfigPage =
 	| {
@@ -204,7 +201,7 @@ type wcConfigPage =
 	  }
 	| undefined;
 
-export interface IWooSettings {
+export type IWooSettings = {
 	adminUrl: string;
 	countries: Record<string, string> | never[];
 	currency: WooCommerceSiteCurrency;
@@ -237,8 +234,8 @@ export interface IWooSettings {
 	taxTotalDisplayItemized: boolean;
 	countryTaxOrVat: string;
 	endpoints: {
-		'order-received': {
+		"order-received": {
 			active: boolean;
 		};
 	};
-}
+};

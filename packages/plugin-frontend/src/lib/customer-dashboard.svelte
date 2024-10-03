@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
-	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
-	import { __ } from '@wordpress/i18n';
-	import { isDev } from '$lib/config/environment';
+	import { MutationCache, QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
+	import { SvelteQueryDevtools } from "@tanstack/svelte-query-devtools";
+	import { onMount } from "svelte";
+	import type { IWooSettings, PluginOptionsFrontend } from "@piggy/types/plugin";
+	import Dashboard from "./components/dashboard.svelte";
+	import { isDev } from "$lib/config/environment";
 	import {
 		pluginSettings as settingsState,
-		wcSettings as wcSettingsState
-	} from '$lib/modules/settings';
-	import { WooCommerceStoreApiError } from '$lib/utils/errors.js';
-	import { hooks } from '$lib/utils/hooks';
-	import { onMount } from 'svelte';
-	import type { IWooSettings, PluginOptionsFrontend } from '@piggy/types/plugin';
-	import Dashboard from './components/dashboard.svelte';
-	import './global.css';
+		wcSettings as wcSettingsState,
+	} from "$lib/modules/settings";
+	import { WooCommerceStoreApiError } from "$lib/utils/errors.js";
+	import { hooks } from "$lib/utils/hooks";
+	import "./global.css";
 
 	export let wcSettings: IWooSettings;
 	export let pluginSettings: PluginOptionsFrontend;
@@ -25,23 +24,21 @@
 		onError: (error) => {
 			if (error instanceof WooCommerceStoreApiError) {
 				const { message, status, statusText } = error;
-
-				return;
 			}
-		}
+		},
 	});
 
 	onMount(async () => {
-		hooks.doAction('on.init', $settingsState);
+		hooks.doAction("on.init", $settingsState);
 	});
 
 	const queryClient = new QueryClient({
 		mutationCache,
 		defaultOptions: {
 			queries: {
-				staleTime: 2 * 60 * 1000
-			}
-		}
+				staleTime: 2 * 60 * 1000,
+			},
+		},
 	});
 </script>
 

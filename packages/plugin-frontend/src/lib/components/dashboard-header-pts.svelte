@@ -1,41 +1,40 @@
 <script lang="ts">
-	import { createMutation } from '@tanstack/svelte-query';
-	import { Button } from '$lib/components/button/index.js';
-	import { piggyService } from '$lib/config/services';
-	import { isLoggedIn, pluginSettings } from '$lib/modules/settings';
-	import { contactStore, hasPiggyAccount } from '$lib/stores';
-	import { MutationKeys } from '$lib/utils/query-keys';
-	import { getTranslatedText } from '$lib/utils/translated-text';
-	import BadgeEuro from 'lucide-svelte/icons/badge-euro';
-	import BarChart from 'lucide-svelte/icons/bar-chart';
-	import ShoppingBag from 'lucide-svelte/icons/shopping-bag';
-	import Tag from 'lucide-svelte/icons/tag';
-	import { replaceStrings } from '@piggy/lib';
+	import { createMutation } from "@tanstack/svelte-query";
+	import BadgeEuro from "lucide-svelte/icons/badge-euro";
+	import ShoppingBag from "lucide-svelte/icons/shopping-bag";
+	import Tag from "lucide-svelte/icons/tag";
+	import { replaceStrings } from "@piggy/lib";
+	import { Button } from "$lib/components/button/index.js";
+	import { piggyService } from "$lib/config/services";
+	import { isLoggedIn, pluginSettings } from "$lib/modules/settings";
+	import { contactStore, hasPiggyAccount } from "$lib/stores";
+	import { MutationKeys } from "$lib/utils/query-keys";
+	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	const joinProgramMutation = createMutation({
 		mutationKey: [MutationKeys.joinProgram],
 		mutationFn: () => piggyService.joinProgram(window.piggyMiddlewareConfig.userId),
 		onSuccess: () => {
 			location.reload();
-		}
+		},
 	});
 
 	const navItems = [
 		{
 			icon: Tag,
-			id: 'coupons',
-			text: getTranslatedText($pluginSettings?.dashboard_nav_coupons)
+			id: "coupons",
+			text: getTranslatedText($pluginSettings?.dashboard_nav_coupons),
 		},
 		{
 			icon: BadgeEuro,
-			id: 'earn',
-			text: getTranslatedText($pluginSettings?.dashboard_nav_earn)
+			id: "earn",
+			text: getTranslatedText($pluginSettings?.dashboard_nav_earn),
 		},
 		{
 			icon: ShoppingBag,
-			id: 'rewards',
-			text: getTranslatedText($pluginSettings?.dashboard_nav_rewards)
-		}
+			id: "rewards",
+			text: getTranslatedText($pluginSettings?.dashboard_nav_rewards),
+		},
 		// {
 		// 	icon: BarChart,
 		// 	id: 'activity',
@@ -44,24 +43,24 @@
 	];
 
 	function getHeaderTitle(text: string, credits: number | string) {
-		if (!text) return '';
+		if (!text) return "";
 
 		const creditsName = getTranslatedText($pluginSettings?.credits_name);
 
 		return replaceStrings(text, [
 			{
-				'{{credits_currency}}': creditsName ?? '',
-				'{{credits}}': credits?.toString() ?? '0'
-			}
+				"{{credits_currency}}": creditsName ?? "",
+				"{{credits}}": credits?.toString() ?? "0",
+			},
 		]);
 	}
 
 	function getNavItemText(text?: string) {
-		if (!text) return '';
+		if (!text) return "";
 
 		const creditsName = getTranslatedText($pluginSettings?.credits_name);
 
-		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
+		return replaceStrings(text, [{ "{{credits_currency}}": creditsName ?? "" }]);
 	}
 
 	function handleScrollNavigation(id: string) {
@@ -70,7 +69,7 @@
 			const element = document.querySelector(`.piggy-dashboard-${id}`);
 
 			if (element) {
-				element.scrollIntoView({ behavior: 'smooth' });
+				element.scrollIntoView({ behavior: "smooth" });
 			}
 		};
 	}
@@ -94,7 +93,10 @@
 				)}
 			{/if}
 		{:else}
-			{getHeaderTitle(getTranslatedText($pluginSettings.dashboard_title_logged_out) ?? '', 400)}
+			{getHeaderTitle(
+				getTranslatedText($pluginSettings.dashboard_title_logged_out) ?? "",
+				400
+			)}
 		{/if}
 	</h2>
 
@@ -102,11 +104,17 @@
 	{#if !isLoggedIn}
 		<div class="piggy-dashboard__cta">
 			{#if window.piggyWcSettings.storePages.myaccount?.permalink}
-				<Button href={window.piggyWcSettings.storePages.myaccount?.permalink} variant="primary">
+				<Button
+					href={window.piggyWcSettings.storePages.myaccount?.permalink}
+					variant="primary"
+				>
 					{getTranslatedText($pluginSettings.dashboard_join_cta)}
 				</Button>
 
-				<Button href={window.piggyWcSettings.storePages.myaccount?.permalink} variant="primary">
+				<Button
+					href={window.piggyWcSettings.storePages.myaccount?.permalink}
+					variant="primary"
+				>
 					{getTranslatedText($pluginSettings.dashboard_login_cta)}
 				</Button>
 			{/if}
@@ -132,7 +140,7 @@
 	{#if isLoggedIn && !isContactNull}
 		<nav class="piggy-dashboard__nav">
 			<ul class="piggy-dashboard__list">
-				{#each navItems as { icon, text, id }, i}
+				{#each navItems as { icon, text, id }}
 					<li>
 						<button class="piggy-dashboard__item" on:click={handleScrollNavigation(id)}>
 							<svelte:component this={icon} size={24} />

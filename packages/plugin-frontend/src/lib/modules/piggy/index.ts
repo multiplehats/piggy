@@ -1,12 +1,12 @@
-import { api } from '@piggy/lib';
+import { api } from "@piggy/lib";
 import type {
 	GetContactResponse,
 	GetCouponsResponse,
 	GetEarnRulesResponse,
 	GetRewardsResponse,
 	GetShopsResponse,
-	GetSpendRulesResponse
-} from './types';
+	GetSpendRulesResponse,
+} from "./types";
 
 export class PiggyApiError extends Error {
 	status: number;
@@ -25,28 +25,28 @@ export class PiggyApiError extends Error {
 
 export class PiggyFrontendService {
 	async getShops() {
-		const { data, error } = await api.get<GetShopsResponse>('/piggy/private/shops');
+		const { data, error } = await api.get<GetShopsResponse>("/piggy/private/shops");
 
 		if (error ?? !data) {
 			if (error) {
 				throw new PiggyApiError(error.status, error.statusText, error.data);
 			}
 
-			throw new Error('No data returned');
+			throw new Error("No data returned");
 		}
 
 		return data;
 	}
 
 	async getRewards() {
-		const { data, error } = await api.get<GetRewardsResponse>('/piggy/private/rewards');
+		const { data, error } = await api.get<GetRewardsResponse>("/piggy/private/rewards");
 
 		if (error ?? !data) {
 			if (error) {
 				throw new PiggyApiError(error.status, error.statusText, error.data);
 			}
 
-			throw new Error('No data returned');
+			throw new Error("No data returned");
 		}
 
 		return data;
@@ -73,9 +73,9 @@ export class PiggyFrontendService {
 	}
 
 	async claimReward(earnRuleId: number, userId?: number) {
-		const { data, error } = await api.post('/piggy/v1/earn-reward', {
+		const { data, error } = await api.post("/piggy/v1/earn-reward", {
 			userId,
-			earnRuleId
+			earnRuleId,
 		});
 
 		if (error) {
@@ -83,14 +83,14 @@ export class PiggyFrontendService {
 				throw new PiggyApiError(error.status, error.statusText, error.data);
 			}
 
-			throw new Error('No data returned');
+			throw new Error("No data returned");
 		}
 
 		return data;
 	}
 
 	async getEarnRules() {
-		const { data, error } = await api.get<GetEarnRulesResponse>('/piggy/v1/earn-rules');
+		const { data, error } = await api.get<GetEarnRulesResponse>("/piggy/v1/earn-rules");
 
 		if (error) {
 			throw new PiggyApiError(error.status, error.statusText, error.data);
@@ -100,7 +100,7 @@ export class PiggyFrontendService {
 	}
 
 	async getSpendRules() {
-		const { data, error } = await api.get<GetSpendRulesResponse>('/piggy/v1/spend-rules');
+		const { data, error } = await api.get<GetSpendRulesResponse>("/piggy/v1/spend-rules");
 
 		if (error) {
 			throw new PiggyApiError(error.status, error.statusText, error.data);
@@ -110,8 +110,8 @@ export class PiggyFrontendService {
 	}
 
 	async joinProgram(userId: number) {
-		const { data, error } = await api.post('/piggy/v1/join-program?g', {
-			userId
+		const { data, error } = await api.post("/piggy/v1/join-program?g", {
+			userId,
 		});
 
 		if (error) {
@@ -124,7 +124,7 @@ export class PiggyFrontendService {
 	async claimSpendRule(spendRuleId: number, userId?: number) {
 		const { data, error } = await api.post(`/piggy/v1/spend-rules-claim`, {
 			userId,
-			id: spendRuleId
+			id: spendRuleId,
 		});
 
 		if (error) {
@@ -132,7 +132,7 @@ export class PiggyFrontendService {
 				throw new PiggyApiError(error.status, error.statusText, error.data);
 			}
 
-			throw new Error('No data returned');
+			throw new Error("No data returned");
 		}
 
 		return data;

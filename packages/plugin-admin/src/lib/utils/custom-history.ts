@@ -1,6 +1,6 @@
-import { Action, createHashHistory } from 'history';
-import type { To, Update } from 'history';
-import { createHistory } from 'svelte-navigator';
+import { Action, createHashHistory } from "history";
+import type { To, Update } from "history";
+import { createHistory } from "svelte-navigator";
 
 function createHashSource() {
 	const history = createHashHistory();
@@ -17,12 +17,12 @@ function createHashSource() {
 			return history.location;
 		},
 		addEventListener(name: string, handler: Update) {
-			if (name !== 'popstate') return;
+			if (name !== "popstate") return;
 			// @ts-expect-error - This works, just doesn't touch it lol
 			listeners.push(handler);
 		},
 		removeEventListener(name: string, handler: Update) {
-			if (name !== 'popstate') return;
+			if (name !== "popstate") return;
 			// @ts-expect-error - This works, just doesn't touch it lol
 			listeners = listeners.filter((fn) => fn !== handler);
 		},
@@ -38,8 +38,8 @@ function createHashSource() {
 			},
 			go(to: number) {
 				history.go(to);
-			}
-		}
+			},
+		},
 	};
 }
 

@@ -1,25 +1,24 @@
-import { Admin } from '@piggy/plugin-admin';
+import { Admin } from "@piggy/plugin-admin";
 
 const piggyWcSettingsConfig = window.piggyWcSettings;
-const adminMount = document.getElementById('piggy-admin-mount');
+const adminMount = document.getElementById("piggy-admin-mount");
 
-const mountFrontend = () => {
+function mountFrontend() {
 	if (adminMount) {
 		if (!piggyWcSettingsConfig) {
 			console.warn(
-				'[piggy] window.piggyWcSettingsConfig is not defined. This is needed to run the app.'
+				"[piggy] window.piggyWcSettingsConfig is not defined. This is needed to run the app."
 			);
 			return;
 		}
 
 		new Admin({
-			target: adminMount
+			target: adminMount,
 		});
 	} else {
-		console.info('[piggy] Could not find Piggy element to mount on.');
-		return;
+		console.info("[piggy] Could not find Piggy element to mount on.");
 	}
-};
+}
 
 const app = mountFrontend();
 

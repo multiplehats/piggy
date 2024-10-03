@@ -1,24 +1,19 @@
 <script lang="ts">
-	import { createQuery } from '@tanstack/svelte-query';
-	import { __ } from '@wordpress/i18n';
-	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
-	import { Alert } from '$lib/components/ui/alert';
-	import { SettingsSection } from '$lib/components/ui/settings-section';
-	import { SettingsAdminService } from '$lib/modules/settings';
-	import { settingsState } from '$lib/stores/settings';
-	import { QueryKeys } from '$lib/utils/query-keys';
-	import { noCheckboxSelected } from '$lib/utils/settings-utils';
-	import SettingsApiKey from './settings-api-key/settings-api-key.svelte';
-	import SettingsCheckboxes from './settings-checkboxes.svelte';
-	import SettingsSelect from './settings-select.svelte';
-	import SettingsSwitch from './settings-switch.svelte';
+	import { createQuery } from "@tanstack/svelte-query";
+	import { __ } from "@wordpress/i18n";
+	import SettingsApiKey from "./settings-api-key/settings-api-key.svelte";
+	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
+	import { SettingsSection } from "$lib/components/ui/settings-section";
+	import { SettingsAdminService } from "$lib/modules/settings";
+	import { settingsState } from "$lib/stores/settings";
+	import { QueryKeys } from "$lib/utils/query-keys";
 
 	const service = new SettingsAdminService();
 	const query = createQuery({
 		queryKey: [QueryKeys.settings],
 		retry: false,
 		queryFn: async () => await service.getAllSettings(),
-		refetchOnWindowFocus: true
+		refetchOnWindowFocus: true,
 	});
 
 	$: if ($query.data && $query.isSuccess) {
@@ -26,14 +21,14 @@
 	}
 </script>
 
-<SettingsSection title={__('General settings')}>
-	<div class="divide-y divide-border w-full">
+<SettingsSection title={__("General settings")}>
+	<div class="divide-border w-full divide-y">
 		{#if $query.isLoading}
-			<p>{__('Loading settings')}</p>
+			<p>{__("Loading settings")}</p>
 		{:else if $query.isError}
 			<p>Error: {$query.error.message}</p>
 		{:else if $query.isSuccess && $settingsState}
-			<div class="pb-4 gap-y-2 grid grid-cols-1">
+			<div class="grid grid-cols-1 gap-y-2 pb-4">
 				<SettingsApiKey />
 			</div>
 

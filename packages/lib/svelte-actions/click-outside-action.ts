@@ -1,13 +1,13 @@
-import type { ActionReturn } from 'svelte/action';
+import type { ActionReturn } from "svelte/action";
 
-interface Params {
+type Params = {
 	active: boolean;
 	callback: () => void;
 	exclude?: string[];
-}
+};
 
 export default function clickOutside(node: HTMLElement, params: Params): ActionReturn<Params> {
-	let current_callback: Params['callback'];
+	let current_callback: Params["callback"];
 
 	const handleClick = (event: Event): void => {
 		if (
@@ -28,9 +28,9 @@ export default function clickOutside(node: HTMLElement, params: Params): ActionR
 		if (active) {
 			current_callback = callback;
 
-			document.addEventListener('click', handleClick, true);
+			document.addEventListener("click", handleClick, true);
 		} else {
-			document.removeEventListener('click', handleClick, true);
+			document.removeEventListener("click", handleClick, true);
 		}
 	};
 
@@ -42,6 +42,6 @@ export default function clickOutside(node: HTMLElement, params: Params): ActionR
 		},
 		destroy(): void {
 			toggle({ active: false, callback: current_callback });
-		}
+		},
 	};
 }

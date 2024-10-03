@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { cn } from '$lib/utils/tw.js';
+	import { cn } from "$lib/utils/tw.js";
 
-	export let size: 'small' | 'medium' | 'large' = 'small';
+	export let size: "small" | "medium" | "large" = "small";
 
 	let sizeClasses = {
-		small: 'w-3 h-3',
-		medium: 'w-6 h-6',
-		large: 'w-8 h-8'
+		small: "w-3 h-3",
+		medium: "w-6 h-6",
+		large: "w-8 h-8",
 	};
 </script>
 
 <span
-	class={cn('simple-pulse', sizeClasses[size], $$props.class)}
+	class={cn("simple-pulse", sizeClasses[size], $$props.class)}
 	role="status"
 	aria-hidden="true"
 />

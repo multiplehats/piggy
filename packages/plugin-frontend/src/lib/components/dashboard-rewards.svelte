@@ -1,25 +1,25 @@
 <script lang="ts">
-	import { createQuery } from '@tanstack/svelte-query';
-	import { apiService } from '$lib/modules/piggy';
-	import { creditsName, pluginSettings } from '$lib/modules/settings';
-	import { QueryKeys } from '$lib/utils/query-keys';
-	import { getTranslatedText } from '$lib/utils/translated-text';
-	import { replaceStrings } from '@piggy/lib';
-	import DashboardSpendRuleCard from './dashboard-spend-rule-card.svelte';
+	import { createQuery } from "@tanstack/svelte-query";
+	import { replaceStrings } from "@piggy/lib";
+	import DashboardSpendRuleCard from "./dashboard-spend-rule-card.svelte";
+	import { apiService } from "$lib/modules/piggy";
+	import { creditsName, pluginSettings } from "$lib/modules/settings";
+	import { QueryKeys } from "$lib/utils/query-keys";
+	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	const query = createQuery({
 		queryKey: [QueryKeys.spendRules],
-		queryFn: async () => await apiService.getSpendRules()
+		queryFn: async () => await apiService.getSpendRules(),
 	});
 
 	function getNavItemText(text?: string) {
-		if (!text) return '';
+		if (!text) return "";
 
-		return replaceStrings(text, [{ '{{credits_currency}}': $creditsName ?? '' }]);
+		return replaceStrings(text, [{ "{{credits_currency}}": $creditsName ?? "" }]);
 	}
 
 	$: filteredRules = $query.data?.filter(
-		(rule) => rule.status.value === 'publish' && rule.label.value
+		(rule) => rule.status.value === "publish" && rule.label.value
 	);
 </script>
 

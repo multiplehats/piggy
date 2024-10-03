@@ -1,6 +1,6 @@
 import config, { DEFAULT_IGNORES } from "@huntabyte/eslint-config";
 
-const ignores = ["**/extended-types", ".github/**", "internal/github/**"];
+const ignores = ["**/vendor"];
 
 export default config({
 	svelte: true,

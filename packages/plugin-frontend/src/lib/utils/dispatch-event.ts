@@ -1,6 +1,6 @@
 const CustomEvent = window.CustomEvent ?? null;
 
-interface DispatchedEventProperties {
+type DispatchedEventProperties = {
 	// Whether the event bubbles.
 	bubbles?: boolean;
 	// Whether the event is cancelable.
@@ -9,15 +9,15 @@ interface DispatchedEventProperties {
 	detail?: unknown;
 	// Element that dispatches the event. By default, the body.
 	element?: Element | null;
-}
+};
 
 /**
  * Wrapper function to dispatch an event.
  */
-export const dispatchEvent = (
+export function dispatchEvent(
 	name: string,
 	{ bubbles = false, cancelable = false, element, detail = {} }: DispatchedEventProperties
-): void => {
+): void {
 	if (!CustomEvent) {
 		return;
 	}
@@ -27,7 +27,7 @@ export const dispatchEvent = (
 	const event = new CustomEvent(name, {
 		bubbles,
 		cancelable,
-		detail
+		detail,
 	});
 	element.dispatchEvent(event);
-};
+}

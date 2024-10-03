@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
-	import OnboardingActions from '$lib/components/onboarding/onboarding-actions.svelte';
-	import OnboardingSteps from '$lib/components/onboarding/onboarding-steps.svelte';
-	import SettingsLogo from '$lib/components/settings-logo.svelte';
-	import { SettingsAdminService } from '$lib/modules/settings';
-	import { saveSettingsMutationConfig } from '$lib/modules/settings/mutations';
-	import { onboardingSteps, useOnboarding } from '$lib/stores/onboarding';
-	import { settingsState } from '$lib/stores/settings';
-	import { QueryKeys } from '$lib/utils/query-keys';
-	import { useNavigate } from 'svelte-navigator';
+	import { createMutation, createQuery, useQueryClient } from "@tanstack/svelte-query";
+	import { useNavigate } from "svelte-navigator";
+	import OnboardingActions from "$lib/components/onboarding/onboarding-actions.svelte";
+	import OnboardingSteps from "$lib/components/onboarding/onboarding-steps.svelte";
+	import SettingsLogo from "$lib/components/settings-logo.svelte";
+	import { SettingsAdminService } from "$lib/modules/settings";
+	import { saveSettingsMutationConfig } from "$lib/modules/settings/mutations";
+	import { onboardingSteps, useOnboarding } from "$lib/stores/onboarding";
+	import { settingsState } from "$lib/stores/settings";
+	import { QueryKeys } from "$lib/utils/query-keys";
 
 	$$restProps;
 
@@ -24,10 +24,10 @@
 				const isLastStep = onboarding.isLastStep();
 
 				if (isLastStep) {
-					navigate('/general', {
+					navigate("/general", {
 						state: {
-							onboarding: 'complete'
-						}
+							onboarding: "complete",
+						},
 					});
 					return;
 				}
@@ -35,14 +35,14 @@
 				const { href } = onboarding.nextStep();
 
 				navigate(href);
-			}
+			},
 		})
 	);
 	const query = createQuery({
 		queryKey: [QueryKeys.settings],
 		retry: false,
 		queryFn: async () => await service.getAllSettings(),
-		refetchOnWindowFocus: true
+		refetchOnWindowFocus: true,
 	});
 
 	$: if ($query.data && $query.isSuccess) {
@@ -61,8 +61,8 @@
 </script>
 
 <div class="mx-auto max-w-4xl py-24">
-	<div class="p-8 rounded-lg border">
-		<div class="w-full items-center justify-center flex mb-8">
+	<div class="rounded-lg border p-8">
+		<div class="mb-8 flex w-full items-center justify-center">
 			<SettingsLogo />
 		</div>
 
@@ -70,7 +70,7 @@
 
 		<form method="POST" on:submit={handleSubmit}>
 			{#each $onboardingSteps as { id, component, status, showActions, initialising } (id)}
-				{#if status === 'current'}
+				{#if status === "current"}
 					{#if component}
 						<svelte:component this={component} />
 					{:else}
@@ -78,7 +78,10 @@
 					{/if}
 
 					{#if showActions}
-						<OnboardingActions saving={$saveSettingsMutation.isPending} disabled={initialising} />
+						<OnboardingActions
+							saving={$saveSettingsMutation.isPending}
+							disabled={initialising}
+						/>
 					{/if}
 				{/if}
 			{/each}

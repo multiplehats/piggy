@@ -1,4 +1,4 @@
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -12,12 +12,12 @@ const config = {
 						...config.include,
 						// This is important, it includes the window object amongst other things
 						// References the @piggy/types package directly
-						'../../types/plugin/augment.d.ts'
-					]
+						"../../types/plugin/augment.d.ts",
+					],
 				};
-			}
-		}
-	}
+			},
+		},
+	},
 };
 
 export default config;

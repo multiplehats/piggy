@@ -1,4 +1,4 @@
-import { allWcSettings } from './wcSettings';
+import { allWcSettings } from "./wcSettings";
 
 export const ADMIN_URL = allWcSettings.adminUrl;
 export const COUNTRIES = allWcSettings.countries;

@@ -1,13 +1,12 @@
 <script lang="ts">
-	import SettingsSectionQuickActions from '$lib/components/settings-section-quick-actions.svelte';
-	import { Alert } from '$lib/components/ui/alert';
-	import { useLocation } from 'svelte-navigator';
+	import { useLocation } from "svelte-navigator";
+	import { Alert } from "$lib/components/ui/alert";
 
 	$$restProps;
 
 	const location = useLocation();
 
-	$: onboardingComplete = $location.state?.onboarding === 'complete';
+	$: onboardingComplete = $location.state?.onboarding === "complete";
 </script>
 
 <div class="grid grid-cols-1 gap-6">

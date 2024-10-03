@@ -1,24 +1,23 @@
 <script lang="ts">
-	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
-	import { __, sprintf } from '@wordpress/i18n';
-	import EarnRulePlaceOrder from '$lib/components/earn-rules/earn-rule-place-order.svelte';
-	import EarnRuleSocial from '$lib/components/earn-rules/earn-rule-social.svelte';
-	import SettingsCalendar from '$lib/components/settings-calendar.svelte';
-	import SettingsInput from '$lib/components/settings-input.svelte';
-	import SettingsSelect from '$lib/components/settings-select.svelte';
-	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
-	import { Alert } from '$lib/components/ui/alert';
-	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { SettingsAdminService } from '$lib/modules/settings';
-	import { upsertEarnRuleMutationConfig } from '$lib/modules/settings/mutations';
-	import type { GetEarnRuleByIdResponse } from '$lib/modules/settings/types';
-	import { QueryKeys } from '$lib/utils/query-keys';
-	import { getStatusText } from '$lib/utils/status-text';
-	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
-	import { useNavigate, useParams } from 'svelte-navigator';
-	import { derived, writable } from 'svelte/store';
+	import { createMutation, createQuery, useQueryClient } from "@tanstack/svelte-query";
+	import { __, sprintf } from "@wordpress/i18n";
+	import ChevronLeft from "lucide-svelte/icons/chevron-left";
+	import { useNavigate, useParams } from "svelte-navigator";
+	import { derived, writable } from "svelte/store";
+	import EarnRulePlaceOrder from "$lib/components/earn-rules/earn-rule-place-order.svelte";
+	import EarnRuleSocial from "$lib/components/earn-rules/earn-rule-social.svelte";
+	import SettingsInput from "$lib/components/settings-input.svelte";
+	import SettingsSelect from "$lib/components/settings-select.svelte";
+	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
+	import { Alert } from "$lib/components/ui/alert";
+	import { Badge } from "$lib/components/ui/badge/index.js";
+	import { Button } from "$lib/components/ui/button/index.js";
+	import * as Card from "$lib/components/ui/card/index.js";
+	import { SettingsAdminService } from "$lib/modules/settings";
+	import { upsertEarnRuleMutationConfig } from "$lib/modules/settings/mutations";
+	import type { GetEarnRuleByIdResponse } from "$lib/modules/settings/types";
+	import { QueryKeys } from "$lib/utils/query-keys";
+	import { getStatusText } from "$lib/utils/status-text";
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
@@ -38,7 +37,7 @@
 				return data[0];
 			},
 			refetchOnWindowFocus: true,
-			enabled: !!$params.id
+			enabled: !!$params.id,
 		}))
 	);
 	const mutate = createMutation(
@@ -46,7 +45,7 @@
 			client,
 			{},
 			{
-				onSuccessCb: () => client.refetchQueries({ queryKey: [QueryKeys.earnRules] })
+				onSuccessCb: () => client.refetchQueries({ queryKey: [QueryKeys.earnRules] }),
 			}
 		)
 	);
@@ -62,22 +61,22 @@
 			type: $rule.type.value,
 			label: $rule.label.value,
 			status: $rule.status.value,
-			title: $rule.title?.value ?? __('New rule', 'piggy'),
+			title: $rule.title?.value ?? __("New rule", "piggy"),
 			startsAt: $rule.startsAt.value,
 			expiresAt: $rule.expiresAt.value,
 			minimumOrderAmount: $rule.minimumOrderAmount.value,
 			credits: $rule.credits.value,
-			socialHandle: $rule.socialHandle.value
+			socialHandle: $rule.socialHandle.value,
 		});
 	}
 
 	$: if ($query.data && $query.isSuccess) {
-		console.log('Incoming data: ', $query.data);
+		console.log("Incoming data: ", $query.data);
 
 		rule.set($query.data);
 	}
 
-	$: ruleTypeLabel = $rule?.type?.options[$rule?.type?.value]?.label ?? '';
+	$: ruleTypeLabel = $rule?.type?.options[$rule?.type?.value]?.label ?? "";
 </script>
 
 {#if $rule && $query.isSuccess && $query.data}
@@ -87,7 +86,7 @@
 				variant="outline"
 				size="icon"
 				class="h-7 w-7"
-				on:click={() => navigate('/loyalty-program')}
+				on:click={() => navigate("/loyalty-program")}
 			>
 				<ChevronLeft class="h-4 w-4" />
 				<span class="sr-only">Back</span>
@@ -98,7 +97,7 @@
 			</h1>
 
 			<Badge
-				variant={$rule.status.value === 'publish' ? 'default' : 'secondary'}
+				variant={$rule.status.value === "publish" ? "default" : "secondary"}
 				class="ml-auto sm:ml-0"
 			>
 				{getStatusText($rule.status.value)}
@@ -112,7 +111,7 @@
 
 			<div class="hidden items-center gap-2 md:ml-auto md:flex">
 				<Button size="sm" on:click={handleSave}>
-					{__('Save rule', 'piggy')}
+					{__("Save rule", "piggy")}
 				</Button>
 			</div>
 		</div>
@@ -121,19 +120,19 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__('General', 'piggy')}</Card.Title>
+						<Card.Title>{__("General", "piggy")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
 						<div class="grid gap-6">
-							{#if $rule.type.value === 'PLACE_ORDER'}
-								<Alert title={__('Credit Calculation', 'piggy')} type="info">
+							{#if $rule.type.value === "PLACE_ORDER"}
+								<Alert title={__("Credit Calculation", "piggy")} type="info">
 									{@html sprintf(
 										__(
 											'These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href="%s" class="underline" target="_blank" rel="noopener noreferrer">Piggy Dashboard</a>.',
-											'piggy'
+											"piggy"
 										),
-										'https://business.piggy.eu/loyalty/1/rules'
+										"https://business.piggy.eu/loyalty/1/rules"
 									)}
 								</Alert>
 							{/if}
@@ -142,18 +141,24 @@
 								<SettingsInput {...$rule.title} bind:value={$rule.title.value} />
 							</div>
 
-							<SettingsTranslateableInput {...$rule.label} bind:value={$rule.label.value} />
+							<SettingsTranslateableInput
+								{...$rule.label}
+								bind:value={$rule.label.value}
+							/>
 
-							{#if $rule.type.value !== 'PLACE_ORDER'}
-								<SettingsInput {...$rule.credits} bind:value={$rule.credits.value} />
+							{#if $rule.type.value !== "PLACE_ORDER"}
+								<SettingsInput
+									{...$rule.credits}
+									bind:value={$rule.credits.value}
+								/>
 							{/if}
 						</div>
 					</Card.Content>
 				</Card.Root>
 
-				{#if $rule?.type?.value === 'PLACE_ORDER'}
+				{#if $rule?.type?.value === "PLACE_ORDER"}
 					<EarnRulePlaceOrder bind:minimumOrderAmount={$rule.minimumOrderAmount} />
-				{:else if $rule?.type.value === 'LIKE_ON_FACEBOOK' || $rule?.type.value === 'FOLLOW_ON_INSTAGRAM' || $rule?.type.value === 'FOLLOW_ON_TIKTOK'}
+				{:else if $rule?.type.value === "LIKE_ON_FACEBOOK" || $rule?.type.value === "FOLLOW_ON_INSTAGRAM" || $rule?.type.value === "FOLLOW_ON_TIKTOK"}
 					<EarnRuleSocial bind:socialHandle={$rule.socialHandle} />
 				{/if}
 			</div>
@@ -161,7 +166,7 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__('Details', 'piggy')}</Card.Title>
+						<Card.Title>{__("Details", "piggy")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -169,24 +174,28 @@
 							<SettingsSelect
 								{...$rule.status}
 								bind:value={$rule.status.value}
-								items={Object.entries($rule.status.options).map(([value, { label: name }]) => {
-									return {
-										value,
-										name
-									};
-								})}
+								items={Object.entries($rule.status.options).map(
+									([value, { label: name }]) => {
+										return {
+											value,
+											name,
+										};
+									}
+								)}
 							/>
 
 							<SettingsSelect
 								hidden={true}
 								{...$rule.type}
 								bind:value={$rule.type.value}
-								items={Object.entries($rule.type.options).map(([value, { label: name }]) => {
-									return {
-										value,
-										name
-									};
-								})}
+								items={Object.entries($rule.type.options).map(
+									([value, { label: name }]) => {
+										return {
+											value,
+											name,
+										};
+									}
+								)}
 							/>
 						</div>
 					</Card.Content>
@@ -217,7 +226,7 @@
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
 			<Button size="sm" on:click={handleSave}>
-				{__('Save rule', 'piggy')}
+				{__("Save rule", "piggy")}
 			</Button>
 		</div>
 	</div>

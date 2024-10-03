@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { headerLinks } from '$lib/config/constants';
-	import { cn } from '$lib/utils/tw.js';
-	import { onMount } from 'svelte';
-	import { Link, useLocation } from 'svelte-navigator';
-	import Logo from '../settings-logo.svelte';
-	import NavigationLinkMobile from './settings-navigation-link-mobile.svelte';
-	import NavigationLink from './settings-navigation-link.svelte';
+	import { onMount } from "svelte";
+	import { Link, useLocation } from "svelte-navigator";
+	import Logo from "../settings-logo.svelte";
+	import NavigationLinkMobile from "./settings-navigation-link-mobile.svelte";
+	import NavigationLink from "./settings-navigation-link.svelte";
+	import { cn } from "$lib/utils/tw.js";
+	import { headerLinks } from "$lib/config/constants";
 
 	const location = useLocation();
 
@@ -19,16 +19,19 @@
 	});
 </script>
 
-<header class="border-b border-gray-200 bg-desert">
+<header class="bg-desert border-b border-gray-200">
 	<div class="app-container">
-		<div class="flex justify-between h-16">
+		<div class="flex h-16 justify-between">
 			<div class="flex px-2 xl:px-0">
-				<div class="flex items-center flex-shrink-0">
+				<div class="flex flex-shrink-0 items-center">
 					<Link to="/">
 						<Logo />
 					</Link>
 				</div>
-				<nav aria-label="Global" class="hidden xl:ml-6 xl:flex xl:items-center xl:space-x-4">
+				<nav
+					aria-label="Global"
+					class="hidden xl:ml-6 xl:flex xl:items-center xl:space-x-4"
+				>
 					{#each headerLinks as { href, label, target, type }, index (index)}
 						<NavigationLink {href} {target} {type} active={$location.pathname === href}
 							>{label}</NavigationLink
@@ -41,14 +44,14 @@
 				<!-- Mobile menu button -->
 				<button
 					type="button"
-					class="inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+					class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
 					aria-expanded={mobileMenuOpen}
 					on:click={() => (mobileMenuOpen = !mobileMenuOpen)}
 				>
 					<span class="sr-only">Open main menu</span>
 					<!-- Heroicon name: outline/bars-3 -->
 					<svg
-						class="block w-6 h-6"
+						class="block h-6 w-6"
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
@@ -65,15 +68,15 @@
 				</button>
 			</div>
 
-			<div class={cn('xl:hidden', mobileMenuOpen && 'block', !mobileMenuOpen && 'hidden')}>
+			<div class={cn("xl:hidden", mobileMenuOpen && "block", !mobileMenuOpen && "hidden")}>
 				<div class="fixed inset-0 z-20 bg-black bg-opacity-25" aria-hidden="true" />
 				<div
-					class="absolute top-0 right-0 z-30 w-full p-2 transition origin-top transform max-w-none"
+					class="absolute right-0 top-0 z-30 w-full max-w-none origin-top transform p-2 transition"
 				>
 					<div
-						class="bg-white divide-y divide-gray-200 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
+						class="divide-y divide-gray-200 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
 					>
-						<div class="pt-3 pb-2">
+						<div class="pb-2 pt-3">
 							<div class="flex items-center justify-between px-4">
 								<div>
 									<Logo />
@@ -81,13 +84,13 @@
 								<div class="-mr-2">
 									<button
 										type="button"
-										class="inline-flex items-center justify-center p-2 text-gray-400 bg-white rounded-md hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+										class="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
 										on:click={() => (mobileMenuOpen = !mobileMenuOpen)}
 									>
 										<span class="sr-only">Close menu</span>
 										<!-- Heroicon name: outline/x-mark -->
 										<svg
-											class="w-6 h-6"
+											class="h-6 w-6"
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
 											viewBox="0 0 24 24"
@@ -104,9 +107,14 @@
 									</button>
 								</div>
 							</div>
-							<div class="px-2 mt-3 space-y-1">
+							<div class="mt-3 space-y-1 px-2">
 								{#each headerLinks as { href, label, target, type }, index (index)}
-									<NavigationLinkMobile {href} {target} {type} active={$location.pathname === href}>
+									<NavigationLinkMobile
+										{href}
+										{target}
+										{type}
+										active={$location.pathname === href}
+									>
 										{label}
 									</NavigationLinkMobile>
 								{/each}

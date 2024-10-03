@@ -1,8 +1,8 @@
-import { currentLanguage } from '$lib/modules/settings';
-import { replaceStrings } from '@piggy/lib';
+import { replaceStrings } from "@piggy/lib";
+import { currentLanguage } from "$lib/modules/settings";
 
 export function getTranslatedText(tx: Record<string, string> | null): string {
-	if (!tx) return '';
+	if (!tx) return "";
 
 	// Try to get the translation for the current language
 	if (tx[currentLanguage]) {
@@ -10,12 +10,12 @@ export function getTranslatedText(tx: Record<string, string> | null): string {
 	}
 
 	// If not found, try to get the 'default' translation
-	if (tx['default']) {
-		return tx['default'];
+	if (tx.default) {
+		return tx.default;
 	}
 
 	// If 'default' is not available, fall back to the first available translation
-	return tx[Object.keys(tx)[0]] ?? '';
+	return tx[Object.keys(tx)[0]] ?? "";
 }
 
 export function getSpendRuleLabel(
@@ -23,14 +23,14 @@ export function getSpendRuleLabel(
 	credits: number | null,
 	creditsName: string,
 	discount: number | null,
-	discountType: 'percentage' | 'fixed'
+	discountType: "percentage" | "fixed"
 ) {
-	if (!text) return '';
+	if (!text) return "";
 
 	const getDiscountType = () => {
-		if (discountType === 'percentage') {
+		if (discountType === "percentage") {
 			return `${discount}%`;
-		} else if (discountType === 'fixed') {
+		} else if (discountType === "fixed") {
 			const currency = window.piggyWcSettings.currency.symbol;
 
 			return `${currency}${discount}`;
@@ -41,9 +41,9 @@ export function getSpendRuleLabel(
 
 	return replaceStrings(text, [
 		{
-			'{{ credits_currency }}': creditsName ?? '',
-			'{{ credits }}': credits?.toString() ?? '0',
-			'{{ discount }}': getDiscountType()
-		}
+			"{{ credits_currency }}": creditsName ?? "",
+			"{{ credits }}": credits?.toString() ?? "0",
+			"{{ discount }}": getDiscountType(),
+		},
 	]);
 }

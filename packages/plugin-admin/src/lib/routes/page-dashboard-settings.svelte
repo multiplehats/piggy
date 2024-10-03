@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { createMutation, useQueryClient } from '@tanstack/svelte-query';
-	import SettingsFormActions from '$lib/components/settings-form-actions.svelte';
-	import SettingsSectionDashboard from '$lib/components/settings-section-dashboard.svelte';
-	import SettingsSectionGeneral from '$lib/components/settings-section-general.svelte';
-	import { Alert } from '$lib/components/ui/alert';
-	import { saveSettingsMutationConfig } from '$lib/modules/settings/mutations';
-	import { settingsState } from '$lib/stores/settings';
-	import { useLocation } from 'svelte-navigator';
+	import { createMutation, useQueryClient } from "@tanstack/svelte-query";
+	import { useLocation } from "svelte-navigator";
+	import SettingsFormActions from "$lib/components/settings-form-actions.svelte";
+	import SettingsSectionDashboard from "$lib/components/settings-section-dashboard.svelte";
+	import { saveSettingsMutationConfig } from "$lib/modules/settings/mutations";
+	import { settingsState } from "$lib/stores/settings";
 
 	$$restProps;
 

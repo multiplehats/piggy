@@ -1,8 +1,7 @@
-import { __, sprintf } from '@wordpress/i18n';
-import type { GetSettingsResponse } from '$lib/modules/settings/types';
-import { get, writable } from 'svelte/store';
-import type { PluginOptionsAdmin, PluginOptionsAdminKeys } from '@piggy/types';
-import { zPluginOptionsAdmin } from '@piggy/types/plugin';
+import { get, writable } from "svelte/store";
+import type { PluginOptionsAdmin, PluginOptionsAdminKeys } from "@piggy/types";
+import { zPluginOptionsAdmin } from "@piggy/types/plugin";
+import type { GetSettingsResponse } from "$lib/modules/settings/types";
 
 // Settings State
 
@@ -10,15 +9,15 @@ export const settingsState = writable<GetSettingsResponse>();
 
 // ACTIONS
 
-export const updateSettings = ({
+export function updateSettings({
 	id,
 	value,
-	onComplete
+	onComplete,
 }: {
 	id: string;
 	value: unknown;
 	onComplete?: ({ settings }: { settings: typeof settingsState }) => void;
-}) => {
+}) {
 	const currentSettings = get(settingsState);
 	const savedOption = currentSettings[id as PluginOptionsAdminKeys];
 
@@ -31,8 +30,8 @@ export const updateSettings = ({
 			...state,
 			[id]: {
 				...state[id as keyof PluginOptionsAdmin],
-				value
-			}
+				value,
+			},
 		};
 
 		return newState;
@@ -40,15 +39,15 @@ export const updateSettings = ({
 
 	if (onComplete) {
 		onComplete({
-			settings: settingsState
+			settings: settingsState,
 		});
 	}
-};
+}
 
 /**
  * Saves the settings by calling the API.
  */
-export const saveSettings = () => {
+export function saveSettings() {
 	const settings = get(settingsState);
 
 	const validation = zPluginOptionsAdmin.safeParse(settings);
@@ -67,4 +66,4 @@ export const saveSettings = () => {
 		},
 		{} as Record<string, unknown>
 	);
-};
+}

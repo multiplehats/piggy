@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { SettingsSection } from '$lib/components/ui/settings-section';
-	import { saveSettings, settingsState } from '$lib/stores/settings';
-	import Switch from './settings-switch.svelte';
+	import Switch from "./settings-switch.svelte";
+	import { SettingsSection } from "$lib/components/ui/settings-section";
+	import { saveSettings, settingsState } from "$lib/stores/settings";
 
-	const onSaved = async () => {
+	async function onSaved() {
 		await saveSettings();
-	};
+	}
 
 	$: options = [$settingsState.plugin_enable, $settingsState.plugin_reset];
 </script>

@@ -1,30 +1,31 @@
 <script lang="ts">
-	import { createMutation, useQueryClient } from '@tanstack/svelte-query';
-	import { piggyService } from '$lib/config/services';
-	import { creditsName, isLoggedIn, pluginSettings } from '$lib/modules/settings';
-	import { contactStore, hasPiggyAccount } from '$lib/stores';
-	import { MutationKeys, QueryKeys } from '$lib/utils/query-keys';
-	import { getTranslatedText } from '$lib/utils/translated-text';
-	import CheckCircle from 'lucide-svelte/icons/badge-check';
-	import { replaceStrings } from '@piggy/lib';
-	import type { EarnRuleType, EarnRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
-	import Button from './button/button.svelte';
+	import { createMutation, useQueryClient } from "@tanstack/svelte-query";
+	import CheckCircle from "lucide-svelte/icons/badge-check";
+	import { replaceStrings } from "@piggy/lib";
+	import type { EarnRuleType, EarnRuleValueItem } from "@piggy/types/plugin/settings/adminTypes";
+	import Button from "./button/button.svelte";
+	import { piggyService } from "$lib/config/services";
+	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
+	import { contactStore, hasPiggyAccount } from "$lib/stores";
+	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
+	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	export let earnRule: EarnRuleValueItem;
 
 	let socialLinkToOpen: string | null = null;
 
 	const socialTypes = [
-		'LIKE_ON_FACEBOOK',
-		'FOLLOW_ON_INSTAGRAM',
-		'FOLLOW_ON_TIKTOK'
+		"LIKE_ON_FACEBOOK",
+		"FOLLOW_ON_INSTAGRAM",
+		"FOLLOW_ON_TIKTOK",
 	] as EarnRuleType[];
 
-	const claimableOnceTypes = [...socialTypes, 'CREATE_ACCOUNT'];
+	const claimableOnceTypes = [...socialTypes, "CREATE_ACCOUNT"];
 	const queryClient = useQueryClient();
 	const claimRewardMutation = createMutation({
 		mutationKey: [MutationKeys.claimReward],
-		mutationFn: () => piggyService.claimReward(earnRule.id, window.piggyMiddlewareConfig.userId),
+		mutationFn: () =>
+			piggyService.claimReward(earnRule.id, window.piggyMiddlewareConfig.userId),
 		onSuccess: () => {
 			const handle = earnRule.socialHandle.value;
 			if (handle) {
@@ -32,40 +33,40 @@
 			}
 
 			queryClient.invalidateQueries({ queryKey: [QueryKeys.contact] });
-		}
+		},
 	});
 
 	function getSocialLink(type: EarnRuleType, handle: string): string {
 		switch (type) {
-			case 'LIKE_ON_FACEBOOK':
+			case "LIKE_ON_FACEBOOK":
 				return `https://www.facebook.com/${handle}`;
-			case 'FOLLOW_ON_INSTAGRAM':
+			case "FOLLOW_ON_INSTAGRAM":
 				return `https://www.instagram.com/${handle}`;
-			case 'FOLLOW_ON_TIKTOK':
+			case "FOLLOW_ON_TIKTOK":
 				return `https://www.tiktok.com/@${handle}`;
 			default:
-				return '';
+				return "";
 		}
 	}
 
 	function getLabel(text: string, credits: number | string) {
-		if (!text) return '';
+		if (!text) return "";
 
 		const handle = earnRule.socialHandle.value;
 
 		return replaceStrings(text, [
 			{
-				'{{ credits_currency }}': $creditsName ?? '',
-				'{{ credits }}': credits?.toString() ?? '0',
-				'{{ handle }}': handle ? `@${handle}` : ''
-			}
+				"{{ credits_currency }}": $creditsName ?? "",
+				"{{ credits }}": credits?.toString() ?? "0",
+				"{{ handle }}": handle ? `@${handle}` : "",
+			},
 		]);
 	}
 
 	function handleClaimAndOpenLink() {
 		$claimRewardMutation.mutateAsync().then(() => {
 			if (socialLinkToOpen) {
-				window.open(socialLinkToOpen, '_blank');
+				window.open(socialLinkToOpen, "_blank");
 				socialLinkToOpen = null;
 			}
 		});
@@ -82,12 +83,17 @@
 <div class="piggy-dashboard-earn-card">
 	<div>
 		<div class="piggy-dashboard-earn-card__icon">
+			<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html earnRule.svg}
 		</div>
 
 		<h4 class="piggy-dashboard-earn-card__header">
 			{#if earnRule.label.value}
-				{@html getLabel(getTranslatedText(earnRule.label.value), earnRule.credits.value ?? 0)}
+				<!--  eslint-disable-next-line svelte/no-at-html-tags -->
+				{@html getLabel(
+					getTranslatedText(earnRule.label.value),
+					earnRule.credits.value ?? 0
+				)}
 			{/if}
 		</h4>
 

@@ -1,27 +1,27 @@
 <script lang="ts">
-	import { createMutation } from '@tanstack/svelte-query';
-	import { piggyService } from '$lib/config/services';
-	import { creditsName, isLoggedIn, pluginSettings } from '$lib/modules/settings';
-	import { contactStore, hasPiggyAccount } from '$lib/stores';
-	import { MutationKeys } from '$lib/utils/query-keys';
-	import { getSpendRuleLabel, getTranslatedText } from '$lib/utils/translated-text';
-	import Gift from 'lucide-svelte/icons/gift';
-	import { cubicOut } from 'svelte/easing';
-	import { tweened } from 'svelte/motion';
-	import { replaceStrings } from '@piggy/lib';
-	import type { SpendRuleValueItem } from '@piggy/types/plugin/settings/adminTypes';
-	import Button from './button/button.svelte';
+	import { createMutation } from "@tanstack/svelte-query";
+	import Gift from "lucide-svelte/icons/gift";
+	import { cubicOut } from "svelte/easing";
+	import { tweened } from "svelte/motion";
+	import { replaceStrings } from "@piggy/lib";
+	import type { SpendRuleValueItem } from "@piggy/types/plugin/settings/adminTypes";
+	import Button from "./button/button.svelte";
+	import { getSpendRuleLabel, getTranslatedText } from "$lib/utils/translated-text";
+	import { MutationKeys } from "$lib/utils/query-keys";
+	import { contactStore, hasPiggyAccount } from "$lib/stores";
+	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
+	import { piggyService } from "$lib/config/services";
 
 	export let rule: SpendRuleValueItem;
 
 	const progress = tweened(0, {
 		duration: 450,
-		easing: cubicOut
+		easing: cubicOut,
 	});
 
 	const claimSpendRuleMutation = createMutation({
 		mutationKey: [MutationKeys.claimSpendRule],
-		mutationFn: () => handleClaim(rule.id)
+		mutationFn: () => handleClaim(rule.id),
 	});
 
 	function handleClaim(id: number) {
@@ -35,26 +35,26 @@
 	}
 
 	function getDescription(text: string, credits: number | string | null) {
-		if (!text) return '';
+		if (!text) return "";
 
 		return replaceStrings(text, [
 			{
-				'{{ credits_currency }}': $creditsName ?? '',
-				'{{ credits }}': credits?.toString() ?? '0',
-				'{{ discount }}': rule.discountValue?.value?.toString() ?? '0'
-			}
+				"{{ credits_currency }}": $creditsName ?? "",
+				"{{ credits }}": credits?.toString() ?? "0",
+				"{{ discount }}": rule.discountValue?.value?.toString() ?? "0",
+			},
 		]);
 	}
 
 	function getProgressText(text: string, creditsRecuired: number | string) {
-		if (!text) return '';
+		if (!text) return "";
 
 		return replaceStrings(text, [
 			{
-				'{{ credits }}': creditsAccumulated?.toString() ?? '0',
-				'{{ credits_currency }}': $creditsName ?? '',
-				'{{ credits_required }}': creditsRecuired?.toString() ?? '0'
-			}
+				"{{ credits }}": creditsAccumulated?.toString() ?? "0",
+				"{{ credits_currency }}": $creditsName ?? "",
+				"{{ credits_required }}": creditsRecuired?.toString() ?? "0",
+			},
 		]);
 	}
 </script>

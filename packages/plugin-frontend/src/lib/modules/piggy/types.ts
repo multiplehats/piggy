@@ -1,16 +1,16 @@
 import type {
 	EarnRuleValueItem,
-	SpendRuleValueItem
-} from '@piggy/types/plugin/settings/adminTypes';
+	SpendRuleValueItem,
+} from "@piggy/types/plugin/settings/adminTypes";
 
-export interface Shop {
+export type Shop = {
 	uuid: string;
 	name: string;
-}
+};
 
 export type GetShopsResponse = Shop[];
 
-export interface Rewards {
+export type Rewards = {
 	uuid: string;
 	title: string;
 	requiredCredits: number;
@@ -21,18 +21,18 @@ export interface Rewards {
 		pre_redeemable: boolean;
 		type: string;
 	};
-}
+};
 
-export interface Coupon {
+export type Coupon = {
 	code: string;
 	spend_rule: SpendRuleValueItem;
-}
+};
 
 export type GetCouponsResponse = Coupon[];
 
 export type GetRewardsResponse = Rewards[];
 
-export interface Contact {
+export type Contact = {
 	uuid: string;
 	email: string;
 	subscriptions: {
@@ -88,7 +88,7 @@ export interface Contact {
 		prepaid: number;
 		credits: number;
 	};
-}
+};
 
 export type ClaimedReward = {
 	id: string;

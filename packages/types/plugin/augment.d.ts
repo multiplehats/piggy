@@ -1,11 +1,6 @@
-import type { Hooks } from '@wordpress/hooks';
-import type {
-	IWooSettings,
-	PluginAdminConfig,
-	PluginOptionsAdmin,
-	PluginOptionsFrontend
-} from './settings';
-import { EarnRuleValueItem, SpendRuleValueItem } from './settings/adminTypes';
+import type { Hooks } from "@wordpress/hooks";
+import type { IWooSettings, PluginOptionsFrontend } from "./settings";
+import type { SpendRuleValueItem } from "./settings/adminTypes";
 
 declare global {
 	interface Window {

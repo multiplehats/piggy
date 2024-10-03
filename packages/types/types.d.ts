@@ -1,4 +1,4 @@
-declare module '@woocommerce/settings' {
+declare module "@woocommerce/settings" {
 	export declare type BillingAddress = Record<string, unknown>;
 	export declare type ShippingAddress = Record<string, unknown>;
 	export declare type LocaleSpecificFormField = string;
@@ -6,10 +6,10 @@ declare module '@woocommerce/settings' {
 	export declare function getSetting<T>(
 		name: string,
 		fallback?: unknown,
-		filter = (val: unknown, fb: unknown) => (typeof val !== 'undefined' ? val : fb)
+		filter = (val: unknown, fb: unknown) => (typeof val !== "undefined" ? val : fb)
 	): T;
 	export declare function isWpVersion(
 		version: string,
-		operator: '>' | '>=' | '=' | '<' | '<='
+		operator: ">" | ">=" | "=" | "<" | "<="
 	): boolean;
 }

@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { __ } from '@wordpress/i18n';
-	import SettingsInput from '$lib/components/settings-input.svelte';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import type { GetSpendRuleByIdResponse } from '$lib/modules/settings/types';
-	import type { NotUndefined } from '@piggy/types';
+	import { __ } from "@wordpress/i18n";
+	import type { NotUndefined } from "@piggy/types";
+	import SettingsInput from "$lib/components/settings-input.svelte";
+	import * as Card from "$lib/components/ui/card/index.js";
+	import type { GetSpendRuleByIdResponse } from "$lib/modules/settings/types";
 
 	export let minimumPurchaseAmount: NotUndefined<
-		GetSpendRuleByIdResponse[0]['minimumPurchaseAmount']
+		GetSpendRuleByIdResponse[0]["minimumPurchaseAmount"]
 	>;
 </script>
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="mb-2">{__('Rule settings', 'piggy')}</Card.Title>
+		<Card.Title class="mb-2">{__("Rule settings", "piggy")}</Card.Title>
 	</Card.Header>
 
 	<Card.Content>

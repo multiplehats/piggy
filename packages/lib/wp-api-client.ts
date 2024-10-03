@@ -1,4 +1,4 @@
-import Qs from 'qs';
+import Qs from "qs";
 
 export type ApiError = {
 	status: number;
@@ -12,14 +12,14 @@ export type ApiError = {
 export default function wpApiClient({
 	ajaxUrl,
 	nonce,
-	actionPrefix = 'piggy_'
+	actionPrefix = "piggy_",
 }: {
 	ajaxUrl: string;
 	nonce: string;
 	actionPrefix?: string;
 }) {
 	const request = async <T = unknown>(
-		method: string = 'GET',
+		method: string = "GET",
 		action?: string,
 		data?: any,
 		params?: { [key: string]: any }
@@ -27,19 +27,19 @@ export default function wpApiClient({
 		data: T | null;
 		error: ApiError | null;
 	}> => {
-		const url = ajaxUrl + (params ? `?${Qs.stringify(params)}` : '');
+		const url = ajaxUrl + (params ? `?${Qs.stringify(params)}` : "");
 
 		return await fetch(url, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			credentials: 'same-origin',
+			method: "POST",
+			headers: { "Content-Type": "application/x-www-form-urlencoded" },
+			credentials: "same-origin",
 			body: new URLSearchParams(
 				Qs.stringify({
 					action: actionPrefix + action,
-					nonce: nonce,
-					data
+					nonce,
+					data,
 				})
-			).toString()
+			).toString(),
 		})
 			.then(async (response) => {
 				if (!response.ok) {
@@ -48,8 +48,8 @@ export default function wpApiClient({
 						error: {
 							status: response.status,
 							statusText: response.statusText,
-							data: await response.json()
-						}
+							data: await response.json(),
+						},
 					};
 				}
 
@@ -58,7 +58,7 @@ export default function wpApiClient({
 				// If payload.success key does not exist, throw error.
 				if (payload.success === undefined) {
 					throw new Error(
-						'Payload does not contain success key, make sure you use wp_send_json_success instead of wp_send_json'
+						"Payload does not contain success key, make sure you use wp_send_json_success instead of wp_send_json"
 					);
 				}
 
@@ -68,14 +68,14 @@ export default function wpApiClient({
 						error: {
 							status: response.status,
 							statusText: response.statusText,
-							data: payload.data
-						}
+							data: payload.data,
+						},
 					};
 				}
 
 				return {
 					data: payload.data,
-					error: null
+					error: null,
 				};
 			})
 			.catch((error) => {
@@ -84,24 +84,24 @@ export default function wpApiClient({
 					error: {
 						status: 500,
 						statusText: error.message,
-						data: null
-					}
+						data: null,
+					},
 				};
 			});
 	};
 
 	return {
 		get: <T = unknown>(action: string, params?: { [key: string]: any }) => {
-			return request<T>('GET', action, undefined, params);
+			return request<T>("GET", action, undefined, params);
 		},
 		post: <T = unknown>(action: string, data?: any) => {
-			return request<T>('POST', action, data);
+			return request<T>("POST", action, data);
 		},
 		put: <T = unknown>(action: string, data?: any) => {
-			return request<T>('PUT', action, data);
+			return request<T>("PUT", action, data);
 		},
 		delete: <T = unknown>(action: string) => {
-			return request<T>('DELETE', action, undefined);
-		}
+			return request<T>("DELETE", action, undefined);
+		},
 	};
 }

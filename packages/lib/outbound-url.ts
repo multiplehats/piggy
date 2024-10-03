@@ -6,7 +6,7 @@ export default function outboundUrl({
 	source,
 	campaign,
 	medium,
-	params
+	params,
 }: {
 	url: string;
 	source: string;
@@ -21,7 +21,7 @@ export default function outboundUrl({
 		utm_source: source,
 		utm_medium: medium,
 		utm_campaign: campaign,
-		...params
+		...params,
 	};
 	type UrlParamsKeys = keyof typeof urlParams;
 

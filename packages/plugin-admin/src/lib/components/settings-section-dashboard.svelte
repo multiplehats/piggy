@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { createQuery } from '@tanstack/svelte-query';
-	import { __ } from '@wordpress/i18n';
-	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
-	import { SettingsSection } from '$lib/components/ui/settings-section';
-	import { SettingsAdminService } from '$lib/modules/settings';
-	import { settingsState } from '$lib/stores/settings';
-	import { QueryKeys } from '$lib/utils/query-keys';
+	import { createQuery } from "@tanstack/svelte-query";
+	import { __ } from "@wordpress/i18n";
+	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
+	import { SettingsSection } from "$lib/components/ui/settings-section";
+	import { SettingsAdminService } from "$lib/modules/settings";
+	import { settingsState } from "$lib/stores/settings";
+	import { QueryKeys } from "$lib/utils/query-keys";
 
 	const service = new SettingsAdminService();
 	const query = createQuery({
 		queryKey: [QueryKeys.settings],
 		retry: false,
 		queryFn: async () => await service.getAllSettings(),
-		refetchOnWindowFocus: true
+		refetchOnWindowFocus: true,
 	});
 
 	$: if ($query.data && $query.isSuccess) {
@@ -20,13 +20,13 @@
 	}
 </script>
 
-<SettingsSection title={__('General settings')}>
+<SettingsSection title={__("General settings")}>
 	{#if $query.isLoading}
-		<p>{__('Loading settings')}</p>
+		<p>{__("Loading settings")}</p>
 	{:else if $query.isError}
 		<p>Error: {$query.error.message}</p>
 	{:else if $query.isSuccess && $settingsState}
-		<div class="divide-y max-w-md divide-border w-full">
+		<div class="divide-border w-full max-w-md divide-y">
 			<SettingsTranslateableInput
 				class="pb-4"
 				{...$settingsState.dashboard_title_logged_in}

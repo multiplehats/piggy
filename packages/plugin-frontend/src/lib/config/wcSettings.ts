@@ -1,6 +1,6 @@
-import type { CurrencyCode, SymbolPosition } from '@piggy/types';
+import type { CurrencyCode, SymbolPosition } from "@piggy/types";
 
-export interface WooCommerceSiteCurrency {
+export type WooCommerceSiteCurrency = {
 	// The ISO code for the currency.
 	code: CurrencyCode;
 	// The precision (decimal places).
@@ -15,18 +15,18 @@ export interface WooCommerceSiteCurrency {
 	thousandSeparator: string;
 	// The format string use for displaying an amount in this currency.
 	priceFormat: string;
-}
+};
 
-export interface WooCommerceSiteLocale {
+export type WooCommerceSiteLocale = {
 	// The locale string for the current site.
 	siteLocale: string;
 	// The locale string for the current user.
 	userLocale: string;
 	// An array of short weekday strings in the current user's locale.
 	weekdaysShort: string[];
-}
+};
 
-export interface WooCommerceSharedSettings {
+export type WooCommerceSharedSettings = {
 	adminUrl: string;
 	countries: Record<string, string> | never[];
 	currency: WooCommerceSiteCurrency;
@@ -42,55 +42,56 @@ export interface WooCommerceSharedSettings {
 	wcVersion: string;
 	wpLoginUrl: string;
 	wpVersion: string;
-}
+};
 type WooCommerceSharedSettingsKeys = keyof WooCommerceSharedSettings;
 
 const defaults: WooCommerceSharedSettings = {
-	adminUrl: '',
+	adminUrl: "",
 	countries: [],
 	displayCartPricesIncludingTax: false,
 	currency: {
-		code: 'USD',
+		code: "USD",
 		precision: 2,
-		symbol: '$',
-		symbolPosition: 'left',
-		decimalSeparator: '.',
-		priceFormat: '%1$s%2$s',
-		thousandSeparator: ','
+		symbol: "$",
+		symbolPosition: "left",
+		decimalSeparator: ".",
+		priceFormat: "%1$s%2$s",
+		thousandSeparator: ",",
 	},
 	currentUserIsAdmin: false,
-	homeUrl: '',
+	homeUrl: "",
 	locale: {
-		siteLocale: 'en_US',
-		userLocale: 'en_US',
-		weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+		siteLocale: "en_US",
+		userLocale: "en_US",
+		weekdaysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
 	},
 	orderStatuses: [],
-	placeholderImgSrc: '',
-	siteTitle: '',
+	placeholderImgSrc: "",
+	siteTitle: "",
 	storePages: [],
-	wcAssetUrl: '',
-	wcVersion: '',
-	wpLoginUrl: '',
-	wpVersion: ''
+	wcAssetUrl: "",
+	wcVersion: "",
+	wpLoginUrl: "",
+	wpVersion: "",
 };
 
-const globalSharedSettings = typeof window.piggyWcSettings === 'object' ? window.piggyWcSettings : {};
+const globalSharedSettings =
+	typeof window.piggyWcSettings === "object" ? window.piggyWcSettings : {};
 
 // Use defaults or global settings, depending on what is set.
 const allWcSettings: WooCommerceSharedSettings = {
 	...defaults,
-	...globalSharedSettings
+	...globalSharedSettings,
 };
 
 allWcSettings.currency = {
 	...defaults.currency,
-	...allWcSettings.currency
+	...allWcSettings.currency,
 };
 
 allWcSettings.locale = {
 	...defaults.locale,
-	...allWcSettings.locale
+	...allWcSettings.locale,
 };
 
 /**
@@ -100,24 +101,24 @@ allWcSettings.locale = {
  * the `fallback` will be returned instead. An optional `filter`
  * callback can be passed to format the returned value.
  */
-export const getSetting = <T>(
+export function getSetting<T>(
 	name: string,
 	fallback: unknown = false,
-	filter = (val: unknown, fb: unknown) => (typeof val !== 'undefined' ? val : fb)
-): T => {
+	filter = (val: unknown, fb: unknown) => (typeof val !== "undefined" ? val : fb)
+): T {
 	const value =
 		name in allWcSettings ? allWcSettings[name as WooCommerceSharedSettingsKeys] : fallback;
 	return filter(value, fallback) as T;
-};
+}
 
-export const getSettingWithCoercion = <T>(
+export function getSettingWithCoercion<T>(
 	name: string,
 	fallback: T,
 	typeguard: (val: unknown, fb: unknown) => val is T
-): T => {
+): T {
 	const value =
 		name in allWcSettings ? allWcSettings[name as WooCommerceSharedSettingsKeys] : fallback;
 	return typeguard(value, fallback) ? value : fallback;
-};
+}
 
 export { allWcSettings };

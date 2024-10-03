@@ -1,87 +1,55 @@
 {
-  "$schema": "https://turbo.build/schema.v2.json",
-  "tasks": {
-    "topo": {
-      "dependsOn": [
-        "^topo"
-      ]
-    },
-    "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
-    },
-    "dev": {
-      "persistent": true,
-      "cache": false
-    },
-    "dev:admin": {
-      "persistent": true,
-      "cache": false
-    },
-    "dev:frontend": {
-      "persistent": true,
-      "cache": false
-    },
-    "analyze": {
-      "dependsOn": [
-        "^build"
-      ]
-    },
-    "@piggy/plugin#i18n": {
-      "cache": false,
-      "dependsOn": [
-        "^build",
-        "@piggy/plugin#package-plugin"
-      ],
-      "outputs": [
-        "languages/**"
-      ]
-    },
-    "@piggy/plugin#package-plugin": {
-      "dependsOn": [
-        "build"
-      ],
-      "outputs": [
-        "piggy.zip"
-      ],
-      "cache": false,
-      "inputs": [
-        "dist/**",
-        "src/**",
-        "vendor/**",
-        "piggy.php"
-      ]
-    },
-    "format": {
-      "outputs": [
-        "node_modules/.cache/.prettiercache"
-      ]
-    },
-    "lint": {
-      "dependsOn": [
-        "^topo"
-      ],
-      "outputs": [
-        "node_modules/.cache/.eslintcache"
-      ]
-    },
-    "typecheck": {
-      "dependsOn": [
-        "^topo"
-      ],
-      "outputs": [
-        "node_modules/.cache/tsbuildinfo.json"
-      ]
-    },
-    "clean": {
-      "cache": false
-    },
-    "//#clean": {
-      "cache": false
-    }
-  }
+	"$schema": "https://turbo.build/schema.v2.json",
+	"tasks": {
+		"topo": {
+			"dependsOn": ["^topo"]
+		},
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**"]
+		},
+		"dev": {
+			"persistent": true,
+			"cache": false
+		},
+		"dev:admin": {
+			"persistent": true,
+			"cache": false
+		},
+		"dev:frontend": {
+			"persistent": true,
+			"cache": false
+		},
+		"analyze": {
+			"dependsOn": ["^build"]
+		},
+		"@piggy/plugin#i18n": {
+			"cache": false,
+			"dependsOn": ["^build", "@piggy/plugin#package-plugin"],
+			"outputs": ["languages/**"]
+		},
+		"@piggy/plugin#package-plugin": {
+			"dependsOn": ["build"],
+			"outputs": ["piggy.zip"],
+			"cache": false,
+			"inputs": ["dist/**", "src/**", "vendor/**", "piggy.php"]
+		},
+		"format": {
+			"outputs": ["node_modules/.cache/.prettiercache"]
+		},
+		"lint": {
+			"dependsOn": ["^topo"],
+			"outputs": ["node_modules/.cache/.eslintcache"]
+		},
+		"typecheck": {
+			"dependsOn": ["^topo"],
+			"outputs": ["node_modules/.cache/tsbuildinfo.json"]
+		},
+		"clean": {
+			"cache": false
+		},
+		"//#clean": {
+			"cache": false
+		}
+	}
 }

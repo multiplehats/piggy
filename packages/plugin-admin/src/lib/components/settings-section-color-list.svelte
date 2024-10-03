@@ -1,13 +1,12 @@
 <script lang="ts">
-	import type { Color } from '@piggy/types/plugin/settings/adminTypes';
-	import { __ } from '@wordpress/i18n';
-	import { SettingsSection } from '$lib/components/ui/settings-section';
-	import { saveSettings } from '$lib/stores/settings';
-	import ColorPicker from './settings-color-picker.svelte';
+	import type { Color } from "@piggy/types/plugin/settings/adminTypes";
+	import ColorPicker from "./settings-color-picker.svelte";
+	import { SettingsSection } from "$lib/components/ui/settings-section";
+	import { saveSettings } from "$lib/stores/settings";
 
-	const onSaved = async () => {
+	async function onSaved() {
 		await saveSettings();
-	};
+	}
 
 	export let colorList: Color[];
 </script>
