@@ -96,8 +96,6 @@
 		"vite-plugin-banner": "^0.7.1"
 	},
 	"dependencies": {
-		"@piggy/eslint-config": "workspace:^",
-		"@piggy/prettier-config": "workspace:^",
 		"@splidejs/svelte-splide": "^0.2.9",
 		"@tanstack/svelte-query": "^5.24.1",
 		"@wordpress/a11y": "^3.43.0",
@@ -106,13 +104,5 @@
 		"slugify": "^1.6.6",
 		"svelte-local-storage-store": "^0.6.4",
 		"svelte-navigator": "^3.2.2"
-	},
-	"eslintConfig": {
-		"root": true,
-		"extends": [
-			"@piggy/eslint-config/base",
-			"@piggy/eslint-config/svelte"
-		]
-	},
-	"prettier": "@piggy/prettier-config"
+	}
 }
