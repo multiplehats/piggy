@@ -1,12 +1,21 @@
 <script lang="ts">
 	import { cn } from '$lib/utils/tw.js';
-	import toast, { Toaster } from 'svelte-french-toast';
-	import { useLocation } from 'svelte-navigator';
+	import { onMount } from 'svelte';
+	import { useLocation, useNavigate } from 'svelte-navigator';
 	import Navigation from './settings-navigation/settings-navigation.svelte';
+
+	const navigate = useNavigate();
 
 	const location = useLocation();
 
 	$: isOnboarding = $location.pathname.startsWith('/onboarding');
+	$: isMissingApiKey = !window.piggyMiddlewareConfig.apiKeySet;
+
+	onMount(() => {
+		if (isMissingApiKey) {
+			navigate('/onboarding');
+		}
+	});
 </script>
 
 <main class="layout-container">
@@ -20,7 +29,6 @@
 			isOnboarding ? 'mt-0 mx-auto' : 'mt-8 mb-16'
 		)}
 	>
-		<Toaster />
 		<slot />
 	</div>
 </main>

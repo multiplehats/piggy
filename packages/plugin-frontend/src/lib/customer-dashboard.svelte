@@ -26,12 +26,8 @@
 			if (error instanceof WooCommerceStoreApiError) {
 				const { message, status, statusText } = error;
 
-				// toast.error(message, {}, `${status} ${statusText}`);
-
 				return;
 			}
-
-			// toast.error(__('There was an unknown error.', 'piggy'));
 		}
 	});
 

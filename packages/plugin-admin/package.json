@@ -109,7 +109,6 @@
 		"cmdk-sv": "^0.0.17",
 		"history": "^5.3.0",
 		"slugify": "^1.6.6",
-		"svelte-french-toast": "^1.2.0",
 		"svelte-local-storage-store": "^0.6.4",
 		"svelte-navigator": "^3.2.2",
 		"zod": "^3.23.7"

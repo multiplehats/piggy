@@ -6,25 +6,44 @@
 	import { getSettingByIdQueryConfig } from '$lib/modules/settings/queries';
 	import { settingsState } from '$lib/stores/settings';
 	import { QueryKeys } from '$lib/utils/query-keys';
+	import { debounce } from 'lodash-es';
 	import { service } from '../../modules/piggy';
 	import SettingsCombobox from '../settings-combobox.svelte';
 
 	export let isLoading = false;
 
 	const client = useQueryClient();
-	const query = createQuery(getSettingByIdQueryConfig('api_key'));
+	const apiKeyQuery = createQuery(getSettingByIdQueryConfig('api_key'));
+
 	const shopQuery = createQuery({
 		queryKey: [QueryKeys.piggyShops],
-		retry: false,
 		queryFn: async () => await service.getShops(),
-		refetchOnWindowFocus: true
+		enabled: !!$settingsState.api_key.value,
+		retry: false
 	});
-	// const saveSettingsMutation = createMutation(
-	// 	saveSettingsMutationConfig(client)
-	// );
+
+	const saveSettingsMutation = createMutation(saveSettingsMutationConfig(client));
+
+	let initialApiKey = $settingsState.api_key.value;
+
+	const debouncedSaveSettings = debounce(() => {
+		$saveSettingsMutation.mutate(settingsState, {
+			onSuccess: () => {
+				$shopQuery.refetch();
+			}
+		});
+	}, 100);
+
+	$: console.log($apiKeyQuery.data);
 
 	$: {
-		isLoading = $query.isLoading || $shopQuery.isLoading;
+		isLoading = $apiKeyQuery.isLoading || $shopQuery.isLoading;
+
+		if ($settingsState.api_key.value !== initialApiKey) {
+			debouncedSaveSettings();
+			initialApiKey = $settingsState.api_key.value;
+			$shopQuery.refetch();
+		}
 	}
 </script>
 
@@ -35,18 +54,32 @@
 	bind:value={$settingsState.api_key.value}
 />
 
-{#if $shopQuery?.data}
-	<SettingsCombobox
-		items={$shopQuery?.data
-			? $shopQuery.data.map((shop) => ({
-					label: shop.name,
-					value: shop.uuid
-			  }))
-			: []}
-		itemName="shop"
-		label={$settingsState.shop_uuid.label}
-		description={$settingsState.shop_uuid.description}
-		id={$settingsState.shop_uuid.id}
-		bind:value={$settingsState.shop_uuid.value}
-	/>
+{#if $apiKeyQuery.isSuccess}
+	{#if $shopQuery.isLoading}
+		<p>
+			{__('Loading your shops...', 'piggy')}
+		</p>
+	{:else if $shopQuery.isError}
+		<p class="text-red-500">
+			{#if $shopQuery.error.message.includes('Unauthenticated')}
+				{__('Your API key is invalid. Please check your API key and try again.', 'piggy')}
+			{:else}
+				{__('There was an error loading your shops. Please try again later.', 'piggy')}
+			{/if}
+		</p>
+	{:else if $shopQuery.isSuccess}
+		<SettingsCombobox
+			items={$shopQuery?.data
+				? $shopQuery.data.map((shop) => ({
+						label: shop.name,
+						value: shop.uuid
+				  }))
+				: []}
+			itemName="shop"
+			label={$settingsState.shop_uuid.label}
+			description={$settingsState.shop_uuid.description}
+			id={$settingsState.shop_uuid.id}
+			bind:value={$settingsState.shop_uuid.value}
+		/>
+	{/if}
 {/if}

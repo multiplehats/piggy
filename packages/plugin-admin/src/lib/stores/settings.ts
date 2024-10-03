@@ -1,6 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
 import type { GetSettingsResponse } from '$lib/modules/settings/types';
-import toast from 'svelte-french-toast';
 import { get, writable } from 'svelte/store';
 import type { PluginOptionsAdmin, PluginOptionsAdminKeys } from '@piggy/types';
 import { zPluginOptionsAdmin } from '@piggy/types/plugin';
@@ -24,7 +23,6 @@ export const updateSettings = ({
 	const savedOption = currentSettings[id as PluginOptionsAdminKeys];
 
 	if (!savedOption) {
-		toast.error(sprintf(__("Option '%s' not found in the settings.", 'piggy'), id));
 		return;
 	}
 
@@ -56,8 +54,6 @@ export const saveSettings = () => {
 	const validation = zPluginOptionsAdmin.safeParse(settings);
 
 	if (!validation.success) {
-		toast.error(__('Error saving settings.', 'piggy'));
-
 		console.error(validation.error);
 
 		return;

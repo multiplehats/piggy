@@ -81,8 +81,8 @@ const completeStep = (stepId: OnboardingStepId) => {
 	setStepStatus(stepId, 'completed');
 };
 
-const completeAndNavigate = (toCOmpleteStepid: OnboardingStepId, nextStepId: OnboardingStepId) => {
-	completeStep(toCOmpleteStepid);
+const completeAndNavigate = (toCompleteStepId: OnboardingStepId, nextStepId: OnboardingStepId) => {
+	completeStep(toCompleteStepId);
 	return goToStep(nextStepId);
 };
 

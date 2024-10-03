@@ -63,9 +63,6 @@ importers:
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
-      svelte-french-toast:
-        specifier: ^1.2.0
-        version: 1.2.0(svelte@4.2.1)
       svelte-local-storage-store:
         specifier: ^0.6.4
         version: 0.6.4(svelte@4.2.1)
@@ -317,9 +314,6 @@ importers:
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
-      svelte-french-toast:
-        specifier: ^1.2.0
-        version: 1.2.0(svelte@4.2.17)
       svelte-local-storage-store:
         specifier: ^0.6.4
         version: 0.6.4(svelte@4.2.17)
@@ -549,9 +543,6 @@ importers:
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
-      svelte-french-toast:
-        specifier: ^1.2.0
-        version: 1.2.0(svelte@4.2.1)
       svelte-local-storage-store:
         specifier: ^0.6.4
         version: 0.6.4(svelte@4.2.1)
@@ -5246,11 +5237,6 @@ packages:
     peerDependenciesMeta:
       svelte:
         optional: true
-
-  svelte-french-toast@1.2.0:
-    resolution: {integrity: sha512-5PW+6RFX3xQPbR44CngYAP1Sd9oCq9P2FOox4FZffzJuZI2mHOB7q5gJBVnOiLF5y3moVGZ7u2bYt7+yPAgcEQ==}
-    peerDependencies:
-      svelte: ^3.57.0 || ^4.0.0
 
   svelte-hmr@0.15.3:
     resolution: {integrity: sha512-41snaPswvSf8TJUhlkoJBekRrABDXDMdpNpT2tfHIv4JuhgvHqLMhEPGtaQn0BmbNSTkuz2Ed20DF2eHw0SmBQ==}
@@ -11182,16 +11168,6 @@ snapshots:
       postcss-scss: 4.0.9(postcss@8.4.31)
     optionalDependencies:
       svelte: 4.2.17
-
-  svelte-french-toast@1.2.0(svelte@4.2.1):
-    dependencies:
-      svelte: 4.2.1
-      svelte-writable-derived: 3.1.0(svelte@4.2.1)
-
-  svelte-french-toast@1.2.0(svelte@4.2.17):
-    dependencies:
-      svelte: 4.2.17
-      svelte-writable-derived: 3.1.0(svelte@4.2.17)
 
   svelte-hmr@0.15.3(svelte@4.2.1):
     dependencies:

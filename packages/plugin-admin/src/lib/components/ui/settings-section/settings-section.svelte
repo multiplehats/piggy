@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { __ } from '@wordpress/i18n';
 	import { cn } from '$lib/utils/tw.js';
-	import { Check, Loader2 } from 'lucide-svelte';
+	import { Check } from 'lucide-svelte';
 	import Button from '../button/button.svelte';
 
 	export let title: string = '';
@@ -58,13 +58,10 @@
 		<div class="px-4 py-2.5 text-left sm:px-6 border-t">
 			<slot name="actions">
 				<div class="inline-flex items-center">
-					<Button size="xs" on:click={handleOnSave} disabled={loading}>
-						{#if loading}
-							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-						{/if}
-
+					<Button size="xs" {loading} on:click={handleOnSave}>
 						{__('Save changes')}
 					</Button>
+
 					{#if saved}
 						<div class="inline-flex items-center">
 							<Check class="ml-2 text-green-600" />

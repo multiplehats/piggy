@@ -1,7 +1,6 @@
 import type { CreateMutationOptions, DefaultError, QueryClient } from '@tanstack/svelte-query';
 import { __ } from '@wordpress/i18n';
 import { MutationKeys, QueryKeys } from '$lib/utils/query-keys';
-import toast from 'svelte-french-toast';
 import { SettingsAdminService } from '.';
 import type {
 	SaveSettingsParams,
@@ -41,8 +40,6 @@ export function saveSettingsMutationConfig(
 		},
 		onSuccess: async (newSettings) => {
 			await queryClient.invalidateQueries({ queryKey: [QueryKeys.piggyShops] });
-
-			toast.success(__('Settings saved updated', 'piggy'));
 
 			if (opts.onSuccessCb) {
 				opts.onSuccessCb(newSettings);
@@ -84,8 +81,6 @@ export function upsertEarnRuleMutationConfig(
 			}
 		},
 		onSuccess: async (newRule) => {
-			toast.success(__('Earn rule saved', 'piggy'));
-
 			if (opts.onSuccessCb) {
 				opts.onSuccessCb(newRule);
 			}
@@ -126,8 +121,6 @@ export function upsertSpendRuleMutationConfig(
 			}
 		},
 		onSuccess: (newRule) => {
-			toast.success(__('Earn rule saved', 'piggy'));
-
 			if (opts.onSuccessCb) {
 				opts.onSuccessCb(newRule);
 			}

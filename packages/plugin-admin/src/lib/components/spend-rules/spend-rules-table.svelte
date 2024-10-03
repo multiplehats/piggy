@@ -9,7 +9,6 @@
 	import { QueryKeys } from '$lib/utils/query-keys';
 	import { getStatusText } from '$lib/utils/status-text';
 	import { WalletMinimal } from 'lucide-svelte';
-	import toast from 'svelte-french-toast';
 	import { useNavigate } from 'svelte-navigator';
 
 	const service = new SettingsAdminService();
@@ -22,12 +21,7 @@
 		refetchOnWindowFocus: true
 	});
 	const mutateSync = createMutation({
-		mutationFn: () =>
-			toast.promise(service.syncRewards(), {
-				loading: __('Syncing rewards...'),
-				success: __('Rewards synced'),
-				error: __('Failed to sync rewards')
-			}),
+		mutationFn: () => service.syncRewards(),
 		mutationKey: ['spend-rules-sync'],
 		onSuccess: () => {
 			$query.refetch();
@@ -68,7 +62,12 @@
 						{__('View in Piggy')}
 					</Button>
 
-					<Button size="sm" target="_blank" on:click={() => $mutateSync.mutate()}>
+					<Button
+						size="sm"
+						target="_blank"
+						loading={$mutateSync.isPending}
+						on:click={() => $mutateSync.mutate()}
+					>
 						{__('Sync rewards')}
 					</Button>
 				</div>
