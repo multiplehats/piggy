@@ -14,7 +14,7 @@
 	<div class="divide-y divide-gray-100">
 		{#each options as item (item.id)}
 			<div class="py-4 first-of-type:pt-0 last-of-type:pb-0">
-				<Switch label={item.label} tooltip={item.tooltip} id={item.id} />
+				<Switch label={item.label} tooltip={item.tooltip} id={item.id} value={item.value} />
 			</div>
 		{/each}
 	</div>

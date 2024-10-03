@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { clickOutsideAction } from '@piggy/lib';
-	import type { PluginOptionsAdminKeys } from '@piggy/types/plugin';
 	import Input from '$lib/components/settings-input.svelte';
 	import { Label } from '$lib/components/ui/label';
 	import { settingsState, updateSettings } from '$lib/stores/settings';
@@ -9,6 +7,8 @@
 	import { debounce } from 'lodash-es';
 	import { onMount } from 'svelte';
 	import type { RgbaStringColorPicker } from 'vanilla-colorful/rgba-string-color-picker.js';
+	import { clickOutsideAction } from '@piggy/lib';
+	import type { PluginOptionsAdminKeys } from '@piggy/types/plugin';
 	import 'vanilla-colorful/rgba-string-color-picker.js';
 
 	export let label = 'Enter a label';
@@ -86,6 +86,7 @@
 			</div>
 
 			<Input
+				{label}
 				{id}
 				bind:el={input}
 				on:click={() => (showPopup = !showPopup)}

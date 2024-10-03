@@ -3,11 +3,11 @@
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 	import { __ } from '@wordpress/i18n';
 	import { isDev } from '$lib/config/environment';
-	import { WooCommerceStoreApiError } from '$lib/modules/cart/cart.service';
 	import {
 		pluginSettings as settingsState,
 		wcSettings as wcSettingsState
 	} from '$lib/modules/settings';
+	import { WooCommerceStoreApiError } from '$lib/utils/errors.js';
 	import { hooks } from '$lib/utils/hooks';
 	import { onMount } from 'svelte';
 	import type { IWooSettings, PluginOptionsFrontend } from '@piggy/types/plugin';

@@ -1,7 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { z } from 'zod';
-import type { Countries } from '../../countries';
-import type { SymbolPosition } from '../../wc-types';
 import * as adminFields from './adminTypes';
 
 /**
@@ -187,6 +185,8 @@ export interface WooCommerceSiteCurrency {
 	priceFormat: string;
 }
 
+type SymbolPosition = 'left' | 'left_space' | 'right' | 'right_space';
+
 export interface WooCommerceSiteLocale {
 	// The locale string for the current site.
 	siteLocale: string;
@@ -206,7 +206,7 @@ type wcConfigPage =
 
 export interface IWooSettings {
 	adminUrl: string;
-	countries: Countries | never[];
+	countries: Record<string, string> | never[];
 	currency: WooCommerceSiteCurrency;
 	currentUserIsAdmin: boolean;
 	homeUrl: string;
