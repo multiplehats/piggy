@@ -113,9 +113,7 @@ apiFetch.use(wcStoreApiNonceMiddleware);
 apiFetch.setNonce = setNonce;
 
 updateNonce(
-	// @ts-expect-error - Need to add this type.
 	window.piggyMiddlewareConfig.storeApiNonce,
-	// @ts-expect-error - Need to add this type.
 	window.piggyMiddlewareConfig.wcStoreApiNonceTimestamp
 );
 

@@ -1,21 +1,4 @@
-import type { CurrencyCode, SymbolPosition } from "@piggy/types";
-
-export type WooCommerceSiteCurrency = {
-	// The ISO code for the currency.
-	code: CurrencyCode;
-	// The precision (decimal places).
-	precision: number;
-	// The symbol for the currency (eg '$')
-	symbol: string;
-	// The position for the symbol ('left', or 'right')
-	symbolPosition: SymbolPosition;
-	// The string used for the decimal separator.
-	decimalSeparator: string;
-	// The string used for the thousands separator.
-	thousandSeparator: string;
-	// The format string use for displaying an amount in this currency.
-	priceFormat: string;
-};
+import type { WooCommerceSiteCurrency } from "@piggy/types";
 
 export type WooCommerceSiteLocale = {
 	// The locale string for the current site.

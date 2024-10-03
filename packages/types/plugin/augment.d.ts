@@ -3,7 +3,8 @@ import type { IWooSettings, PluginOptionsFrontend } from "./settings";
 import type { SpendRuleValueItem } from "./settings/adminTypes";
 
 declare global {
-	type Window = {
+	// eslint-disable-next-line ts/consistent-type-definitions
+	interface Window {
 		// Frontend settings
 		piggyConfig: PluginOptionsFrontend;
 		// WooCommerce settings
@@ -25,7 +26,7 @@ declare global {
 			hooks: Hooks;
 			[other: string]: unknown;
 		};
-	};
+	}
 }
 
 export {};

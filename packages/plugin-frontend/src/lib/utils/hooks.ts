@@ -15,17 +15,14 @@ const NAMESPACE = "piggy";
 
 export const hooks = {
 	doAction: (hookname: ActionHookNames, ...args: unknown[]) => {
-		// @ts-expect-error - This exists in the global scope.
 		window.wp.hooks.doAction(hookname, ...args);
 	},
 
 	addAction: (hookname: ActionHookNames, callback: Callback, priority?: number) => {
-		// @ts-expect-error - This exists in the global scope.
 		window.wp.hooks.addAction(hookname, NAMESPACE, callback, priority);
 	},
 
 	doingAction: (hookname: ActionHookNames) => {
-		// @ts-expect-error - This exists in the global scope.
 		return window.wp.hooks.doingAction(hookname);
 	},
 };

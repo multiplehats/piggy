@@ -157,7 +157,16 @@ async function request<T = unknown>(
 			};
 		})
 		.catch((e) => {
-			const err = e as ApiErrorResponse | null;
+			const err = e as {
+				data: {
+					status: number;
+					code: string;
+					message: string;
+				};
+				status: number;
+				code: string;
+				message: string;
+			} | null;
 
 			return {
 				data: null,

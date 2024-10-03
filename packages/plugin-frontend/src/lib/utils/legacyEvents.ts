@@ -1,4 +1,3 @@
-import type { AddToCartEventDetail } from "@piggy/types";
 import { dispatchEvent } from "./dispatch-event";
 
 let fragmentRequestTimeoutId: ReturnType<typeof setTimeout>;
@@ -25,7 +24,7 @@ export function triggerAddingToCartEvent(): void {
 	});
 }
 
-export function triggerAddedToCartEvent({ preserveCartData = false }: AddToCartEventDetail): void {
+export function triggerAddedToCartEvent({ preserveCartData = false }): void {
 	dispatchEvent("piggy_added_to_cart", {
 		bubbles: true,
 		cancelable: true,
