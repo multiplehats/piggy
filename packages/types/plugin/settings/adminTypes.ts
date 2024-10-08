@@ -219,6 +219,9 @@ export const zSpendRuleValueItem = z.object({
 	creditCost: zNumber,
 	description: zTranslatableText,
 	fulfillment: zTranslatableText,
+	image: z.object({
+		value: z.string().nullable(),
+	}),
 	discountValue: zNumber,
 	discountType: zSelect.extend({
 		default: z.literal("percentage").or(z.literal("fixed")),

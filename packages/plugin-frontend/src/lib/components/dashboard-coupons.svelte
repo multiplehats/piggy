@@ -9,7 +9,7 @@
 
 	const query = createQuery({
 		queryKey: [QueryKeys.coupons],
-		queryFn: async () => await apiService.getCoupons(),
+		queryFn: async () => await apiService.getCoupons(window.piggyMiddlewareConfig.userId),
 	});
 
 	function getNavItemText(text?: string) {

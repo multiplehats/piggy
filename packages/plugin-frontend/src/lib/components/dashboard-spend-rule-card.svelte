@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createMutation } from "@tanstack/svelte-query";
+	import { createMutation, useQueryClient } from "@tanstack/svelte-query";
 	import Gift from "lucide-svelte/icons/gift";
 	import { cubicOut } from "svelte/easing";
 	import { tweened } from "svelte/motion";
@@ -7,7 +7,7 @@
 	import type { SpendRuleValueItem } from "@piggy/types/plugin/settings/adminTypes";
 	import Button from "./button/button.svelte";
 	import { getSpendRuleLabel, getTranslatedText } from "$lib/utils/translated-text";
-	import { MutationKeys } from "$lib/utils/query-keys";
+	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 	import { contactStore, hasPiggyAccount } from "$lib/stores";
 	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
 	import { piggyService } from "$lib/config/services";
@@ -19,9 +19,14 @@
 		easing: cubicOut,
 	});
 
+	const client = useQueryClient();
 	const claimSpendRuleMutation = createMutation({
 		mutationKey: [MutationKeys.claimSpendRule],
 		mutationFn: () => handleClaim(rule.id),
+		onSuccess: async () => {
+			await client.invalidateQueries({ queryKey: [QueryKeys.coupons] });
+			await client.refetchQueries({ queryKey: [QueryKeys.coupons] });
+		},
 	});
 
 	function handleClaim(id: number) {
@@ -33,6 +38,8 @@
 	$: if (creditsRequired) {
 		progress.set(creditsAccumulated / creditsRequired);
 	}
+
+	$: hasEnoughCredits = creditsAccumulated >= (creditsRequired ?? 0);
 
 	function getDescription(text: string, credits: number | string | null) {
 		if (!text) return "";
@@ -107,7 +114,7 @@
 		<div class="piggy-dashboard-earn-card__action">
 			<Button
 				loading={$claimSpendRuleMutation.isPending}
-				disabled={$claimSpendRuleMutation.isPending}
+				disabled={$claimSpendRuleMutation.isPending || !hasEnoughCredits}
 				variant="primary"
 				on:click={() => $claimSpendRuleMutation.mutateAsync()}
 			>

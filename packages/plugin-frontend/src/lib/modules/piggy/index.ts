@@ -101,8 +101,10 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async getSpendRules() {
-		const { data, error } = await api.get<GetSpendRulesResponse>("/piggy/v1/spend-rules");
+	async getSpendRules(userId?: number) {
+		const { data, error } = await api.get<GetSpendRulesResponse>(
+			`/piggy/v1/spend-rules?userId=${userId}`
+		);
 
 		if (error) {
 			throw new PiggyApiError(error.status, error.statusText, error.data);
