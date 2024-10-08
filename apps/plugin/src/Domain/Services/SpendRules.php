@@ -149,6 +149,14 @@ class SpendRules
 				'type' => 'text',
 				'description' => __('The reward that is selected for the spend rule.', 'piggy'),
 			],
+			'image' => [
+				'id' => 'image',
+				'label' => __('Image', 'piggy'),
+				'default' => null,
+				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_image', null),
+				'type' => 'text',
+				'description' => __('The image that is displayed for the spend rule.', 'piggy'),
+			],
 			'description' => [
 				'id' => 'description',
 				'label' => __('Description', 'piggy'),
@@ -321,6 +329,10 @@ class SpendRules
 				'_piggy_spend_rule_selected_reward' => $reward['uuid'],
 			)
 		);
+
+		if(isset($reward['image'])) {
+			$post_data['meta_input']['_piggy_spend_rule_image'] = $reward['image'];
+		}
 
 		if ($existing_post_id) {
 			$post_data['ID'] = $existing_post_id;

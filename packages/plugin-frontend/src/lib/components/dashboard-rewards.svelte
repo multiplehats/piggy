@@ -9,7 +9,7 @@
 
 	const query = createQuery({
 		queryKey: [QueryKeys.spendRules],
-		queryFn: async () => await apiService.getSpendRules(),
+		queryFn: async () => await apiService.getSpendRules(window.piggyMiddlewareConfig.userId),
 	});
 
 	function getNavItemText(text?: string) {

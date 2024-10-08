@@ -277,6 +277,9 @@ class Connection {
 	 * @return array
 	 */
 	public function format_reward( Reward $reward ) {
+		$media_obj = $reward->getMedia();
+		$media = $media_obj ? ['type' => $media_obj->getType(), 'value' => $media_obj->getValue()] : null;
+
 		return [
 			'uuid' => $reward->getUuid(),
 			'title' => $reward->getTitle(),
@@ -284,6 +287,7 @@ class Connection {
 			'type' => $reward->getRewardType(),
 			'active' => $reward->isActive(),
 			'attributes' => $reward->getAttributes(),
+			'media' => $media,
 		];
 	}
 
@@ -705,10 +709,8 @@ class Connection {
 		$current_spend_rules = get_posts($prepared_args);
 		$this->logger->info("Current spend rules in WordPress: " . count($current_spend_rules));
 
-
 		// Collect existing Piggy UUIDs from CPT
 		$existing_uuids = array_column($current_spend_rules, '_piggy_reward_uuid', 'ID');
-
 
 		// Sync Piggy rewards with CPT (add/update)
 		$processed_uuids = [];
@@ -725,9 +727,12 @@ class Connection {
 				'selectedReward' => $reward['uuid'],
 			];
 
+			if(isset($reward['media'])) {
+				$mapped_reward['image'] = $reward['media']['value'];
+			}
+
 			// Check if the reward already exists in CPT
 			$existing_post_id = array_search($reward['uuid'], $existing_uuids);
-
 
 			if ($existing_post_id !== false) {
 				// Update existing spend rule

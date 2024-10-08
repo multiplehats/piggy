@@ -41,7 +41,11 @@
 
 <div class="piggy-dashboard-coupon-card">
 	<div class="piggy-dashboard-coupon-card__icon">
-		<Gift size={48} />
+		{#if coupon.spend_rule?.image?.value}
+			<img src={coupon.spend_rule.image.value} alt={coupon.code} />
+		{:else}
+			<Gift size={48} />
+		{/if}
 	</div>
 
 	<h4 class="piggy-dashboard-coupon-card__header">
@@ -149,7 +153,18 @@
 
 	.piggy-dashboard-coupon-card__icon {
 		width: 100%;
-		height: auto;
+		height: 80px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 0.25rem;
+	}
+
+	.piggy-dashboard-coupon-card__icon img {
+		max-width: 100%;
+		max-height: 100%;
+		object-fit: contain;
+		border-radius: 0.375rem;
 	}
 
 	h4.piggy-dashboard-coupon-card__header {
