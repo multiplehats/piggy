@@ -1,23 +1,23 @@
 <script lang="ts">
-	import { cn } from '$lib/utils/cn.js';
-	import { Button as ButtonPrimitive } from 'bits-ui';
-	import { type Events, type Props } from './index.js';
+	import { Button as ButtonPrimitive } from "bits-ui";
+	import { type Events, type Props } from "./index.js";
+	import { cn } from "$lib/utils/cn.js";
 
 	type $$Props = Props;
 	type $$Events = Events;
 
-	let className: $$Props['class'] = undefined;
-	export let loading: $$Props['loading'] = false;
-	export let variant: $$Props['variant'] = 'primary';
-	export let builders: $$Props['builders'] = [];
+	let className: $$Props["class"] = undefined;
+	export let loading: $$Props["loading"] = false;
+	export let variant: $$Props["variant"] = "primary";
+	export let builders: $$Props["builders"] = [];
 	export { className as class };
 </script>
 
 <ButtonPrimitive.Root
 	{builders}
-	class={cn('piggy-button', `piggy-button--${variant}`, {
-		'piggy-button--disabled': $$restProps.disabled,
-		className
+	class={cn("piggy-button", `piggy-button--${variant}`, {
+		"piggy-button--disabled": $$restProps.disabled,
+		className,
 	})}
 	type="button"
 	{...$$restProps}
@@ -31,7 +31,13 @@
 			fill="none"
 			viewBox="0 0 24 24"
 		>
-			<circle class="piggy-spinner-bg" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+			<circle
+				class="piggy-spinner-bg"
+				cx="12"
+				cy="12"
+				r="10"
+				stroke="currentColor"
+				stroke-width="4"
 			></circle>
 			<path
 				class="piggy-spinner-fr"

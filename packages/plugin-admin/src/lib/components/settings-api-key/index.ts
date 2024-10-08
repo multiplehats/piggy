@@ -1,1 +1,1 @@
-export { default as SettingsApiKey } from './settings-api-key.svelte';
+export { default as SettingsApiKey } from "./settings-api-key.svelte";

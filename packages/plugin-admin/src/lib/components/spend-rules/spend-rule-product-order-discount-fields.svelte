@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { __ } from '@wordpress/i18n';
-	import SettingsInput from '$lib/components/settings-input.svelte';
-	import SettingsSelect from '$lib/components/settings-select.svelte';
-	import type { GetSpendRuleByIdResponse } from '$lib/modules/settings/types';
-	import type { NotUndefined } from '@piggy/types';
+	import type { NotUndefined } from "@piggy/types";
+	import SettingsInput from "$lib/components/settings-input.svelte";
+	import SettingsSelect from "$lib/components/settings-select.svelte";
+	import type { GetSpendRuleByIdResponse } from "$lib/modules/settings/types";
 
-	export let discountValue: NotUndefined<GetSpendRuleByIdResponse[0]['discountValue']>;
-	export let discountType: NotUndefined<GetSpendRuleByIdResponse[0]['discountType']>;
+	export let discountValue: NotUndefined<GetSpendRuleByIdResponse[0]["discountValue"]>;
+	export let discountType: NotUndefined<GetSpendRuleByIdResponse[0]["discountType"]>;
 </script>
 
 <div class="grid grid-cols-2 gap-4">
@@ -16,7 +15,7 @@
 		items={Object.entries(discountType.options).map(([value, { label: name }]) => {
 			return {
 				value,
-				name
+				name,
 			};
 		})}
 		onSelectChange={(selected) => {
@@ -29,12 +28,12 @@
 	<SettingsInput
 		{...discountValue}
 		type="number"
-		attributes={discountType.value === 'percentage' ? { min: 0, max: 100 } : { min: 0 }}
+		attributes={discountType.value === "percentage" ? { min: 0, max: 100 } : { min: 0 }}
 		bind:value={discountValue.value}
 	>
 		<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
 			<span class="h-5 w-5 text-gray-600">
-				{discountType.value === 'percentage' ? '%' : ''}
+				{discountType.value === "percentage" ? "%" : ""}
 			</span>
 		</div>
 	</SettingsInput>

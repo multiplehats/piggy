@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { Coupon } from '$lib/modules/piggy/types';
-	import { creditsName } from '$lib/modules/settings';
-	import { getSpendRuleLabel, getTranslatedText } from '$lib/utils/translated-text';
-	import Check from 'lucide-svelte/icons/check';
-	import Copy from 'lucide-svelte/icons/copy';
-	import Gift from 'lucide-svelte/icons/gift';
-	import { onMount } from 'svelte';
+	import Check from "lucide-svelte/icons/check";
+	import Copy from "lucide-svelte/icons/copy";
+	import Gift from "lucide-svelte/icons/gift";
+	import { onMount } from "svelte";
+	import { getSpendRuleLabel, getTranslatedText } from "$lib/utils/translated-text";
+	import { creditsName } from "$lib/modules/settings";
+	import type { Coupon } from "$lib/modules/piggy/types";
 
 	export let coupon: Coupon;
 
@@ -34,7 +34,7 @@
 						isCopied = false;
 					}, 3000);
 				})
-				.catch((err) => console.error('Failed to copy: ', err));
+				.catch((err) => console.error("Failed to copy: ", err));
 		}
 	}
 </script>

@@ -1,1 +1,1 @@
-export { default as Admin } from './admin.svelte';
+export { default as Admin } from "./admin.svelte";

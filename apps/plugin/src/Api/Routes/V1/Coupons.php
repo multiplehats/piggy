@@ -42,11 +42,20 @@ class Coupons extends AbstractRoute {
      */
     public function get_args() {
         return [
-			[
-				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
-			],
+            [
+                'methods'             => \WP_REST_Server::READABLE,
+                'callback'            => [ $this, 'get_response' ],
+                'permission_callback' => '__return_true',
+                'args'                => [
+                    'userId' => [
+                        'type'              => 'integer',
+                        'validate_callback' => function($param) {
+                            return is_numeric($param) && $param > 0;
+                        },
+                        'sanitize_callback' => 'absint',
+                    ],
+                ],
+            ],
             'schema' => [ $this->schema, 'get_public_item_schema' ],
         ];
     }
@@ -59,7 +68,11 @@ class Coupons extends AbstractRoute {
      * @return \WP_REST_Response
      */
     public function get_route_response( \WP_REST_Request $request ) {
-        $user_id = get_current_user_id();
+        $user_id = $request->get_param('userId');
+
+        if ( ! $user_id ) {
+            $user_id = get_current_user_id();
+        }
 
         if ( ! $user_id ) {
             throw new RouteException( 'no_user_id', 'User ID is required', 400 );

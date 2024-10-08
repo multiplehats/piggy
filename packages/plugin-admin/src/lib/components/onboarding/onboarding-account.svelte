@@ -1,46 +1,46 @@
 <script lang="ts">
-	import { __ } from '@wordpress/i18n';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { OnboardingStepId, useOnboarding } from '$lib/stores/onboarding';
-	import { useNavigate } from 'svelte-navigator';
-	import { outboundUrl } from '@piggy/lib';
+	import { __ } from "@wordpress/i18n";
+	import { useNavigate } from "svelte-navigator";
+	import { outboundUrl } from "@piggy/lib";
+	import { Button } from "$lib/components/ui/button/index.js";
+	import * as Card from "$lib/components/ui/card/index.js";
+	import { OnboardingStepId, useOnboarding } from "$lib/stores/onboarding";
 
 	const navigate = useNavigate();
 	const onboarding = useOnboarding();
 
 	const options = [
 		{
-			id: 'connect-account-option',
-			variant: 'primary',
-			title: __('Existing Piggy user?', 'piggy'),
-			description: __('Connect your account to get started.', 'piggy'),
-			cta: 'Connect account',
+			id: "connect-account-option",
+			variant: "primary",
+			title: __("Existing Piggy user?", "piggy"),
+			description: __("Connect your account to get started.", "piggy"),
+			cta: "Connect account",
 			action: () => {
 				const { href } = onboarding.completeAndNavigate(
 					OnboardingStepId.welcome,
 					OnboardingStepId.connectAccount
 				);
 				navigate(href);
-			}
+			},
 		},
 		{
-			id: 'create-account-option',
-			variant: 'secondary',
-			title: __('New to Piggy?', 'piggy'),
-			description: __('Create a new account to get started.', 'piggy'),
-			cta: 'Create an account',
+			id: "create-account-option",
+			variant: "secondary",
+			title: __("New to Piggy?", "piggy"),
+			description: __("Create a new account to get started.", "piggy"),
+			cta: "Create an account",
 			link: outboundUrl({
-				url: 'https://business.piggy.eu/sign-up',
-				source: 'woocommerce',
-				medium: 'onboarding',
-				campaign: 'wp-plugin'
-			})
-		}
+				url: "https://business.piggy.eu/sign-up",
+				source: "woocommerce",
+				medium: "onboarding",
+				campaign: "wp-plugin",
+			}),
+		},
 	];
 </script>
 
-<div class="grid gap-4 grid-cols-2">
+<div class="grid grid-cols-2 gap-4">
 	{#each options as option (option.id)}
 		<Card.Root>
 			<Card.Header>

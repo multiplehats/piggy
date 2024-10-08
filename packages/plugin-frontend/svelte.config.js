@@ -1,4 +1,4 @@
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -6,22 +6,19 @@ const config = {
 	kit: {
 		typescript: {
 			config: (config) => {
-				return {
-					...config,
-					compilerOptions: {
-						...config.compilerOptions,
-						types: ['jquery']
-					},
-					include: [
-						...config.include,
-						// This is important, it includes the window object amongst other things
-						// References the @piggy/types package directly
-						'../../types/plugin/augment.d.ts'
-					]
-				};
-			}
-		}
-	}
+				config.include.push("../../../packages/types/plugin/augment.d.ts");
+
+				// Ensure config.compilerOptions exists
+				config.compilerOptions = config.compilerOptions || {};
+				// Ensure config.compilerOptions.types exists as an array
+				config.compilerOptions.types = config.compilerOptions.types || [];
+				// Push "jquery" to the types array
+				config.compilerOptions.types.push("jquery");
+
+				return config;
+			},
+		},
+	},
 };
 
 export default config;

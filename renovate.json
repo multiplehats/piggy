@@ -1,35 +1,21 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "schedule": [
-        "after 5pm every weekday",
-        "every weekend"
-    ],
-    "extends": [
-        "config:base"
-    ],
-    "labels": [
-        "renovate"
-    ],
-    "rangeStrategy": "bump",
-    "packageRules": [
-        {
-            "groupName": "dependencies",
-            "matchDepTypes": [
-                "dependencies"
-            ]
-        },
-        {
-            "groupName": "devDependencies",
-            "matchDepTypes": [
-                "devDependencies"
-            ]
-        }
-    ],
-    "lockFileMaintenance": {
-        "enabled": true,
-        "schedule": [
-            "after 5pm every weekday",
-            "every weekend"
-        ]
-    }
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"schedule": ["after 5pm every weekday", "every weekend"],
+	"extends": ["config:base"],
+	"labels": ["renovate"],
+	"rangeStrategy": "bump",
+	"packageRules": [
+		{
+			"groupName": "dependencies",
+			"matchDepTypes": ["dependencies"]
+		},
+		{
+			"groupName": "devDependencies",
+			"matchDepTypes": ["devDependencies"]
+		}
+	],
+	"lockFileMaintenance": {
+		"enabled": true,
+		"schedule": ["after 5pm every weekday", "every weekend"]
+	}
 }

@@ -1,17 +1,17 @@
-export type LinkTypes = 'link' | 'external';
+export type LinkTypes = "link" | "external";
 
-export interface HeaderLinkProps {
+export type HeaderLinkProps = {
 	label: string;
 	type: LinkTypes;
 	target?: string;
 	href?: string;
-}
+};
 
-export interface AdminProduct {
+export type AdminProduct = {
 	id: number;
 	name: string;
 	categories: {
 		id: number;
 		name: string;
 	};
-}
+};

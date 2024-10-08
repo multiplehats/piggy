@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { cn } from '$lib/utils/tw.js';
-	import SettingsFieldErrors from './settings-field-errors.svelte';
-	import type { SettingsLabelProps } from './settings-label';
-	import SettingsLabel from './settings-label/settings-label.svelte';
-	import { Combobox, type ComboboxProps } from './ui/combobox';
+	import type { SettingsLabelProps } from "./settings-label";
+	import SettingsLabel from "./settings-label/settings-label.svelte";
+	import { Combobox, type ComboboxProps } from "./ui/combobox";
+	import { cn } from "$lib/utils/tw.js";
 
 	type $$Props = ComboboxProps &
 		SettingsLabelProps & {
@@ -15,14 +14,14 @@
 	let className: string | undefined = undefined;
 
 	export { className as class };
-	export let widthClass: $$Props['widthClass'] = undefined;
-	export let id: $$Props['id'];
-	export let items: $$Props['items'];
-	export let itemName: $$Props['itemName'];
-	export let value: $$Props['value'];
+	export let widthClass: $$Props["widthClass"] = undefined;
+	export let id: $$Props["id"];
+	export let items: $$Props["items"];
+	export let itemName: $$Props["itemName"];
+	export let value: $$Props["value"];
 </script>
 
-<div class={cn('flex flex-col justify-between', className)}>
+<div class={cn("flex flex-col justify-between", className)}>
 	<SettingsLabel
 		label={$$props.label}
 		description={$$props.description}

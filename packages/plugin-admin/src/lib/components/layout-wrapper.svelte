@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { cn } from '$lib/utils/tw.js';
-	import { onMount } from 'svelte';
-	import { useLocation, useNavigate } from 'svelte-navigator';
-	import Navigation from './settings-navigation/settings-navigation.svelte';
+	import { onMount } from "svelte";
+	import { useLocation, useNavigate } from "svelte-navigator";
+	import Navigation from "./settings-navigation/settings-navigation.svelte";
+	import { cn } from "$lib/utils/tw.js";
 
 	const navigate = useNavigate();
 
 	const location = useLocation();
 
-	$: isOnboarding = $location.pathname.startsWith('/onboarding');
+	$: isOnboarding = $location.pathname.startsWith("/onboarding");
 	$: isMissingApiKey = !window.piggyMiddlewareConfig.apiKeySet;
 
 	onMount(() => {
 		if (isMissingApiKey) {
-			navigate('/onboarding');
+			navigate("/onboarding");
 		}
 	});
 </script>
@@ -25,8 +25,8 @@
 
 	<div
 		class={cn(
-			'app-container content-container relative',
-			isOnboarding ? 'mt-0 mx-auto' : 'mt-8 mb-16'
+			"app-container content-container relative",
+			isOnboarding ? "mx-auto mt-0" : "mb-16 mt-8"
 		)}
 	>
 		<slot />

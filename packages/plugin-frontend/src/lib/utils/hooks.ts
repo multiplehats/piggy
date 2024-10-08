@@ -1,17 +1,17 @@
-import type { Callback } from '@wordpress/hooks';
+import type { Callback } from "@wordpress/hooks";
 
 /**
  * @note: Hook names can only contain numbers, letters, dashes, periods and underscores.
  */
-type ActionHookName = 'on.init';
+type ActionHookName = "on.init";
 
-const ACTION_HOOK_NAMES: Record<ActionHookName, `on.${string}` | `do.${string}`> = {
-	'on.init': 'on.init'
+const _ACTION_HOOK_NAMES: Record<ActionHookName, `on.${string}` | `do.${string}`> = {
+	"on.init": "on.init",
 } as const;
 
-type ActionHookNames = keyof typeof ACTION_HOOK_NAMES;
+type ActionHookNames = keyof typeof _ACTION_HOOK_NAMES;
 
-const NAMESPACE = 'piggy';
+const NAMESPACE = "piggy";
 
 export const hooks = {
 	doAction: (hookname: ActionHookNames, ...args: unknown[]) => {
@@ -24,5 +24,5 @@ export const hooks = {
 
 	doingAction: (hookname: ActionHookNames) => {
 		return window.wp.hooks.doingAction(hookname);
-	}
+	},
 };

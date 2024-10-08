@@ -1,5 +1,5 @@
 {
-    "require-dev": {
-        "php-stubs/woocommerce-stubs": "^7.1"
-    }
+	"require-dev": {
+		"php-stubs/woocommerce-stubs": "^7.1"
+	}
 }

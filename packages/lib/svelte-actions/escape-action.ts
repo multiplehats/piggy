@@ -1,14 +1,14 @@
-import type { ActionReturn } from 'svelte/action';
+import type { ActionReturn } from "svelte/action";
 
-interface Params {
+type Params = {
 	callback: () => void;
-}
+};
 
 export default function handleEscape(node: HTMLElement, params: Params): ActionReturn<Params> {
-	let currentCallback: Params['callback'];
+	let currentCallback: Params["callback"];
 
 	const handleKeydown = (event: KeyboardEvent): void => {
-		if (event.code === 'Escape') {
+		if (event.code === "Escape") {
 			currentCallback();
 		}
 	};
@@ -16,9 +16,9 @@ export default function handleEscape(node: HTMLElement, params: Params): ActionR
 	const toggle = (active: boolean, current_params: Params): void => {
 		if (active) {
 			currentCallback = current_params.callback;
-			node.addEventListener('keydown', handleKeydown, true);
+			node.addEventListener("keydown", handleKeydown, true);
 		} else {
-			node.removeEventListener('keydown', handleKeydown, true);
+			node.removeEventListener("keydown", handleKeydown, true);
 		}
 	};
 
@@ -31,6 +31,6 @@ export default function handleEscape(node: HTMLElement, params: Params): ActionR
 		update(next_params: Params): void {
 			destroy();
 			toggle(true, next_params);
-		}
+		},
 	};
 }

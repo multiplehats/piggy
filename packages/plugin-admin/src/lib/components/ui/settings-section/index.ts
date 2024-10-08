@@ -1,7 +1,7 @@
-import Root from './settings-section.svelte';
+import Root from "./settings-section.svelte";
 
 export {
 	Root,
 	//
-	Root as SettingsSection
+	Root as SettingsSection,
 };

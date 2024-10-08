@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { createQuery, useQueryClient } from '@tanstack/svelte-query';
-	import { __ } from '@wordpress/i18n';
-	import { PiggyAdminService } from '$lib/modules/piggy';
-	import type { GetSpendRuleByIdResponse } from '$lib/modules/settings/types';
-	import { QueryKeys } from '$lib/utils/query-keys';
-	import SettingsCombobox from '../settings-combobox.svelte';
-	import { Alert } from '../ui/alert';
+	import { createQuery } from "@tanstack/svelte-query";
+	import { __ } from "@wordpress/i18n";
+	import SettingsCombobox from "../settings-combobox.svelte";
+	import { Alert } from "../ui/alert";
+	import { PiggyAdminService } from "$lib/modules/piggy";
+	import type { GetSpendRuleByIdResponse } from "$lib/modules/settings/types";
+	import { QueryKeys } from "$lib/utils/query-keys";
 
-	export let selectedReward: GetSpendRuleByIdResponse[0]['selectedReward'];
+	export let selectedReward: GetSpendRuleByIdResponse[0]["selectedReward"];
 
 	const service = new PiggyAdminService();
-	const client = useQueryClient();
+
 	const query = createQuery({
 		queryKey: [QueryKeys.piggyRewards],
-		queryFn: async () => await service.getRewards()
+		queryFn: async () => await service.getRewards(),
 	});
 
 	// filter on attributes.pre_redeemable === true
@@ -24,7 +24,7 @@
 	<p>Loading...</p>
 {:else if $query.isError}
 	<Alert
-		description={__(`Error retrieving rewards: ${$query.error.message}`, 'piggy')}
+		description={__(`Error retrieving rewards: ${$query.error.message}`, "piggy")}
 		type="error"
 	/>
 {:else if $query.isSuccess}
@@ -33,10 +33,10 @@
 			items={filteredRewards
 				? filteredRewards.map((reward) => ({
 						label: reward.title,
-						value: reward.uuid
-				  }))
+						value: reward.uuid,
+					}))
 				: []}
-			itemName={__('Reward', 'piggy')}
+			itemName={__("Reward", "piggy")}
 			label={selectedReward.label}
 			description={selectedReward.description}
 			id={selectedReward.id}

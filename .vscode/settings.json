@@ -1,5 +1,30 @@
 {
-    "intelephense.environment.includePaths": [
-        "${workspaceFolder}/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php"
-    ]
+	"intelephense.environment.includePaths": [
+		"${workspaceFolder}/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php"
+	],
+	// Enable the ESlint flat config support
+	"eslint.useFlatConfig": true,
+	"eslint.experimental.useFlatConfig": true,
+	// Auto fix
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit",
+		"source.organizeImports": "never"
+	},
+	// Enable eslint for all supported languages
+	"eslint.validate": [
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact",
+		"vue",
+		"tsx",
+		"svelte",
+		"html",
+		"markdown",
+		"json",
+		"jsonc",
+		"yaml",
+		"toml",
+		"astro"
+	]
 }

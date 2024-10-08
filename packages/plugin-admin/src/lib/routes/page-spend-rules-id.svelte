@@ -1,25 +1,25 @@
 <script lang="ts">
-	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query';
-	import { __ } from '@wordpress/i18n';
+	import { createMutation, createQuery, useQueryClient } from "@tanstack/svelte-query";
+	import { __ } from "@wordpress/i18n";
 	// import SettingsCalendar from '$lib/components/settings-calendar.svelte';
-	import SettingsInput from '$lib/components/settings-input.svelte';
-	import SettingsSelect from '$lib/components/settings-select.svelte';
-	import SettingsTranslateableInput from '$lib/components/settings-translateable-input.svelte';
-	import SpendRuleFreeProductFields from '$lib/components/spend-rules/spend-rule-free-product-fields.svelte';
+	import ChevronLeft from "lucide-svelte/icons/chevron-left";
+	import { useNavigate, useParams } from "svelte-navigator";
+	import { derived, writable } from "svelte/store";
+	import SettingsInput from "$lib/components/settings-input.svelte";
+	import SettingsSelect from "$lib/components/settings-select.svelte";
+	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
+	import SpendRuleFreeProductFields from "$lib/components/spend-rules/spend-rule-free-product-fields.svelte";
 	// import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
-	import SpendRuleProductOrderDiscountFields from '$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte';
+	import SpendRuleProductOrderDiscountFields from "$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte";
 	// import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
-	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { SettingsAdminService } from '$lib/modules/settings';
-	import { upsertSpendRuleMutationConfig } from '$lib/modules/settings/mutations';
-	import type { GetSpendRuleByIdResponse } from '$lib/modules/settings/types';
-	import { QueryKeys } from '$lib/utils/query-keys';
-	import { getStatusText } from '$lib/utils/status-text';
-	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
-	import { useNavigate, useParams } from 'svelte-navigator';
-	import { derived, writable } from 'svelte/store';
+	import { Badge } from "$lib/components/ui/badge/index.js";
+	import { Button } from "$lib/components/ui/button/index.js";
+	import * as Card from "$lib/components/ui/card/index.js";
+	import { SettingsAdminService } from "$lib/modules/settings";
+	import { upsertSpendRuleMutationConfig } from "$lib/modules/settings/mutations";
+	import type { GetSpendRuleByIdResponse } from "$lib/modules/settings/types";
+	import { QueryKeys } from "$lib/utils/query-keys";
+	import { getStatusText } from "$lib/utils/status-text";
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
@@ -39,7 +39,7 @@
 				return data[0];
 			},
 			refetchOnWindowFocus: true,
-			enabled: !!$params.id
+			enabled: !!$params.id,
 		}))
 	);
 	const mutate = createMutation(
@@ -47,7 +47,7 @@
 			client,
 			{},
 			{
-				onSuccessCb: () => client.refetchQueries({ queryKey: [QueryKeys.spendRules] })
+				onSuccessCb: () => client.refetchQueries({ queryKey: [QueryKeys.spendRules] }),
 			}
 		)
 	);
@@ -61,7 +61,7 @@
 		$mutate.mutate({
 			id: $rule.id,
 			type: $rule.type.value,
-			title: $rule.title?.value ?? __('New rule', 'piggy'),
+			title: $rule.title?.value ?? __("New rule", "piggy"),
 			label: $rule.label.value,
 			status: $rule.status.value,
 			startsAt: $rule?.startsAt?.value,
@@ -72,7 +72,7 @@
 			fulfillment: $rule?.fulfillment?.value,
 			discountValue: $rule?.discountValue?.value,
 			discountType: $rule?.discountType?.value,
-			minimumPurchaseAmount: $rule?.minimumPurchaseAmount?.value
+			minimumPurchaseAmount: $rule?.minimumPurchaseAmount?.value,
 		});
 	}
 
@@ -80,9 +80,7 @@
 		rule.set($query.data);
 	}
 
-	$: ruleTypeLabel = $rule?.type?.options[$rule?.type?.value]?.label ?? '';
-
-	$: console.log($rule);
+	$: ruleTypeLabel = $rule?.type?.options[$rule?.type?.value]?.label ?? "";
 </script>
 
 {#if $query.isLoading}
@@ -96,18 +94,19 @@
 				variant="outline"
 				size="icon"
 				class="h-7 w-7"
-				on:click={() => navigate('/loyalty-program')}
+				on:click={() => navigate("/loyalty-program")}
 			>
 				<ChevronLeft class="h-4 w-4" />
 				<span class="sr-only">Back</span>
 			</Button>
 
 			<h1 class="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold sm:grow-0">
+				<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html $rule.title.value}
 			</h1>
 
 			<Badge
-				variant={$rule.status.value === 'publish' ? 'default' : 'secondary'}
+				variant={$rule.status.value === "publish" ? "default" : "secondary"}
 				class="ml-auto sm:ml-0"
 			>
 				{getStatusText($rule.status.value)}
@@ -121,7 +120,7 @@
 
 			<div class="hidden items-center gap-2 md:ml-auto md:flex">
 				<Button size="sm" on:click={handleSave}>
-					{__('Save rule', 'piggy')}
+					{__("Save rule", "piggy")}
 				</Button>
 			</div>
 		</div>
@@ -130,7 +129,7 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__('General', 'piggy')}</Card.Title>
+						<Card.Title>{__("General", "piggy")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -139,17 +138,26 @@
 							<SettingsSelect
 								{...$rule.type}
 								bind:value={$rule.type.value}
-								items={Object.entries($rule.type.options).map(([value, { label: name }]) => {
-									return {
-										value,
-										name
-									};
-								})}
+								items={Object.entries($rule.type.options).map(
+									([value, { label: name }]) => {
+										return {
+											value,
+											name,
+										};
+									}
+								)}
 							/>
 
-							<SettingsInput {...$rule.title} bind:value={$rule.title.value} readonly={true} />
+							<SettingsInput
+								{...$rule.title}
+								bind:value={$rule.title.value}
+								readonly={true}
+							/>
 
-							<SettingsTranslateableInput {...$rule.label} bind:value={$rule.label.value} />
+							<SettingsTranslateableInput
+								{...$rule.label}
+								bind:value={$rule.label.value}
+							/>
 
 							<SettingsTranslateableInput
 								{...$rule.description}
@@ -172,14 +180,14 @@
 								bind:value={$rule.creditCost.value}
 							/>
 
-							{#if ($rule?.type?.value === 'ORDER_DISCOUNT' || $rule?.type?.value === 'FREE_PRODUCT') && $rule?.discountType && $rule?.discountValue}
+							{#if ($rule?.type?.value === "ORDER_DISCOUNT" || $rule?.type?.value === "FREE_PRODUCT") && $rule?.discountType && $rule?.discountValue}
 								<SpendRuleProductOrderDiscountFields
 									bind:discountType={$rule.discountType}
 									bind:discountValue={$rule.discountValue}
 								/>
 							{/if}
 
-							{#if ($rule?.type?.value === 'ORDER_DISCOUNT' || $rule?.type?.value === 'FREE_SHIPPING') && $rule.minimumPurchaseAmount}
+							{#if ($rule?.type?.value === "ORDER_DISCOUNT" || $rule?.type?.value === "FREE_SHIPPING") && $rule.minimumPurchaseAmount}
 								<SettingsInput
 									{...$rule.minimumPurchaseAmount}
 									type="number"
@@ -188,8 +196,10 @@
 								></SettingsInput>
 							{/if}
 
-							{#if $rule?.type?.value === 'FREE_PRODUCT' && $rule?.selectedProducts?.value}
-								<SpendRuleFreeProductFields selectedProducts={$rule.selectedProducts} />
+							{#if $rule?.type?.value === "FREE_PRODUCT" && $rule?.selectedProducts?.value}
+								<SpendRuleFreeProductFields
+									selectedProducts={$rule.selectedProducts}
+								/>
 							{/if}
 						</div>
 					</Card.Content>
@@ -199,7 +209,7 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__('Details', 'piggy')}</Card.Title>
+						<Card.Title>{__("Details", "piggy")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -207,24 +217,28 @@
 							<SettingsSelect
 								{...$rule.status}
 								bind:value={$rule.status.value}
-								items={Object.entries($rule.status.options).map(([value, { label: name }]) => {
-									return {
-										value,
-										name
-									};
-								})}
+								items={Object.entries($rule.status.options).map(
+									([value, { label: name }]) => {
+										return {
+											value,
+											name,
+										};
+									}
+								)}
 							/>
 
 							<SettingsSelect
 								hidden={true}
 								{...$rule.type}
 								bind:value={$rule.type.value}
-								items={Object.entries($rule.type.options).map(([value, { label: name }]) => {
-									return {
-										value,
-										name
-									};
-								})}
+								items={Object.entries($rule.type.options).map(
+									([value, { label: name }]) => {
+										return {
+											value,
+											name,
+										};
+									}
+								)}
 							/>
 						</div>
 					</Card.Content>
@@ -256,7 +270,7 @@
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
 			<Button size="sm" on:click={handleSave}>
-				{__('Save rule', 'piggy')}
+				{__("Save rule", "piggy")}
 			</Button>
 		</div>
 	</div>

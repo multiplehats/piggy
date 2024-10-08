@@ -1,7 +1,7 @@
-import type { Button as ButtonPrimitive } from 'bits-ui';
-import Root from './button.svelte';
+import type { Button as ButtonPrimitive } from "bits-ui";
+import Root from "./button.svelte";
 
-type ButtonVariants = 'primary' | 'secondary';
+type ButtonVariants = "primary" | "secondary";
 
 type Props = ButtonPrimitive.Props & {
 	variant?: ButtonVariants;
@@ -17,5 +17,5 @@ export {
 	//
 	Root as Button,
 	type Props as ButtonProps,
-	type Events as ButtonEvents
+	type Events as ButtonEvents,
 };

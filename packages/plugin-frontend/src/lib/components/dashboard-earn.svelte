@@ -1,21 +1,21 @@
 <script lang="ts">
-	import { createQuery } from '@tanstack/svelte-query';
-	import { apiService } from '$lib/modules/piggy';
-	import { creditsName, pluginSettings } from '$lib/modules/settings';
-	import { QueryKeys } from '$lib/utils/query-keys';
-	import { getTranslatedText } from '$lib/utils/translated-text';
-	import { replaceStrings } from '@piggy/lib';
-	import DashboardEarnCard from './dashboard-earn-card.svelte';
+	import { createQuery } from "@tanstack/svelte-query";
+	import { replaceStrings } from "@piggy/lib";
+	import DashboardEarnCard from "./dashboard-earn-card.svelte";
+	import { apiService } from "$lib/modules/piggy";
+	import { creditsName, pluginSettings } from "$lib/modules/settings";
+	import { QueryKeys } from "$lib/utils/query-keys";
+	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	const query = createQuery({
 		queryKey: [QueryKeys.earnRules],
-		queryFn: async () => await apiService.getEarnRules()
+		queryFn: async () => await apiService.getEarnRules(),
 	});
 
 	function getNavItemText(text?: string) {
-		if (!text) return '';
+		if (!text) return "";
 
-		return replaceStrings(text, [{ '{{credits_currency}}': $creditsName ?? '' }]);
+		return replaceStrings(text, [{ "{{credits_currency}}": $creditsName ?? "" }]);
 	}
 </script>
 

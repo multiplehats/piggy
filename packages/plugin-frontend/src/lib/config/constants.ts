@@ -1,4 +1,4 @@
 export const LocalStorageKeys = {
-	Analytics: 'piggy:analytics',
-	storeApiNonce: 'piggy:storeApiNonce'
+	Analytics: "piggy:analytics",
+	storeApiNonce: "piggy:storeApiNonce",
 };

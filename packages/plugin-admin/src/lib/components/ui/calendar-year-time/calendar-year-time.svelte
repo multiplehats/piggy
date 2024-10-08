@@ -1,55 +1,55 @@
 <script lang="ts">
 	import {
 		DateFormatter,
+		type DateValue,
 		getLocalTimeZone,
 		parseTime,
 		today,
-		type DateValue
-	} from '@internationalized/date';
-	import { __ } from '@wordpress/i18n';
-	import * as Calendar from '$lib/components/ui/calendar/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
-	import { cn } from '$lib/utils/tw';
-	import { Calendar as CalendarPrimitive } from 'bits-ui';
+	} from "@internationalized/date";
+	import { __ } from "@wordpress/i18n";
+	import { Calendar as CalendarPrimitive } from "bits-ui";
+	import * as Calendar from "$lib/components/ui/calendar/index.js";
+	import * as Select from "$lib/components/ui/select/index.js";
+	import { cn } from "$lib/utils/tw";
 
 	type $$Props = CalendarPrimitive.Props & {
 		onChange?: (value: DateValue | DateValue[] | undefined) => void;
 	};
 	type $$Events = CalendarPrimitive.Events;
 
-	export let value: $$Props['value'] = today(getLocalTimeZone());
-	export let placeholder: $$Props['placeholder'] = today(getLocalTimeZone());
-	export let weekdayFormat: $$Props['weekdayFormat'] = 'short';
-	export let onChange: $$Props['onChange'] = undefined;
+	export let value: $$Props["value"] = today(getLocalTimeZone());
+	export let placeholder: $$Props["placeholder"] = today(getLocalTimeZone());
+	export let weekdayFormat: $$Props["weekdayFormat"] = "short";
+	export let onChange: $$Props["onChange"] = undefined;
 
 	const monthOptions = [
-		__('January', 'piggy'),
-		__('February', 'piggy'),
-		__('March', 'piggy'),
-		__('April', 'piggy'),
-		__('May', 'piggy'),
-		__('June', 'piggy'),
-		__('July', 'piggy'),
-		__('August', 'piggy'),
-		__('September', 'piggy'),
-		__('October', 'piggy'),
-		__('November', 'piggy'),
-		__('December', 'piggy')
+		__("January", "piggy"),
+		__("February", "piggy"),
+		__("March", "piggy"),
+		__("April", "piggy"),
+		__("May", "piggy"),
+		__("June", "piggy"),
+		__("July", "piggy"),
+		__("August", "piggy"),
+		__("September", "piggy"),
+		__("October", "piggy"),
+		__("November", "piggy"),
+		__("December", "piggy"),
 	].map((month, i) => ({ value: i + 1, label: month }));
 
 	const monthFmt = new DateFormatter(window.piggyMiddlewareConfig.siteLanguage, {
-		month: 'short'
+		month: "short",
 	});
 
 	const yearOptions = Array.from({ length: 100 }, (_, i) => ({
 		label: String(new Date().getFullYear() - i),
-		value: new Date().getFullYear() - i
+		value: new Date().getFullYear() - i,
 	}));
 
 	const timeFormatter = new Intl.DateTimeFormat(window.piggyMiddlewareConfig.siteLanguage, {
-		hour: 'numeric',
-		minute: 'numeric',
-		hour12: false
+		hour: "numeric",
+		minute: "numeric",
+		hour12: false,
 	});
 
 	const timeOptions = Array.from({ length: 48 }, (_, i) => {
@@ -59,26 +59,26 @@
 		date.setHours(hours);
 		date.setMinutes(minutes);
 		return {
-			value: `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`,
-			label: timeFormatter.format(date)
+			value: `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`,
+			label: timeFormatter.format(date),
 		};
 	});
 
 	$: defaultYear = placeholder
 		? {
 				value: placeholder.year,
-				label: String(placeholder.year)
-		  }
+				label: String(placeholder.year),
+			}
 		: undefined;
 
 	$: defaultMonth = placeholder
 		? {
 				value: placeholder.month,
-				label: monthFmt.format(placeholder.toDate(getLocalTimeZone()))
-		  }
+				label: monthFmt.format(placeholder.toDate(getLocalTimeZone())),
+			}
 		: undefined;
 
-	let className: $$Props['class'] = undefined;
+	let className: $$Props["class"] = undefined;
 	export { className as class };
 </script>
 
@@ -87,7 +87,7 @@
 	bind:placeholder
 	onValueChange={(date) => onChange && onChange(date)}
 	{weekdayFormat}
-	class={cn('rounded-md border p-3', className)}
+	class={cn("rounded-md border p-3", className)}
 	{...$$restProps}
 	on:keydown
 	let:months
@@ -107,7 +107,10 @@
 				<Select.Trigger aria-label="Select month" class="w-[28%]">
 					<Select.Value placeholder="Select month" />
 				</Select.Trigger>
-				<Select.Content sameWidth={false} class="max-h-[200px] min-w-[8rem] overflow-y-auto">
+				<Select.Content
+					sameWidth={false}
+					class="max-h-[200px] min-w-[8rem] overflow-y-auto"
+				>
 					{#each monthOptions as { value, label }}
 						<Select.Item {value} {label}>
 							{label}
@@ -127,7 +130,10 @@
 				<Select.Trigger aria-label="Select year" class="w-[28%]">
 					<Select.Value placeholder="Select year" />
 				</Select.Trigger>
-				<Select.Content sameWidth={false} class="max-h-[200px] min-w-[8rem] overflow-y-auto">
+				<Select.Content
+					sameWidth={false}
+					class="max-h-[200px] min-w-[8rem] overflow-y-auto"
+				>
 					{#each yearOptions as { value, label }}
 						<Select.Item {value} {label}>
 							{label}
@@ -145,14 +151,17 @@
 
 					placeholder = placeholder.set({
 						hour: time.hour,
-						minute: time.minute
+						minute: time.minute,
 					});
 				}}
 			>
 				<Select.Trigger aria-label="Select time" class="w-[44%]">
 					<Select.Value placeholder="Select time" />
 				</Select.Trigger>
-				<Select.Content sameWidth={false} class="max-h-[200px] min-w-[8rem] overflow-y-auto">
+				<Select.Content
+					sameWidth={false}
+					class="max-h-[200px] min-w-[8rem] overflow-y-auto"
+				>
 					{#each timeOptions as { value, label }}
 						<Select.Item {value} {label}>
 							{label}

@@ -1,20 +1,20 @@
-import type { ActionReturn } from 'svelte/action';
+import type { ActionReturn } from "svelte/action";
 
 export default function trapFocus(node: HTMLElement): ActionReturn<undefined> {
 	function handleKeydown(event: KeyboardEvent): void {
-		if (event.code !== 'Tab') {
+		if (event.code !== "Tab") {
 			return;
 		}
 
 		event.preventDefault();
 
-		const tabbables = Array.from(node.querySelectorAll('*')).filter((el) => {
+		const tabbables = Array.from(node.querySelectorAll("*")).filter((el) => {
 			return (
-				'tabIndex' in el &&
+				"tabIndex" in el &&
 				(el.tabIndex as number) >= 0 &&
-				!el.hasAttribute('disabled') &&
-				!el.hasAttribute('hidden') &&
-				!el.getAttribute('aria-hidden')
+				!el.hasAttribute("disabled") &&
+				!el.hasAttribute("hidden") &&
+				!el.getAttribute("aria-hidden")
 			);
 		});
 
@@ -39,9 +39,9 @@ export default function trapFocus(node: HTMLElement): ActionReturn<undefined> {
 
 	function toggleListeners(shouldListen: boolean): void {
 		if (shouldListen) {
-			node.addEventListener('keydown', handleKeydown);
+			node.addEventListener("keydown", handleKeydown);
 		} else {
-			node.removeEventListener('keydown', handleKeydown);
+			node.removeEventListener("keydown", handleKeydown);
 		}
 	}
 
@@ -50,6 +50,6 @@ export default function trapFocus(node: HTMLElement): ActionReturn<undefined> {
 	return {
 		destroy(): void {
 			toggleListeners(false);
-		}
+		},
 	};
 }

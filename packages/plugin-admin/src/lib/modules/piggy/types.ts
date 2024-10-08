@@ -1,11 +1,11 @@
-export interface Shop {
+export type Shop = {
 	uuid: string;
 	name: string;
-}
+};
 
 export type GetShopsResponse = Shop[];
 
-export interface Rewards {
+export type Rewards = {
 	uuid: string;
 	title: string;
 	requiredCredits: number;
@@ -16,6 +16,6 @@ export interface Rewards {
 		pre_redeemable: boolean;
 		type: string;
 	};
-}
+};
 
 export type GetRewardsResponse = Rewards[];

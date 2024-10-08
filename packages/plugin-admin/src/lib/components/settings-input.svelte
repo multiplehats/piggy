@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Input, type InputProps } from '$lib/components/ui/input/index.js';
-	import { cn } from '$lib/utils/tw.js';
-	import { onMount } from 'svelte';
-	import type { HTMLInputAttributes } from 'svelte/elements';
-	import { SettingsLabel, type SettingsLabelProps } from './settings-label/index.js';
-	import { Checkbox } from './ui/checkbox/index.js';
+	import { onMount } from "svelte";
+	import type { HTMLInputAttributes } from "svelte/elements";
+	import { SettingsLabel, type SettingsLabelProps } from "./settings-label/index.js";
+	import { Checkbox } from "./ui/checkbox/index.js";
+	import { cn } from "$lib/utils/tw.js";
+	import { Input, type InputProps } from "$lib/components/ui/input/index.js";
 
 	let className: string | undefined = undefined;
 
@@ -19,13 +19,13 @@
 		};
 
 	export { className as class };
-	export let el: $$Props['el'] = undefined;
-	export let placeholder: $$Props['placeholder'] = undefined;
-	export let inputWrapperClass: $$Props['inputWrapperClass'] = undefined;
-	export let value: $$Props['value'] = undefined;
-	export let attributes: $$Props['attributes'] = undefined;
+	export let el: $$Props["el"] = undefined;
+	export let placeholder: $$Props["placeholder"] = undefined;
+	export let inputWrapperClass: $$Props["inputWrapperClass"] = undefined;
+	export let value: $$Props["value"] = undefined;
+	export let attributes: $$Props["attributes"] = undefined;
 	export let id: string;
-	export let withVisibility: $$Props['withVisibility'] = false;
+	export let withVisibility: $$Props["withVisibility"] = false;
 	let show = true;
 
 	onMount(() => {
@@ -58,7 +58,7 @@
 		/>
 	</div>
 
-	<div class={cn('relative', inputWrapperClass)}>
+	<div class={cn("relative", inputWrapperClass)}>
 		{#if show}
 			<Input
 				{placeholder}

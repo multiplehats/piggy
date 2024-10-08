@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { cn } from '$lib/utils/tw.js';
+	import { cn } from "$lib/utils/tw.js";
 
 	let className: string | undefined = undefined;
 	export { className as class };
 </script>
 
 <svg
-	class={cn('hover:fill-piggy-orange-hover fill-piggy-orange h-8', className)}
+	class={cn("hover:fill-piggy-orange-hover fill-piggy-orange h-8", className)}
 	width="90"
 	height="27"
 	viewBox="0 0 90 27"

@@ -1,15 +1,15 @@
-import type { settingsState } from '$lib/stores/settings';
 import type {
 	PluginEarnRuleItemValues,
+	PluginOptionType,
 	PluginOptionsAdmin,
 	PluginOptionsAdminKeys,
-	PluginOptionType,
-	PluginSpendRuleItemValues
-} from '@piggy/types';
+	PluginSpendRuleItemValues,
+} from "@piggy/types";
 import type {
 	EarnRuleValueItem,
-	SpendRuleValueItem
-} from '@piggy/types/plugin/settings/adminTypes';
+	SpendRuleValueItem,
+} from "@piggy/types/plugin/settings/adminTypes";
+import type { settingsState } from "$lib/stores/settings";
 
 export type SaveSettingsParams = typeof settingsState;
 export type SaveSettingsResponse = PluginOptionsAdmin | null;
@@ -17,18 +17,18 @@ export type SaveSettingsResponse = PluginOptionsAdmin | null;
 export type GetSettingsResponse = PluginOptionsAdmin;
 export type GetSettingsParams = void;
 
-export interface GetSettingByIdParams<K extends PluginOptionsAdminKeys> {
+export type GetSettingByIdParams<K extends PluginOptionsAdminKeys> = {
 	id: K;
-}
+};
 
 export type GetSettingByIdResponse<K extends PluginOptionsAdminKeys> = PluginOptionType<K>;
 
 export type GetEarnRulesResponse = EarnRuleValueItem[];
 export type GetEarnRulesParams = void;
 
-export interface GetEarnRuleByIdParams {
+export type GetEarnRuleByIdParams = {
 	id: number | string;
-}
+};
 export type GetEarnRuleByIdResponse = [EarnRuleValueItem];
 
 export type UpsertEarnRuleParams = Partial<PluginEarnRuleItemValues> & {
@@ -42,9 +42,9 @@ export type UpsertEarnRuleResponse = EarnRuleValueItem;
 export type GetSpendRulesResponse = SpendRuleValueItem[];
 export type GetSpendRulesParams = void;
 
-export interface GetSpendRuleByIdParams {
+export type GetSpendRuleByIdParams = {
 	id: number | string;
-}
+};
 export type GetSpendRuleByIdResponse = [SpendRuleValueItem];
 
 export type UpsertSpendRuleParams = Partial<PluginSpendRuleItemValues> & {

@@ -1,13 +1,9 @@
-import type { Hooks } from '@wordpress/hooks';
-import type {
-	IWooSettings,
-	PluginAdminConfig,
-	PluginOptionsAdmin,
-	PluginOptionsFrontend
-} from './settings';
-import { EarnRuleValueItem, SpendRuleValueItem } from './settings/adminTypes';
+import type { Hooks } from "@wordpress/hooks";
+import type { IWooSettings, PluginOptionsFrontend } from "./settings";
+import type { SpendRuleValueItem } from "./settings/adminTypes";
 
 declare global {
+	// eslint-disable-next-line ts/consistent-type-definitions
 	interface Window {
 		// Frontend settings
 		piggyConfig: PluginOptionsFrontend;
@@ -26,9 +22,6 @@ declare global {
 			storeApiNonce: string;
 			wcStoreApiNonceTimestamp: string;
 		};
-		// Admin config
-		// piggyAdminConfig: PluginAdminConfig;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		wp: {
 			hooks: Hooks;
 			[other: string]: unknown;

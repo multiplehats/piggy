@@ -1,23 +1,23 @@
 <script lang="ts">
-	import { createQuery } from '@tanstack/svelte-query';
-	import { apiService } from '$lib/modules/piggy';
-	import { currentLanguage, pluginSettings } from '$lib/modules/settings';
-	import { QueryKeys } from '$lib/utils/query-keys';
-	import { getTranslatedText } from '$lib/utils/translated-text';
-	import { replaceStrings } from '@piggy/lib';
-	import DashboardCouponCard from './dashboard-coupon-card.svelte';
+	import { createQuery } from "@tanstack/svelte-query";
+	import { replaceStrings } from "@piggy/lib";
+	import DashboardCouponCard from "./dashboard-coupon-card.svelte";
+	import { apiService } from "$lib/modules/piggy";
+	import { currentLanguage, pluginSettings } from "$lib/modules/settings";
+	import { QueryKeys } from "$lib/utils/query-keys";
+	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	const query = createQuery({
 		queryKey: [QueryKeys.coupons],
-		queryFn: async () => await apiService.getCoupons()
+		queryFn: async () => await apiService.getCoupons(),
 	});
 
 	function getNavItemText(text?: string) {
-		if (!text) return '';
+		if (!text) return "";
 
 		const creditsName = $pluginSettings?.credits_name?.[currentLanguage];
 
-		return replaceStrings(text, [{ '{{credits_currency}}': creditsName ?? '' }]);
+		return replaceStrings(text, [{ "{{credits_currency}}": creditsName ?? "" }]);
 	}
 </script>
 
@@ -36,7 +36,8 @@
 
 	{#if $query.isSuccess && $query.data}
 		{@const filteredCoupons = $query.data.filter(
-			(coupon) => coupon.spend_rule.status.value === 'publish' && coupon.spend_rule.label.value
+			(coupon) =>
+				coupon.spend_rule.status.value === "publish" && coupon.spend_rule.label.value
 		)}
 
 		{#if filteredCoupons.length > 0}

@@ -1,15 +1,14 @@
-import type { CreateMutationOptions, DefaultError, QueryClient } from '@tanstack/svelte-query';
-import { __ } from '@wordpress/i18n';
-import { MutationKeys, QueryKeys } from '$lib/utils/query-keys';
-import { SettingsAdminService } from '.';
+import type { CreateMutationOptions, DefaultError, QueryClient } from "@tanstack/svelte-query";
 import type {
 	SaveSettingsParams,
 	SaveSettingsResponse,
 	UpsertEarnRuleParams,
 	UpsertEarnRuleResponse,
 	UpsertSpendRuleParams,
-	UpsertSpendRuleResponse
-} from './types';
+	UpsertSpendRuleResponse,
+} from "./types";
+import { SettingsAdminService } from ".";
+import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 
 const service = new SettingsAdminService();
 
@@ -22,7 +21,7 @@ type SaveSettingsMutationConfig = CreateMutationOptions<
 export function saveSettingsMutationConfig(
 	queryClient: QueryClient,
 	mutationOpts: Partial<
-		Omit<SaveSettingsMutationConfig, 'mutationKey' | 'mutationFn' | 'onSuccess' | 'onMutate'>
+		Omit<SaveSettingsMutationConfig, "mutationKey" | "mutationFn" | "onSuccess" | "onMutate">
 	> = {},
 	opts: {
 		onSuccessCb?: (newSettings: SaveSettingsResponse) => void;
@@ -45,7 +44,7 @@ export function saveSettingsMutationConfig(
 				opts.onSuccessCb(newSettings);
 			}
 		},
-		...mutationOpts
+		...mutationOpts,
 	};
 }
 
@@ -58,7 +57,7 @@ type UpsertEarnRuleMutationConfig = CreateMutationOptions<
 export function upsertEarnRuleMutationConfig(
 	queryClient: QueryClient,
 	mutationOpts: Partial<
-		Omit<UpsertEarnRuleMutationConfig, 'mutationKey' | 'mutationFn' | 'onSuccess' | 'onMutate'>
+		Omit<UpsertEarnRuleMutationConfig, "mutationKey" | "mutationFn" | "onSuccess" | "onMutate">
 	> = {},
 	opts: {
 		onSuccessCb?: (newRule: UpsertEarnRuleResponse) => void;
@@ -85,7 +84,7 @@ export function upsertEarnRuleMutationConfig(
 				opts.onSuccessCb(newRule);
 			}
 		},
-		...mutationOpts
+		...mutationOpts,
 	};
 }
 
@@ -98,7 +97,7 @@ type UpsertSpendRuleMutationConfig = CreateMutationOptions<
 export function upsertSpendRuleMutationConfig(
 	queryClient: QueryClient,
 	mutationOpts: Partial<
-		Omit<UpsertSpendRuleMutationConfig, 'mutationKey' | 'mutationFn' | 'onSuccess' | 'onMutate'>
+		Omit<UpsertSpendRuleMutationConfig, "mutationKey" | "mutationFn" | "onSuccess" | "onMutate">
 	> = {},
 	opts: {
 		onSuccessCb?: (newRule: UpsertSpendRuleResponse) => void;
@@ -125,6 +124,6 @@ export function upsertSpendRuleMutationConfig(
 				opts.onSuccessCb(newRule);
 			}
 		},
-		...mutationOpts
+		...mutationOpts,
 	};
 }

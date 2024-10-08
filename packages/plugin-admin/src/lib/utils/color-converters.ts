@@ -1,104 +1,107 @@
-import { round } from './math';
+import { round } from "./math";
 
-interface RgbColor {
+type RgbColor = {
 	r: number;
 	g: number;
 	b: number;
-}
+};
 
-interface RgbaColor extends RgbColor {
+type RgbaColor = {
 	a: number;
-}
+} & RgbColor;
 
-interface HsvColor {
+type HsvColor = {
 	h: number;
 	s: number;
 	v: number;
-}
+};
 
-interface HsvaColor extends HsvColor {
+type HsvaColor = {
 	a: number;
-}
+} & HsvColor;
 
-interface HslaColor {
+type HslaColor = {
 	h: number;
 	s: number;
 	l: number;
 	a: number;
-}
+};
 
-export const isHex = (color: string): boolean => /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+// eslint-disable-next-line regexp/no-unused-capturing-group
+export const isHex = (color: string): boolean => /^#([A-F0-9]{6}|[A-F0-9]{3})$/i.test(color);
 
-export const hexToRgba = (hex: string): RgbaColor => {
+export function hexToRgba(hex: string): RgbaColor {
 	if (isHex(hex)) hex = hex.substring(1);
 
 	if (hex.length === 3 || hex.length === 4) {
 		return {
-			r: parseInt(hex[0] + hex[0], 16),
-			g: parseInt(hex[1] + hex[1], 16),
-			b: parseInt(hex[2] + hex[2], 16),
-			a: hex.length === 4 ? round(parseInt(hex[3] + hex[3], 16) / 255, 2) : 1
+			r: Number.parseInt(hex[0] + hex[0], 16),
+			g: Number.parseInt(hex[1] + hex[1], 16),
+			b: Number.parseInt(hex[2] + hex[2], 16),
+			a: hex.length === 4 ? round(Number.parseInt(hex[3] + hex[3], 16) / 255, 2) : 1,
 		};
 	}
 
 	return {
-		r: parseInt(hex.substring(0, 2), 16),
-		g: parseInt(hex.substring(2, 4), 16),
-		b: parseInt(hex.substring(4, 6), 16),
-		a: hex.length === 8 ? round(parseInt(hex.substring(6, 8), 16) / 255, 2) : 1
+		r: Number.parseInt(hex.substring(0, 2), 16),
+		g: Number.parseInt(hex.substring(2, 4), 16),
+		b: Number.parseInt(hex.substring(4, 6), 16),
+		a: hex.length === 8 ? round(Number.parseInt(hex.substring(6, 8), 16) / 255, 2) : 1,
 	};
-};
+}
 
-export const hexToRgbaString = (hex: string): string => {
+export function hexToRgbaString(hex: string): string {
 	const { r, g, b, a } = hexToRgba(hex);
 	return `rgba(${r}, ${g}, ${b}, ${a})`;
-};
+}
 
-export const isHsva = (color: string): boolean =>
-	/^hsva?\(\d{1,3},\s?\d{1,3}%,\s?\d{1,3}%,\s?0?\.\d+\)$/.test(color);
+export function isHsva(color: string): boolean {
+	return /^hsva?\(\d{1,3},\s?\d{1,3}%,\s?\d{1,3}%,\s?0?\.\d+\)$/.test(color);
+}
 
-export const parseHsva = (hsva: string): HsvaColor => {
+export function parseHsva(hsva: string): HsvaColor {
 	const match = hsva.match(/^hsva?\((\d{1,3}),\s?(\d{1,3})%,\s?(\d{1,3})%,\s?(0?\.\d+)\)$/);
 	if (match) {
 		return {
-			h: parseInt(match[1]),
-			s: parseInt(match[2]),
-			v: parseInt(match[3]),
-			a: parseFloat(match[4])
+			h: Number.parseInt(match[1]),
+			s: Number.parseInt(match[2]),
+			v: Number.parseInt(match[3]),
+			a: Number.parseFloat(match[4]),
 		};
 	}
 
 	return { h: 0, s: 0, v: 0, a: 1 };
-};
+}
 
-export const hsvaToRgba = ({ h, s, v, a }: HsvaColor): RgbaColor => {
+export function hsvaToRgba({ h, s, v, a }: HsvaColor): RgbaColor {
 	h = (h / 360) * 6;
 	s /= 100;
 	v /= 100;
 
-	const hh = Math.floor(h),
-		b = v * (1 - s),
-		c = v * (1 - (h - hh) * s),
-		d = v * (1 - (1 - h + hh) * s),
-		module = hh % 6;
+	const hh = Math.floor(h);
+	const b = v * (1 - s);
+	const c = v * (1 - (h - hh) * s);
+	const d = v * (1 - (1 - h + hh) * s);
+	const module = hh % 6;
 
 	return {
 		r: round([v, c, b, b, d, v][module] * 255),
 		g: round([d, v, v, c, b, b][module] * 255),
 		b: round([b, b, d, v, v, c][module] * 255),
-		a: round(a, 2)
+		a: round(a, 2),
 	};
-};
+}
 
-export const hsvaToRgbaString = (hsva: string): string => {
+export function hsvaToRgbaString(hsva: string): string {
 	const { r, g, b, a } = hsvaToRgba(parseHsva(hsva));
 	return `rgba(${r}, ${g}, ${b}, ${a})`;
-};
+}
 
-export const isHsla = (color: string): boolean =>
-	/^hsla?\(\d{1,3},\s?\d{1,3}%,\s?\d{1,3}%,\s?0?\.\d+\)$/.test(color);
+export function isHsla(color: string): boolean {
+	return /^hsla?\(\d{1,3},\s?\d{1,3}%,\s?\d{1,3}%,\s?0?\.\d+\)$/.test(color);
+}
 
-export const hslaToRgba = ({ h, s, l, a }: HslaColor): RgbaColor => {
+export function hslaToRgba({ h, s, l, a }: HslaColor): RgbaColor {
 	s /= 100;
 	l /= 100;
 
@@ -141,26 +144,26 @@ export const hslaToRgba = ({ h, s, l, a }: HslaColor): RgbaColor => {
 	b = round((b + m) * 255);
 
 	return { r, g, b, a };
-};
+}
 
-export const hslaToRgbaString = (hsla: string): string => {
+export function hslaToRgbaString(hsla: string): string {
 	const match = hsla.match(/^hsla?\((\d{1,3}),\s?(\d{1,3})%,\s?(\d{1,3})%,\s?(0?\.\d+)\)$/);
 	if (match) {
-		const h = parseInt(match[1]);
-		const s = parseInt(match[2]);
-		const l = parseInt(match[3]);
-		const a = parseFloat(match[4]);
+		const h = Number.parseInt(match[1]);
+		const s = Number.parseInt(match[2]);
+		const l = Number.parseInt(match[3]);
+		const a = Number.parseFloat(match[4]);
 
 		const rgba = hslaToRgba({ h, s, l, a });
 		return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
 	}
-	throw new Error('Invalid HSLa color string');
-};
+	throw new Error("Invalid HSLa color string");
+}
 
-export const colorToRgbaString = (color: string): string => {
+export function colorToRgbaString(color: string): string {
 	if (isHex(color)) return hexToRgbaString(color);
 	if (isHsva(color)) return hsvaToRgbaString(color);
 	if (isHsla(color)) return hslaToRgbaString(color);
 
 	return color;
-};
+}

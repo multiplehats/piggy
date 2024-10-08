@@ -2,6 +2,7 @@
   "name": "piggy-turborepo",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -16,19 +17,20 @@
     "package-plugin": "turbo run package-plugin",
     "lint-staged": "lint-staged",
     "prepare": "husky install",
-    "format": "turbo format --continue -- --cache --cache-location='node_modules/.cache/.prettiercache'",
-    "format:fix": "turbo format --continue -- --write --cache --cache-location='node_modules/.cache/.prettiercache'",
-    "lint": "turbo lint --continue -- --cache --cache-location 'node_modules/.cache/.eslintcache'",
-    "lint:fix": "turbo lint --continue -- --fix --cache --cache-location 'node_modules/.cache/.eslintcache'",
+    "format": "prettier --write .",
+    "lint": "prettier --check . && eslint .",
+    "lint:fix": "eslint --fix .",
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
+    "prettier": "^3.3.2",
+    "prettier-plugin-svelte": "^3.2.2",
+    "prettier-plugin-tailwindcss": "0.5.13",
     "@commitlint/cli": "^18.1.0",
     "@commitlint/config-conventional": "^18.1.0",
-    "@piggy/prettier-config": "workspace:^",
     "husky": "^8.0.3",
     "lint-staged": "^15.0.2",
-    "prettier": "^3.0.3"
+    "@huntabyte/eslint-config": "^0.3.1"
   },
   "engines": {
     "node": ">=22.x",
@@ -38,6 +40,5 @@
   "dependencies": {
     "@changesets/cli": "^2.26.2",
     "turbo": "^2.1.1"
-  },
-  "prettier": "@piggy/prettier-config"
+  }
 }

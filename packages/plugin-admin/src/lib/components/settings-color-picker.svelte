@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { clickOutsideAction } from '@piggy/lib';
-	import type { PluginOptionsAdminKeys } from '@piggy/types/plugin';
-	import Input from '$lib/components/settings-input.svelte';
-	import { Label } from '$lib/components/ui/label';
-	import { settingsState, updateSettings } from '$lib/stores/settings';
-	import { colorToRgbaString } from '$lib/utils/color-converters';
-	import { cn } from '$lib/utils/tw.js';
-	import { debounce } from 'lodash-es';
-	import { onMount } from 'svelte';
-	import type { RgbaStringColorPicker } from 'vanilla-colorful/rgba-string-color-picker.js';
-	import 'vanilla-colorful/rgba-string-color-picker.js';
+	import { debounce } from "lodash-es";
+	import { onMount } from "svelte";
+	import type { RgbaStringColorPicker } from "vanilla-colorful/rgba-string-color-picker.js";
+	import { clickOutsideAction } from "@piggy/lib";
+	import type { PluginOptionsAdminKeys } from "@piggy/types/plugin";
+	import Input from "$lib/components/settings-input.svelte";
+	import { Label } from "$lib/components/ui/label";
+	import { settingsState, updateSettings } from "$lib/stores/settings";
+	import { colorToRgbaString } from "$lib/utils/color-converters";
+	import { cn } from "$lib/utils/tw.js";
+	import "vanilla-colorful/rgba-string-color-picker.js";
 
-	export let label = 'Enter a label';
+	export let label = "Enter a label";
 	export let id: string;
-	export let value = '#1e88e5';
+	export let value = "#1e88e5";
 
 	let showPopup = false;
 
@@ -25,7 +25,6 @@
 	});
 
 	const onPickerColorChanged = debounce((event: CustomEvent<{ value: string }>) => {
-		const previousValue = value;
 		value = event.detail.value;
 
 		if (!id) {
@@ -36,12 +35,11 @@
 
 		updateSettings({
 			id,
-			value
+			value,
 		});
 	}, 75);
 
 	const onInputChange = debounce((event: Event) => {
-		const previousValue = value;
 		const _value = (event.target as HTMLInputElement).value;
 
 		if (!id) {
@@ -56,14 +54,14 @@
 
 		updateSettings({
 			id,
-			value
+			value,
 		});
 	}, 75);
 </script>
 
-<div class={cn('relative', $$props.class)}>
+<div class={cn("relative", $$props.class)}>
 	<div
-		class={cn('absolute z-20 left-0 top-16', showPopup ? 'block' : 'hidden')}
+		class={cn("absolute left-0 top-16 z-20", showPopup ? "block" : "hidden")}
 		use:clickOutsideAction={{ active: true, callback: () => (showPopup = false) }}
 	>
 		<rgba-string-color-picker color={value} on:color-changed={onPickerColorChanged} />
@@ -72,13 +70,13 @@
 	<div>
 		<Label for={id}>{label}</Label>
 
-		<div class="w-full mt-2 inline-flex rounded-lg">
+		<div class="mt-2 inline-flex w-full rounded-lg">
 			<div
-				class="!p-1 bg-transparent border-input border !border-r-none rounded-l-sm !overflow-hidden"
+				class="border-input !border-r-none !overflow-hidden rounded-l-sm border bg-transparent !p-1"
 			>
 				<button
 					on:click={() => (showPopup = !showPopup)}
-					class="flex w-10 h-full overflow-hidden border rounded-md"
+					class="flex h-full w-10 overflow-hidden rounded-md border"
 					style:background-color={value}
 				>
 					<span class="sr-only">Open color picker</span>
@@ -86,6 +84,7 @@
 			</div>
 
 			<Input
+				{label}
 				{id}
 				bind:el={input}
 				on:click={() => (showPopup = !showPopup)}
@@ -94,7 +93,7 @@
 				bind:value
 				type="text"
 				placeholder="rgba(0,0,0)"
-				class="!rounded-l-none !first:rounded-l-lg !last:rounded-r-lg w !border-l-0 !first:border-l !last:border-r focus:ring-none"
+				class="!first:rounded-l-lg !last:rounded-r-lg w !first:border-l !last:border-r focus:ring-none !rounded-l-none !border-l-0"
 			/>
 		</div>
 	</div>

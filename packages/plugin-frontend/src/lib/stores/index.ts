@@ -1,5 +1,5 @@
-import type { GetContactResponse } from '$lib/modules/piggy/types';
-import { derived, writable } from 'svelte/store';
+import { derived, writable } from "svelte/store";
+import type { GetContactResponse } from "$lib/modules/piggy/types";
 
 export const contactStore = writable<GetContactResponse | null>(null);
 
