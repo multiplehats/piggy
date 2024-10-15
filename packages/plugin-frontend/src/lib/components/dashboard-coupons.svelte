@@ -3,13 +3,14 @@
 	import { replaceStrings } from "@piggy/lib";
 	import DashboardCouponCard from "./dashboard-coupon-card.svelte";
 	import { apiService } from "$lib/modules/piggy";
-	import { currentLanguage, pluginSettings } from "$lib/modules/settings";
+	import { currentLanguage, isLoggedIn, pluginSettings } from "$lib/modules/settings";
 	import { QueryKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	const query = createQuery({
 		queryKey: [QueryKeys.coupons],
 		queryFn: async () => await apiService.getCoupons(window.piggyMiddlewareConfig.userId),
+		enabled: isLoggedIn,
 	});
 
 	function getNavItemText(text?: string) {
@@ -21,40 +22,42 @@
 	}
 </script>
 
-<div class="piggy-dashboard-coupons">
-	<div>
-		<h3 class="piggy-dashboard__header">
-			{getNavItemText(getTranslatedText($pluginSettings?.dashboard_nav_coupons))}
-		</h3>
-	</div>
-
-	{#if $query.isLoading}
-		<div class="piggy-dashboard-coupons__loading">
-			<p>{getTranslatedText($pluginSettings?.dashboard_coupons_loading_state)}</p>
+{#if isLoggedIn}
+	<div class="piggy-dashboard-coupons">
+		<div>
+			<h3 class="piggy-dashboard__header">
+				{getNavItemText(getTranslatedText($pluginSettings?.dashboard_nav_coupons))}
+			</h3>
 		</div>
-	{/if}
 
-	{#if $query.isSuccess && $query.data}
-		{@const filteredCoupons = $query.data.filter(
-			(coupon) =>
-				coupon.spend_rule.status.value === "publish" && coupon.spend_rule.label.value
-		)}
-
-		{#if filteredCoupons.length > 0}
-			<div class="piggy-dashboard-coupons__cards">
-				{#each filteredCoupons as coupon}
-					<DashboardCouponCard {coupon} />
-				{/each}
-			</div>
-		{:else}
-			<div class="piggy-dashboard-coupons__empty">
-				<p>
-					{getTranslatedText($pluginSettings?.dashboard_nav_coupons_empty_state)}
-				</p>
+		{#if $query.isLoading}
+			<div class="piggy-dashboard-coupons__loading">
+				<p>{getTranslatedText($pluginSettings?.dashboard_coupons_loading_state)}</p>
 			</div>
 		{/if}
-	{/if}
-</div>
+
+		{#if $query.isSuccess && $query.data}
+			{@const filteredCoupons = $query.data.filter(
+				(coupon) =>
+					coupon.spend_rule.status.value === "publish" && coupon.spend_rule.label.value
+			)}
+
+			{#if filteredCoupons.length > 0}
+				<div class="piggy-dashboard-coupons__cards">
+					{#each filteredCoupons as coupon}
+						<DashboardCouponCard {coupon} />
+					{/each}
+				</div>
+			{:else}
+				<div class="piggy-dashboard-coupons__empty">
+					<p>
+						{getTranslatedText($pluginSettings?.dashboard_nav_coupons_empty_state)}
+					</p>
+				</div>
+			{/if}
+		{/if}
+	</div>
+{/if}
 
 <style>
 	.piggy-dashboard-coupons {

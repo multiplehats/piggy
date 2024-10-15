@@ -3,13 +3,14 @@
 	import { replaceStrings } from "@piggy/lib";
 	import DashboardSpendRuleCard from "./dashboard-spend-rule-card.svelte";
 	import { apiService } from "$lib/modules/piggy";
-	import { creditsName, pluginSettings } from "$lib/modules/settings";
+	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
 	import { QueryKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	const query = createQuery({
 		queryKey: [QueryKeys.spendRules],
 		queryFn: async () => await apiService.getSpendRules(window.piggyMiddlewareConfig.userId),
+		enabled: isLoggedIn,
 	});
 
 	function getNavItemText(text?: string) {

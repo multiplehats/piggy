@@ -218,7 +218,7 @@ final class AssetsController
 		$all_languages = Common::get_languages();
 		$current_language = Common::get_current_language();
 		$api_key_set = $this->connection->has_api_key();
-		$user_id = get_current_user_id();
+		$user_id = is_user_logged_in() ? get_current_user_id() : null;
 
 		return "
             window.piggyMiddlewareConfig = {

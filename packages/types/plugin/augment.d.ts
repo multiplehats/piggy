@@ -14,7 +14,7 @@ declare global {
 		// WP Fetch middleware config
 		piggyMiddlewareConfig: {
 			apiKeySet: boolean;
-			userId: number;
+			userId: number | null;
 			loggedIn: boolean;
 			siteLanguage: string;
 			languages: string[];

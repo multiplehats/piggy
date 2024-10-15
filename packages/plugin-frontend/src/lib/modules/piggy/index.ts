@@ -52,10 +52,11 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async getCoupons(userId?: number) {
-		const { data, error } = await api.get<GetCouponsResponse>(
-			`/piggy/v1/coupons?userId=${userId}`
-		);
+	async getCoupons(userId: number | null) {
+		const endpoint = "/piggy/v1/coupons";
+		const url = userId !== null ? `${endpoint}?userId=${userId}` : endpoint;
+
+		const { data, error } = await api.get<GetCouponsResponse>(url);
 
 		if (error) {
 			throw new PiggyApiError(error.status, error.statusText, error.data);
@@ -74,7 +75,7 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async claimReward(earnRuleId: number, userId?: number) {
+	async claimReward(earnRuleId: number, userId: number | null) {
 		const { data, error } = await api.post("/piggy/v1/earn-reward", {
 			userId,
 			earnRuleId,
@@ -101,10 +102,11 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async getSpendRules(userId?: number) {
-		const { data, error } = await api.get<GetSpendRulesResponse>(
-			`/piggy/v1/spend-rules?userId=${userId}`
-		);
+	async getSpendRules(userId: number | null) {
+		const endpoint = "/piggy/v1/spend-rules";
+		const url = userId !== null ? `${endpoint}?userId=${userId}` : endpoint;
+
+		const { data, error } = await api.get<GetSpendRulesResponse>(url);
 
 		if (error) {
 			throw new PiggyApiError(error.status, error.statusText, error.data);
@@ -113,7 +115,7 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async joinProgram(userId: number) {
+	async joinProgram(userId: number | null) {
 		const { data, error } = await api.post("/piggy/v1/join-program?g", {
 			userId,
 		});
@@ -125,7 +127,7 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async claimSpendRule(spendRuleId: number, userId?: number) {
+	async claimSpendRule(spendRuleId: number, userId: number | null) {
 		const { data, error } = await api.post(`/piggy/v1/spend-rules-claim`, {
 			userId,
 			id: spendRuleId,
