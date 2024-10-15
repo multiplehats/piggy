@@ -52,10 +52,11 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async getCoupons(userId?: number) {
-		const { data, error } = await api.get<GetCouponsResponse>(
-			`/piggy/v1/coupons?userId=${userId}`
-		);
+	async getCoupons(userId: number | null) {
+		const endpoint = "/piggy/v1/coupons";
+		const url = userId !== null ? `${endpoint}?userId=${userId}` : endpoint;
+
+		const { data, error } = await api.get<GetCouponsResponse>(url);
 
 		if (error) {
 			throw new PiggyApiError(error.status, error.statusText, error.data);
@@ -101,10 +102,11 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async getSpendRules(userId?: number) {
-		const { data, error } = await api.get<GetSpendRulesResponse>(
-			`/piggy/v1/spend-rules?userId=${userId}`
-		);
+	async getSpendRules(userId: number | null) {
+		const endpoint = "/piggy/v1/spend-rules";
+		const url = userId !== null ? `${endpoint}?userId=${userId}` : endpoint;
+
+		const { data, error } = await api.get<GetSpendRulesResponse>(url);
 
 		if (error) {
 			throw new PiggyApiError(error.status, error.statusText, error.data);

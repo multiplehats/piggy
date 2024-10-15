@@ -11,6 +11,7 @@
 	const query = createQuery({
 		queryKey: [QueryKeys.contact],
 		queryFn: async () => await apiService.getContact(),
+		enabled: window.piggyMiddlewareConfig.userId !== null,
 	});
 
 	$: contactStore.set($query.data ?? null);
