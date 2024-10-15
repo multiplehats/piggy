@@ -75,7 +75,7 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async claimReward(earnRuleId: number, userId?: number) {
+	async claimReward(earnRuleId: number, userId: number | null) {
 		const { data, error } = await api.post("/piggy/v1/earn-reward", {
 			userId,
 			earnRuleId,
@@ -115,7 +115,7 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async joinProgram(userId: number) {
+	async joinProgram(userId: number | null) {
 		const { data, error } = await api.post("/piggy/v1/join-program?g", {
 			userId,
 		});
@@ -127,7 +127,7 @@ export class PiggyFrontendService {
 		return data;
 	}
 
-	async claimSpendRule(spendRuleId: number, userId?: number) {
+	async claimSpendRule(spendRuleId: number, userId: number | null) {
 		const { data, error } = await api.post(`/piggy/v1/spend-rules-claim`, {
 			userId,
 			id: spendRuleId,
