@@ -29,7 +29,7 @@ if ( ! defined( 'PIGGY_URL' ) ) {
 }
 
 if ( ! defined( 'PIGGY_VERSION' ) ) {
-	define( 'PIGGY_VERSION', '0.1.9' );
+	define( 'PIGGY_VERSION', '0.1.10' );
 }
 
 /**
