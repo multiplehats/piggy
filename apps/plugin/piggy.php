@@ -4,7 +4,7 @@
  * Plugin Name: Piggy - Loyalty & Marketing
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
- * Version: 0.1.9
+ * Version: 0.1.10
  * Author: Piggy
  * Author URI: https://piggy.com
  * Text Domain: piggy
@@ -31,19 +31,6 @@ if ( ! defined( 'PIGGY_URL' ) ) {
 if ( ! defined( 'PIGGY_VERSION' ) ) {
 	define( 'PIGGY_VERSION', '0.1.9' );
 }
-
-/**
- * Temporary solution to update the plugin using WPLatest Updater until
- * we release the plugin in the WordPress repository.
- */
-add_action('init', function() {
-	$options = array(
-		'file'   => __FILE__,
-		'id'     => 'plugin_t7jfygltvh47e88f6c6nfubb',
-	);
-
-	// new WPLatest\Updater\PluginUpdater($options);
-});
 
 /**
  * Declare support for HPOS (High-Performance Order Storage)
@@ -116,6 +103,19 @@ if ( is_readable( $autoloader ) ) {
 			)
 		);
 	}
+
+	/**
+	 * Temporary solution to update the plugin using WPLatest Updater until
+	 * we release the plugin in the WordPress repository.
+	 */
+	add_action('init', function() {
+		$options = array(
+			'file'   => __FILE__,
+			'id'     => 'plugin_t7jfygltvh47e88f6c6nfubb',
+		);
+
+		new WPLatest\Updater\PluginUpdater($options);
+	});
 
 	/**
 	 * Outputs an admin notice if composer install has not been ran.
