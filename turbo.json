@@ -34,29 +34,29 @@
 				"^build"
 			]
 		},
-		"@piggy/plugin#i18n": {
+		"@leat/plugin#i18n": {
 			"cache": false,
 			"dependsOn": [
 				"^build",
-				"@piggy/plugin#package-plugin"
+				"@leat/plugin#package-plugin"
 			],
 			"outputs": [
 				"languages/**"
 			]
 		},
-		"@piggy/plugin#package-plugin": {
+		"@leat/plugin#package-plugin": {
 			"dependsOn": [
 				"build"
 			],
 			"outputs": [
-				"piggy.zip"
+				"leat.zip"
 			],
 			"cache": false,
 			"inputs": [
 				"dist/**",
 				"src/**",
 				"vendor/**",
-				"piggy.php"
+				"leat.php"
 			]
 		},
 		"format": {

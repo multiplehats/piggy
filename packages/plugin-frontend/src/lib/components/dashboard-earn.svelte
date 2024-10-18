@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { createQuery } from "@tanstack/svelte-query";
-	import { replaceStrings } from "@piggy/lib";
+	import { replaceStrings } from "@leat/lib";
 	import DashboardEarnCard from "./dashboard-earn-card.svelte";
-	import { apiService } from "$lib/modules/piggy";
+	import { apiService } from "$lib/modules/leat";
 	import { creditsName, pluginSettings } from "$lib/modules/settings";
 	import { QueryKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
@@ -19,14 +19,14 @@
 	}
 </script>
 
-<div class="piggy-dashboard-earn">
+<div class="leat-dashboard-earn">
 	<div>
-		<h3 class="piggy-dashboard__header">
+		<h3 class="leat-dashboard__header">
 			{getNavItemText(getTranslatedText($pluginSettings.dashboard_nav_earn))}
 		</h3>
 
 		{#if $query.data && $query.data.length > 0}
-			<div class="piggy-dashboard-earn__cards">
+			<div class="leat-dashboard-earn__cards">
 				{#each $query.data as earnRule}
 					{#if earnRule.label.value}
 						<DashboardEarnCard {earnRule} />
@@ -38,14 +38,14 @@
 </div>
 
 <style>
-	.piggy-dashboard-earn {
+	.leat-dashboard-earn {
 		text-align: center;
 		max-width: 1260px;
 		width: 100%;
 		margin-top: 3rem;
 	}
 
-	.piggy-dashboard__header {
+	.leat-dashboard__header {
 		font-size: 1.5rem;
 		margin: 0;
 		margin-bottom: 1.5rem;
@@ -54,22 +54,22 @@
 		max-width: 450px;
 	}
 
-	.piggy-dashboard-earn__cards {
+	.leat-dashboard-earn__cards {
 		display: grid;
-		background: var(--piggy-dashboard-card-background-color, #f7f7f7);
+		background: var(--leat-dashboard-card-background-color, #f7f7f7);
 		padding: 1.4rem;
 		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 		gap: 1rem;
 	}
 
 	@media (max-width: 768px) {
-		.piggy-dashboard-earn__cards {
+		.leat-dashboard-earn__cards {
 			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 		}
 	}
 
 	@media (max-width: 480px) {
-		.piggy-dashboard-earn__cards {
+		.leat-dashboard-earn__cards {
 			grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 		}
 	}

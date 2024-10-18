@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Plugin Name: Piggy - Loyalty & Marketing
+ * Plugin Name: Leat - Loyalty & Marketing
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
  * Version: 0.1.10
- * Author: Piggy
- * Author URI: https://piggy.com
- * Text Domain: piggy
+ * Author: Leat
+ * Author URI: https://leat.com
+ * Text Domain: leat
  * Requires at least: 5.9
  * Domain Path: /languages
  * Requires PHP: 8.0
@@ -15,21 +15,21 @@
  * Requires Plugins: woocommerce
  * WC requires at least: 6.9
  * WC tested up to: 8.8.3
- * Update URI:  https://wplatest.co
+ * Update URI: https://wplatest.co
  *
- * @package Piggy
+ * @package Leat
  */
 
 defined( 'ABSPATH' ) || exit;
 
 $minimum_wp_version = '6.0';
 
-if ( ! defined( 'PIGGY_URL' ) ) {
-	define( 'PIGGY_URL', plugins_url( '/', __FILE__ ) );
+if ( ! defined( 'LEAT_URL' ) ) {
+	define( 'LEAT_URL', plugins_url( '/', __FILE__ ) );
 }
 
-if ( ! defined( 'PIGGY_VERSION' ) ) {
-	define( 'PIGGY_VERSION', '0.1.10' );
+if ( ! defined( 'LEAT_VERSION' ) ) {
+	define( 'LEAT_VERSION', '0.1.10' );
 }
 
 /**
@@ -69,16 +69,16 @@ if ( version_compare( $GLOBALS['wp_version'], $minimum_wp_version, '<' ) ) {
 	 *
 	 * @since 2.5.0
 	 */
-	function piggy_admin_unsupported_wp_notice() {
+	function leat_admin_unsupported_wp_notice() {
 		if ( should_display_compatibility_notices() ) {
 			?>
 			<div class="notice notice-error">
-				<p><?php esc_html_e( 'The Piggy plugin requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Piggy.', 'piggy' ); ?></p>
+				<p><?php esc_html_e( 'The Leat plugin requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Leat.', 'leat' ); ?></p>
 			</div>
 			<?php
 		}
 	}
-	add_action( 'admin_notices', 'piggy_admin_unsupported_wp_notice' );
+	add_action( 'admin_notices', 'leat_admin_unsupported_wp_notice' );
 	return;
 }
 
@@ -97,7 +97,7 @@ if ( is_readable( $autoloader ) ) {
 		error_log(  // phpcs:ignore
 			sprintf(
 				/* translators: 1: composer command. 2: plugin directory */
-				esc_html__( 'Your installation of the Piggy plugin is incomplete. Please run %1$s within the %2$s directory.', 'piggy' ),
+				esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat' ),
 				'`composer install`',
 				'`' . esc_html( str_replace( ABSPATH, '', __DIR__ ) ) . '`'
 			)
@@ -129,7 +129,7 @@ if ( is_readable( $autoloader ) ) {
 				<?php
 				printf(
 					/* translators: 1: composer command. 2: plugin directory */
-					esc_html__( 'Your installation of the Piggy plugin is incomplete. Please run %1$s within the %2$s directory.', 'piggy' ),
+					esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat' ),
 					'<code>composer install</code>',
 					'<code>' . esc_html( str_replace( ABSPATH, '', __DIR__ ) ) . '</code>'
 				);
@@ -142,4 +142,4 @@ if ( is_readable( $autoloader ) ) {
 	return;
 }
 
-add_action( 'plugins_loaded', array( '\PiggyWP\Package', 'init' ) );
+add_action( 'plugins_loaded', array( '\Leat\Package', 'init' ) );

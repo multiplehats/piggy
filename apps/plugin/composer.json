@@ -1,7 +1,7 @@
 {
-	"name": "piggy/plugin",
-	"description": "Piggy plugin.",
-	"homepage": "https://piggy.com/",
+	"name": "leat/plugin",
+	"description": "Leat WordPress plugin.",
+	"homepage": "https://leat.com/",
 	"type": "wordpress-plugin",
 	"keywords": [
 		"woocommerce"
@@ -26,7 +26,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"PiggyWP\\": "src/"
+			"Leat\\": "src/"
 		}
 	},
 	"scripts": {
@@ -37,7 +37,7 @@
 			"phpcbf -p --extensions=php"
 		],
 		"makepot": [
-			"wp i18n make-pot . ./languages/piggy.pot --include=\"piggy.php,src,dist/frontend/assets, dist/admin/assets\""
+			"wp i18n make-pot . ./languages/leat.pot --include=\"leat.php,src,dist/frontend/assets, dist/admin/assets\""
 		]
 	},
 	"config": {

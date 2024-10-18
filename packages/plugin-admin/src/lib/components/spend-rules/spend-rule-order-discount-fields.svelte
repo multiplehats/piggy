@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { __ } from "@wordpress/i18n";
-	import type { NotUndefined } from "@piggy/types";
+	import type { NotUndefined } from "@leat/types";
 	import SettingsInput from "$lib/components/settings-input.svelte";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import type { GetSpendRuleByIdResponse } from "$lib/modules/settings/types";
@@ -12,7 +12,7 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="mb-2">{__("Rule settings", "piggy")}</Card.Title>
+		<Card.Title class="mb-2">{__("Rule settings", "leat")}</Card.Title>
 	</Card.Header>
 
 	<Card.Content>

@@ -2,7 +2,7 @@
 	import { MutationCache, QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
 	import { SvelteQueryDevtools } from "@tanstack/svelte-query-devtools";
 	import { onMount } from "svelte";
-	import type { IWooSettings, PluginOptionsFrontend } from "@piggy/types/plugin";
+	import type { IWooSettings, PluginOptionsFrontend } from "@leat/types/plugin";
 	import Dashboard from "./components/dashboard.svelte";
 	import { isDev } from "$lib/config/environment";
 	import {
@@ -47,7 +47,7 @@
 <QueryClientProvider client={queryClient}>
 	{#if $settingsState}
 		{#if $settingsState.plugin_enable}
-			<div class="piggy-dashboard">
+			<div class="leat-dashboard">
 				<Dashboard />
 			</div>
 		{/if}
@@ -59,7 +59,7 @@
 </QueryClientProvider>
 
 <style>
-	.piggy-dashboard {
+	.leat-dashboard {
 		background-color: white;
 		font-size: 16px;
 		border-radius: 6px;
@@ -68,12 +68,12 @@
 	}
 
 	@media (min-width: 768px) {
-		.piggy-dashboard {
+		.leat-dashboard {
 			padding: 16px;
 		}
 	}
 
-	.piggy-dashboard {
+	.leat-dashboard {
 		margin-left: auto;
 		margin-right: auto;
 		height: 100%;

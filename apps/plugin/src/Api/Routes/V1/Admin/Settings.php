@@ -1,9 +1,9 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1\Admin;
+namespace Leat\Api\Routes\V1\Admin;
 
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Routes\V1\Admin\Middleware;
 
 /**
  * Shops class.
@@ -47,7 +47,7 @@ class Settings extends AbstractRoute {
 				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Settings', 'piggy' ),
+						'description' => __( 'Settings', 'leat' ),
 						'type'        => 'object',
 					],
 				],
@@ -58,7 +58,7 @@ class Settings extends AbstractRoute {
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'id' => [
-						'description' => __( 'Setting ID', 'piggy' ),
+						'description' => __( 'Setting ID', 'leat' ),
 						'type'        => 'string',
 					],
 				],

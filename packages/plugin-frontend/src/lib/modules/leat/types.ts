@@ -1,7 +1,4 @@
-import type {
-	EarnRuleValueItem,
-	SpendRuleValueItem,
-} from "@piggy/types/plugin/settings/adminTypes";
+import type { EarnRuleValueItem, SpendRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
 
 export type Shop = {
 	uuid: string;

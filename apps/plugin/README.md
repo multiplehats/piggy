@@ -1,4 +1,4 @@
-# Piggy
+# Leat WordPress Plugin
 
 ## Getting started
 

@@ -38,7 +38,7 @@ export function saveSettingsMutationConfig(
 			}
 		},
 		onSuccess: async (newSettings) => {
-			await queryClient.invalidateQueries({ queryKey: [QueryKeys.piggyShops] });
+			await queryClient.invalidateQueries({ queryKey: [QueryKeys.leatShops] });
 
 			if (opts.onSuccessCb) {
 				opts.onSuccessCb(newSettings);

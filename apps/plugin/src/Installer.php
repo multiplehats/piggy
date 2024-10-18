@@ -1,11 +1,11 @@
 <?php
-namespace PiggyWP;
+namespace Leat;
 
-use PiggyWP\Api\Connection;
+use Leat\Api\Connection;
 
 /**
  * Installer class.
- * Handles installation of Piggy plugin dependencies.
+ * Handles installation of Leat plugin dependencies.
  *
  * @internal
  */
@@ -25,7 +25,7 @@ class Installer {
 		global $wpdb;
 
 		$schema_version    = 1;
-		$db_schema_version = (int) get_option( 'piggy_db_schema_version', 0 );
+		$db_schema_version = (int) get_option( 'leat_db_schema_version', 0 );
 
 		if ( $db_schema_version >= $schema_version && 0 !== $db_schema_version ) {
 			return;
@@ -35,7 +35,7 @@ class Installer {
 		$collate     = $wpdb->has_cap( 'collation' ) ? $wpdb->get_charset_collate() : '';
 
 		$tables = [
-			"CREATE TABLE {$wpdb->prefix}piggy_reward_logs (
+			"CREATE TABLE {$wpdb->prefix}leat_reward_logs (
 				`id` mediumint(9) NOT NULL AUTO_INCREMENT,
 				`wp_user_id` bigint(20) NOT NULL,
 				`earn_rule_id` bigint(20) NOT NULL,
@@ -60,7 +60,7 @@ class Installer {
 
 		// Update succeeded. This is only updated when successful and validated.
 		// $schema_version should be incremented when changes to schema are made within this method.
-		update_option( 'piggy_db_schema_version', $schema_version );
+		update_option( 'leat_db_schema_version', $schema_version );
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Installer {
 				echo '<div class="error"><p>';
 				printf(
 					/* translators: %1$s table name, %2$s database user, %3$s database name. */
-					esc_html__( 'Piggy %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?', 'woo-gutenberg-products-block' ),
+					esc_html__( 'Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?', 'woo-gutenberg-products-block' ),
 					'<code>' . esc_html( $table_name ) . '</code>',
 					'<code>' . esc_html( DB_USER ) . '</code>',
 					'<code>' . esc_html( DB_NAME ) . '</code>'
@@ -122,11 +122,11 @@ class Installer {
 	}
 
 	public function maybe_redirect_to_onboarding() {
-		$api_key = get_option('piggy_api_key', null);
+		$api_key = get_option('leat_api_key', null);
 
-		if ( get_option( 'piggy_first_activation', false ) === false && $api_key !== null && $api_key !== '' ) {
-			update_option( 'piggy_first_activation', true );
-			wp_redirect( admin_url( 'admin.php?page=piggy#/onboarding' ) );
+		if ( get_option( 'leat_first_activation', false ) === false && $api_key !== null && $api_key !== '' ) {
+			update_option( 'leat_first_activation', true );
+			wp_redirect( admin_url( 'admin.php?page=leat#/onboarding' ) );
 			exit;
 		}
 	}

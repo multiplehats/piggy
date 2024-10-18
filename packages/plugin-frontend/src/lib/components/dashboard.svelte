@@ -6,12 +6,12 @@
 	import DashboardRewards from "./dashboard-rewards.svelte";
 	import { QueryKeys } from "$lib/utils/query-keys";
 	import { contactStore } from "$lib/stores";
-	import { apiService } from "$lib/modules/piggy";
+	import { apiService } from "$lib/modules/leat";
 
 	const query = createQuery({
 		queryKey: [QueryKeys.contact],
 		queryFn: async () => await apiService.getContact(),
-		enabled: window.piggyMiddlewareConfig.userId !== null,
+		enabled: window.leatMiddlewareConfig.userId !== null,
 	});
 
 	$: contactStore.set($query.data ?? null);

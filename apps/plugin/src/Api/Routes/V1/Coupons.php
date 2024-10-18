@@ -1,10 +1,10 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1;
+namespace Leat\Api\Routes\V1;
 
-use PiggyWP\Api\Exceptions\RouteException;
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Domain\Services\SpendRules;
+use Leat\Api\Exceptions\RouteException;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Domain\Services\SpendRules;
 
 /**
  * Coupons class.

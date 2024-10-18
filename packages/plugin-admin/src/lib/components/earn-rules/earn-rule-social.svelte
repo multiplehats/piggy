@@ -9,7 +9,7 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>{__("Rule settings", "piggy")}</Card.Title>
+		<Card.Title>{__("Rule settings", "leat")}</Card.Title>
 	</Card.Header>
 
 	<Card.Content>

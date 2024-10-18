@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { NotUndefined } from "@piggy/types";
+	import type { NotUndefined } from "@leat/types";
 	import SettingsInput from "$lib/components/settings-input.svelte";
 	import SettingsSelect from "$lib/components/settings-select.svelte";
 	import type { GetSpendRuleByIdResponse } from "$lib/modules/settings/types";

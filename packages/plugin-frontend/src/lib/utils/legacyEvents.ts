@@ -18,14 +18,14 @@ export function triggerFragmentRefresh(): void {
 }
 
 export function triggerAddingToCartEvent(): void {
-	dispatchEvent("piggy_adding_to_cart", {
+	dispatchEvent("leat_adding_to_cart", {
 		bubbles: true,
 		cancelable: true,
 	});
 }
 
 export function triggerAddedToCartEvent({ preserveCartData = false }): void {
-	dispatchEvent("piggy_added_to_cart", {
+	dispatchEvent("leat_added_to_cart", {
 		bubbles: true,
 		cancelable: true,
 		detail: { preserveCartData },

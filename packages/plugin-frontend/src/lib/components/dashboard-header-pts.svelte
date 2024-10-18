@@ -3,17 +3,17 @@
 	import BadgeEuro from "lucide-svelte/icons/badge-euro";
 	import ShoppingBag from "lucide-svelte/icons/shopping-bag";
 	import Tag from "lucide-svelte/icons/tag";
-	import { replaceStrings } from "@piggy/lib";
+	import { replaceStrings } from "@leat/lib";
 	import { Button } from "$lib/components/button/index.js";
-	import { piggyService } from "$lib/config/services";
+	import { leatService } from "$lib/config/services";
 	import { isLoggedIn, pluginSettings } from "$lib/modules/settings";
-	import { contactStore, hasPiggyAccount } from "$lib/stores";
+	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { MutationKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	const joinProgramMutation = createMutation({
 		mutationKey: [MutationKeys.joinProgram],
-		mutationFn: () => piggyService.joinProgram(window.piggyMiddlewareConfig.userId),
+		mutationFn: () => leatService.joinProgram(window.leatMiddlewareConfig.userId),
 		onSuccess: () => {
 			location.reload();
 		},
@@ -64,9 +64,9 @@
 	}
 
 	function handleScrollNavigation(id: string) {
-		// scroll to the nearest `piggy-dashboard-${id}` element
+		// scroll to the nearest `leat-dashboard-${id}` element
 		return () => {
-			const element = document.querySelector(`.piggy-dashboard-${id}`);
+			const element = document.querySelector(`.leat-dashboard-${id}`);
 
 			if (element) {
 				element.scrollIntoView({ behavior: "smooth" });
@@ -78,11 +78,11 @@
 		$joinProgramMutation.mutate();
 	}
 
-	$: isContactNull = isLoggedIn && !$hasPiggyAccount;
+	$: isContactNull = isLoggedIn && !$hasLeatAccount;
 </script>
 
 <section>
-	<h2 class="piggy-dashboard__header">
+	<h2 class="leat-dashboard__header">
 		{#if isLoggedIn}
 			{#if isContactNull}
 				{getTranslatedText($pluginSettings.dashboard_title_join_program)}
@@ -102,17 +102,17 @@
 
 	<!-- Call to action-->
 	{#if !isLoggedIn}
-		<div class="piggy-dashboard__cta">
-			{#if window.piggyWcSettings.storePages.myaccount?.permalink}
+		<div class="leat-dashboard__cta">
+			{#if window.leatWcSettings.storePages.myaccount?.permalink}
 				<Button
-					href={window.piggyWcSettings.storePages.myaccount?.permalink}
+					href={window.leatWcSettings.storePages.myaccount?.permalink}
 					variant="primary"
 				>
 					{getTranslatedText($pluginSettings.dashboard_join_cta)}
 				</Button>
 
 				<Button
-					href={window.piggyWcSettings.storePages.myaccount?.permalink}
+					href={window.leatWcSettings.storePages.myaccount?.permalink}
 					variant="primary"
 				>
 					{getTranslatedText($pluginSettings.dashboard_login_cta)}
@@ -120,7 +120,7 @@
 			{/if}
 		</div>
 	{:else if isContactNull}
-		<div class="piggy-dashboard__cta">
+		<div class="leat-dashboard__cta">
 			<Button
 				on:click={handleJoinProgram}
 				variant="primary"
@@ -130,7 +130,7 @@
 			</Button>
 
 			{#if $joinProgramMutation.isError}
-				<p class="piggy-dashboard__error">
+				<p class="leat-dashboard__error">
 					{$joinProgramMutation.error.message}
 				</p>
 			{/if}
@@ -138,11 +138,11 @@
 	{/if}
 
 	{#if isLoggedIn && !isContactNull}
-		<nav class="piggy-dashboard__nav">
-			<ul class="piggy-dashboard__list">
+		<nav class="leat-dashboard__nav">
+			<ul class="leat-dashboard__list">
 				{#each navItems as { icon, text, id }}
 					<li>
-						<button class="piggy-dashboard__item" on:click={handleScrollNavigation(id)}>
+						<button class="leat-dashboard__item" on:click={handleScrollNavigation(id)}>
 							<svelte:component this={icon} size={24} />
 
 							{getNavItemText(text)}
@@ -159,7 +159,7 @@
 		text-align: center;
 	}
 
-	.piggy-dashboard__header {
+	.leat-dashboard__header {
 		font-size: 1.5rem;
 		margin: 0;
 		margin-bottom: 1.5rem;
@@ -169,20 +169,20 @@
 	}
 
 	@media screen and (max-width: 768px) {
-		.piggy-dashboard__header {
+		.leat-dashboard__header {
 			font-size: 1.25rem;
 		}
 	}
 
-	.piggy-dashboard__nav {
+	.leat-dashboard__nav {
 		justify-content: center;
 		display: flex;
 		align-items: center;
 	}
 
-	.piggy-dashboard__list {
+	.leat-dashboard__list {
 		display: inline-flex;
-		border-bottom: 1px solid var(--piggy-dashboard-nav-item-border, #e5e5e5);
+		border-bottom: 1px solid var(--leat-dashboard-nav-item-border, #e5e5e5);
 		gap: 6px;
 		justify-content: center;
 		flex-wrap: wrap;
@@ -190,13 +190,13 @@
 		margin: 0;
 	}
 
-	.piggy-dashboard__cta {
+	.leat-dashboard__cta {
 		display: flex;
 		justify-content: center;
 		gap: 0.5rem;
 	}
 
-	.piggy-dashboard__item {
+	.leat-dashboard__item {
 		outline: none;
 		display: inline-flex;
 		cursor: pointer;
@@ -209,21 +209,21 @@
 		background-color: transparent;
 	}
 
-	.piggy-dashboard__item:hover {
-		background-color: var(--piggy-dashboard-nav-item-bg-hover, #f5f5f5);
+	.leat-dashboard__item:hover {
+		background-color: var(--leat-dashboard-nav-item-bg-hover, #f5f5f5);
 	}
 
 	@media (max-width: 768px) {
-		.piggy-dashboard__list {
+		.leat-dashboard__list {
 			border-bottom: none;
 			width: 100%;
 			display: grid;
 			grid-template-columns: repeat(1, 1fr);
 		}
 
-		.piggy-dashboard__item {
+		.leat-dashboard__item {
 			border-radius: 6px;
-			background-color: var(--piggy-dashboard-nav-item-bg, #f5f5f5);
+			background-color: var(--leat-dashboard-nav-item-bg, #f5f5f5);
 			width: 100%;
 		}
 	}

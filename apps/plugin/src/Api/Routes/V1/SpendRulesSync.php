@@ -1,9 +1,9 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1;
+namespace Leat\Api\Routes\V1;
 
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Connection;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Connection;
 
 /**
  * SpendRuleSync class.
@@ -55,7 +55,7 @@ class SpendRulesSync extends AbstractRoute {
 	}
 
 	/**
-	 * Syncs spend rules with Piggy rewards
+	 * Syncs spend rules with Leat rewards
 	 *
 	 * @param  \WP_REST_Request $request Request object.
 	 *
@@ -66,9 +66,9 @@ class SpendRulesSync extends AbstractRoute {
 		$result = $connection->sync_rewards_with_spend_rules();
 
 		if ($result) {
-			return new \WP_REST_Response(['message' => 'Spend rules synced successfully with Piggy rewards'], 200);
+			return new \WP_REST_Response(['message' => 'Spend rules synced successfully with Leat rewards'], 200);
 		} else {
-			return new \WP_Error('sync_failed', 'Failed to sync spend rules with Piggy rewards', ['status' => 500]);
+			return new \WP_Error('sync_failed', 'Failed to sync spend rules with Leat rewards', ['status' => 500]);
 		}
 	}
 }

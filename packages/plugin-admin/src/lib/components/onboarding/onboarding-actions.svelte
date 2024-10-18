@@ -22,10 +22,10 @@
 		disabled={saving || disabled}
 		on:click={handlePreviousStep}
 	>
-		{__("Back", "piggy")}
+		{__("Back", "leat")}
 	</Button>
 
 	<Button size="sm" variant="default" loading={saving} {disabled} type="submit">
-		{__("Save and continue", "piggy")}
+		{__("Save and continue", "leat")}
 	</Button>
 </div>

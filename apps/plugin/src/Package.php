@@ -1,11 +1,11 @@
 <?php
 
-namespace PiggyWP;
+namespace Leat;
 
-use PiggyWP\Domain\Package as NewPackage;
-use PiggyWP\Domain\Bootstrap;
-use PiggyWP\Registry\Container;
-use PiggyWP\Domain\Services\FeatureGating;
+use Leat\Domain\Package as NewPackage;
+use Leat\Domain\Bootstrap;
+use Leat\Registry\Container;
+use Leat\Domain\Services\FeatureGating;
 
 /**
  * Main package class.
@@ -86,7 +86,7 @@ class Package {
 				NewPackage::class,
 				function ( $container ) {
 					// TODO: Need to construct this from the plugin file.
-					$version = PIGGY_VERSION;
+					$version = LEAT_VERSION;
 					return new NewPackage(
 						$version,
 						dirname( __DIR__ )

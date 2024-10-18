@@ -1,8 +1,8 @@
 <?php
 
-namespace PiggyWP\Shortcodes;
+namespace Leat\Shortcodes;
 
-use PiggyWP\Shortcodes\AbstractShortcode;
+use Leat\Shortcodes\AbstractShortcode;
 
 class CustomerDashboardShortcode extends AbstractShortcode {
 	/**
@@ -30,7 +30,7 @@ class CustomerDashboardShortcode extends AbstractShortcode {
 	public function shortcode_output($attributes, $content = '') {
 		$output = ob_start();
 
-		?><div class="piggy-customer-dashboard"></div><?php
+		?><div class="leat-customer-dashboard"></div><?php
 
 		$output = ob_get_clean();
 

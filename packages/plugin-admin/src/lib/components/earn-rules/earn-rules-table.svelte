@@ -3,7 +3,7 @@
 	import { __ } from "@wordpress/i18n";
 	import { WalletMinimal } from "lucide-svelte";
 	import { useNavigate } from "svelte-navigator";
-	import type { EarnRuleType } from "@piggy/types/plugin/settings/adminTypes";
+	import type { EarnRuleType } from "@leat/types/plugin/settings/adminTypes";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button, buttonVariants } from "$lib/components/ui/button";
 	import * as Card from "$lib/components/ui/card/index.js";
@@ -41,12 +41,12 @@
 	);
 
 	const ruleTypes = [
-		{ label: __("Like on Facebook", "piggy"), value: "LIKE_ON_FACEBOOK" },
-		{ label: __("Follow on TikTok", "piggy"), value: "FOLLOW_ON_TIKTOK" },
-		{ label: __("Follow on Instagram", "piggy"), value: "FOLLOW_ON_INSTAGRAM" },
-		{ label: __("Place an order", "piggy"), value: "PLACE_ORDER" },
-		// { label: __('Celebrate your birthday', 'piggy'), value: 'CELEBRATE_BIRTHDAY' },
-		{ label: __("Create an account", "piggy"), value: "CREATE_ACCOUNT" },
+		{ label: __("Like on Facebook", "leat"), value: "LIKE_ON_FACEBOOK" },
+		{ label: __("Follow on TikTok", "leat"), value: "FOLLOW_ON_TIKTOK" },
+		{ label: __("Follow on Instagram", "leat"), value: "FOLLOW_ON_INSTAGRAM" },
+		{ label: __("Place an order", "leat"), value: "PLACE_ORDER" },
+		// { label: __('Celebrate your birthday', 'leat'), value: 'CELEBRATE_BIRTHDAY' },
+		{ label: __("Create an account", "leat"), value: "CREATE_ACCOUNT" },
 	] satisfies { label: string; value: EarnRuleType }[];
 
 	let title: string | undefined = undefined;
@@ -109,7 +109,7 @@
 			<p>
 				{__(
 					"Create rules that reward customers with credits when they perform certain actions. For example, you can reward customers with credits when they create an account or place an order.",
-					"piggy"
+					"leat"
 				)}
 			</p>
 		</div>
@@ -128,11 +128,11 @@
 					<Button
 						size="sm"
 						variant="secondary"
-						href="https://business.piggy.eu/loyalty"
+						href="https://business.leat.eu/loyalty"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						{__("View in Piggy")}
+						{__("View in Leat")}
 					</Button>
 
 					<Dialog.Root>
@@ -216,9 +216,9 @@
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
-							<Table.Head>{__("Title", "piggy")}</Table.Head>
-							<Table.Head>{__("Created at", "piggy")}</Table.Head>
-							<Table.Head class="text-right">{__("Status", "piggy")}</Table.Head>
+							<Table.Head>{__("Title", "leat")}</Table.Head>
+							<Table.Head>{__("Created at", "leat")}</Table.Head>
+							<Table.Head class="text-right">{__("Status", "leat")}</Table.Head>
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>

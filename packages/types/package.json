@@ -1,5 +1,5 @@
 {
-    "name": "@piggy/types",
+    "name": "@leat/types",
     "version": "0.0.0",
     "private": true,
     "main": "./dist/index.js",
@@ -15,7 +15,7 @@
         "build": "tsup"
     },
     "devDependencies": {
-        "@piggy/tsconfig": "workspace:^",
+        "@leat/tsconfig": "workspace:^",
         "@types/react": "^18.3.2",
         "@types/react-dom": "^18.3.0",
         "@types/wordpress__blocks": "^12.5.14",

@@ -10,7 +10,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import * as Command from "$lib/components/ui/command";
 	import * as Popover from "$lib/components/ui/popover";
-	import { PiggyAdminService } from "$lib/modules/piggy";
+	import { LeatAdminService } from "$lib/modules/leat";
 	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 	import { cn } from "$lib/utils/tw.js";
 
@@ -23,7 +23,7 @@
 		value: string[];
 	};
 
-	const service = new PiggyAdminService();
+	const service = new LeatAdminService();
 
 	let className: string | undefined = undefined;
 	let open = false;

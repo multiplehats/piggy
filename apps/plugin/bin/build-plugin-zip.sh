@@ -52,7 +52,7 @@ get_version() {
 # Set version
 VERSION=$(get_version)
 
-status "💃 Time to build a Piggy ZIP 🕺"
+status "💃 Time to build the Leat WordPress plugin ZIP 🕺"
 
 if [ -z "$NO_CHECKS" ]; then
 	# Make sure there are no changes in the working tree. Release builds should be
@@ -76,7 +76,7 @@ fi
 # perl -i -pe "s/\"type\":*.+/\"type\":\"wordpress-plugin\",\n\t\"version\": \"${VERSION}\",/" composer.json
 
 # Add version to plugin header
-perl -i -pe "s/Version:.*$/Version: ${VERSION}/" piggy.php
+perl -i -pe "s/Version:.*$/Version: ${VERSION}/" leat.php
 
 # Run the build.
 if [ $TYPE = 'DEV' ]; then
@@ -112,15 +112,15 @@ mkdir zip-file
 mkdir zip-file/build
 sh "$CURR_DIR/bin/copy-plugin-files.sh" "$CURR_DIR" "$CURR_DIR/zip-file"
 cd "$(pwd)/zip-file"
-zip -r ../piggy.zip ./
+zip -r ../leat.zip ./
 cd ..
 rm -r zip-file
 
 # cleanup composer.json
 git checkout -- composer.json
-git checkout -- piggy.php
+git checkout -- leat.php
 
 # regenerate classmap for development use
 composer dump-autoload
 
-success "Done. You've built Piggy! 🎉"
+success "Done. You've built Leat! 🎉"

@@ -175,7 +175,7 @@ export const zEarnRuleValueItem = z.object({
 	type: zSelect.extend({
 		value: zEarnRuleType,
 	}),
-	piggyTierUuids: z.array(z.string()).or(z.tuple([])),
+	leatTierUuids: z.array(z.string()).or(z.tuple([])),
 	createdAt: z.string(),
 	updatedAt: z.string(),
 	startsAt: zDate,

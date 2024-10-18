@@ -47,8 +47,9 @@ const config = {
 		extend: {
 			colors: {
 				// Custom colors.
-				piggy: {
+				leat: {
 					orange: "#fc5200",
+					darkBlue: "#050E27",
 					"orange-hover": "#d44500",
 					primary: { ...primaryColors },
 				},

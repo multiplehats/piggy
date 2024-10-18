@@ -1,8 +1,8 @@
 <?php
 
-namespace PiggyWP\Api\Schemas\V1;
+namespace Leat\Api\Schemas\V1;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
+use Leat\Api\Schemas\V1\AbstractSchema;
 
 class WCProductsSearchSchema extends AbstractSchema {
     protected $title = 'wc-products';
@@ -11,11 +11,11 @@ class WCProductsSearchSchema extends AbstractSchema {
     public function get_properties() {
         return [
             'id' => [
-                'description' => __('Unique identifier for the product or variation', 'piggy'),
+                'description' => __('Unique identifier for the product or variation', 'leat'),
                 'type'        => 'integer',
             ],
             'title' => [
-                'description' => __('Title of the product or variation', 'piggy'),
+                'description' => __('Title of the product or variation', 'leat'),
                 'type'        => 'string',
             ],
         ];

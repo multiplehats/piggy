@@ -1,9 +1,9 @@
 <?php
 
-namespace PiggyWP\Api\Schemas\V1;
+namespace Leat\Api\Schemas\V1;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
-use PiggyWP\Domain\Services\EarnRules as EarnRulesService;
+use Leat\Api\Schemas\V1\AbstractSchema;
+use Leat\Domain\Services\EarnRules as EarnRulesService;
 
 /**
  * Settings class.
@@ -44,67 +44,67 @@ class EarnRulesSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'id' => [
-				'description' => __( 'Unique identifier for the rule', 'piggy' ),
+				'description' => __( 'Unique identifier for the rule', 'leat' ),
 				'type'        => 'integer',
 			],
 			'status' => [
-				'description' => __( 'Status of the rule', 'piggy' ),
+				'description' => __( 'Status of the rule', 'leat' ),
 				'type'        => 'string',
 			],
 			'title' => [
-				'description' => __( 'Title of the rule', 'piggy' ),
+				'description' => __( 'Title of the rule', 'leat' ),
 				'type'        => 'string',
 			],
 			'createdAt' => [
-				'description' => __( 'Date rule was created.', 'piggy' ),
+				'description' => __( 'Date rule was created.', 'leat' ),
 				'type'        => 'string',
 			],
 			'updatedAt' => [
-				'description' => __( 'Date rule was last updated.', 'piggy' ),
+				'description' => __( 'Date rule was last updated.', 'leat' ),
 				'type'        => 'string',
 			],
 			'description' => [
-				'description' => __( 'Description of the rule', 'piggy' ),
+				'description' => __( 'Description of the rule', 'leat' ),
 				'type'        => 'string',
 			],
 			'type' => [
-				'description' => __( 'Type of the rule', 'piggy' ),
+				'description' => __( 'Type of the rule', 'leat' ),
 				'type'        => 'string',
 			],
-			'piggyTierUuids' => [
-				'description' => __( 'Piggy tier UUIDs that rule is applicable to.', 'piggy' ),
+			'leatTierUuids' => [
+				'description' => __( 'Leat tier UUIDs that rule is applicable to.', 'leat' ),
 				'type'        => 'array',
 			],
 			'startsAt' => [
-				'description' => __( 'Date rule starts.', 'piggy' ),
+				'description' => __( 'Date rule starts.', 'leat' ),
 				'type'        => 'string',
 			],
 			'expiresAt' => [
-				'description' => __( 'Date rule expires.', 'piggy' ),
+				'description' => __( 'Date rule expires.', 'leat' ),
 				'type'        => 'string',
 			],
 			'completed' => [
-				'description' => __( 'Whether rule has been completed.', 'piggy' ),
+				'description' => __( 'Whether rule has been completed.', 'leat' ),
 				'type'        => 'boolean',
 			],
 			'credits' => [
-				'description' => __( 'Credits awarded for completing the rule', 'piggy' ),
+				'description' => __( 'Credits awarded for completing the rule', 'leat' ),
 				'type'        => 'integer',
 			],
 			'socialHandle' => [
-				'description' => __( 'URL of the social network.', 'piggy' ),
+				'description' => __( 'URL of the social network.', 'leat' ),
 				'type'        => 'string',
 			],
 			'excludedCollectionIds' => [
-				'description' => __( 'Collection IDs that are excluded from the rule', 'piggy' ),
+				'description' => __( 'Collection IDs that are excluded from the rule', 'leat' ),
 				'type'        => 'array',
 			],
 			'excludedProductIds' => [
-				'description' => __( 'Product IDs that are excluded from the rule', 'piggy' ),
+				'description' => __( 'Product IDs that are excluded from the rule', 'leat' ),
 				'type'        => 'array',
 			],
 			'minimumOrderAmount' => [
-				'description' => __( 'Minimum order subtotal in cents.', 'piggy' ),
+				'description' => __( 'Minimum order subtotal in cents.', 'leat' ),
 				'type'        => 'integer',
 			],
 		];

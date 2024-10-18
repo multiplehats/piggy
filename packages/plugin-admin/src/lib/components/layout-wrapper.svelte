@@ -9,7 +9,7 @@
 	const location = useLocation();
 
 	$: isOnboarding = $location.pathname.startsWith("/onboarding");
-	$: isMissingApiKey = !window.piggyMiddlewareConfig.apiKeySet;
+	$: isMissingApiKey = !window.leatMiddlewareConfig.apiKeySet;
 
 	onMount(() => {
 		if (isMissingApiKey) {

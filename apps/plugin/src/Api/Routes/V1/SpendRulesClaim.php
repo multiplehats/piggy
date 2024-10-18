@@ -1,12 +1,12 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1;
+namespace Leat\Api\Routes\V1;
 
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Routes\V1\Admin\Middleware;
-use PiggyWP\Api\Connection;
-use PiggyWP\Api\Exceptions\RouteException;
-use PiggyWP\Domain\Services\SpendRules;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Connection;
+use Leat\Api\Exceptions\RouteException;
+use Leat\Domain\Services\SpendRules;
 
 /**
  * SpendRuleSync class.
@@ -101,10 +101,10 @@ class SpendRulesClaim extends AbstractRoute {
 		$contact_uuid = $connection->get_contact_uuid_by_wp_id( $user_id );
 
 		if ( ! $contact_uuid ) {
-			throw new RouteException( 'spend-rules-claim', 'User not found in Piggy', 404 );
+			throw new RouteException( 'spend-rules-claim', 'User not found in Leat', 404 );
 		}
 
-		$reward_uuid = $rule['piggyRewardUuid']['value'];
+		$reward_uuid = $rule['leatRewardUuid']['value'];
 
 		if ( ! $reward_uuid ) {
 			throw new RouteException( 'spend-rules-claim', 'Reward UUID not found for this spend rule', 404 );

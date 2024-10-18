@@ -3,16 +3,16 @@
 	import { __ } from "@wordpress/i18n";
 	import SettingsCombobox from "../settings-combobox.svelte";
 	import { Alert } from "../ui/alert";
-	import { PiggyAdminService } from "$lib/modules/piggy";
+	import { LeatAdminService } from "$lib/modules/leat";
 	import type { GetSpendRuleByIdResponse } from "$lib/modules/settings/types";
 	import { QueryKeys } from "$lib/utils/query-keys";
 
 	export let selectedReward: GetSpendRuleByIdResponse[0]["selectedReward"];
 
-	const service = new PiggyAdminService();
+	const service = new LeatAdminService();
 
 	const query = createQuery({
-		queryKey: [QueryKeys.piggyRewards],
+		queryKey: [QueryKeys.leatRewards],
 		queryFn: async () => await service.getRewards(),
 	});
 
@@ -24,7 +24,7 @@
 	<p>Loading...</p>
 {:else if $query.isError}
 	<Alert
-		description={__(`Error retrieving rewards: ${$query.error.message}`, "piggy")}
+		description={__(`Error retrieving rewards: ${$query.error.message}`, "leat")}
 		type="error"
 	/>
 {:else if $query.isSuccess}
@@ -36,7 +36,7 @@
 						value: reward.uuid,
 					}))
 				: []}
-			itemName={__("Reward", "piggy")}
+			itemName={__("Reward", "leat")}
 			label={selectedReward.label}
 			description={selectedReward.description}
 			id={selectedReward.id}

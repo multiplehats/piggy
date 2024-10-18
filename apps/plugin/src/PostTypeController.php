@@ -1,10 +1,10 @@
 <?php
-namespace PiggyWP;
+namespace Leat;
 
-use PiggyWP\Api\Connection;
+use Leat\Api\Connection;
 
 final class PostTypeController {
-	const PREFIX = 'piggy';
+	const PREFIX = 'leat';
 
 	/**
 	 * The Connection instance.
@@ -28,7 +28,7 @@ final class PostTypeController {
 		add_action('init', array($this, 'register_earn_rules_post_type'));
 		add_action('init', array($this, 'register_spend_rules_post_type'));
 		add_action('init', array($this, 'schedule_daily_reward_sync'));
-		// add_action('piggy_daily_reward_sync', array($this, 'sync_rewards_cron'));
+		// add_action('leat_daily_reward_sync', array($this, 'sync_rewards_cron'));
 	}
 
 	/**
@@ -36,30 +36,30 @@ final class PostTypeController {
 	 */
 	public function register_earn_rules_post_type() {
 		$labels = array(
-			'name'                  => _x('Earn Rules', 'Post type general name', 'piggy'),
-			'singular_name'         => _x('Earn Rule', 'Post type singular name', 'piggy'),
-			'menu_name'             => _x('Earn Rules', 'Admin Menu text', 'piggy'),
-			'name_admin_bar'        => _x('Earn Rule', 'Add New on Toolbar', 'piggy'),
-			'add_new'               => __('Add New', 'piggy'),
-			'add_new_item'          => __('Add New Earn Rule', 'piggy'),
-			'new_item'              => __('New Earn Rule', 'piggy'),
-			'edit_item'             => __('Edit Earn Rule', 'piggy'),
-			'view_item'             => __('View Earn Rule', 'piggy'),
-			'all_items'             => __('All Earn Rules', 'piggy'),
-			'search_items'          => __('Search Earn Rules', 'piggy'),
-			'parent_item_colon'     => __('Parent Earn Rules:', 'piggy'),
-			'not_found'             => __('No earn rules found.', 'piggy'),
-			'not_found_in_trash'    => __('No earn rules found in Trash.', 'piggy'),
-			'featured_image'        => _x('Earn Rule Cover Image', 'Overrides the "Featured Image" phrase for this post type. Added in 4.3', 'piggy'),
-			'set_featured_image'    => _x('Set cover image', 'Overrides the "Set featured image" phrase for this post type. Added in 4.3', 'piggy'),
-			'remove_featured_image' => _x('Remove cover image', 'Overrides the "Remove featured image" phrase for this post type. Added in 4.3', 'piggy'),
-			'use_featured_image'    => _x('Use as cover image', 'Overrides the "Use as featured image" phrase for this post type. Added in 4.3', 'piggy'),
-			'archives'              => _x('Earn Rule archives', 'The post type archive label used in nav menus. Default "Post Archives". Added in 4.4', 'piggy'),
-			'insert_into_item'      => _x('Insert into earn rule', 'Overrides the "Insert into post"/"Insert into page" phrase (used when inserting media into a post). Added in 4.4', 'piggy'),
-			'uploaded_to_this_item' => _x('Uploaded to this earn rule', 'Overrides the "Uploaded to this post/page" phrase (used when viewing media attached to a post). Added in 4.4', 'piggy'),
-			'filter_items_list'     => _x('Filter earn rules list', 'Screen reader text for the filter links heading on the post type listing screen. Default "Filter posts list"/"Filter pages list". Added in 4.4', 'piggy'),
-			'items_list_navigation' => _x('Earn rules list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default "Posts list navigation"/"Pages list navigation". Added in 4.4', 'piggy'),
-			'items_list'            => _x('Earn rules list', 'Screen reader text for the items list heading on the post type listing screen. Default "Posts list"/"Pages list". Added in 4.4', 'piggy'),
+			'name'                  => _x('Earn Rules', 'Post type general name', 'leat'),
+			'singular_name'         => _x('Earn Rule', 'Post type singular name', 'leat'),
+			'menu_name'             => _x('Earn Rules', 'Admin Menu text', 'leat'),
+			'name_admin_bar'        => _x('Earn Rule', 'Add New on Toolbar', 'leat'),
+			'add_new'               => __('Add New', 'leat'),
+			'add_new_item'          => __('Add New Earn Rule', 'leat'),
+			'new_item'              => __('New Earn Rule', 'leat'),
+			'edit_item'             => __('Edit Earn Rule', 'leat'),
+			'view_item'             => __('View Earn Rule', 'leat'),
+			'all_items'             => __('All Earn Rules', 'leat'),
+			'search_items'          => __('Search Earn Rules', 'leat'),
+			'parent_item_colon'     => __('Parent Earn Rules:', 'leat'),
+			'not_found'             => __('No earn rules found.', 'leat'),
+			'not_found_in_trash'    => __('No earn rules found in Trash.', 'leat'),
+			'featured_image'        => _x('Earn Rule Cover Image', 'Overrides the "Featured Image" phrase for this post type. Added in 4.3', 'leat'),
+			'set_featured_image'    => _x('Set cover image', 'Overrides the "Set featured image" phrase for this post type. Added in 4.3', 'leat'),
+			'remove_featured_image' => _x('Remove cover image', 'Overrides the "Remove featured image" phrase for this post type. Added in 4.3', 'leat'),
+			'use_featured_image'    => _x('Use as cover image', 'Overrides the "Use as featured image" phrase for this post type. Added in 4.3', 'leat'),
+			'archives'              => _x('Earn Rule archives', 'The post type archive label used in nav menus. Default "Post Archives". Added in 4.4', 'leat'),
+			'insert_into_item'      => _x('Insert into earn rule', 'Overrides the "Insert into post"/"Insert into page" phrase (used when inserting media into a post). Added in 4.4', 'leat'),
+			'uploaded_to_this_item' => _x('Uploaded to this earn rule', 'Overrides the "Uploaded to this post/page" phrase (used when viewing media attached to a post). Added in 4.4', 'leat'),
+			'filter_items_list'     => _x('Filter earn rules list', 'Screen reader text for the filter links heading on the post type listing screen. Default "Filter posts list"/"Filter pages list". Added in 4.4', 'leat'),
+			'items_list_navigation' => _x('Earn rules list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default "Posts list navigation"/"Pages list navigation". Added in 4.4', 'leat'),
+			'items_list'            => _x('Earn rules list', 'Screen reader text for the items list heading on the post type listing screen. Default "Posts list"/"Pages list". Added in 4.4', 'leat'),
 		);
 
 		$args = array(
@@ -82,30 +82,30 @@ final class PostTypeController {
 
 	public function register_spend_rules_post_type() {
 		$labels = array(
-			'name'                  => _x('Spend Rules', 'Post type general name', 'piggy'),
-			'singular_name'         => _x('Spend Rule', 'Post type singular name', 'piggy'),
-			'menu_name'             => _x('Spend Rules', 'Admin Menu text', 'piggy'),
-			'name_admin_bar'        => _x('Spend Rule', 'Add New on Toolbar', 'piggy'),
-			'add_new'               => __('Add New', 'piggy'),
-			'add_new_item'          => __('Add New Spend Rule', 'piggy'),
-			'new_item'              => __('New Spend Rule', 'piggy'),
-			'edit_item'             => __('Edit Spend Rule', 'piggy'),
-			'view_item'             => __('View Spend Rule', 'piggy'),
-			'all_items'             => __('All Spend Rules', 'piggy'),
-			'search_items'          => __('Search Spend Rules', 'piggy'),
-			'parent_item_colon'     => __('Parent Spend Rules:', 'piggy'),
-			'not_found'             => __('No spend rules found.', 'piggy'),
-			'not_found_in_trash'    => __('No spend rules found in Trash.', 'piggy'),
-			'featured_image'        => _x('Spend Rule Cover Image', 'Overrides the "Featured Image" phrase for this post type. Added in 4.3', 'piggy'),
-			'set_featured_image'    => _x('Set cover image', 'Overrides the "Set featured image" phrase for this post type. Added in 4.3', 'piggy'),
-			'remove_featured_image' => _x('Remove cover image', 'Overrides the "Remove featured image" phrase for this post type. Added in 4.3', 'piggy'),
-			'use_featured_image'    => _x('Use as cover image', 'Overrides the "Use as featured image" phrase for this post type. Added in 4.3', 'piggy'),
-			'archives'              => _x('Spend Rule archives', 'The post type archive label used in nav menus. Default "Post Archives". Added in 4.4', 'piggy'),
-			'insert_into_item'      => _x('Insert into spend rule', 'Overrides the "Insert into post"/"Insert into page" phrase (used when inserting media into a post). Added in 4.4', 'piggy'),
-			'uploaded_to_this_item' => _x('Uploaded to this spend rule', 'Overrides the "Uploaded to this post/page" phrase (used when viewing media attached to a post). Added in 4.4', 'piggy'),
-			'filter_items_list'     => _x('Filter spend rules list', 'Screen reader text for the filter links heading on the post type listing screen. Default "Filter posts list"/"Filter pages list". Added in 4.4', 'piggy'),
-			'items_list_navigation' => _x('Spend rules list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default "Posts list navigation"/"Pages list navigation". Added in 4.4', 'piggy'),
-			'items_list'            => _x('Spend rules list', 'Screen reader text for the items list heading on the post type listing screen. Default "Posts list"/"Pages list". Added in 4.4', 'piggy'),
+			'name'                  => _x('Spend Rules', 'Post type general name', 'leat'),
+			'singular_name'         => _x('Spend Rule', 'Post type singular name', 'leat'),
+			'menu_name'             => _x('Spend Rules', 'Admin Menu text', 'leat'),
+			'name_admin_bar'        => _x('Spend Rule', 'Add New on Toolbar', 'leat'),
+			'add_new'               => __('Add New', 'leat'),
+			'add_new_item'          => __('Add New Spend Rule', 'leat'),
+			'new_item'              => __('New Spend Rule', 'leat'),
+			'edit_item'             => __('Edit Spend Rule', 'leat'),
+			'view_item'             => __('View Spend Rule', 'leat'),
+			'all_items'             => __('All Spend Rules', 'leat'),
+			'search_items'          => __('Search Spend Rules', 'leat'),
+			'parent_item_colon'     => __('Parent Spend Rules:', 'leat'),
+			'not_found'             => __('No spend rules found.', 'leat'),
+			'not_found_in_trash'    => __('No spend rules found in Trash.', 'leat'),
+			'featured_image'        => _x('Spend Rule Cover Image', 'Overrides the "Featured Image" phrase for this post type. Added in 4.3', 'leat'),
+			'set_featured_image'    => _x('Set cover image', 'Overrides the "Set featured image" phrase for this post type. Added in 4.3', 'leat'),
+			'remove_featured_image' => _x('Remove cover image', 'Overrides the "Remove featured image" phrase for this post type. Added in 4.3', 'leat'),
+			'use_featured_image'    => _x('Use as cover image', 'Overrides the "Use as featured image" phrase for this post type. Added in 4.3', 'leat'),
+			'archives'              => _x('Spend Rule archives', 'The post type archive label used in nav menus. Default "Post Archives". Added in 4.4', 'leat'),
+			'insert_into_item'      => _x('Insert into spend rule', 'Overrides the "Insert into post"/"Insert into page" phrase (used when inserting media into a post). Added in 4.4', 'leat'),
+			'uploaded_to_this_item' => _x('Uploaded to this spend rule', 'Overrides the "Uploaded to this post/page" phrase (used when viewing media attached to a post). Added in 4.4', 'leat'),
+			'filter_items_list'     => _x('Filter spend rules list', 'Screen reader text for the filter links heading on the post type listing screen. Default "Filter posts list"/"Filter pages list". Added in 4.4', 'leat'),
+			'items_list_navigation' => _x('Spend rules list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default "Posts list navigation"/"Pages list navigation". Added in 4.4', 'leat'),
+			'items_list'            => _x('Spend rules list', 'Screen reader text for the items list heading on the post type listing screen. Default "Posts list"/"Pages list". Added in 4.4', 'leat'),
 		);
 
 		$args = array(
@@ -127,8 +127,8 @@ final class PostTypeController {
 	}
 
 	public function schedule_daily_reward_sync() {
-		if (!wp_next_scheduled('piggy_daily_reward_sync')) {
-			wp_schedule_event(time(), 'daily', 'piggy_daily_reward_sync');
+		if (!wp_next_scheduled('leat_daily_reward_sync')) {
+			wp_schedule_event(time(), 'daily', 'leat_daily_reward_sync');
 		}
 	}
 

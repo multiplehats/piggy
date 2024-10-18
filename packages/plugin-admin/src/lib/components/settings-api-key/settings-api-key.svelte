@@ -2,7 +2,7 @@
 	import { createMutation, createQuery, useQueryClient } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
 	import { debounce } from "lodash-es";
-	import { service } from "../../modules/piggy";
+	import { service } from "../../modules/leat";
 	import SettingsCombobox from "../settings-combobox.svelte";
 	import SettingsInput from "$lib/components/settings-input.svelte";
 	import { saveSettingsMutationConfig } from "$lib/modules/settings/mutations";
@@ -16,7 +16,7 @@
 	const apiKeyQuery = createQuery(getSettingByIdQueryConfig("api_key"));
 
 	const shopQuery = createQuery({
-		queryKey: [QueryKeys.piggyShops],
+		queryKey: [QueryKeys.leatShops],
 		queryFn: async () => await service.getShops(),
 		enabled: !!$settingsState.api_key.value,
 		retry: false,
@@ -55,14 +55,14 @@
 {#if $apiKeyQuery.isSuccess}
 	{#if $shopQuery.isLoading}
 		<p>
-			{__("Loading your shops...", "piggy")}
+			{__("Loading your shops...", "leat")}
 		</p>
 	{:else if $shopQuery.isError}
 		<p class="text-red-500">
 			{#if $shopQuery.error.message.includes("Unauthenticated")}
-				{__("Your API key is invalid. Please check your API key and try again.", "piggy")}
+				{__("Your API key is invalid. Please check your API key and try again.", "leat")}
 			{:else}
-				{__("There was an error loading your shops. Please try again later.", "piggy")}
+				{__("There was an error loading your shops. Please try again later.", "leat")}
 			{/if}
 		</p>
 	{:else if $shopQuery.isSuccess}

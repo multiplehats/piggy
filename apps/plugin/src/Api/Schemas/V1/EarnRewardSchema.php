@@ -1,10 +1,10 @@
 <?php
 
-namespace PiggyWP\Api\Schemas\V1;
+namespace Leat\Api\Schemas\V1;
 
-use PiggyWP\Api\Exceptions\RouteException;
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
-use PiggyWP\Domain\Services\EarnRules as EarnRulesService;
+use Leat\Api\Exceptions\RouteException;
+use Leat\Api\Schemas\V1\AbstractSchema;
+use Leat\Domain\Services\EarnRules as EarnRulesService;
 
 /**
  * Settings class.
@@ -45,12 +45,12 @@ class EarnRewardSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'earnRuleId' => [
-				'description' => __( 'The Earn Rule ID', 'piggy' ),
+				'description' => __( 'The Earn Rule ID', 'leat' ),
 				'type'        => 'integer',
 				'required'    => true,
 			],
 			'userId' => [
-				'description' => __( 'The Customer ID', 'piggy' ),
+				'description' => __( 'The Customer ID', 'leat' ),
 				'type'        => 'integer',
 				'required'    => false,
 			],

@@ -1,12 +1,11 @@
 <?php
 
-namespace PiggyWP\Domain\Services;
+namespace Leat\Domain\Services;
 
-use Piggy\Api\Models\CustomAttributes\CustomAttribute;
-use PiggyWP\Api\Connection;
-use PiggyWP\Domain\Services\EarnRules;
-use PiggyWP\Domain\Services\SpendRules;
-use PiggyWP\Utils\Logger;
+use Leat\Api\Connection;
+use Leat\Domain\Services\EarnRules;
+use Leat\Domain\Services\SpendRules;
+use Leat\Utils\Logger;
 
 /**
  * Class CustomerSession
@@ -68,8 +67,8 @@ class CustomerSession
 	{
 		$coupon = new \WC_Coupon($coupon_code);
 
-		if ($coupon->get_meta('_piggy_spend_rule_coupon') === 'true') {
-			$spend_rule_id = $coupon->get_meta('_piggy_spend_rule_id');
+		if ($coupon->get_meta('_leat_spend_rule_coupon') === 'true') {
+			$spend_rule_id = $coupon->get_meta('_leat_spend_rule_id');
 			$spend_rule = $this->spend_rules->get_spend_rule_by_id($spend_rule_id);
 
 			if ($spend_rule) {
@@ -91,7 +90,7 @@ class CustomerSession
 		$cart = WC()->cart;
 		if ($cart) {
 			foreach ($cart->get_cart() as $cart_item) {
-				if (isset($cart_item['piggy_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
+				if (isset($cart_item['leat_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
 					return '';
 				}
 			}
@@ -104,8 +103,8 @@ class CustomerSession
 		$cart = WC()->cart;
 		if ($cart) {
 			foreach ($cart->get_cart() as $cart_item) {
-				if (isset($cart_item['piggy_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
-					return $cart_item['piggy_discounted_price'];
+				if (isset($cart_item['leat_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
+					return $cart_item['leat_discounted_price'];
 				}
 			}
 		}
@@ -120,8 +119,8 @@ class CustomerSession
 	{
 		$coupon = new \WC_Coupon($coupon_code);
 
-		if ($coupon->get_meta('_piggy_spend_rule_coupon') === 'true') {
-			$spend_rule_id = $coupon->get_meta('_piggy_spend_rule_id');
+		if ($coupon->get_meta('_leat_spend_rule_coupon') === 'true') {
+			$spend_rule_id = $coupon->get_meta('_leat_spend_rule_id');
 			$spend_rule = $this->spend_rules->get_spend_rule_by_id($spend_rule_id);
 
 			if ($spend_rule) {
@@ -155,7 +154,7 @@ class CustomerSession
 			}
 
 			$cart_item['data']->set_price($discounted_price);
-			$cart_item['piggy_discount'] = [
+			$cart_item['leat_discount'] = [
 				'original_price' => $original_price,
 				'spend_rule_id' => $spend_rule['id'],
 			];
@@ -165,9 +164,9 @@ class CustomerSession
 	private function remove_discount_from_cart($spend_rule)
 	{
 		foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-			if (isset($cart_item['piggy_discount']) && $cart_item['piggy_discount']['spend_rule_id'] == $spend_rule['id']) {
-				$cart_item['data']->set_price($cart_item['piggy_discount']['original_price']);
-				unset($cart_item['piggy_discount']);
+			if (isset($cart_item['leat_discount']) && $cart_item['leat_discount']['spend_rule_id'] == $spend_rule['id']) {
+				$cart_item['data']->set_price($cart_item['leat_discount']['original_price']);
+				unset($cart_item['leat_discount']);
 			}
 		}
 	}
@@ -227,11 +226,11 @@ class CustomerSession
 		// Update the price
 		$cart_item['data']->set_price($discounted_price);
 
-		// Add Piggy-specific data
-		$cart_item['piggy_discounted_product'] = true;
-		$cart_item['piggy_spend_rule_id'] = $spend_rule_id;
-		$cart_item['piggy_original_price'] = $original_price;
-		$cart_item['piggy_discounted_price'] = $discounted_price;
+		// Add Leat-specific data
+		$cart_item['leat_discounted_product'] = true;
+		$cart_item['leat_spend_rule_id'] = $spend_rule_id;
+		$cart_item['leat_original_price'] = $original_price;
+		$cart_item['leat_discounted_price'] = $discounted_price;
 
 		// Set quantity to 1
 		$cart->set_quantity($cart_item_key, 1);
@@ -243,10 +242,10 @@ class CustomerSession
     private function add_new_cart_item($product_id, $discounted_price, $spend_rule_id, $original_price)
     {
         WC()->cart->add_to_cart($product_id, 1, 0, array(), array(
-            'piggy_discounted_product' => true,
-            'piggy_spend_rule_id' => $spend_rule_id,
-            'piggy_original_price' => $original_price,
-            'piggy_discounted_price' => $discounted_price
+            'leat_discounted_product' => true,
+            'leat_spend_rule_id' => $spend_rule_id,
+            'leat_original_price' => $original_price,
+            'leat_discounted_price' => $discounted_price
         ));
     }
 
@@ -256,7 +255,7 @@ class CustomerSession
     private function remove_free_or_discounted_products_from_cart($spend_rule)
     {
         foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-            if (isset($cart_item['piggy_discounted_product']) && $cart_item['piggy_spend_rule_id'] == $spend_rule['id']) {
+            if (isset($cart_item['leat_discounted_product']) && $cart_item['leat_spend_rule_id'] == $spend_rule['id']) {
                 WC()->cart->remove_cart_item($cart_item_key);
             }
         }
@@ -276,8 +275,8 @@ class CustomerSession
 		}
 
 		foreach ($cart->get_cart() as $cart_item) {
-			if (isset($cart_item['piggy_discounted_product'])) {
-				$cart_item['data']->set_price($cart_item['piggy_discounted_price']);
+			if (isset($cart_item['leat_discounted_product'])) {
+				$cart_item['data']->set_price($cart_item['leat_discounted_price']);
 				// Remove sale price to avoid sale badge
 				$cart_item['data']->set_sale_price('');
 
@@ -285,7 +284,7 @@ class CustomerSession
 				if ($cart_item['quantity'] > 1) {
 					WC()->cart->set_quantity($cart_item['key'], 1);
 				}
-			} elseif (isset($cart_item['piggy_discount'])) {
+			} elseif (isset($cart_item['leat_discount'])) {
 				$cart_item['data']->set_price($cart_item['data']->get_price());
 				// Remove sale price to avoid sale badge
 				$cart_item['data']->set_sale_price('');
@@ -358,10 +357,10 @@ class CustomerSession
 		$reward_logs = $this->connection->get_user_reward_logs($user->ID);
 
 		?>
-			<h3>Piggy Claimed Rewards</h3>
+			<h3>Leat Claimed Rewards</h3>
 			<table class="form-table">
 				<tr>
-					<th><label for="piggy_claimed_rewards">Claimed Rewards</label></th>
+					<th><label for="leat_claimed_rewards">Claimed Rewards</label></th>
 					<td>
 						<?php
 						if (!empty($reward_logs)) {
@@ -387,11 +386,11 @@ class CustomerSession
 	public function show_uuid_on_profile($user)
 	{
 		?>
-		<h3>Piggy</h3>
+		<h3>Leat</h3>
 
 		<table class="form-table">
 			<tr>
-				<th><label for="piggy_uuid">Contact ID</label></th>
+				<th><label for="leat_uuid">Contact ID</label></th>
 				<td>
 					<?php
 					$uuid = $this->connection->get_contact_uuid_by_wp_id($user->ID);
@@ -406,7 +405,7 @@ class CustomerSession
 
 	public function update_last_login($user_id) {
 		$last_login = current_time('mysql');
-		update_user_meta($user_id, 'piggy_last_login', $last_login);
+		update_user_meta($user_id, 'leat_last_login', $last_login);
 		return $last_login;
 	}
 
@@ -486,7 +485,7 @@ class CustomerSession
 
 		if ($applicable_rule) {
 			// Note: We don't apply the credits from the rule in WordPress.
-			// Instead, this is managed by a rule in the Piggy dashboard.
+			// Instead, this is managed by a rule in the Leat dashboard.
 			$result = $this->connection->apply_credits($uuid, null, $order_total, 'purchase_amount');
 
 			if (!$result) {
@@ -499,9 +498,9 @@ class CustomerSession
 			$result_uuid = $result->getUuid();
 
 			// Save the result UUID in the order meta
-			$order->update_meta_data('_piggy_earn_rule_credit_transaction_uuid', $result_uuid);
+			$order->update_meta_data('_leat_earn_rule_credit_transaction_uuid', $result_uuid);
 			// Save the total credits isssued
-			$order->update_meta_data('_piggy_earn_rule_credits_issued', $credits);
+			$order->update_meta_data('_leat_earn_rule_credits_issued', $credits);
 
 			$order->save();
 
@@ -516,11 +515,11 @@ class CustomerSession
 			return;
 		}
 
-		$credit_transaction_uuid = $order->get_meta('_piggy_earn_rule_credit_transaction_uuid');
-		$original_credits = $order->get_meta('_piggy_earn_rule_credits_issued');
+		$credit_transaction_uuid = $order->get_meta('_leat_earn_rule_credit_transaction_uuid');
+		$original_credits = $order->get_meta('_leat_earn_rule_credits_issued');
 
 		if (!$credit_transaction_uuid) {
-			$this->logger->error("No Piggy credit transaction UUID found for order $order_id");
+			$this->logger->error("No Leat credit transaction UUID found for order $order_id");
 			return;
 		}
 

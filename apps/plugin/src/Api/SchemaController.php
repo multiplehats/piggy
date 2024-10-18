@@ -1,8 +1,8 @@
 <?php
-namespace PiggyWP\Api;
+namespace Leat\Api;
 
-use PiggyWP\Api\Schemas\ExtendSchema;
-use PiggyWP\Settings;
+use Leat\Api\Schemas\ExtendSchema;
+use Leat\Settings;
 
 /**
  * SchemaController class.
@@ -10,7 +10,7 @@ use PiggyWP\Settings;
 class SchemaController {
 
 	/**
-	 * Piggy schema class instances.
+	 * Leat schema class instances.
 	 *
 	 * @var Schemas\V1\AbstractSchema[]
 	 */
@@ -25,7 +25,7 @@ class SchemaController {
 
 
 	/**
-	 * Piggy Rest Extending instance
+	 * Leat Rest Extending instance
 	 *
 	 * @var ExtendSchema
 	 */

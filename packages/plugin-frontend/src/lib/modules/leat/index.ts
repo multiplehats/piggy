@@ -1,4 +1,4 @@
-import { api } from "@piggy/lib";
+import { api } from "@leat/lib";
 import type {
 	GetContactResponse,
 	GetCouponsResponse,
@@ -8,14 +8,14 @@ import type {
 	GetSpendRulesResponse,
 } from "./types";
 
-export class PiggyApiError extends Error {
+export class LeatApiError extends Error {
 	status: number;
 	statusText: string;
 	data: string;
 	message: string;
 
 	constructor(status: number, statusText: string, data: string) {
-		super(`PiggyApiError: ${statusText}`);
+		super(`LeatApiError: ${statusText}`);
 		this.status = status;
 		this.statusText = statusText;
 		this.data = data;
@@ -23,13 +23,13 @@ export class PiggyApiError extends Error {
 	}
 }
 
-export class PiggyFrontendService {
+export class LeatFrontendService {
 	async getShops() {
-		const { data, error } = await api.get<GetShopsResponse>("/piggy/private/shops");
+		const { data, error } = await api.get<GetShopsResponse>("/leat/private/shops");
 
 		if (error ?? !data) {
 			if (error) {
-				throw new PiggyApiError(error.status, error.statusText, error.data);
+				throw new LeatApiError(error.status, error.statusText, error.data);
 			}
 
 			throw new Error("No data returned");
@@ -39,11 +39,11 @@ export class PiggyFrontendService {
 	}
 
 	async getRewards() {
-		const { data, error } = await api.get<GetRewardsResponse>("/piggy/private/rewards");
+		const { data, error } = await api.get<GetRewardsResponse>("/leat/private/rewards");
 
 		if (error ?? !data) {
 			if (error) {
-				throw new PiggyApiError(error.status, error.statusText, error.data);
+				throw new LeatApiError(error.status, error.statusText, error.data);
 			}
 
 			throw new Error("No data returned");
@@ -53,37 +53,37 @@ export class PiggyFrontendService {
 	}
 
 	async getCoupons(userId: number | null) {
-		const endpoint = "/piggy/v1/coupons";
+		const endpoint = "/leat/v1/coupons";
 		const url = userId !== null ? `${endpoint}?userId=${userId}` : endpoint;
 
 		const { data, error } = await api.get<GetCouponsResponse>(url);
 
 		if (error) {
-			throw new PiggyApiError(error.status, error.statusText, error.data);
+			throw new LeatApiError(error.status, error.statusText, error.data);
 		}
 
 		return data;
 	}
 
 	async getContact() {
-		const { data, error } = await api.get<GetContactResponse>(`/piggy/v1/contact`);
+		const { data, error } = await api.get<GetContactResponse>(`/leat/v1/contact`);
 
 		if (error) {
-			throw new PiggyApiError(error.status, error.statusText, error.data);
+			throw new LeatApiError(error.status, error.statusText, error.data);
 		}
 
 		return data;
 	}
 
 	async claimReward(earnRuleId: number, userId: number | null) {
-		const { data, error } = await api.post("/piggy/v1/earn-reward", {
+		const { data, error } = await api.post("/leat/v1/earn-reward", {
 			userId,
 			earnRuleId,
 		});
 
 		if (error) {
 			if (error) {
-				throw new PiggyApiError(error.status, error.statusText, error.data);
+				throw new LeatApiError(error.status, error.statusText, error.data);
 			}
 
 			throw new Error("No data returned");
@@ -93,49 +93,49 @@ export class PiggyFrontendService {
 	}
 
 	async getEarnRules() {
-		const { data, error } = await api.get<GetEarnRulesResponse>("/piggy/v1/earn-rules");
+		const { data, error } = await api.get<GetEarnRulesResponse>("/leat/v1/earn-rules");
 
 		if (error) {
-			throw new PiggyApiError(error.status, error.statusText, error.data);
+			throw new LeatApiError(error.status, error.statusText, error.data);
 		}
 
 		return data;
 	}
 
 	async getSpendRules(userId: number | null) {
-		const endpoint = "/piggy/v1/spend-rules";
+		const endpoint = "/leat/v1/spend-rules";
 		const url = userId !== null ? `${endpoint}?userId=${userId}` : endpoint;
 
 		const { data, error } = await api.get<GetSpendRulesResponse>(url);
 
 		if (error) {
-			throw new PiggyApiError(error.status, error.statusText, error.data);
+			throw new LeatApiError(error.status, error.statusText, error.data);
 		}
 
 		return data;
 	}
 
 	async joinProgram(userId: number | null) {
-		const { data, error } = await api.post("/piggy/v1/join-program?g", {
+		const { data, error } = await api.post("/leat/v1/join-program?g", {
 			userId,
 		});
 
 		if (error) {
-			throw new PiggyApiError(error.status, error.statusText, error.data);
+			throw new LeatApiError(error.status, error.statusText, error.data);
 		}
 
 		return data;
 	}
 
 	async claimSpendRule(spendRuleId: number, userId: number | null) {
-		const { data, error } = await api.post(`/piggy/v1/spend-rules-claim`, {
+		const { data, error } = await api.post(`/leat/v1/spend-rules-claim`, {
 			userId,
 			id: spendRuleId,
 		});
 
 		if (error) {
 			if (error) {
-				throw new PiggyApiError(error.status, error.statusText, error.data);
+				throw new LeatApiError(error.status, error.statusText, error.data);
 			}
 
 			throw new Error("No data returned");
@@ -145,4 +145,4 @@ export class PiggyFrontendService {
 	}
 }
 
-export const apiService = new PiggyFrontendService();
+export const apiService = new LeatFrontendService();

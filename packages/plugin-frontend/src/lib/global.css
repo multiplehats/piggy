@@ -1,8 +1,8 @@
-.piggy-animate-spin {
-	animation: piggy-spin 1s linear infinite;
+.leat-animate-spin {
+	animation: leat-spin 1s linear infinite;
 }
 
-@keyframes piggy-spin {
+@keyframes leat-spin {
 	to {
 		transform: rotate(1turn);
 	}

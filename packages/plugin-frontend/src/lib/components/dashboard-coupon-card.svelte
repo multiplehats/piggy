@@ -5,7 +5,7 @@
 	import { onMount } from "svelte";
 	import { getSpendRuleLabel, getTranslatedText } from "$lib/utils/translated-text";
 	import { creditsName } from "$lib/modules/settings";
-	import type { Coupon } from "$lib/modules/piggy/types";
+	import type { Coupon } from "$lib/modules/leat/types";
 
 	export let coupon: Coupon;
 
@@ -39,8 +39,8 @@
 	}
 </script>
 
-<div class="piggy-dashboard-coupon-card">
-	<div class="piggy-dashboard-coupon-card__icon">
+<div class="leat-dashboard-coupon-card">
+	<div class="leat-dashboard-coupon-card__icon">
 		{#if coupon.spend_rule?.image?.value}
 			<img src={coupon.spend_rule.image.value} alt={coupon.code} />
 		{:else}
@@ -48,7 +48,7 @@
 		{/if}
 	</div>
 
-	<h4 class="piggy-dashboard-coupon-card__header">
+	<h4 class="leat-dashboard-coupon-card__header">
 		{getSpendRuleLabel(
 			getTranslatedText(spend_rule.label.value),
 			spend_rule.creditCost.value,
@@ -77,7 +77,7 @@
 		{/if}
 	</div>
 
-	<!-- <div class="piggy-dashboard-coupon-card__action">
+	<!-- <div class="leat-dashboard-coupon-card__action">
 		<Button variant="primary" on:click={() => cartApiService.addCoupon(coupon.code)}>
 			Apply coupon
 		</Button>
@@ -85,13 +85,13 @@
 </div>
 
 <style>
-	.piggy-dashboard-coupon-card {
+	.leat-dashboard-coupon-card {
 		position: relative;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
 		align-items: center;
-		background-color: var(--piggy-dashboard-card-background-color, #fff);
+		background-color: var(--leat-dashboard-card-background-color, #fff);
 		padding: 12px;
 		text-align: center;
 		box-shadow:
@@ -101,7 +101,7 @@
 			0 1px 2px -1px rgb(0 0 0 / 0.1);
 	}
 
-	/* .piggy-dashboard-coupon-card__action {
+	/* .leat-dashboard-coupon-card__action {
 		margin-top: 12px;
 	} */
 
@@ -113,15 +113,15 @@
 		height: 1.8rem;
 		width: 100%;
 		border-radius: 0.375rem;
-		border: 1px solid var(--piggy-input-border-color, hsl(240 5.9% 90%));
-		background-color: var(--piggy-input-background-color, #fff);
+		border: 1px solid var(--leat-input-border-color, hsl(240 5.9% 90%));
+		background-color: var(--leat-input-background-color, #fff);
 		padding: 0.5rem 0.75rem;
 		font-size: 0.675rem;
-		color: var(--piggy-input-text-color, #000);
+		color: var(--leat-input-text-color, #000);
 		width: 100%;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		font-family: var(--piggy-font-family-mono, monospace);
+		font-family: var(--leat-font-family-mono, monospace);
 		box-sizing: border-box;
 	}
 
@@ -132,7 +132,7 @@
 	.coupon-input:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px
-			var(--piggy-input-border-color, var(--wp--preset--color--contrast, #007cba));
+			var(--leat-input-border-color, var(--wp--preset--color--contrast, #007cba));
 	}
 
 	.coupon-input:disabled {
@@ -141,7 +141,7 @@
 	}
 
 	.coupon-input::placeholder {
-		color: var(--piggy-input-placeholder-color, hsl(240 5.9% 90%));
+		color: var(--leat-input-placeholder-color, hsl(240 5.9% 90%));
 	}
 
 	.coupon-input::file-selector-button {
@@ -151,7 +151,7 @@
 		font-weight: 500;
 	}
 
-	.piggy-dashboard-coupon-card__icon {
+	.leat-dashboard-coupon-card__icon {
 		width: 100%;
 		height: 80px;
 		display: flex;
@@ -160,14 +160,14 @@
 		margin-bottom: 0.25rem;
 	}
 
-	.piggy-dashboard-coupon-card__icon img {
+	.leat-dashboard-coupon-card__icon img {
 		max-width: 100%;
 		max-height: 100%;
 		object-fit: contain;
 		border-radius: 0.375rem;
 	}
 
-	h4.piggy-dashboard-coupon-card__header {
+	h4.leat-dashboard-coupon-card__header {
 		font-size: 1rem;
 		margin: 0.5rem 0 1rem 0;
 	}
@@ -188,7 +188,7 @@
 		background: none;
 		border: none;
 		cursor: pointer;
-		color: var(--piggy-input-text-color, #000);
+		color: var(--leat-input-text-color, #000);
 		opacity: 0.7;
 		transition:
 			opacity 0.2s,
@@ -212,7 +212,7 @@
 		background: none;
 		border: none;
 		cursor: pointer;
-		color: var(--piggy-input-text-color, #000);
+		color: var(--leat-input-text-color, #000);
 		opacity: 0.7;
 		transition: opacity 0.2s;
 		padding: 0.25rem;

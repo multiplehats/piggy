@@ -1,7 +1,7 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1\Admin;
+namespace Leat\Api\Schemas\V1\Admin;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
+use Leat\Api\Schemas\V1\AbstractSchema;
 
 /**
  * Settings class.
@@ -31,25 +31,25 @@ class SettingsSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'reward_order_statuses' => [
-				'description' => __( 'Reward order statuses.', 'piggy' ),
+				'description' => __( 'Reward order statuses.', 'leat' ),
 				'type'        => 'object',
 				'context'     => [ 'view', 'edit' ],
 				'properties'  => [
 					'paid' => [
 						'type'        => 'string',
-						'description' => __( 'Pending payment.', 'piggy' ),
+						'description' => __( 'Pending payment.', 'leat' ),
 					],
 					'pending' => [
 						'type'        => 'string',
-						'description' => __( 'On hold.', 'piggy' ),
+						'description' => __( 'On hold.', 'leat' ),
 					],
 					'processing' => [
 						'type'        => 'string',
-						'description' => __( 'Processing.', 'piggy' ),
+						'description' => __( 'Processing.', 'leat' ),
 					],
 					'completed' => [
 						'type'        => 'string',
-						'description' => __( 'Completed.', 'piggy' ),
+						'description' => __( 'Completed.', 'leat' ),
 					],
 				],
 			],

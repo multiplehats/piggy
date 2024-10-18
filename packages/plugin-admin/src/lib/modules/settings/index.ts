@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
-import { api } from "@piggy/lib";
-import type { PluginOptionsAdminKeys } from "@piggy/types";
+import { api } from "@leat/lib";
+import type { PluginOptionsAdminKeys } from "@leat/types";
 import type {
 	GetEarnRuleByIdParams,
 	GetEarnRuleByIdResponse,
@@ -36,7 +36,7 @@ export class SettingsAdminApiError extends Error {
 
 export class SettingsAdminService {
 	async saveSettings(settingsStore: SaveSettingsParams): Promise<SaveSettingsResponse> {
-		const { data, error } = await api.post<SaveSettingsResponse>("/piggy/private/settings", {
+		const { data, error } = await api.post<SaveSettingsResponse>("/leat/private/settings", {
 			settings: Object.entries(get(settingsStore)).reduce(
 				(acc, [key, setting]) => {
 					acc[key] = {
@@ -69,7 +69,7 @@ export class SettingsAdminService {
 	}
 
 	async getAllSettings(): Promise<GetSettingsResponse> {
-		const { data, error } = await api.get<GetSettingsResponse>("/piggy/private/settings", {
+		const { data, error } = await api.get<GetSettingsResponse>("/leat/private/settings", {
 			cache: "no-store",
 		});
 
@@ -88,7 +88,7 @@ export class SettingsAdminService {
 		id,
 	}: GetSettingByIdParams<K>): Promise<GetSettingByIdResponse<K>> {
 		const { data, error } = await api.get<GetSettingByIdResponse<K>>(
-			`/piggy/private/settings/?id=${id}`,
+			`/leat/private/settings/?id=${id}`,
 			{
 				cache: "no-store",
 			}
@@ -107,7 +107,7 @@ export class SettingsAdminService {
 
 	async getEarnRuleById({ id }: GetEarnRuleByIdParams): Promise<GetEarnRuleByIdResponse> {
 		const { data, error } = await api.get<GetEarnRuleByIdResponse>(
-			`/piggy/v1/earn-rules/?id=${id}&status=publish,draft`,
+			`/leat/v1/earn-rules/?id=${id}&status=publish,draft`,
 			{
 				cache: "no-store",
 			}
@@ -126,7 +126,7 @@ export class SettingsAdminService {
 
 	async getEarnRules(): Promise<GetEarnRulesResponse> {
 		const { data, error } = await api.get<GetEarnRulesResponse>(
-			"/piggy/v1/earn-rules?status=draft,publish",
+			"/leat/v1/earn-rules?status=draft,publish",
 			{
 				cache: "no-store",
 			}
@@ -145,7 +145,7 @@ export class SettingsAdminService {
 
 	async upsertEarnRule(earnRule: UpsertEarnRuleParams): Promise<UpsertEarnRuleResponse> {
 		const { data, error } = await api.post<UpsertEarnRuleResponse>(
-			"/piggy/v1/earn-rules",
+			"/leat/v1/earn-rules",
 			earnRule
 		);
 
@@ -162,7 +162,7 @@ export class SettingsAdminService {
 
 	async getSpendRules(): Promise<GetSpendRulesResponse> {
 		const { data, error } = await api.get<GetSpendRulesResponse>(
-			"/piggy/v1/spend-rules?status=draft,publish",
+			"/leat/v1/spend-rules?status=draft,publish",
 			{
 				cache: "no-store",
 			}
@@ -181,7 +181,7 @@ export class SettingsAdminService {
 
 	async upsertSpendRule(spendRule: UpsertSpendRuleParams): Promise<UpsertSpendRuleResponse> {
 		const { data, error } = await api.post<UpsertSpendRuleResponse>(
-			"/piggy/v1/spend-rules",
+			"/leat/v1/spend-rules",
 			spendRule
 		);
 
@@ -197,7 +197,7 @@ export class SettingsAdminService {
 	}
 
 	async syncRewards(): Promise<{ ok: true }> {
-		const { data, error } = await api.get<{ ok: true }>(`/piggy/v1/spend-rules-sync`, {
+		const { data, error } = await api.get<{ ok: true }>(`/leat/v1/spend-rules-sync`, {
 			cache: "no-store",
 		});
 
@@ -214,7 +214,7 @@ export class SettingsAdminService {
 
 	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
 		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
-			`/piggy/v1/spend-rules/?id=${id}&status=publish,draft`,
+			`/leat/v1/spend-rules/?id=${id}&status=publish,draft`,
 			{
 				cache: "no-store",
 			}

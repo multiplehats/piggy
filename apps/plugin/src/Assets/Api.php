@@ -1,7 +1,7 @@
 <?php
-namespace PiggyWP\Assets;
+namespace Leat\Assets;
 
-use PiggyWP\Domain\Package;
+use Leat\Domain\Package;
 use Exception;
 use Kucrut\Vite;
 
@@ -136,7 +136,7 @@ class Api {
 		 * @param string $handle The script's handle.
 		 * @return array
 		 */
-		$script_dependencies = apply_filters( 'piggy_register_script_dependencies', $dependencies, $handle );
+		$script_dependencies = apply_filters( 'leat_register_script_dependencies', $dependencies, $handle );
 
 		Vite\enqueue_asset(
 			$this->get_manifest_path( $folder ),
@@ -149,7 +149,7 @@ class Api {
 		);
 
 		if ( $has_i18n && function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( $handle, 'piggy', $this->package->get_path( 'languages' ) );
+			wp_set_script_translations( $handle, 'leat', $this->package->get_path( 'languages' ) );
 		}
 	}
 

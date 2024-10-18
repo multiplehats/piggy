@@ -1,8 +1,8 @@
 <?php
 
-namespace PiggyWP\Api\Schemas\V1;
+namespace Leat\Api\Schemas\V1;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
+use Leat\Api\Schemas\V1\AbstractSchema;
 
 /**
  * Coupons schema class.
@@ -32,7 +32,7 @@ class CouponsSchema extends AbstractSchema {
     public function get_properties() {
         return [
             'coupons' => [
-                'description' => __( 'List of coupon codes', 'piggy' ),
+                'description' => __( 'List of coupon codes', 'leat' ),
                 'type'        => 'array',
                 'items'       => [
                     'type' => 'string',

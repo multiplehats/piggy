@@ -34,7 +34,7 @@ rsync ./ "$2"/ --recursive --delete --delete-excluded \
 	--exclude=tsconfig.json \
 	--exclude=tsconfig.base.json \
 	--exclude=tsconfig.node.json \
-	--exclude=piggy.zip \
+	--exclude=leat.zip \
 	--exclude="zip-file/" \
 	--exclude=packages/ \
     --exclude=patches/ \

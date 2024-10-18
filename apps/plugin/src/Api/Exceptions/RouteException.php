@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Api\Exceptions;
+namespace Leat\Api\Exceptions;
 
 /**
  * RouteException class.

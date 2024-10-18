@@ -1,6 +1,6 @@
 <?php
 
-namespace PiggyWP\Domain;
+namespace Leat\Domain;
 
 /**
  * Main package class.
@@ -11,14 +11,14 @@ namespace PiggyWP\Domain;
  */
 class Package {
 	/**
-	 * Holds the current version of the Piggy plugin.
+	 * Holds the current version of the Leat plugin.
 	 *
 	 * @var string
 	 */
 	private $version;
 
 	/**
-	 * Holds the main path to the Piggy plugin directory.
+	 * Holds the main path to the Leat plugin directory.
 	 *
 	 * @var string
 	 */
@@ -57,7 +57,7 @@ class Package {
 	 * @return string
 	 */
 	public function get_version_stored_on_db() {
-		return get_option( 'piggy_version' );
+		return get_option( 'leat_version' );
 	}
 
 	/**
@@ -65,7 +65,7 @@ class Package {
 	 * This is useful during the first installation or after the upgrade process.
 	 */
 	public function set_version_stored_on_db() {
-		update_option( 'piggy_version', $this->get_version() );
+		update_option( 'leat_version', $this->get_version() );
 	}
 
 	/**
@@ -84,7 +84,7 @@ class Package {
 	 * Get this plugin's directory path, relative to this file's location.
 	 *
 	 * This file should be in `/src` and we want one level above.
-	 * Example: /app/public/wp-content/plugins/piggy/
+	 * Example: /app/public/wp-content/plugins/leat/
 	 *
 	 * @return string
 	 */
@@ -93,7 +93,7 @@ class Package {
 	}
 
 	/**
-	 * Returns the url to the Piggy plugin directory.
+	 * Returns the url to the Leat plugin directory.
 	 *
 	 * @param string $relative_url If provided, the relative url will be
 	 *                             appended to the plugin url.

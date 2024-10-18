@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Registry;
+namespace Leat\Registry;
 
 /**
  * Definition for the FactoryType dependency type.

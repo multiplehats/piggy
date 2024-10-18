@@ -1,7 +1,7 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1\Admin;
+namespace Leat\Api\Schemas\V1\Admin;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
+use Leat\Api\Schemas\V1\AbstractSchema;
 
 /**
  * Shops class.
@@ -31,12 +31,12 @@ class ShopsSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'uuid'          => [
-				'description' => __( 'The shops\'s unique id.', 'piggy' ),
+				'description' => __( 'The shops\'s unique id.', 'leat' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'name'          => [
-				'description' => __( 'The shops\'s name.', 'piggy' ),
+				'description' => __( 'The shops\'s name.', 'leat' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],

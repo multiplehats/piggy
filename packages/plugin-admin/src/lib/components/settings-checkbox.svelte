@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CheckboxValue } from "@piggy/types/plugin/settings/adminTypes";
+	import type { CheckboxValue } from "@leat/types/plugin/settings/adminTypes";
 	import type { SettingsLabelProps } from "./settings-label";
 	import SettingsLabel from "./settings-label/settings-label.svelte";
 	import { cn } from "$lib/utils/tw";

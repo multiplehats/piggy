@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { createMutation, useQueryClient } from "@tanstack/svelte-query";
 	import CheckCircle from "lucide-svelte/icons/badge-check";
-	import { replaceStrings } from "@piggy/lib";
-	import type { EarnRuleType, EarnRuleValueItem } from "@piggy/types/plugin/settings/adminTypes";
+	import { replaceStrings } from "@leat/lib";
+	import type { EarnRuleType, EarnRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
 	import Button from "./button/button.svelte";
-	import { piggyService } from "$lib/config/services";
+	import { leatService } from "$lib/config/services";
 	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
-	import { contactStore, hasPiggyAccount } from "$lib/stores";
+	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
 
@@ -24,8 +24,7 @@
 	const queryClient = useQueryClient();
 	const claimRewardMutation = createMutation({
 		mutationKey: [MutationKeys.claimReward],
-		mutationFn: () =>
-			piggyService.claimReward(earnRule.id, window.piggyMiddlewareConfig.userId),
+		mutationFn: () => leatService.claimReward(earnRule.id, window.leatMiddlewareConfig.userId),
 		onSuccess: () => {
 			const handle = earnRule.socialHandle.value;
 			if (handle) {
@@ -80,14 +79,14 @@
 	);
 </script>
 
-<div class="piggy-dashboard-earn-card">
+<div class="leat-dashboard-earn-card">
 	<div>
-		<div class="piggy-dashboard-earn-card__icon">
+		<div class="leat-dashboard-earn-card__icon">
 			<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html earnRule.svg}
 		</div>
 
-		<h4 class="piggy-dashboard-earn-card__header">
+		<h4 class="leat-dashboard-earn-card__header">
 			{#if earnRule.label.value}
 				<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html getLabel(
@@ -97,8 +96,8 @@
 			{/if}
 		</h4>
 
-		{#if isLoggedIn && isSocial && $hasPiggyAccount}
-			<div class="piggy-dashboard-earn-card__action">
+		{#if isLoggedIn && isSocial && $hasLeatAccount}
+			<div class="leat-dashboard-earn-card__action">
 				{#if !hasClaimed}
 					<Button
 						loading={$claimRewardMutation.isPending}
@@ -123,12 +122,12 @@
 </div>
 
 <style>
-	.piggy-dashboard-earn-card {
+	.leat-dashboard-earn-card {
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
 		align-items: center;
-		background-color: var(--piggy-dashboard-card-background-color, #fff);
+		background-color: var(--leat-dashboard-card-background-color, #fff);
 		padding: 24px;
 		text-align: center;
 		box-shadow:
@@ -138,7 +137,7 @@
 			0 1px 2px -1px rgb(0 0 0 / 0.1);
 	}
 
-	.piggy-dashboard-earn-card__action {
+	.leat-dashboard-earn-card__action {
 		margin-top: 14px;
 		display: flex;
 		justify-content: center;
@@ -148,12 +147,12 @@
 		align-items: center;
 	}
 
-	.piggy-dashboard-earn-card__icon {
+	.leat-dashboard-earn-card__icon {
 		width: 100%;
 		height: auto;
 	}
 
-	h4.piggy-dashboard-earn-card__header {
+	h4.leat-dashboard-earn-card__header {
 		font-size: 1rem;
 		margin: 0.5rem 0 0 0;
 	}

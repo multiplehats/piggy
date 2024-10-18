@@ -1,10 +1,10 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1;
+namespace Leat\Api\Routes\V1;
 
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Exceptions\RouteException;
-use PiggyWP\Domain\Services\CustomerSession;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Exceptions\RouteException;
+use Leat\Domain\Services\CustomerSession;
 
 class JoinProgram extends AbstractRoute {
     const IDENTIFIER = 'join-program';

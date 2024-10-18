@@ -1,8 +1,8 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1;
+namespace Leat\Api\Schemas\V1;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
-use PiggyWP\Domain\Services\SpendRules as SpendRulesService;
+use Leat\Api\Schemas\V1\AbstractSchema;
+use Leat\Domain\Services\SpendRules as SpendRulesService;
 
 /**
  * Settings class.
@@ -39,47 +39,47 @@ class SpendRulesClaimSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'id' => [
-				'description' => __( 'Unique identifier for the rule', 'piggy' ),
+				'description' => __( 'Unique identifier for the rule', 'leat' ),
 				'type'        => 'integer',
 			],
 			'status' => [
-				'description' => __( 'Status of the rule', 'piggy' ),
+				'description' => __( 'Status of the rule', 'leat' ),
 				'type'        => 'string',
 			],
 			'title' => [
-				'description' => __( 'Title of the rule', 'piggy' ),
+				'description' => __( 'Title of the rule', 'leat' ),
 				'type'        => 'string',
 			],
 			'createdAt' => [
-				'description' => __( 'Date rule was created.', 'piggy' ),
+				'description' => __( 'Date rule was created.', 'leat' ),
 				'type'        => 'string',
 			],
 			'updatedAt' => [
-				'description' => __( 'Date rule was last updated.', 'piggy' ),
+				'description' => __( 'Date rule was last updated.', 'leat' ),
 				'type'        => 'string',
 			],
 			'description' => [
-				'description' => __( 'Description of the rule', 'piggy' ),
+				'description' => __( 'Description of the rule', 'leat' ),
 				'type'        => 'string',
 			],
 			'type' => [
-				'description' => __( 'Type of the rule', 'piggy' ),
+				'description' => __( 'Type of the rule', 'leat' ),
 				'type'        => 'string',
 			],
 			'startsAt' => [
-				'description' => __( 'Date rule starts.', 'piggy' ),
+				'description' => __( 'Date rule starts.', 'leat' ),
 				'type'        => 'string',
 			],
 			'expiresAt' => [
-				'description' => __( 'Date rule expires.', 'piggy' ),
+				'description' => __( 'Date rule expires.', 'leat' ),
 				'type'        => 'string',
 			],
 			'completed' => [
-				'description' => __( 'Whether rule has been completed.', 'piggy' ),
+				'description' => __( 'Whether rule has been completed.', 'leat' ),
 				'type'        => 'boolean',
 			],
 			'creditCost' => [
-				'description' => __( 'Credit cost to redeem the reward', 'piggy' ),
+				'description' => __( 'Credit cost to redeem the reward', 'leat' ),
 				'type'        => 'number',
 			],
 		];

@@ -1,3 +1,3 @@
-import { PiggyFrontendService } from "$lib/modules/piggy";
+import { LeatFrontendService } from "$lib/modules/leat";
 
-export const piggyService = new PiggyFrontendService();
+export const leatService = new LeatFrontendService();

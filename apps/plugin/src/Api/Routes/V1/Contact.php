@@ -1,9 +1,9 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1;
+namespace Leat\Api\Routes\V1;
 
-use PiggyWP\Api\Exceptions\RouteException;
-use PiggyWP\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Exceptions\RouteException;
+use Leat\Api\Routes\V1\AbstractRoute;
 
 /**
  * Contact class.
@@ -64,7 +64,7 @@ class Contact extends AbstractRoute {
             throw new RouteException( 'no_user_id', 'User ID is required', 400 );
         }
 
-		$uuid = get_user_meta( get_current_user_id(), 'piggy_uuid', true);
+		$uuid = get_user_meta( get_current_user_id(), 'leat_uuid', true);
 		$contact = $uuid ? $this->connection->get_contact( $uuid ) : null;
 		$claimed_rewards = $uuid ? $this->connection->get_user_reward_logs( $user_id ) : null;
 

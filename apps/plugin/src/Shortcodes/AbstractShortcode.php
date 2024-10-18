@@ -1,7 +1,7 @@
 <?php
-namespace PiggyWP\Shortcodes;
+namespace Leat\Shortcodes;
 
-use PiggyWP\Assets\Api as AssetApi;
+use Leat\Assets\Api as AssetApi;
 
 /**
  * AbstractShortcode class.
@@ -12,7 +12,7 @@ abstract class AbstractShortcode {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'piggy';
+	protected $namespace = 'leat';
 
 	/**
 	 * Shortcode name within this namespace.
@@ -53,7 +53,7 @@ abstract class AbstractShortcode {
 	 */
 	public function init() {
 		if ( empty( $this->shortcode_name ) ) {
-			throw new \Exception(esc_html__('Shortcode name is required.', 'piggy'));
+			throw new \Exception(esc_html__('Shortcode name is required.', 'leat'));
 		}
 
 		$this->init_hooks();

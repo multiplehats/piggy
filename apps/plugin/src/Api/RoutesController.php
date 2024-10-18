@@ -1,23 +1,23 @@
 <?php
-namespace PiggyWP\Api;
+namespace Leat\Api;
 
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Connection;
-use PiggyWP\Settings;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Connection;
+use Leat\Settings;
 
 /**
  * RoutesController class.
  */
 class RoutesController {
 	/**
-	 * Piggy schema_controller.
+	 * Leat schema_controller.
 	 *
 	 * @var SchemaController
 	 */
 	protected $schema_controller;
 
 	/**
-	 * Piggy connection.
+	 * Leat connection.
 	 *
 	 * @var Connection
 	 */
@@ -31,7 +31,7 @@ class RoutesController {
 	protected $settings;
 
 	/**
-	 * Piggy routes.
+	 * Leat routes.
 	 *
 	 * @var array
 	 */
@@ -68,11 +68,11 @@ class RoutesController {
 	}
 
 	/**
-	 * Register all Piggy API routes. This includes routes under specific version namespaces.
+	 * Register all Leat API routes. This includes routes under specific version namespaces.
 	 */
 	public function register_all_routes() {
-		$this->register_routes( 'v1', 'piggy/v1' );
-		$this->register_routes( 'private', 'piggy/private' );
+		$this->register_routes( 'v1', 'leat/v1' );
+		$this->register_routes( 'private', 'leat/private' );
 	}
 
 	/**
@@ -106,7 +106,7 @@ class RoutesController {
 	 * @param string $version API Version being registered..
 	 * @param string $namespace Overrides the default route namespace.
 	 */
-	protected function register_routes( $version = 'v1', $namespace = 'piggy/v1' ) {
+	protected function register_routes( $version = 'v1', $namespace = 'leat/v1' ) {
 		if ( ! isset( $this->routes[ $version ] ) ) {
 			return;
 		}

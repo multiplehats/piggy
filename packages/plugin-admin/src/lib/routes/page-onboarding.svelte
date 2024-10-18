@@ -20,7 +20,7 @@
 	const saveSettingsMutation = createMutation(
 		saveSettingsMutationConfig(client, {
 			onSuccess: async () => {
-				await client.invalidateQueries({ queryKey: [QueryKeys.piggyShops] });
+				await client.invalidateQueries({ queryKey: [QueryKeys.leatShops] });
 
 				const isLastStep = onboarding.isLastStep();
 

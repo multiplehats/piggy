@@ -10,14 +10,14 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="mb-2">{__("Rule settings", "piggy")}</Card.Title>
+		<Card.Title class="mb-2">{__("Rule settings", "leat")}</Card.Title>
 
 		<Card.Description>
 			<Alert
 				type="info"
 				description={__(
-					"The amount of credits customers will earn will be calculated based on the rules you have set up in the Piggy Dashboard.",
-					"piggy"
+					"The amount of credits customers will earn will be calculated based on the rules you have set up in the Leat Dashboard.",
+					"leat"
 				)}
 			/>
 		</Card.Description>

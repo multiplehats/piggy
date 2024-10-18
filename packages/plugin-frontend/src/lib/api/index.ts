@@ -1,6 +1,6 @@
 import apiFetch from "@wordpress/api-fetch";
 import type { APIFetchMiddleware, APIFetchOptions } from "@wordpress/api-fetch";
-import type { ApiErrorResponse } from "@piggy/types";
+import type { ApiErrorResponse } from "@leat/types";
 import { LocalStorageKeys } from "../config/constants";
 import { logger } from "$lib/config/logger";
 
@@ -129,8 +129,8 @@ apiFetch.use(logMiddleware);
 apiFetch.setNonce = setNonce;
 
 updateNonce(
-	window.piggyMiddlewareConfig.storeApiNonce,
-	window.piggyMiddlewareConfig.wcStoreApiNonceTimestamp
+	window.leatMiddlewareConfig.storeApiNonce,
+	window.leatMiddlewareConfig.wcStoreApiNonceTimestamp
 );
 
 export type ApiError = {

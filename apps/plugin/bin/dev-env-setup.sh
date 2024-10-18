@@ -16,21 +16,21 @@ echo -e 'Update URL structure \n'
 wp-env run cli wp rewrite structure '/%postname%/' --hard
 
 echo -e 'Add Customer user \n'
-wp-env run cli wp user create customer customer@piggy.dev \
+wp-env run cli wp user create customer customer@leat.dev \
     --user_pass=password \
     --role=subscriber \
     --first_name='Jane' \
     --last_name='Smith'
 
 echo -e 'Add WordPress Admin user \n'
-wp-env run cli wp user create admin admin@piggy.dev \
+wp-env run cli wp user create admin admin@leat.dev \
     --user_pass=password \
     --role=administrator \
     --first_name='John' \
     --last_name='Doe'
 
 echo -e 'Update Blog Name \n'
-wp-env run cli wp option update blogname 'Piggy: Dev'
+wp-env run cli wp option update blogname 'Leat: Dev'
 
 echo -e 'Update Permalink structure \n'
 wp-env run cli wp rewrite flush

@@ -1,9 +1,9 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1;
+namespace Leat\Api\Routes\V1;
 
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Routes\V1\Admin\Middleware;
 
 /**
  * Shops class.
@@ -47,7 +47,7 @@ class EarnRules extends AbstractRoute {
 				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Earn rules', 'piggy' ),
+						'description' => __( 'Earn rules', 'leat' ),
 						'type'        => 'object',
 					],
 				],
@@ -58,11 +58,11 @@ class EarnRules extends AbstractRoute {
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'id' => [
-						'description' => __( 'Earn rule ID', 'piggy' ),
+						'description' => __( 'Earn rule ID', 'leat' ),
 						'type'        => 'string',
 					],
 					'status' => [
-						'description' => __( 'Spend rule status', 'piggy' ),
+						'description' => __( 'Spend rule status', 'leat' ),
 						'type'        => 'string',
 					],
 				],
@@ -86,7 +86,7 @@ class EarnRules extends AbstractRoute {
 			'label' => $request->get_param( 'label' ),
 			'title' => $request->get_param( 'title' ),
 			'type' => $request->get_param( 'type' ),
-			'piggyTierUuids' => $request->get_param( 'piggyTierUuids' ),
+			'leatTierUuids' => $request->get_param( 'leatTierUuids' ),
 			'startsAt' => $request->get_param( 'startsAt' ),
 			'expiresAt' => $request->get_param( 'expiresAt' ),
 			'completed' => $request->get_param( 'completed' ),
@@ -98,21 +98,21 @@ class EarnRules extends AbstractRoute {
 		);
 
 		$post_data = array(
-			'post_type' => 'piggy_earn_rule',
+			'post_type' => 'leat_earn_rule',
 			'post_title' => $data['title'],
 			'post_status' => $data['status'],
 			'meta_input' => array(
-				'_piggy_earn_rule_label' => $data['label'],
-				'_piggy_earn_rule_type' => $data['type'],
-				'_piggy_earn_rule_piggy_tier_uuids' => $data['piggyTierUuids'],
-				'_piggy_earn_rule_starts_at' => $data['startsAt'],
-				'_piggy_earn_rule_expires_at' => $data['expiresAt'],
-				'_piggy_earn_rule_completed' => $data['completed'],
-				'_piggy_earn_rule_points' => $data['credits'],
-				'_piggy_earn_rule_social_handle' => $data['socialHandle'],
-				'_piggy_earn_rule_excluded_collection_ids' => $data['excludedCollectionIds'],
-				'_piggy_earn_rule_excluded_product_ids' => $data['excludedProductIds'],
-				'_piggy_earn_rule_min_order_subtotal_cents' => $data['minimumOrderAmount'],
+				'_leat_earn_rule_label' => $data['label'],
+				'_leat_earn_rule_type' => $data['type'],
+				'_leat_earn_rule_leat_tier_uuids' => $data['leatTierUuids'],
+				'_leat_earn_rule_starts_at' => $data['startsAt'],
+				'_leat_earn_rule_expires_at' => $data['expiresAt'],
+				'_leat_earn_rule_completed' => $data['completed'],
+				'_leat_earn_rule_points' => $data['credits'],
+				'_leat_earn_rule_social_handle' => $data['socialHandle'],
+				'_leat_earn_rule_excluded_collection_ids' => $data['excludedCollectionIds'],
+				'_leat_earn_rule_excluded_product_ids' => $data['excludedProductIds'],
+				'_leat_earn_rule_min_order_subtotal_cents' => $data['minimumOrderAmount'],
 			)
 		);
 
@@ -124,7 +124,7 @@ class EarnRules extends AbstractRoute {
 		}
 
 		if ( is_wp_error( $post_id ) ) {
-			return new \WP_Error( 'post_save_failed', __( 'Failed to save earn rule', 'piggy' ), array( 'status' => 500 ) );
+			return new \WP_Error( 'post_save_failed', __( 'Failed to save earn rule', 'leat' ), array( 'status' => 500 ) );
 		}
 
 		$response = $this->prepare_item_for_response( get_post( $post_id ), $request );
@@ -141,7 +141,7 @@ class EarnRules extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$prepared_args = array(
-			'post_type' => 'piggy_earn_rule',
+			'post_type' => 'leat_earn_rule',
 			'posts_per_page' => -1,
 			'post_status' => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array('publish'),
 		);
