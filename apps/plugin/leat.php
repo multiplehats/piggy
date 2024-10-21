@@ -4,7 +4,7 @@
  * Plugin Name: Leat - Loyalty & Marketing
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
- * Version: 0.1.10
+ * Version: 0.2.0
  * Author: Leat
  * Author URI: https://leat.com
  * Text Domain: leat
@@ -29,7 +29,7 @@ if ( ! defined( 'LEAT_URL' ) ) {
 }
 
 if ( ! defined( 'LEAT_VERSION' ) ) {
-	define( 'LEAT_VERSION', '0.1.10' );
+	define( 'LEAT_VERSION', '0.2.0' );
 }
 
 /**
@@ -65,7 +65,7 @@ function should_display_compatibility_notices() {
 
 if ( version_compare( $GLOBALS['wp_version'], $minimum_wp_version, '<' ) ) {
 	/**
-	 * Outputs for an admin notice about running WooCommerce Blocks on outdated WordPress.
+	 * Outputs for an admin notice about running Leat on outdated WordPress.
 	 *
 	 * @since 2.5.0
 	 */

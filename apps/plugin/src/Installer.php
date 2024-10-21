@@ -15,6 +15,7 @@ class Installer {
 	 */
 	public function init() {
 		add_action( 'admin_init', array( $this, 'maybe_create_tables' ) );
+		add_action( 'admin_init', array( $this, 'maybe_migrate_piggy_to_leat' ) );
 		// add_action( 'admin_init', array( $this, 'maybe_redirect_to_onboarding' ) );
 	}
 
@@ -130,4 +131,34 @@ class Installer {
 			exit;
 		}
 	}
+
+	/**
+     * Migrate data from piggy_ prefix to leat_ prefix during installation.
+     */
+    public function maybe_migrate_piggy_to_leat() {
+        if ( get_option( 'leat_migration_complete', false ) ) {
+            return;
+        }
+
+        global $wpdb;
+
+        // Migrate options
+        $piggy_options = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'piggy_%'");
+        foreach ($piggy_options as $option) {
+            $new_option_name = str_replace('piggy_', 'leat_', $option->option_name);
+            update_option($new_option_name, $option->option_value);
+            delete_option($option->option_name);
+        }
+
+        // Rename database tables
+        $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}piggy_%'");
+        foreach ($tables as $table) {
+            $old_table_name = reset($table);
+            $new_table_name = str_replace('piggy_', 'leat_', $old_table_name);
+            $wpdb->query("RENAME TABLE {$old_table_name} TO {$new_table_name}");
+        }
+
+        // Set flag to indicate migration is complete
+        update_option('leat_migration_complete', true);
+    }
 }

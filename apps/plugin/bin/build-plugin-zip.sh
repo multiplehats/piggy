@@ -72,11 +72,11 @@ if [ -z "$NO_CHECKS" ]; then
 	fi
 fi
 
-# Add version to composer.json
-# perl -i -pe "s/\"type\":*.+/\"type\":\"wordpress-plugin\",\n\t\"version\": \"${VERSION}\",/" composer.json
-
 # Add version to plugin header
 perl -i -pe "s/Version:.*$/Version: ${VERSION}/" leat.php
+
+# Update the LEAT_VERSION constant
+perl -i -pe "s/LEAT_VERSION,.*$/LEAT_VERSION, '${VERSION}' );/" leat.php
 
 # Run the build.
 if [ $TYPE = 'DEV' ]; then
@@ -85,21 +85,21 @@ if [ $TYPE = 'DEV' ]; then
 	composer install
 	PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true pnpm install --frozen-lockfile
 	status "==========================="
-	status "Generating development build... 👷‍♀️"
+	status "Generating development build... (v${VERSION}) 👷‍♀️"
 	status "==========================="
 	pnpm build
 	status "==========================="
 elif [ $TYPE = 'ZIP_ONLY' ]; then
 	composer install --no-dev
 	composer dump-autoload
-	status "Skipping build commands - using current built assets on disk for built archive...👷‍♀️"
+	status "Skipping build commands - using current built assets on disk for built archive...(v${VERSION}) 👷‍♀️"
 	status "==========================="
 else
 	status "Installing dependencies... 📦"
 	composer install --no-dev
 	PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true pnpm install --frozen-lockfile
 	status "==========================="
-	status "Generating production build... 👷‍♀️"
+	status "Generating production build... (v${VERSION}) 👷‍♀️"
 	status "==========================="
 	pnpm build
 	status "==========================="

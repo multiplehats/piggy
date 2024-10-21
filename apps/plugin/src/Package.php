@@ -71,7 +71,7 @@ class Package {
 	}
 
 	/**
-	 * Loads the dependency injection container for woocommerce blocks.
+	 * Loads the dependency injection container for Leat.
 	 *
 	 * @param boolean $reset Used to reset the container to a fresh instance.
 	 *                       Note: this means all dependencies will be

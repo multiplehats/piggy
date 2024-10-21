@@ -57,7 +57,7 @@ class Bootstrap {
 
 		if ( $this->has_core_dependencies() ) {
 			/**
-			 * Leat depends on the WooCommerce Blocks plugin (also included in WooCommerce core as of 6.4).
+			 * Leat depends on the WooCommerce plugin (also included in WooCommerce core as of 6.4).
 			 */
 			add_action(
 				'woocommerce_blocks_loaded',
