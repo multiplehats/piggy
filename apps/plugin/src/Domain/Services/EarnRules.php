@@ -1,6 +1,6 @@
 <?php
 
-namespace PiggyWP\Domain\Services;
+namespace Leat\Domain\Services;
 
 /**
  * Class EarnRules
@@ -13,11 +13,11 @@ class EarnRules {
 
 	public function get_earn_rules_by_type($type, $post_status = ['publish']) {
 		$args = [
-			'post_type' => 'piggy_earn_rule',
+			'post_type' => 'leat_earn_rule',
 			'post_status' => $post_status,
 			'meta_query' => [
 				[
-					'key' => '_piggy_earn_rule_type',
+					'key' => '_leat_earn_rule_type',
 					'value' => $type,
 				],
 			],
@@ -57,7 +57,7 @@ class EarnRules {
 	 * @return array
 	 */
 	public function get_formatted_post( $post ) {
-		$type = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_type', null);
+		$type = $this->get_post_meta_data($post->ID, '_leat_earn_rule_type', null);
 
 		$earn_rule = [
 			'id' => (int) $post->ID,
@@ -66,65 +66,65 @@ class EarnRules {
 			'svg' => $this->get_svg($type),
 			'status' => [
 				'id' => 'status',
-				'label' => __( 'Status', 'piggy' ),
+				'label' => __( 'Status', 'leat' ),
 				'default' => 'publish',
 				'value' => $post->post_status,
 				'options' => [
-					'publish' => [ 'label' => __( 'Active', 'piggy' ) ],
-					'draft' => [ 'label' => __( 'Inactive', 'piggy' ) ],
+					'publish' => [ 'label' => __( 'Active', 'leat' ) ],
+					'draft' => [ 'label' => __( 'Inactive', 'leat' ) ],
 				],
 				'type' => 'select',
-				'description' => __( 'Set the status of the rule. Inactive earn rules will not be displayed to users.', 'piggy' ),
+				'description' => __( 'Set the status of the rule. Inactive earn rules will not be displayed to users.', 'leat' ),
 			],
 			'title' => [
 				'id' => 'title',
-				'label' => __( 'Title', 'piggy' ),
+				'label' => __( 'Title', 'leat' ),
 				'default' => null,
 				'value' => $post->post_title,
 				'type' => 'text',
-				'description' => __('This is not displayed to the user and is only used for internal reference.', 'piggy'),
+				'description' => __('This is not displayed to the user and is only used for internal reference.', 'leat'),
 			],
 			'type' => [
 				'id' => 'type',
-				'label' => __( 'Type', 'piggy' ),
+				'label' => __( 'Type', 'leat' ),
 				'default' => 'PLACE_ORDER',
 				'value' => $type,
 				'type' => 'select',
 				'options' => [
-					'LIKE_ON_FACEBOOK' => [ 'label' => __( 'Like on Facebook', 'piggy' ) ],
-					'FOLLOW_ON_TIKTOK' => [ 'label' => __( 'Follow on TikTok', 'piggy' ) ],
-					'FOLLOW_ON_INSTAGRAM' => [ 'label' => __( 'Follow on Instagram', 'piggy' ) ],
-					'PLACE_ORDER' => [ 'label' => __( 'Place an order', 'piggy' ) ],
-					// 'CELEBRATE_BIRTHDAY' => [ 'label' => __( 'Celebrate your birthday', 'piggy' ) ],
-					'CREATE_ACCOUNT' => [ 'label' => __( 'Create an account', 'piggy' ) ],
+					'LIKE_ON_FACEBOOK' => [ 'label' => __( 'Like on Facebook', 'leat' ) ],
+					'FOLLOW_ON_TIKTOK' => [ 'label' => __( 'Follow on TikTok', 'leat' ) ],
+					'FOLLOW_ON_INSTAGRAM' => [ 'label' => __( 'Follow on Instagram', 'leat' ) ],
+					'PLACE_ORDER' => [ 'label' => __( 'Place an order', 'leat' ) ],
+					// 'CELEBRATE_BIRTHDAY' => [ 'label' => __( 'Celebrate your birthday', 'leat' ) ],
+					'CREATE_ACCOUNT' => [ 'label' => __( 'Create an account', 'leat' ) ],
 				],
-				'description' => __( 'The type of earn rule.', 'piggy' ),
+				'description' => __( 'The type of earn rule.', 'leat' ),
 			],
-			'piggyTierUuids' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_piggy_tier_uuids', null),
+			'leatTierUuids' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_leat_tier_uuids', null),
 			'startsAt' => [
 				'id' => 'startsAt',
-				'label' => __( 'Starts at', 'piggy' ),
+				'label' => __( 'Starts at', 'leat' ),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_starts_at', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_starts_at', null),
 				'type' => 'date',
-				'description' => __( 'Optional date for when the rule should start.', 'piggy' ),
+				'description' => __( 'Optional date for when the rule should start.', 'leat' ),
 			],
 			'expiresAt' => [
 				'id' => 'expiresAt',
-				'label' => __( 'Expires at', 'piggy' ),
+				'label' => __( 'Expires at', 'leat' ),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_expires_at', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_expires_at', null),
 				'type' => 'date',
-				'description' => __( 'Optional date for when the rule should expire.', 'piggy' ),
+				'description' => __( 'Optional date for when the rule should expire.', 'leat' ),
 			],
-			'completed' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_completed', null),
+			'completed' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_completed', null),
 			'minimumOrderAmount' => [
 				'id' => 'minimumOrderAmount',
-				'label' => __( 'Minimum order amount', 'piggy' ),
+				'label' => __( 'Minimum order amount', 'leat' ),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_min_order_subtotal_cents', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_min_order_subtotal_cents', null),
 				'type' => 'number',
-				'description' => __( 'The minimum order amount required to satisfy the rule', 'piggy' ),
+				'description' => __( 'The minimum order amount required to satisfy the rule', 'leat' ),
 				'attributes' => [
 					'min' => 0,
 					'step' => 1,
@@ -132,11 +132,11 @@ class EarnRules {
 			],
 			'credits' => [
 				'id' => 'credits',
-				'label' => __( 'Credits', 'piggy' ),
+				'label' => __( 'Credits', 'leat' ),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_points', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_points', null),
 				'type' => 'number',
-				'description' => __( 'The number of credits awarded for completing this action.', 'piggy' ),
+				'description' => __( 'The number of credits awarded for completing this action.', 'leat' ),
 				'attributes' => [
 					'min' => 0,
 					'step' => 1,
@@ -146,17 +146,17 @@ class EarnRules {
 				'id' => 'social_handle',
 				'label' => $this->get_social_network_label($type),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_earn_rule_social_handle', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_social_handle', null),
 				'type' => 'text',
 				'description' => $this->get_social_network_description($type),
 			]
 		];
 
-		$label_value = $this->get_post_meta_data($post->ID, '_piggy_earn_rule_label', null);
+		$label_value = $this->get_post_meta_data($post->ID, '_leat_earn_rule_label', null);
 
 		$earn_rule['label'] = [
 			'id' => 'label',
-			'label' => __( 'Label', 'piggy' ),
+			'label' => __( 'Label', 'leat' ),
 			'default' => $this->get_label_default($type),
 			'value' => isset($label_value) ? $label_value : $this->get_label_default($type),
 			'type' => 'translatable_text',
@@ -184,7 +184,7 @@ class EarnRules {
 		}
 
 		/* translators: %s: a list of placeholders */
-		return sprintf( __( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'piggy' ), $placeholders );
+		return sprintf( __( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat' ), $placeholders );
 	}
 
 	private function get_label_default($type) {
@@ -192,22 +192,22 @@ class EarnRules {
 
 		switch ($type) {
 			case 'LIKE_ON_FACEBOOK':
-				$default = __( 'Follow us on Facebook and earn {{ credits }} {{ credits_currency }}', 'piggy' );
+				$default = __( 'Follow us on Facebook and earn {{ credits }} {{ credits_currency }}', 'leat' );
 				break;
 			case 'FOLLOW_ON_TIKTOK':
-				$default = __( 'Follow us on TikTok and earn {{ credits }} {{ credits_currency }}', 'piggy' );
+				$default = __( 'Follow us on TikTok and earn {{ credits }} {{ credits_currency }}', 'leat' );
 				break;
 			case 'FOLLOW_ON_INSTAGRAM':
-				$default = __( 'Follow us on Instagram and earn {{ credits }} {{ credits_currency }}', 'piggy' );
+				$default = __( 'Follow us on Instagram and earn {{ credits }} {{ credits_currency }}', 'leat' );
 				break;
 			case 'PLACE_ORDER':
-				$default = __( 'For every order you place, you earn {{ credits }} {{ credits_currency }}', 'piggy' );
+				$default = __( 'For every order you place, you earn {{ credits }} {{ credits_currency }}', 'leat' );
 				break;
 			case 'CELEBRATE_BIRTHDAY':
-				$default = __( 'On your birthday, you earn {{ credits }} {{ credits_currency }}', 'piggy' );
+				$default = __( 'On your birthday, you earn {{ credits }} {{ credits_currency }}', 'leat' );
 				break;
 			case 'CREATE_ACCOUNT':
-				$default = __( 'Create an account and earn {{ credits }} {{ credits_currency }}', 'piggy' );
+				$default = __( 'Create an account and earn {{ credits }} {{ credits_currency }}', 'leat' );
 				break;
 		}
 
@@ -219,26 +219,26 @@ class EarnRules {
 	private function get_social_network_label($type) {
 		switch ($type) {
 			case 'LIKE_ON_FACEBOOK':
-				return __( 'Facebook handle', 'piggy' );
+				return __( 'Facebook handle', 'leat' );
 			case 'FOLLOW_ON_TIKTOK':
-				return __( 'TikTok handle', 'piggy' );
+				return __( 'TikTok handle', 'leat' );
 			case 'FOLLOW_ON_INSTAGRAM':
-				return __( 'Instagram handle', 'piggy' );
+				return __( 'Instagram handle', 'leat' );
 			default:
-				return __( 'Social network handle', 'piggy' );
+				return __( 'Social network handle', 'leat' );
 		}
 	}
 
 	private function get_social_network_description($type) {
 		switch ($type) {
 			case 'LIKE_ON_FACEBOOK':
-				return __( 'The handle of the Facebook account (without the @) that the user must like', 'piggy' );
+				return __( 'The handle of the Facebook account (without the @) that the user must like', 'leat' );
 			case 'FOLLOW_ON_TIKTOK':
-				return __( 'The handle of the TikTok account (without the @) that the user must follow', 'piggy' );
+				return __( 'The handle of the TikTok account (without the @) that the user must follow', 'leat' );
 			case 'FOLLOW_ON_INSTAGRAM':
-				return __( 'The handle of the Instagram account (without the @) that the user must follow', 'piggy' );
+				return __( 'The handle of the Instagram account (without the @) that the user must follow', 'leat' );
 			default:
-				return __( 'The handle of the social network account that the user must like or follow', 'piggy' );
+				return __( 'The handle of the social network account that the user must like or follow', 'leat' );
 		}
 	}
 
@@ -271,7 +271,7 @@ class EarnRules {
 				throw new \Exception('Invalid earn rule type');
 		}
 
-		return apply_filters('piggy_earn_rule_svg', $svg, $type);
+		return apply_filters('leat_earn_rule_svg', $svg, $type);
 	}
 
 	/**
@@ -311,7 +311,7 @@ class EarnRules {
      */
     public function has_user_claimed_rule($user_id, $earn_rule_id) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'piggy_reward_logs';
+        $table_name = $wpdb->prefix . 'leat_reward_logs';
 
 		$result = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM $table_name WHERE wp_user_id = %d AND earn_rule_id = %d",

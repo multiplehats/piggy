@@ -1,13 +1,13 @@
-import { Admin } from "@piggy/plugin-admin";
+import { Admin } from "@leat/plugin-admin";
 
-const piggyWcSettingsConfig = window.piggyWcSettings;
-const adminMount = document.getElementById("piggy-admin-mount");
+const leatWcSettingsConfig = window.leatWcSettings;
+const adminMount = document.getElementById("leat-admin-mount");
 
 function mountFrontend() {
 	if (adminMount) {
-		if (!piggyWcSettingsConfig) {
+		if (!leatWcSettingsConfig) {
 			console.warn(
-				"[piggy] window.piggyWcSettingsConfig is not defined. This is needed to run the app."
+				"[leat] window.leatWcSettingsConfig is not defined. This is needed to run the app."
 			);
 			return;
 		}
@@ -17,7 +17,7 @@ function mountFrontend() {
 			target: adminMount,
 		});
 	} else {
-		console.info("[piggy] Could not find Piggy element to mount on.");
+		console.info("[leat] Could not find Leat element to mount on.");
 	}
 }
 

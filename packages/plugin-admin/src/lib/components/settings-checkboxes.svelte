@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Info } from "lucide-svelte";
-	import type { CheckboxValue, CheckboxesOptions } from "@piggy/types/plugin/settings/adminTypes";
+	import type { CheckboxValue, CheckboxesOptions } from "@leat/types/plugin/settings/adminTypes";
 	import SettingsFieldErrors from "./settings-field-errors.svelte";
 	import {
 		SettingsLabel,

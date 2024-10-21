@@ -6,13 +6,13 @@ declare global {
 	// eslint-disable-next-line ts/consistent-type-definitions
 	interface Window {
 		// Frontend settings
-		piggyConfig: PluginOptionsFrontend;
+		leatConfig: PluginOptionsFrontend;
 		// WooCommerce settings
-		piggyWcSettings: IWooSettings;
-		piggySpentRules: SpendRuleValueItem[] | null;
+		leatWcSettings: IWooSettings;
+		leatSpentRules: SpendRuleValueItem[] | null;
 
 		// WP Fetch middleware config
-		piggyMiddlewareConfig: {
+		leatMiddlewareConfig: {
 			apiKeySet: boolean;
 			userId: number | null;
 			loggedIn: boolean;

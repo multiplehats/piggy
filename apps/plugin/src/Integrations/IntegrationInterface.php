@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Integrations;
+namespace Leat\Integrations;
 
 /**
  * Integration.Interface

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Color } from "@piggy/types/plugin/settings/adminTypes";
+	import type { Color } from "@leat/types/plugin/settings/adminTypes";
 	import ColorPicker from "./settings-color-picker.svelte";
 	import { SettingsSection } from "$lib/components/ui/settings-section";
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace  PiggyWP\Api\Routes\V1;
+namespace  Leat\Api\Routes\V1;
 
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Routes\V1\Admin\Middleware;
 use WP_REST_Request;
 
 class WCProductsSearch extends AbstractRoute
@@ -31,22 +31,22 @@ class WCProductsSearch extends AbstractRoute
 				'permission_callback'    => [Middleware::class, 'is_authorized'],
 				'args'                => [
 					'term' => [
-						'description' => __( 'Search term', 'piggy' ),
+						'description' => __( 'Search term', 'leat' ),
 						'type'        => 'string',
 					],
 					'limit' => [
-						'description' => __( 'Limit', 'piggy' ),
+						'description' => __( 'Limit', 'leat' ),
 						'type'        => 'integer',
 					],
 					'include' => [
-						'description' => __( 'Include IDs', 'piggy' ),
+						'description' => __( 'Include IDs', 'leat' ),
 						'type'        => 'array',
 						'items'       => [
 							'type' => 'integer',
 						],
 					],
 					'exclude' => [
-						'description' => __( 'Exclude IDs', 'piggy' ),
+						'description' => __( 'Exclude IDs', 'leat' ),
 						'type'        => 'array',
 						'items'       => [
 							'type' => 'integer',

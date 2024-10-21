@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Api\Routes;
+namespace Leat\Api\Routes;
 
 /**
  * RouteInterface.

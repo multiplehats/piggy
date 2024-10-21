@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Registry;
+namespace Leat\Registry;
 
 /**
  * An abstract class for dependency types.

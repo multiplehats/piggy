@@ -1,21 +1,21 @@
 <?php
-namespace PiggyWP\Domain;
+namespace Leat\Domain;
 
-use PiggyWP\Api\Connection;
-use PiggyWP\Assets\Api as AssetApi;
-use PiggyWP\Assets\AssetDataRegistry;
-use PiggyWP\AssetsController;
-use PiggyWP\Installer;
-use PiggyWP\Registry\Container;
-use PiggyWP\Migration;
-use PiggyWP\Api\Api;
-use PiggyWP\Domain\Services\CustomerSession;
-use PiggyWP\Domain\Services\EarnRules;
-use PiggyWP\Domain\Services\SpendRules;
-use PiggyWP\PostTypeController;
-use PiggyWP\Settings;
-use PiggyWP\Shortcodes\CustomerDashboardShortcode;
-use PiggyWP\RedirectController;
+use Leat\Api\Connection;
+use Leat\Assets\Api as AssetApi;
+use Leat\Assets\AssetDataRegistry;
+use Leat\AssetsController;
+use Leat\Installer;
+use Leat\Registry\Container;
+use Leat\Migration;
+use Leat\Api\Api;
+use Leat\Domain\Services\CustomerSession;
+use Leat\Domain\Services\EarnRules;
+use Leat\Domain\Services\SpendRules;
+use Leat\PostTypeController;
+use Leat\Settings;
+use Leat\Shortcodes\CustomerDashboardShortcode;
+use Leat\RedirectController;
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -57,21 +57,21 @@ class Bootstrap {
 
 		if ( $this->has_core_dependencies() ) {
 			/**
-			 * Piggy depends on the WooCommerce Blocks plugin (also included in WooCommerce core as of 6.4).
+			 * Leat depends on the WooCommerce plugin (also included in WooCommerce core as of 6.4).
 			 */
 			add_action(
 				'woocommerce_blocks_loaded',
 				function() {
 					$this->init();
 					/**
-					 * Fires after the Piggy plugin has loaded.
+					 * Fires after the Leat plugin has loaded.
 					 *
 					 * This hook is intended to be used as a safe event hook for when the plugin has been loaded, and all
 					 * dependency requirements have been met.
 					 *
 					 * @since 1.0.0
 					 */
-					do_action( 'piggy_loaded' );
+					do_action( 'leat_loaded' );
 				}
 			);
 		}
@@ -82,11 +82,11 @@ class Bootstrap {
 	 */
 	protected function init() {
 		/**
-		 * Action triggered before Piggy initialization begins.
+		 * Action triggered before Leat initialization begins.
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'before_piggy_init' );
+		do_action( 'before_leat_init' );
 
 		$this->register_dependencies();
 
@@ -115,11 +115,11 @@ class Bootstrap {
 		$this->container->get( CustomerSession::class );
 
 		/**
-		* Action triggered after Piggy initialization finishes.
+		* Action triggered after Leat initialization finishes.
 		*
 		* @since 1.0.0
 		*/
-		do_action( 'piggy_init' );
+		do_action( 'leat_init' );
 	}
 
 	/**
@@ -132,7 +132,7 @@ class Bootstrap {
 
 		if ( $has_needed_dependencies ) {
 			$plugin_data = \get_file_data(
-				$this->package->get_path( 'piggy.php' ),
+				$this->package->get_path( 'leat.php' ),
 				[
 					'RequiredWCVersion' => 'WC requires at least',
 				]
@@ -143,13 +143,13 @@ class Bootstrap {
 				add_action(
 					'admin_notices',
 					function() use ( $plugin_data ) {
-						if ( should_display_compatibility_notices() ) {
+						if ( leat_should_display_compatibility_notices() ) {
 							?>
 							<div class="notice notice-error">
 								<p>
 								<?php
 									/* translators: %s: Required WooCommerce version */
-									printf( esc_html__( 'The Piggy plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce.', 'piggy' ), esc_html( $plugin_data['RequiredWCVersion'] ) );
+									printf( esc_html__( 'The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce.', 'leat' ), esc_html( $plugin_data['RequiredWCVersion'] ) );
 								?>
 								</p>
 							</div>
@@ -209,7 +209,7 @@ class Bootstrap {
 				echo '<div class="error"><p>';
 				printf(
 					/* translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command. */
-					esc_html__( 'Piggy requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes.', 'piggy' ),
+					esc_html__( 'Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes.', 'leat' ),
 					'<code>pnpm install</code>',
 					'<code>pnpm run build</code>',
 					'<code>pnpm start</code>'

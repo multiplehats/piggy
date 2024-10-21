@@ -1,7 +1,7 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1\Admin;
+namespace Leat\Api\Schemas\V1\Admin;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
+use Leat\Api\Schemas\V1\AbstractSchema;
 
 /**
  * Rewards class.
@@ -31,32 +31,32 @@ class RewardsSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'uuid'          => [
-				'description' => __( 'The reward\'s unique id.', 'piggy' ),
+				'description' => __( 'The reward\'s unique id.', 'leat' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'name'          => [
-				'description' => __( 'The reward\'s name.', 'piggy' ),
+				'description' => __( 'The reward\'s name.', 'leat' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'requiredCredits' => [
-				'description' => __( 'The reward\'s required credits.', 'piggy' ),
+				'description' => __( 'The reward\'s required credits.', 'leat' ),
 				'type'        => 'integer',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'type'          => [
-				'description' => __( 'The reward\'s type.', 'piggy' ),
+				'description' => __( 'The reward\'s type.', 'leat' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'active'        => [
-				'description' => __( 'The reward\'s active status.', 'piggy' ),
+				'description' => __( 'The reward\'s active status.', 'leat' ),
 				'type'        => 'boolean',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'attributes'    => [
-				'description' => __( 'The reward\'s attributes.', 'piggy' ),
+				'description' => __( 'The reward\'s attributes.', 'leat' ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
 			],

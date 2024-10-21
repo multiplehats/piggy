@@ -1,12 +1,12 @@
 {
-	"name": "@piggy/plugin",
-	"version": "0.1.11",
-	"description": "Piggy WordPress plugin",
-	"homepage": "https://piggy.com",
+	"name": "@leat/plugin",
+	"version": "0.2.0",
+	"description": "Leat WordPress plugin",
+	"homepage": "https://leat.com",
 	"contributors": [
 		{
-			"name": "Piggy",
-			"email": "support@piggy.eu"
+			"name": "Leat",
+			"email": "support@leat.eu"
 		},
 		{
 			"name": "Chris Jaydeh",
@@ -20,16 +20,16 @@
 		"dev": "concurrently \"pnpm dev:frontend\" \"pnpm dev:admin\"",
 		"dev:frontend": "NODE_ENV=development vite --config vite-frontend.config.ts --port 4001",
 		"dev:admin": "NODE_ENV=development vite --config vite-admin.config.ts --port 4002",
-		"build": "rimraf ./dist && pnpm build:frontend && pnpm build:admin",
+		"build": "pnpm build:frontend && pnpm build:admin",
 		"build:frontend": "NODE_ENV=production vite build --config vite-frontend.config.ts",
 		"build:admin": "NODE_ENV=production vite build --config vite-admin.config.ts",
 		"analyze": "ANALYZE=true pnpm build",
-		"i18n": "WP_CLI_PHP_ARGS='-d memory_limit=4096M' wp i18n --allow-root make-pot . languages/piggy.pot --slug=piggy --domain=piggy --include=src,dist/admin/assets,dist/frontend/assets --exclude=bin,node_modules,tests,vendor,dist/admin/assets/codemirror-*.js,dist/admin/assets/vendor-*.js,dist/admin/assets/*.js.map",
+		"i18n": "WP_CLI_PHP_ARGS='-d memory_limit=4096M' wp i18n --allow-root make-pot . languages/leat.pot --slug=leat --domain=leat --include=src,dist/admin/assets,dist/frontend/assets --exclude=bin,node_modules,tests,vendor,dist/admin/assets/codemirror-*.js,dist/admin/assets/vendor-*.js,dist/admin/assets/*.js.map",
 		"typecheck": "svelte-check --tsconfig ./tsconfig.json",
 		"typecheck:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-		"package-plugin": "rimraf piggy.zip && ./bin/build-plugin-zip.sh",
-		"package-plugin:dev": "rimraf piggy.zip && ./bin/build-plugin-zip.sh -d",
-		"package-plugin:zip-only": "rimraf piggy.zip && ./bin/build-plugin-zip.sh -z",
+		"package-plugin": "rimraf leat.zip && ./bin/build-plugin-zip.sh",
+		"package-plugin:dev": "rimraf leat.zip && ./bin/build-plugin-zip.sh -d",
+		"package-plugin:zip-only": "rimraf leat.zip && ./bin/build-plugin-zip.sh -z",
 		"lint-php": "composer run-script phpcs ./src",
 		"lint-php-fix": "composer run-script phpcbf ./src",
 		"lint": "eslint \"./src/**/*.{js,cjs,mjs,ts,tsx,md,json}\"",
@@ -42,10 +42,11 @@
 		"env:restart": "wp-env start --update"
 	},
 	"devDependencies": {
-		"@piggy/lib": "workspace:^",
-		"@piggy/plugin-frontend": "workspace:^",
-		"@piggy/tailwind-config": "workspace:^",
-		"@piggy/types": "workspace:*",
+		"@leat/lib": "workspace:^",
+		"@leat/plugin-frontend": "workspace:^",
+		"@leat/plugin-admin": "workspace:^",
+		"@leat/tailwind-config": "workspace:^",
+		"@leat/types": "workspace:*",
 		"@codemirror/autocomplete": "^6.10.2",
 		"@codemirror/lang-css": "^6.2.1",
 		"@codemirror/lang-javascript": "^6.2.1",
@@ -104,7 +105,6 @@
 		"vite-plugin-banner": "^0.7.1"
 	},
 	"dependencies": {
-		"@piggy/plugin-admin": "workspace:^",
 		"@splidejs/svelte-splide": "^0.2.9",
 		"@tanstack/svelte-query": "^5.24.1",
 		"@wordpress/a11y": "^3.43.0",

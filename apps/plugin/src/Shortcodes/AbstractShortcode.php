@@ -1,21 +1,21 @@
 <?php
-namespace PiggyWP\Shortcodes;
+namespace Leat\Shortcodes;
 
-use PiggyWP\Assets\Api as AssetApi;
+use Leat\Assets\Api as AssetApi;
 
 /**
  * AbstractShortcode class.
  */
 abstract class AbstractShortcode {
 	/**
-	 * Shortcode namespace.
+	 * Shortcode namespaces.
 	 *
-	 * @var string
+	 * @var array
 	 */
-	protected $namespace = 'piggy';
+	protected $namespaces = ['leat'];
 
 	/**
-	 * Shortcode name within this namespace.
+	 * Shortcode name within these namespaces.
 	 *
 	 * @var string
 	 */
@@ -53,7 +53,7 @@ abstract class AbstractShortcode {
 	 */
 	public function init() {
 		if ( empty( $this->shortcode_name ) ) {
-			throw new \Exception(esc_html__('Shortcode name is required.', 'piggy'));
+			throw new \Exception(esc_html__('Shortcode name is required.', 'leat'));
 		}
 
 		$this->init_hooks();
@@ -69,11 +69,12 @@ abstract class AbstractShortcode {
 	 * Registers the shortcode type with WordPress.
 	 */
 	protected function register_shortcode_type() {
-		if ( shortcode_exists( $this->get_shortcode_type() ) ) {
-			return;
+		foreach ($this->namespaces as $namespace) {
+			$shortcode_type = $namespace . '_' . $this->shortcode_name;
+			if (!shortcode_exists($shortcode_type)) {
+				add_shortcode($shortcode_type, [$this, 'render_callback']);
+			}
 		}
-
-		add_shortcode( $this->get_shortcode_type(), [ $this, 'render_callback' ] );
 	}
 
 	/**
@@ -121,12 +122,14 @@ abstract class AbstractShortcode {
 	abstract protected function shortcode_output($attributes, $content = '');
 
 	/**
-	 * Get the shortcode type.
+	 * Get the shortcode types.
 	 *
-	 * @return string
+	 * @return array
 	 */
-	protected function get_shortcode_type() {
-		return $this->namespace . '_' . $this->shortcode_name;
+	protected function get_shortcode_types() {
+		return array_map(function($namespace) {
+			return $namespace . '_' . $this->shortcode_name;
+		}, $this->namespaces);
 	}
 
 	/**
@@ -135,11 +138,12 @@ abstract class AbstractShortcode {
 	 * @param string $content The content to search in.
 	 * @return bool
 	 */
-	protected function has_shortcode( string $content ) {
-		if ( has_shortcode( $content, $this->get_shortcode_type() ) ) {
-			return true;
+	protected function has_shortcode(string $content) {
+		foreach ($this->get_shortcode_types() as $shortcode_type) {
+			if (has_shortcode($content, $shortcode_type)) {
+				return true;
+			}
 		}
-
 		return false;
 	}
 

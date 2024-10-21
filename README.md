@@ -1,6 +1,6 @@
-# Piggy Monorepo
+# LEAT WordPress Monorepo
 
-This repository contains the monorepo for the Piggy WordPess plugin and its related components.
+This repository contains the monorepo for the LEAT WordPress plugin and its related components.
 
 ## Development Setup
 
@@ -29,7 +29,7 @@ cd /Users/jayden/Code/local-by-flywheel/mysite/app/public/wp-content/plugins
 2. Run the following command to create the symlink:
 
 ```bash
-ln -s /Users/jayden/Code/piggy/plugins/piggy/apps/plugin piggy
+ln -s /Users/jayden/Code/leat/plugins/leat/apps/plugin leat
 ```
 
-This will create a symlink called `piggy` in your WordPress plugins directory, pointing to the Piggy plugin within your development environment.
+This will create a symlink called `leat` in your WordPress plugins directory, pointing to the Leat plugin within your development environment.

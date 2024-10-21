@@ -1,4 +1,4 @@
-import type { WooCommerceSiteCurrency } from "@piggy/types";
+import type { WooCommerceSiteCurrency } from "@leat/types";
 
 export type WooCommerceSiteLocale = {
 	// The locale string for the current site.
@@ -58,8 +58,7 @@ const defaults: WooCommerceSharedSettings = {
 	wpVersion: "",
 };
 
-const globalSharedSettings =
-	typeof window.piggyWcSettings === "object" ? window.piggyWcSettings : {};
+const globalSharedSettings = typeof window.leatWcSettings === "object" ? window.leatWcSettings : {};
 
 // Use defaults or global settings, depending on what is set.
 const allWcSettings: WooCommerceSharedSettings = {

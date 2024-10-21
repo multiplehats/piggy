@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP;
+namespace Leat;
 
 /**
  * Takes care of the migrations.
@@ -7,20 +7,18 @@ namespace PiggyWP;
  * @since 2.5.0
  */
 class Migration {
-
 	/**
 	 * DB updates and callbacks that need to be run per version.
 	 *
-	 * Please note that these functions are invoked when WooCommerce Blocks is updated from a previous version,
-	 * but NOT when WooCommerce Blocks is newly installed.
+	 * Please note that these functions are invoked when Leat is updated from a previous version,
+	 * but NOT when Leat is newly installed.
 	 *
 	 * @var array
 	 */
 	private $db_upgrades = array(
-		// We don't need to do the following migration yet, but we'll keep it here for future use.
-		// '7.10.0' => array(
-		// 'piggy_update_710_create_new_options',
-		// ).
+		// '1.0.0' => array(
+		// 	'leat_update_example_callback',
+		// ),
 	);
 
 	/**
@@ -29,9 +27,13 @@ class Migration {
 	 * @var array
 	 */
 	public function run_migrations() {
-		$current_db_version = get_option( 'piggy_version' );
+		$current_db_version = get_option( 'leat_version' );
 
 		if ( empty( $current_db_version ) ) {
+			return;
+		}
+
+		if ( empty( $this->db_upgrades ) ) {
 			return;
 		}
 
@@ -44,10 +46,12 @@ class Migration {
 		}
 	}
 
-	/**
-	 * Set a flag to indicate if the blockified Product Grid Block should be rendered by default.
-	 */
-	public static function piggy_update_710_create_new_options() {
-		update_option( 'piggy_example', 'test' );
-	}
+	// /**
+	//  * Example callback.
+	//  */
+	// public static function leat_update_example_callback() {
+	// 	global $wpdb;
+
+	// 	// Do work.
+	// }
 }

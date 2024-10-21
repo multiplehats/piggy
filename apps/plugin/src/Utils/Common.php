@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Utils;
+namespace Leat\Utils;
 
 /**
  * Common Helper class.

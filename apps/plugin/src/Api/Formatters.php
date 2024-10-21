@@ -1,8 +1,8 @@
 <?php
-namespace PiggyWP\Api;
+namespace Leat\Api;
 
 use \Exception;
-use PiggyWP\Api\Formatters\DefaultFormatter;
+use Leat\Api\Formatters\DefaultFormatter;
 
 /**
  * Formatters class.

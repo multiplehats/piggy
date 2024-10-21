@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { zPluginOptionsAdmin } from "@piggy/types";
-	import type { PluginOptionsAdminKeys } from "@piggy/types";
+	import { zPluginOptionsAdmin } from "@leat/types";
+	import type { PluginOptionsAdminKeys } from "@leat/types";
 	import { cn } from "$lib/utils/tw";
 
 	let className: string | undefined = undefined;

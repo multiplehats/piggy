@@ -9,7 +9,7 @@
 	import { history } from "$lib/utils/custom-history";
 	import Layout from "$lib/components/layout-wrapper.svelte";
 	import PageGeneralSettings from "$lib/routes/page-general-settings.svelte";
-	import "@piggy/tailwind-config/global.postcss";
+	import "@leat/tailwind-config/global.postcss";
 
 	const mutationCache = new MutationCache();
 

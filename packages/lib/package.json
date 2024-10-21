@@ -1,5 +1,5 @@
 {
-	"name": "@piggy/lib",
+	"name": "@leat/lib",
 	"version": "0.0.0",
 	"description": "A collection of useful functions for building WordPress apps",
 	"main": "./index.ts",
@@ -10,7 +10,7 @@
 		"format": "prettier --write --ignore-path=../../.prettierignore ."
 	},
 	"devDependencies": {
-		"@piggy/types": "workspace:^",
+		"@leat/types": "workspace:^",
 		"@types/qs": "^6.9.8",
 		"qs": "^6.11.2",
 		"svelte": "^4.2.1",

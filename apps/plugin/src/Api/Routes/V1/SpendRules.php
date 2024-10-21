@@ -1,9 +1,9 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1;
+namespace Leat\Api\Routes\V1;
 
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Routes\V1\Admin\Middleware;
 
 /**
  * Shops class.
@@ -47,7 +47,7 @@ class SpendRules extends AbstractRoute {
 				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Spend rules', 'piggy' ),
+						'description' => __( 'Spend rules', 'leat' ),
 						'type'        => 'object',
 					],
 				],
@@ -58,11 +58,11 @@ class SpendRules extends AbstractRoute {
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'id' => [
-						'description' => __( 'Spend rule ID', 'piggy' ),
+						'description' => __( 'Spend rule ID', 'leat' ),
 						'type'        => 'string',
 					],
 					'status' => [
-						'description' => __( 'Spend rule status', 'piggy' ),
+						'description' => __( 'Spend rule status', 'leat' ),
 						'type'        => 'string',
 					],
 				],
@@ -99,23 +99,23 @@ class SpendRules extends AbstractRoute {
 		);
 
 		$post_data = array(
-			'post_type' => 'piggy_spend_rule',
+			'post_type' => 'leat_spend_rule',
 			'post_title' => $data['title'],
 			'post_status' => $data['status'],
 			'meta_input' => array(
-				'_piggy_spend_rule_type' => $data['type'],
-				'_piggy_spend_rule_label' => $data['label'],
-				'_piggy_spend_rule_starts_at' => $data['startsAt'],
-				'_piggy_spend_rule_expires_at' => $data['expiresAt'],
-				'_piggy_spend_rule_completed' => $data['completed'],
-				'_piggy_spend_rule_instructions' => $data['instructions'],
-				'_piggy_spend_rule_description' => $data['description'],
-				'_piggy_spend_rule_fulfillment' => $data['fulfillment'],
-				'_piggy_spend_rule_discount_value' => $data['discountValue'],
-				'_piggy_spend_rule_discount_type' => $data['discountType'],
-				'_piggy_spend_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
-				'_piggy_spend_rule_selected_products' => $data['selectedProducts'],
-				'_piggy_spend_rule_image' => $data['image'],
+				'_leat_spend_rule_type' => $data['type'],
+				'_leat_spend_rule_label' => $data['label'],
+				'_leat_spend_rule_starts_at' => $data['startsAt'],
+				'_leat_spend_rule_expires_at' => $data['expiresAt'],
+				'_leat_spend_rule_completed' => $data['completed'],
+				'_leat_spend_rule_instructions' => $data['instructions'],
+				'_leat_spend_rule_description' => $data['description'],
+				'_leat_spend_rule_fulfillment' => $data['fulfillment'],
+				'_leat_spend_rule_discount_value' => $data['discountValue'],
+				'_leat_spend_rule_discount_type' => $data['discountType'],
+				'_leat_spend_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
+				'_leat_spend_rule_selected_products' => $data['selectedProducts'],
+				'_leat_spend_rule_image' => $data['image'],
 			)
 		);
 
@@ -127,7 +127,7 @@ class SpendRules extends AbstractRoute {
 		}
 
 		if ( is_wp_error( $post_id ) ) {
-			return new \WP_Error( 'post_save_failed', __( 'Failed to save spend rule', 'piggy' ), array( 'status' => 500 ) );
+			return new \WP_Error( 'post_save_failed', __( 'Failed to save spend rule', 'leat' ), array( 'status' => 500 ) );
 		}
 
 		$response = $this->prepare_item_for_response( get_post( $post_id ), $request );
@@ -144,7 +144,7 @@ class SpendRules extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$prepared_args = array(
-			'post_type' => 'piggy_spend_rule',
+			'post_type' => 'leat_spend_rule',
 			'posts_per_page' => -1,
 			'post_status' => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array('publish'),
 		);

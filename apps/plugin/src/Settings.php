@@ -1,6 +1,6 @@
 <?php
 
-namespace PiggyWP;
+namespace Leat;
 
 /**
  * Contains all the default options and options from the database.
@@ -13,69 +13,69 @@ class Settings {
 		$settings = [];
 
 		$settings[] = array(
-			'title'    => __( 'Quick actions', 'piggy' ),
+			'title'    => __( 'Quick actions', 'leat' ),
 			'id'       => 'plugin_enable',
 			'default'  => 'on',
 			'type'     => 'switch',
-			'label'    => __( 'Enable plugin', 'piggy' ),
-			'tooltip'  => __( 'If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable Piggy without deactivating the entire plugin.', 'piggy' ),
+			'label'    => __( 'Enable plugin', 'leat' ),
+			'tooltip'  => __( 'If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable plugin functionality without deactivating the entire plugin.', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'plugin_reset',
 			'default'  => 'off',
 			'type'     => 'switch',
-			'label'    => __( 'Delete plugin settings upon deactivation', 'piggy' ),
-			'tooltip'  => __( 'This will delete all plugins settings upon deactivation. Use with caution!', 'piggy' ),
+			'label'    => __( 'Delete plugin settings upon deactivation', 'leat' ),
+			'tooltip'  => __( 'This will delete all plugins settings upon deactivation. Use with caution!', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'api_key',
 			'default'  => '',
 			'type'     => 'text',
-			'label'    => __( 'API Key', 'piggy' ),
-			'tooltip'  => __( 'Enter your API key here.', 'piggy' ),
+			'label'    => __( 'API Key', 'leat' ),
+			'tooltip'  => __( 'Enter your API key here.', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'shop_uuid',
 			'default'  => '',
 			'type'     => 'text',
-			'label'    => __( 'Shop ID', 'piggy' ),
-			'tooltip'  => __( 'Select the shop you want to connect to.', 'piggy' ),
+			'label'    => __( 'Shop ID', 'leat' ),
+			'tooltip'  => __( 'Select the shop you want to connect to.', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'credits_name',
 			'default'  => array(
-				'default' => __( 'Credits', 'piggy' ),
+				'default' => __( 'Credits', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Credits name', 'piggy' ),
-			'description' => __( 'The name of the credits in your shop.', 'piggy' ),
+			'label'    => __( 'Credits name', 'leat' ),
+			'description' => __( 'The name of the credits in your shop.', 'leat' ),
 		);
 
 		$settings[] = array(
 			'id'       => 'credits_spend_rule_progress',
 			'default'  => array(
-				'default' => __( 'You have {{ credits }} {{ credits_currency }} out of {{ credits_required }}', 'piggy' ),
+				'default' => __( 'You have {{ credits }} {{ credits_currency }} out of {{ credits_required }}', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Credits balance', 'piggy' ),
+			'label'    => __( 'Credits balance', 'leat' ),
 			'description' =>
-			sprintf( __( 'The format of the credits balance message that will be displayed to the user. The following placeholders can be used: %s', 'piggy' ), '{{ credits }}, {{ credits_currency }} and {{ credits_required }}' ),
+			sprintf( __( 'The format of the credits balance message that will be displayed to the user. The following placeholders can be used: %s', 'leat' ), '{{ credits }}, {{ credits_currency }} and {{ credits_required }}' ),
 		);
 		$settings[] = array(
 			'id'       => 'include_guests',
 			'default'  => 'off',
 			'type'     => 'switch',
-			'label'    => __( 'Include guests', 'piggy' ),
-			'description' => __( 'Include customers without an account (guests) in your loyalty program.', 'piggy' ),
+			'label'    => __( 'Include guests', 'leat' ),
+			'description' => __( 'Include customers without an account (guests) in your loyalty program.', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'reward_order_statuses',
 			'type'     => 'checkboxes',
-			'label'    => __( 'Reward order statuses', 'piggy' ),
-			'description' => __( 'Reward customers when the financial status of the order is one of the following', 'piggy' ),
+			'label'    => __( 'Reward order statuses', 'leat' ),
+			'description' => __( 'Reward customers when the financial status of the order is one of the following', 'leat' ),
 			'default'  => array('paid' => 'on'),
 			'options'  => array(
-				'paid'      => array('label' => __( 'Pending payment', 'piggy' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'piggy' )),
+				'paid'      => array('label' => __( 'Pending payment', 'leat' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat' )),
 				'pending'   => array('label' => __( 'On hold', 'cartpops' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'cartpops' )),
 				'processing'=> array('label' => __( 'Processing', 'cartpops' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'cartpops' )),
 				'completed' => array('label' => __( 'Completed', 'cartpops' ), 'tooltip' => __( 'Order fulfilled and complete.', 'cartpops' )),
@@ -84,11 +84,11 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'withdraw_order_statuses',
 			'type'     => 'checkboxes',
-			'label'    => __( 'Withdraw credits order statuses', 'piggy' ),
-			'description' => __( 'Withdraw credits from customers when the order financial status is one of the following', 'piggy'),
+			'label'    => __( 'Withdraw credits order statuses', 'leat' ),
+			'description' => __( 'Withdraw credits from customers when the order financial status is one of the following', 'leat'),
 			'default'  => array('paid' => 'on'),
 			'options'  => array(
-				'paid'      => array('label' => __( 'Pending payment', 'piggy' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'piggy' )),
+				'paid'      => array('label' => __( 'Pending payment', 'leat' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat' )),
 				'pending'   => array('label' => __( 'On hold', 'cartpops' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'cartpops' )),
 				'processing'=> array('label' => __( 'Processing', 'cartpops' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'cartpops' )),
 				'completed' => array('label' => __( 'Completed', 'cartpops' ), 'tooltip' => __( 'Order fulfilled and complete.', 'cartpops' )),
@@ -97,145 +97,145 @@ class Settings {
 		$settings[] = array(
 			'id'       => 'reward_order_parts',
 			'type'     => 'checkboxes',
-			'label'    => __( 'Reward order parts', 'piggy' ),
-			'description' => __( 'Reward customers for the following parts of an order', 'piggy' ),
+			'label'    => __( 'Reward order parts', 'leat' ),
+			'description' => __( 'Reward customers for the following parts of an order', 'leat' ),
 			'default'  => array('subtotal' => 'on'),
 			'options'  => array(
-				'subtotal' => array('label' => __( 'Subtotal', 'piggy' ), 'tooltip' => __( 'The total amount of the order before taxes and shipping.', 'piggy' )),
-				'shipping' => array('label' => __( 'Shipping', 'piggy' ), 'tooltip' => __( 'The cost of shipping the order.', 'piggy' )),
-				'tax'      => array('label' => __( 'Tax', 'piggy' ), 'tooltip' => __( 'The amount of tax on the order.', 'piggy' )),
-				'discount' => array('label' => __( 'Discount', 'piggy' ), 'tooltip' => __( 'The amount of discount on the order.', 'piggy' )),
+				'subtotal' => array('label' => __( 'Subtotal', 'leat' ), 'tooltip' => __( 'The total amount of the order before taxes and shipping.', 'leat' )),
+				'shipping' => array('label' => __( 'Shipping', 'leat' ), 'tooltip' => __( 'The cost of shipping the order.', 'leat' )),
+				'tax'      => array('label' => __( 'Tax', 'leat' ), 'tooltip' => __( 'The amount of tax on the order.', 'leat' )),
+				'discount' => array('label' => __( 'Discount', 'leat' ), 'tooltip' => __( 'The amount of discount on the order.', 'leat' )),
 			),
 		);
 
 		$settings[] = array(
 			'id'       => 'marketing_consent_subscription',
 			'type'     => 'select',
-			'label'    => __( 'Marketing consent subscription', 'piggy' ),
-			'description' => __( 'Opt-in users to receive marketing emails.', 'piggy' ),
+			'label'    => __( 'Marketing consent subscription', 'leat' ),
+			'description' => __( 'Opt-in users to receive marketing emails.', 'leat' ),
 			'default'  => 'off'
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_in',
 			'default'  => array(
-				'default' => __( 'You have {{ credits }} {{ credits_currency }}', 'piggy' ),
+				'default' => __( 'You have {{ credits }} {{ credits_currency }}', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Title (Logged in)', 'piggy' ),
+			'label'    => __( 'Title (Logged in)', 'leat' ),
 			/* translators: %s: a list of placeholders */
-			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged in. You can use the following placeholders: %s', 'piggy' ), '{{ credits }} {{ credits_currency }}' ),
+			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged in. You can use the following placeholders: %s', 'leat' ), '{{ credits }} {{ credits_currency }}' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_out',
 			'default'  => array(
-				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us. Get your first {{ credits }} {{ credits_currency }} when you sign up now', 'piggy' ),
+				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us. Get your first {{ credits }} {{ credits_currency }} when you sign up now', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Title (Logged out)', 'piggy' ),
+			'label'    => __( 'Title (Logged out)', 'leat' ),
 			/* translators: %s: a list of placeholders */
-			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged out. You can use the following placeholders: %s', 'piggy' ), '{{ credits }} {{ credits_currency }}' ),
+			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged out. You can use the following placeholders: %s', 'leat' ), '{{ credits }} {{ credits_currency }}' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_join_cta',
 			'default'  => array(
-				'default' => __( 'Join now', 'piggy' ),
+				'default' => __( 'Join now', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Join program button', 'piggy' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'piggy' ),
+			'label'    => __( 'Join program button', 'leat' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_title_join_program',
 			'default'  => array(
-				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us.', 'piggy' ),
+				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us.', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Title (Join program)', 'piggy' ),
+			'label'    => __( 'Title (Join program)', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_join_program_cta',
 			'default'  => array(
-				'default' => __( 'Join program', 'piggy' ),
+				'default' => __( 'Join program', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Join program button', 'piggy' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'piggy' ),
+			'label'    => __( 'Join program button', 'leat' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_login_cta',
 			'default'  => array(
-				'default' => __( 'Log in', 'piggy' ),
+				'default' => __( 'Log in', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Log in button', 'piggy' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to log in.', 'piggy' ),
+			'label'    => __( 'Log in button', 'leat' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to log in.', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_coupons',
 			'default'  => array(
-				'default' => __( 'Your coupons', 'piggy' ),
+				'default' => __( 'Your coupons', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Coupons navigation item', 'piggy' ),
+			'label'    => __( 'Coupons navigation item', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_coupons_empty_state',
 			'default'  => array(
-				'default' => __( 'You don\'t have any coupons yet.', 'piggy' ),
+				'default' => __( 'You don\'t have any coupons yet.', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Coupons empty state', 'piggy' ),
+			'label'    => __( 'Coupons empty state', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_coupons_loading_state',
 			'default'  => array(
-				'default' => __( 'Loading your coupons...', 'piggy' ),
+				'default' => __( 'Loading your coupons...', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Coupons loading state', 'piggy' ),
+			'label'    => __( 'Coupons loading state', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_earn',
 			'default'  => array(
-				'default' => __( 'Earn {{ credits_currency }}', 'piggy' ),
+				'default' => __( 'Earn {{ credits_currency }}', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Earn navigation item', 'piggy' ),
-			'description' => sprintf( __( 'The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s', 'piggy' ), '{{ credits_currency }}' ),
+			'label'    => __( 'Earn navigation item', 'leat' ),
+			'description' => sprintf( __( 'The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s', 'leat' ), '{{ credits_currency }}' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_rewards',
 			'default'  => array(
-				'default' => __( 'Rewards', 'piggy' ),
+				'default' => __( 'Rewards', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Rewards navigation item', 'piggy' ),
+			'label'    => __( 'Rewards navigation item', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_activity',
 			'default'  => array(
-				'default' => __( 'Your activity', 'piggy' ),
+				'default' => __( 'Your activity', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Activity navigation item', 'piggy' ),
+			'label'    => __( 'Activity navigation item', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_earn_cta',
 			'default'  => array(
-				'default' => __( 'Claim reward', 'piggy' ),
+				'default' => __( 'Claim reward', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Claim reward button', 'piggy' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to claim their reward.', 'piggy' ),
+			'label'    => __( 'Claim reward button', 'leat' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to claim their reward.', 'leat' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_spend_cta',
 			'default'  => array(
-				'default' => __( 'Unlock', 'piggy' ),
+				'default' => __( 'Unlock', 'leat' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Spend credits button', 'piggy' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to spend their credits.', 'piggy' ),
+			'label'    => __( 'Spend credits button', 'leat' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to spend their credits.', 'leat' ),
 		);
 
 		/**
@@ -243,7 +243,7 @@ class Settings {
 		 *
 		 * @since 1.0.0
 		 */
-		return apply_filters('piggy_default_settings', $settings, $this);
+		return apply_filters('leat_default_settings', $settings, $this);
 	}
 
 	/**
@@ -263,7 +263,7 @@ class Settings {
 	 * @return string
 	 */
 	public function get_settings_page_slug(): string {
-		return 'piggy--settings';
+		return 'leat--settings';
 	}
 
 	/**
@@ -309,7 +309,7 @@ class Settings {
 		$default = isset($setting['default']) ? $setting['default'] : null;
 		$id = $setting['id'];
 
-		$setting['value'] = get_option('piggy_' . $id, $default);
+		$setting['value'] = get_option('leat_' . $id, $default);
 
 		if ($setting['type'] === 'translatable_text' && is_string($setting['value'])) {
 			$setting['value'] = json_decode($setting['value'], true);
@@ -360,7 +360,7 @@ class Settings {
 				$value = json_encode($value);
 			}
 
-			update_option('piggy_' . $setting['id'], $value);
+			update_option('leat_' . $setting['id'], $value);
 		}
 
 		return true;

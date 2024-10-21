@@ -1,6 +1,6 @@
 <?php
 
-namespace PiggyWP;
+namespace Leat;
 
 class RedirectController {
     public function init() {
@@ -9,13 +9,13 @@ class RedirectController {
 
     public function maybe_redirect_to_onboarding() {
         // Remove the $screen variable as it's not reliable in this context
-        $api_key = get_option('piggy_api_key', null);
-        $first_activation = get_option('piggy_first_activation', false);
+        $api_key = get_option('leat_api_key', null);
+        $first_activation = get_option('leat_first_activation', false);
 
-        // Check if we're on the Piggy plugin page
-        if (isset($_GET['page']) && $_GET['page'] === 'piggy' &&
+        // Check if we're on the Leat plugin page
+        if (isset($_GET['page']) && $_GET['page'] === 'leat' &&
             ($first_activation === false || $api_key === null || $api_key === '')) {
-            wp_redirect(admin_url('admin.php?page=piggy#/onboarding'));
+            wp_redirect(admin_url('admin.php?page=leat#/onboarding'));
             exit;
         }
     }

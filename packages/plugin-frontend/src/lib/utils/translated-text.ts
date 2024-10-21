@@ -1,4 +1,4 @@
-import { replaceStrings } from "@piggy/lib";
+import { replaceStrings } from "@leat/lib";
 import { currentLanguage } from "$lib/modules/settings";
 
 export function getTranslatedText(tx: Record<string, string> | null): string {
@@ -31,7 +31,7 @@ export function getSpendRuleLabel(
 		if (discountType === "percentage") {
 			return `${discount}%`;
 		} else if (discountType === "fixed") {
-			const currency = window.piggyWcSettings.currency.symbol;
+			const currency = window.leatWcSettings.currency.symbol;
 
 			return `${currency}${discount}`;
 		}

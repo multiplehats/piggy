@@ -1,19 +1,19 @@
 <?php
-namespace PiggyWP\Api;
+namespace Leat\Api;
 
-use PiggyWP\Registry\Container;
-use PiggyWP\Api\Formatters;
-use PiggyWP\Api\RoutesController;
-use PiggyWP\Api\SchemaController;
-use PiggyWP\Api\Schemas\ExtendSchema;
-use PiggyWP\Settings;
+use Leat\Registry\Container;
+use Leat\Api\Formatters;
+use Leat\Api\RoutesController;
+use Leat\Api\SchemaController;
+use Leat\Api\Schemas\ExtendSchema;
+use Leat\Settings;
 
 /**
  * Api Main Class.
  */
 final class Api {
 	/**
-	 * Init and hook in Piggy API functionality.
+	 * Init and hook in Leat API functionality.
 	 */
 	public function init() {
 		add_action(
@@ -25,7 +25,7 @@ final class Api {
 	}
 
 	/**
-	 * Loads the DI container for Piggy API.
+	 * Loads the DI container for Leat API.
 	 *
 	 * @param boolean $reset Used to reset the container to a fresh instance. Note: this means all dependencies will be reconstructed.
 	 * @return mixed

@@ -1,12 +1,12 @@
 <?php
 
-namespace PiggyWP\Utils;
+namespace Leat\Utils;
 
 class Logger {
     private $logger;
     private $source;
 
-    public function __construct($source = 'piggy') {
+    public function __construct($source = 'leat') {
         $this->logger = wc_get_logger();
         $this->source = $source;
     }

@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Integrations;
+namespace Leat\Integrations;
 
 /**
  * Class used for tracking registered integrations with various Block types.
@@ -32,7 +32,7 @@ class IntegrationRegistry {
 		}
 
 		if ( empty( $this->registry_identifier ) ) {
-			_doing_it_wrong( __METHOD__, esc_html__( 'Integration registry requires an identifier.', 'piggy' ), '4.6.0' );
+			_doing_it_wrong( __METHOD__, esc_html__( 'Integration registry requires an identifier.', 'leat' ), '4.6.0' );
 			return false;
 		}
 
@@ -46,7 +46,7 @@ class IntegrationRegistry {
 		 * @param IntegrationRegistry $this Instance of the IntegrationRegistry class which exposes the IntegrationRegistry::register() method.
 		 * @since 1.0.0
 		 */
-		do_action( 'piggy_' . $this->registry_identifier . '_registration', $this );
+		do_action( 'leat_' . $this->registry_identifier . '_registration', $this );
 
 		foreach ( $this->get_all_registered() as $registered_integration ) {
 			$registered_integration->initialize();
@@ -65,7 +65,7 @@ class IntegrationRegistry {
 
 		if ( $this->is_registered( $name ) ) {
 			/* translators: %s: Integration name. */
-			_doing_it_wrong( __METHOD__, esc_html( sprintf( __( '"%s" is already registered.', 'piggy' ), $name ) ), '4.6.0' );
+			_doing_it_wrong( __METHOD__, esc_html( sprintf( __( '"%s" is already registered.', 'leat' ), $name ) ), '4.6.0' );
 			return false;
 		}
 
@@ -96,7 +96,7 @@ class IntegrationRegistry {
 
 		if ( ! $this->is_registered( $name ) ) {
 			/* translators: %s: Integration name. */
-			_doing_it_wrong( __METHOD__, esc_html( sprintf( __( 'Integration "%s" is not registered.', 'piggy' ), $name ) ), '4.6.0' );
+			_doing_it_wrong( __METHOD__, esc_html( sprintf( __( 'Integration "%s" is not registered.', 'leat' ), $name ) ), '4.6.0' );
 			return false;
 		}
 

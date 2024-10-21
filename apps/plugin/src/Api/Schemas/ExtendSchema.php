@@ -1,14 +1,14 @@
 <?php
-namespace PiggyWP\Api\Schemas;
+namespace Leat\Api\Schemas;
 
-use PiggyWP\Api\Formatters;
+use Leat\Api\Formatters;
 
 /**
- * Provides utility functions to extend Piggy API schemas.
+ * Provides utility functions to extend Leat API schemas.
  */
 final class ExtendSchema {
 	/**
-	 * List of Piggy API schema that is allowed to be extended by extensions.
+	 * List of Leat API schema that is allowed to be extended by extensions.
 	 *
 	 * @var string[]
 	 */
@@ -79,12 +79,12 @@ final class ExtendSchema {
 		);
 
 		if ( ! is_string( $args['namespace'] ) || empty( $args['namespace'] ) ) {
-			$this->throw_exception( 'You must provide a plugin namespace when extending a Piggy REST endpoint.' );
+			$this->throw_exception( 'You must provide a plugin namespace when extending a Leat REST endpoint.' );
 		}
 
 		if ( ! in_array( $args['endpoint'], $this->endpoints, true ) ) {
 			$this->throw_exception(
-				sprintf( 'You must provide a valid Piggy REST endpoint to extend, valid endpoints are: %1$s. You provided %2$s.', implode( ', ', $this->endpoints ), $args['endpoint'] )
+				sprintf( 'You must provide a valid Leat REST endpoint to extend, valid endpoints are: %1$s. You provided %2$s.', implode( ', ', $this->endpoints ), $args['endpoint'] )
 			);
 		}
 
@@ -131,7 +131,7 @@ final class ExtendSchema {
 		);
 
 		if ( ! is_string( $args['namespace'] ) || empty( $args['namespace'] ) ) {
-			throw new \Exception( 'You must provide a plugin namespace when extending a Piggy REST endpoint.' );
+			throw new \Exception( 'You must provide a plugin namespace when extending a Leat REST endpoint.' );
 		}
 
 		if ( ! is_callable( $args['callback'] ) ) {
@@ -179,7 +179,7 @@ final class ExtendSchema {
 	 */
 	public function get_update_callback( $namespace ) {
 		if ( ! is_string( $namespace ) ) {
-			throw new \Exception( 'You must provide a plugin namespace when extending a Piggy REST endpoint.' );
+			throw new \Exception( 'You must provide a plugin namespace when extending a Leat REST endpoint.' );
 		}
 
 		if ( ! array_key_exists( $namespace, $this->callback_methods ) ) {
@@ -316,7 +316,7 @@ final class ExtendSchema {
 		if ( ARRAY_N === $schema_type ) {
 			return [
 				/* translators: %s: extension namespace */
-				'description' => sprintf( __( 'Extension data registered by %s', 'piggy' ), $namespace ),
+				'description' => sprintf( __( 'Extension data registered by %s', 'leat' ), $namespace ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
 				'items'       => $schema,
@@ -324,7 +324,7 @@ final class ExtendSchema {
 		}
 		return [
 			/* translators: %s: extension namespace */
-			'description' => sprintf( __( 'Extension data registered by %s', 'piggy' ), $namespace ),
+			'description' => sprintf( __( 'Extension data registered by %s', 'leat' ), $namespace ),
 			'type'        => 'object',
 			'context'     => [ 'view', 'edit' ],
 			'properties'  => $schema,

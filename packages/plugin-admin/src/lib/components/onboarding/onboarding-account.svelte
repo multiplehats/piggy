@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { __ } from "@wordpress/i18n";
 	import { useNavigate } from "svelte-navigator";
-	import { outboundUrl } from "@piggy/lib";
+	import { outboundUrl } from "@leat/lib";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { OnboardingStepId, useOnboarding } from "$lib/stores/onboarding";
@@ -13,8 +13,8 @@
 		{
 			id: "connect-account-option",
 			variant: "primary",
-			title: __("Existing Piggy user?", "piggy"),
-			description: __("Connect your account to get started.", "piggy"),
+			title: __("Existing Leat user?", "leat"),
+			description: __("Connect your account to get started.", "leat"),
 			cta: "Connect account",
 			action: () => {
 				const { href } = onboarding.completeAndNavigate(
@@ -27,11 +27,11 @@
 		{
 			id: "create-account-option",
 			variant: "secondary",
-			title: __("New to Piggy?", "piggy"),
-			description: __("Create a new account to get started.", "piggy"),
+			title: __("New to Leat?", "leat"),
+			description: __("Create a new account to get started.", "leat"),
 			cta: "Create an account",
 			link: outboundUrl({
-				url: "https://business.piggy.eu/sign-up",
+				url: "https://business.leat.eu/sign-up",
 				source: "woocommerce",
 				medium: "onboarding",
 				campaign: "wp-plugin",

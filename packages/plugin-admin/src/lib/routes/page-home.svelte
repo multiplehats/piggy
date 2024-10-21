@@ -15,7 +15,7 @@
 		<Alert
 			type="success"
 			title="Onboarding completed"
-			description="You have successfully completed the onboarding process. You can now start using Piggy."
+			description="You have successfully completed the onboarding process. You can now start using Leat."
 		/>
 	{/if}
 </div>

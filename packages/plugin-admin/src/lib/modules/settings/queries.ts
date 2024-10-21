@@ -1,5 +1,5 @@
 import type { DefaultError, QueryKey, UndefinedInitialDataOptions } from "@tanstack/svelte-query";
-import type { PluginOptionsAdminKeys } from "@piggy/types";
+import type { PluginOptionsAdminKeys } from "@leat/types";
 import type { GetSettingByIdResponse, GetSettingsParams, GetSettingsResponse } from "./types";
 import { SettingsAdminService } from ".";
 import { QueryKeys } from "$lib/utils/query-keys";

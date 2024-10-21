@@ -52,7 +52,7 @@ get_version() {
 # Set version
 VERSION=$(get_version)
 
-status "💃 Time to build a Piggy ZIP 🕺"
+status "💃 Time to build the Leat WordPress plugin ZIP 🕺"
 
 if [ -z "$NO_CHECKS" ]; then
 	# Make sure there are no changes in the working tree. Release builds should be
@@ -72,11 +72,11 @@ if [ -z "$NO_CHECKS" ]; then
 	fi
 fi
 
-# Add version to composer.json
-# perl -i -pe "s/\"type\":*.+/\"type\":\"wordpress-plugin\",\n\t\"version\": \"${VERSION}\",/" composer.json
-
 # Add version to plugin header
-perl -i -pe "s/Version:.*$/Version: ${VERSION}/" piggy.php
+perl -i -pe "s/Version:.*$/Version: ${VERSION}/" leat.php
+
+# Update the LEAT_VERSION constant
+perl -i -pe "s/LEAT_VERSION,.*$/LEAT_VERSION, '${VERSION}' );/" leat.php
 
 # Run the build.
 if [ $TYPE = 'DEV' ]; then
@@ -85,21 +85,21 @@ if [ $TYPE = 'DEV' ]; then
 	composer install
 	PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true pnpm install --frozen-lockfile
 	status "==========================="
-	status "Generating development build... 👷‍♀️"
+	status "Generating development build... (v${VERSION}) 👷‍♀️"
 	status "==========================="
 	pnpm build
 	status "==========================="
 elif [ $TYPE = 'ZIP_ONLY' ]; then
 	composer install --no-dev
 	composer dump-autoload
-	status "Skipping build commands - using current built assets on disk for built archive...👷‍♀️"
+	status "Skipping build commands - using current built assets on disk for built archive...(v${VERSION}) 👷‍♀️"
 	status "==========================="
 else
 	status "Installing dependencies... 📦"
 	composer install --no-dev
 	PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true pnpm install --frozen-lockfile
 	status "==========================="
-	status "Generating production build... 👷‍♀️"
+	status "Generating production build... (v${VERSION}) 👷‍♀️"
 	status "==========================="
 	pnpm build
 	status "==========================="
@@ -112,15 +112,15 @@ mkdir zip-file
 mkdir zip-file/build
 sh "$CURR_DIR/bin/copy-plugin-files.sh" "$CURR_DIR" "$CURR_DIR/zip-file"
 cd "$(pwd)/zip-file"
-zip -r ../piggy.zip ./
+zip -r ../leat.zip ./
 cd ..
 rm -r zip-file
 
 # cleanup composer.json
 git checkout -- composer.json
-git checkout -- piggy.php
+git checkout -- leat.php
 
 # regenerate classmap for development use
 composer dump-autoload
 
-success "Done. You've built Piggy! 🎉"
+success "Done. You've built Leat (v${VERSION}) 🎉"

@@ -41,7 +41,7 @@
 			<p>
 				{__(
 					"Create and manage spend rules to allow customers to spend their credits.",
-					"piggy"
+					"leat"
 				)}
 			</p>
 		</div>
@@ -60,11 +60,11 @@
 					<Button
 						size="sm"
 						variant="secondary"
-						href="https://business.piggy.eu/loyalty"
+						href="https://business.leat.eu/loyalty"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						{__("View in Piggy")}
+						{__("View in Leat")}
 					</Button>
 
 					<Button
@@ -82,9 +82,9 @@
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
-							<Table.Head>{__("Title", "piggy")}</Table.Head>
-							<Table.Head>{__("Created at", "piggy")}</Table.Head>
-							<Table.Head class="text-right">{__("Status", "piggy")}</Table.Head>
+							<Table.Head>{__("Title", "leat")}</Table.Head>
+							<Table.Head>{__("Created at", "leat")}</Table.Head>
+							<Table.Head class="text-right">{__("Status", "leat")}</Table.Head>
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>

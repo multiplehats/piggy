@@ -1,4 +1,4 @@
-import baseConfig from "@piggy/tailwind-config";
+import baseConfig from "@leat/tailwind-config";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

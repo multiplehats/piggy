@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SwitchValue } from "@piggy/types/plugin/settings/adminTypes";
+	import type { SwitchValue } from "@leat/types/plugin/settings/adminTypes";
 	import SettingsFieldErrors from "./settings-field-errors.svelte";
 	import {
 		SettingsLabel,

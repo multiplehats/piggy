@@ -1,8 +1,8 @@
 <?php
 
-namespace PiggyWP\Api\Schemas\V1;
+namespace Leat\Api\Schemas\V1;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
+use Leat\Api\Schemas\V1\AbstractSchema;
 
 /**
  * Contact schema class.

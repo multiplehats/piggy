@@ -1,11 +1,11 @@
 <?php
-namespace PiggyWP;
+namespace Leat;
 
-use PiggyWP\Api\Connection;
+use Leat\Api\Connection;
 
 /**
  * Installer class.
- * Handles installation of Piggy plugin dependencies.
+ * Handles installation of Leat plugin dependencies.
  *
  * @internal
  */
@@ -15,6 +15,7 @@ class Installer {
 	 */
 	public function init() {
 		add_action( 'admin_init', array( $this, 'maybe_create_tables' ) );
+		add_action( 'admin_init', array( $this, 'maybe_migrate_piggy_to_leat' ) );
 		// add_action( 'admin_init', array( $this, 'maybe_redirect_to_onboarding' ) );
 	}
 
@@ -25,7 +26,7 @@ class Installer {
 		global $wpdb;
 
 		$schema_version    = 1;
-		$db_schema_version = (int) get_option( 'piggy_db_schema_version', 0 );
+		$db_schema_version = (int) get_option( 'leat_db_schema_version', 0 );
 
 		if ( $db_schema_version >= $schema_version && 0 !== $db_schema_version ) {
 			return;
@@ -35,7 +36,7 @@ class Installer {
 		$collate     = $wpdb->has_cap( 'collation' ) ? $wpdb->get_charset_collate() : '';
 
 		$tables = [
-			"CREATE TABLE {$wpdb->prefix}piggy_reward_logs (
+			"CREATE TABLE {$wpdb->prefix}leat_reward_logs (
 				`id` mediumint(9) NOT NULL AUTO_INCREMENT,
 				`wp_user_id` bigint(20) NOT NULL,
 				`earn_rule_id` bigint(20) NOT NULL,
@@ -60,7 +61,7 @@ class Installer {
 
 		// Update succeeded. This is only updated when successful and validated.
 		// $schema_version should be incremented when changes to schema are made within this method.
-		update_option( 'piggy_db_schema_version', $schema_version );
+		update_option( 'leat_db_schema_version', $schema_version );
 	}
 
 	/**
@@ -111,7 +112,7 @@ class Installer {
 				echo '<div class="error"><p>';
 				printf(
 					/* translators: %1$s table name, %2$s database user, %3$s database name. */
-					esc_html__( 'Piggy %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?', 'woo-gutenberg-products-block' ),
+					esc_html__( 'Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?', 'woo-gutenberg-products-block' ),
 					'<code>' . esc_html( $table_name ) . '</code>',
 					'<code>' . esc_html( DB_USER ) . '</code>',
 					'<code>' . esc_html( DB_NAME ) . '</code>'
@@ -122,12 +123,87 @@ class Installer {
 	}
 
 	public function maybe_redirect_to_onboarding() {
-		$api_key = get_option('piggy_api_key', null);
+		$api_key = get_option('leat_api_key', null);
 
-		if ( get_option( 'piggy_first_activation', false ) === false && $api_key !== null && $api_key !== '' ) {
-			update_option( 'piggy_first_activation', true );
-			wp_redirect( admin_url( 'admin.php?page=piggy#/onboarding' ) );
+		if ( get_option( 'leat_first_activation', false ) === false && $api_key !== null && $api_key !== '' ) {
+			update_option( 'leat_first_activation', true );
+			wp_redirect( admin_url( 'admin.php?page=leat#/onboarding' ) );
 			exit;
 		}
 	}
+
+	/**
+     * Migrate data from piggy_ prefix to leat_ prefix during installation.
+     */
+    public function maybe_migrate_piggy_to_leat() {
+        if ( get_option( 'leat_migration_complete', false ) ) {
+            return;
+        }
+
+        global $wpdb;
+
+        // Migrate options
+        $piggy_options = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'piggy_%'");
+        foreach ($piggy_options as $option) {
+            $new_option_name = str_replace('piggy_', 'leat_', $option->option_name);
+            update_option($new_option_name, $option->option_value);
+            delete_option($option->option_name);
+        }
+
+        // Rename database tables
+        $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}piggy_%'");
+        foreach ($tables as $table) {
+            $old_table_name = reset($table);
+            $new_table_name = str_replace('piggy_', 'leat_', $old_table_name);
+
+            // Check if the new table already exists
+            if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $new_table_name)) != $new_table_name) {
+                // If it doesn't exist, rename the old table
+                $result = $wpdb->query("RENAME TABLE {$old_table_name} TO {$new_table_name}");
+                if ($result === false) {
+                    // Log the error if the rename fails
+                    error_log("Failed to rename table {$old_table_name} to {$new_table_name}");
+                }
+            } else {
+                // If the new table already exists, we might want to merge data or handle this case
+                error_log("Table {$new_table_name} already exists. Skipping rename operation.");
+            }
+        }
+
+        // Migrate custom post types
+        $this->migrate_custom_post_type('piggy_earn_rule', 'leat_earn_rule');
+        $this->migrate_custom_post_type('piggy_spend_rule', 'leat_spend_rule');
+
+        // Set flag to indicate migration is complete
+        update_option('leat_migration_complete', true);
+
+		// maybe deactivate piggy plugin
+		deactivate_plugins('piggy/piggy.php');
+    }
+
+    private function migrate_custom_post_type($old_post_type, $new_post_type) {
+        $posts = get_posts(array(
+            'post_type' => $old_post_type,
+            'numberposts' => -1,
+            'post_status' => 'any'
+        ));
+
+        foreach ($posts as $post) {
+            // Update post type
+            $post->post_type = $new_post_type;
+            wp_update_post($post);
+
+            // Update post meta
+            $post_meta = get_post_meta($post->ID);
+            foreach ($post_meta as $meta_key => $meta_values) {
+                if (strpos($meta_key, '_piggy_') === 0) {
+                    $new_meta_key = str_replace('_piggy_', '_leat_', $meta_key);
+                    foreach ($meta_values as $meta_value) {
+                        add_post_meta($post->ID, $new_meta_key, $meta_value);
+                    }
+                    delete_post_meta($post->ID, $meta_key);
+                }
+            }
+        }
+    }
 }

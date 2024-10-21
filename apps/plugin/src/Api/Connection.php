@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Api;
+namespace Leat\Api;
 
 use Piggy\Api\RegisterClient;
 use Piggy\Api\ApiClient;
@@ -9,12 +9,12 @@ use Piggy\Api\Models\CustomAttributes\CustomAttribute;
 use Piggy\Api\Models\Shops\Shop;
 use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
 use Piggy\Api\Models\Loyalty\Receptions\RewardReception;
-use PiggyWP\Domain\Services\SpendRules;
-use PiggyWP\Utils\Logger;
+use Leat\Domain\Services\SpendRules;
+use Leat\Utils\Logger;
 
 class Connection {
 	/**
-	 * Piggy Register Client instance.
+	 * Register Client instance.
 	 *
 	 * @var RegisterClient
 	 */
@@ -51,12 +51,16 @@ class Connection {
 	}
 
 	/**
-	 * Get the Piggy API key.
+	 * Get the Leat API key.
 	 *
-	 * @return string|null The Piggy API key.
+	 * @return string|null The Leat API key.
 	 */
 	public function get_api_key() {
-		$api_key = get_option('piggy_api_key', null);
+		$api_key = get_option('leat_api_key', null);
+
+		if(!$api_key) {
+			$api_key = get_option('piggy_api_key', null);
+		}
 
 		return $api_key;
 	}
@@ -68,7 +72,7 @@ class Connection {
 	}
 
 	/**
-	 * Get the Piggy Register Client instance.
+	 * Get the  Register Client instance.
 	 *
 	 * @return null|true
 	 */
@@ -322,7 +326,7 @@ class Connection {
 		$client = $this->init_client();
 		if (!$client) return false;
 
-		$shop_uuid = get_option('piggy_shop_uuid', null);
+		$shop_uuid = get_option('leat_shop_uuid', null);
 		if (!$shop_uuid) return false;
 
 		$params = [
@@ -360,7 +364,7 @@ class Connection {
 	 */
 	public function get_contact_uuid_by_wp_id($wp_id, $create = false)
 	{
-		$uuid = get_user_meta( $wp_id, 'piggy_uuid', true);
+		$uuid = get_user_meta( $wp_id, 'leat_uuid', true);
 
 		if( ! $uuid && $create ) {
 			$contact = $this->create_contact( get_the_author_meta( 'email', $wp_id ) );
@@ -375,7 +379,7 @@ class Connection {
 	}
 
 
-		/**
+	/**
 	 * Get WooCommerce user data.
 	 *
 	 * @param int $user_id
@@ -492,7 +496,7 @@ class Connection {
 
 
 	/**
-	 * Get user attributes for Piggy.
+	 * Get user attributes for Leat.
 	 *
 	 * @param int $user_id
 	 * @return array
@@ -506,7 +510,7 @@ class Connection {
 			'lastname' => $user->last_name,
 			'wp_user_role' => implode(', ', $user->roles),
 			'wp_account_age_days' => floor((time() - strtotime($user->user_registered)) / (60 * 60 * 24)),
-			'wp_last_login' => get_user_meta($user_id, 'piggy_last_login', true) ?: '',
+			'wp_last_login' => get_user_meta($user_id, 'leat_last_login', true) ?: '',
 			'wp_post_count' => count_user_posts($user_id),
 		];
 
@@ -544,7 +548,7 @@ class Connection {
 	}
 
 	/**
-	 * Ensure custom attributes exist in Piggy.
+	 * Ensure custom attributes exist in Leat.
 	 */
 	public function ensure_custom_attributes_exist()
 	{
@@ -617,7 +621,7 @@ class Connection {
 	}
 
 	/**
-	 * Set the user meta for the Piggy UUID.
+	 * Set the user meta for the Leat UUID.
 	 *
 	 * @param string $uuid
 	 * @param int $wp_id
@@ -625,24 +629,24 @@ class Connection {
 	 */
 	public function update_user_meta_uuid($uuid, $wp_user_id)
 	{
-		return update_user_meta($wp_user_id, 'piggy_uuid', $uuid);
+		return update_user_meta($wp_user_id, 'leat_uuid', $uuid);
 	}
 
 	/**
-	 * Get all user metadata regarding piggy_
+	 * Get all user metadata regarding leat_
 	 *
 	 * @param int $wp_user_id
 	 * @return array
 	 */
-	public function get_user_piggy_metadata($wp_user_id)
+	public function get_user_leat_metadata($wp_user_id)
 	{
 		$meta_data = get_user_meta($wp_user_id);
 
-		$piggy_meta_data = array_filter($meta_data, function($key) {
-			return strpos($key, 'piggy_') === 0;
+		$leat_meta_data = array_filter($meta_data, function($key) {
+			return strpos($key, 'leat_') === 0;
 		}, ARRAY_FILTER_USE_KEY);
 
-		return $piggy_meta_data;
+		return $leat_meta_data;
 	}
 
 	/**
@@ -653,7 +657,7 @@ class Connection {
 	 */
 	public function get_user_reward_logs($wp_user_id) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'piggy_reward_logs';
+		$table_name = $wpdb->prefix . 'leat_reward_logs';
 
 		$query = $wpdb->prepare("SELECT * FROM $table_name WHERE wp_user_id = %d", $wp_user_id);
 		$reward_logs = $wpdb->get_results($query, ARRAY_A);
@@ -671,7 +675,7 @@ class Connection {
 	 */
 	public function add_reward_log($wp_user_id, $earn_rule_id, $credits) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'piggy_reward_logs';
+		$table_name = $wpdb->prefix . 'leat_reward_logs';
 
 		$reward_log = [
 			'wp_user_id' => $wp_user_id,
@@ -694,14 +698,14 @@ class Connection {
 
 		$rewards = $this->get_rewards();
 		if (!$rewards) {
-			$this->logger->error("Failed to retrieve rewards from Piggy");
+			$this->logger->error("Failed to retrieve rewards from Leat");
 			return false;
 		}
 
 		$this->logger->info("Starting reward sync. Total rewards retrieved: " . count($rewards));
 
 		$prepared_args = array(
-			'post_type' => 'piggy_spend_rule',
+			'post_type' => 'leat_spend_rule',
 			'posts_per_page' => -1,
 			'post_status' => array('publish', 'draft', 'pending'),
 		);
@@ -709,10 +713,10 @@ class Connection {
 		$current_spend_rules = get_posts($prepared_args);
 		$this->logger->info("Current spend rules in WordPress: " . count($current_spend_rules));
 
-		// Collect existing Piggy UUIDs from CPT
-		$existing_uuids = array_column($current_spend_rules, '_piggy_reward_uuid', 'ID');
+		// Collect existing Leat UUIDs from CPT
+		$existing_uuids = array_column($current_spend_rules, '_leat_reward_uuid', 'ID');
 
-		// Sync Piggy rewards with CPT (add/update)
+		// Sync Leat rewards with CPT (add/update)
 		$processed_uuids = [];
 		$updated_count = 0;
 		$created_count = 0;
@@ -751,10 +755,10 @@ class Connection {
 			$processed_uuids[] = $reward['uuid'];
 		}
 
-		// Delete spend rules that no longer exist in Piggy
+		// Delete spend rules that no longer exist in Leat
 		$uuids_to_delete = array_diff($existing_uuids, $processed_uuids);
 		$delete_count = count($uuids_to_delete);
-		$this->logger->info("Deleting " . $delete_count . " spend rules that no longer exist in Piggy");
+		$this->logger->info("Deleting " . $delete_count . " spend rules that no longer exist in Leat");
 		$this->spend_rules_service->delete_spend_rules_by_uuids($uuids_to_delete);
 
 		// Handle duplicated UUIDs
@@ -774,7 +778,7 @@ class Connection {
 		$client = $this->init_client();
 		if (!$client) return false;
 
-		$shop_uuid = get_option('piggy_shop_uuid', null);
+		$shop_uuid = get_option('leat_shop_uuid', null);
 
 		if (!$shop_uuid) {
 			$this->logger->error("Shop UUID not set. Unable to create Reward Reception.");

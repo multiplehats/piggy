@@ -33,7 +33,7 @@
 			<Alert
 				type="info"
 				title="You're all set!"
-				description="You have successfully completed the onboarding process. You can now start using Piggy."
+				description="You have successfully completed the onboarding process. You can now start using Leat."
 			/>
 		{/if}
 

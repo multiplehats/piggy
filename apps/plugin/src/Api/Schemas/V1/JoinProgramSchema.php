@@ -1,8 +1,8 @@
 <?php
 
-namespace PiggyWP\Api\Schemas\V1;
+namespace Leat\Api\Schemas\V1;
 
-use PiggyWP\Api\Schemas\V1\AbstractSchema;
+use Leat\Api\Schemas\V1\AbstractSchema;
 
 /**
  * JoinProgram schema class.
@@ -32,7 +32,7 @@ class JoinProgramSchema extends AbstractSchema {
     public function get_properties() {
         return [
             'user_id' => [
-                'description' => __('The ID of the user joining the program', 'piggy'),
+                'description' => __('The ID of the user joining the program', 'leat'),
                 'type'        => 'integer',
                 'required'    => true,
             ],

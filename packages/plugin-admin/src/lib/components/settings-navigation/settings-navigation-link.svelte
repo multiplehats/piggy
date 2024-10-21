@@ -9,8 +9,10 @@
 	export let type: LinkTypes = "link";
 
 	$: classes = cn(
-		"flex items-center overflow-hidden rounded-sm px-3 py-2 text-sm font-medium",
-		active ? "text-secondary-fpregrpimd bg-secondary" : "text-gray-700"
+		"flex items-center overflow-hidden  rounded-full px-3 py-2 text-sm font-medium hover:bg-white/15",
+		active
+			? "bg-white/20 text-white hover:text-white"
+			: "bg-transparent text-white hover:bg-white/20 hover:text-white"
 	);
 </script>
 
@@ -23,10 +25,3 @@
 		<slot />
 	</a>
 {/if}
-
-<style>
-	.active-link {
-		background-color: #f7fafc;
-		border-color: #cbd5e0;
-	}
-</style>

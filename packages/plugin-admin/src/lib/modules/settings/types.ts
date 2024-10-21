@@ -4,11 +4,8 @@ import type {
 	PluginOptionsAdmin,
 	PluginOptionsAdminKeys,
 	PluginSpendRuleItemValues,
-} from "@piggy/types";
-import type {
-	EarnRuleValueItem,
-	SpendRuleValueItem,
-} from "@piggy/types/plugin/settings/adminTypes";
+} from "@leat/types";
+import type { EarnRuleValueItem, SpendRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
 import type { settingsState } from "$lib/stores/settings";
 
 export type SaveSettingsParams = typeof settingsState;

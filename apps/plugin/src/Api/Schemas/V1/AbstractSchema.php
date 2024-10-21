@@ -1,9 +1,9 @@
 <?php
-namespace PiggyWP\Api\Schemas\V1;
+namespace Leat\Api\Schemas\V1;
 
-use PiggyWP\Api\SchemaController;
-use PiggyWP\Api\Schemas\ExtendSchema;
-use PiggyWP\Settings;
+use Leat\Api\SchemaController;
+use Leat\Api\Schemas\ExtendSchema;
+use Leat\Settings;
 
 /**
  * AbstractSchema class.
@@ -328,43 +328,43 @@ abstract class AbstractSchema {
 	protected function get_store_currency_properties() {
 		return [
 			'currency_code'               => [
-				'description' => __( 'Currency code (in ISO format) for returned prices.', 'piggy' ),
+				'description' => __( 'Currency code (in ISO format) for returned prices.', 'leat' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
 			'currency_symbol'             => [
-				'description' => __( 'Currency symbol for the currency which can be used to format returned prices.', 'piggy' ),
+				'description' => __( 'Currency symbol for the currency which can be used to format returned prices.', 'leat' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
 			'currency_minor_unit'         => [
-				'description' => __( 'Currency minor unit (number of digits after the decimal separator) for returned prices.', 'piggy' ),
+				'description' => __( 'Currency minor unit (number of digits after the decimal separator) for returned prices.', 'leat' ),
 				'type'        => 'integer',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 			],
 			'currency_decimal_separator'  => array(
-				'description' => __( 'Decimal separator for the currency which can be used to format returned prices.', 'piggy' ),
+				'description' => __( 'Decimal separator for the currency which can be used to format returned prices.', 'leat' ),
 				'type'        => 'string',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 			),
 			'currency_thousand_separator' => array(
-				'description' => __( 'Thousand separator for the currency which can be used to format returned prices.', 'piggy' ),
+				'description' => __( 'Thousand separator for the currency which can be used to format returned prices.', 'leat' ),
 				'type'        => 'string',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 			),
 			'currency_prefix'             => array(
-				'description' => __( 'Price prefix for the currency which can be used to format returned prices.', 'piggy' ),
+				'description' => __( 'Price prefix for the currency which can be used to format returned prices.', 'leat' ),
 				'type'        => 'string',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 			),
 			'currency_suffix'             => array(
-				'description' => __( 'Price prefix for the currency which can be used to format returned prices.', 'piggy' ),
+				'description' => __( 'Price prefix for the currency which can be used to format returned prices.', 'leat' ),
 				'type'        => 'string',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,

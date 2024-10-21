@@ -23,21 +23,21 @@
 	export let onChange: $$Props["onChange"] = undefined;
 
 	const monthOptions = [
-		__("January", "piggy"),
-		__("February", "piggy"),
-		__("March", "piggy"),
-		__("April", "piggy"),
-		__("May", "piggy"),
-		__("June", "piggy"),
-		__("July", "piggy"),
-		__("August", "piggy"),
-		__("September", "piggy"),
-		__("October", "piggy"),
-		__("November", "piggy"),
-		__("December", "piggy"),
+		__("January", "leat"),
+		__("February", "leat"),
+		__("March", "leat"),
+		__("April", "leat"),
+		__("May", "leat"),
+		__("June", "leat"),
+		__("July", "leat"),
+		__("August", "leat"),
+		__("September", "leat"),
+		__("October", "leat"),
+		__("November", "leat"),
+		__("December", "leat"),
 	].map((month, i) => ({ value: i + 1, label: month }));
 
-	const monthFmt = new DateFormatter(window.piggyMiddlewareConfig.siteLanguage, {
+	const monthFmt = new DateFormatter(window.leatMiddlewareConfig.siteLanguage, {
 		month: "short",
 	});
 
@@ -46,7 +46,7 @@
 		value: new Date().getFullYear() - i,
 	}));
 
-	const timeFormatter = new Intl.DateTimeFormat(window.piggyMiddlewareConfig.siteLanguage, {
+	const timeFormatter = new Intl.DateTimeFormat(window.leatMiddlewareConfig.siteLanguage, {
 		hour: "numeric",
 		minute: "numeric",
 		hour12: false,

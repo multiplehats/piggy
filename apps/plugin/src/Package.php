@@ -1,11 +1,11 @@
 <?php
 
-namespace PiggyWP;
+namespace Leat;
 
-use PiggyWP\Domain\Package as NewPackage;
-use PiggyWP\Domain\Bootstrap;
-use PiggyWP\Registry\Container;
-use PiggyWP\Domain\Services\FeatureGating;
+use Leat\Domain\Package as NewPackage;
+use Leat\Domain\Bootstrap;
+use Leat\Registry\Container;
+use Leat\Domain\Services\FeatureGating;
 
 /**
  * Main package class.
@@ -71,7 +71,7 @@ class Package {
 	}
 
 	/**
-	 * Loads the dependency injection container for woocommerce blocks.
+	 * Loads the dependency injection container for Leat.
 	 *
 	 * @param boolean $reset Used to reset the container to a fresh instance.
 	 *                       Note: this means all dependencies will be
@@ -86,7 +86,7 @@ class Package {
 				NewPackage::class,
 				function ( $container ) {
 					// TODO: Need to construct this from the plugin file.
-					$version = PIGGY_VERSION;
+					$version = LEAT_VERSION;
 					return new NewPackage(
 						$version,
 						dirname( __DIR__ )

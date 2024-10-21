@@ -1,8 +1,8 @@
 <?php
 
-namespace PiggyWP\Domain\Services;
+namespace Leat\Domain\Services;
 
-use PiggyWP\Utils\Logger;
+use Leat\Utils\Logger;
 
 /**
  * Class SpendRules
@@ -28,14 +28,14 @@ class SpendRules
 	public function get_spend_rules_by_type($type, $post_status = ['publish'])
 	{
 		$args = [
-			'post_type' => 'piggy_spend_rule',
+			'post_type' => 'leat_spend_rule',
 			'post_status' => $post_status,
 		];
 
 		if($type) {
 			$args['meta_query'] = [
 				[
-					'key' => '_piggy_spend_rule_type',
+					'key' => '_leat_spend_rule_type',
 					'value' => $type,
 				],
 			];
@@ -77,7 +77,7 @@ class SpendRules
 	 */
 	public function get_formatted_post($post)
 	{
-		$type = $this->get_post_meta_data($post->ID, '_piggy_spend_rule_type', null);
+		$type = $this->get_post_meta_data($post->ID, '_leat_spend_rule_type', null);
 
 		$spend_rule = [
 			'id' => (int) $post->ID,
@@ -85,159 +85,159 @@ class SpendRules
 			'updatedAt' => $post->post_modified,
 			'status' => [
 				'id' => 'status',
-				'label' => __('Status', 'piggy'),
+				'label' => __('Status', 'leat'),
 				'default' => 'publish',
 				'value' => $post->post_status,
 				'options' => [
-					'publish' => ['label' => __('Active', 'piggy')],
-					'draft' => ['label' => __('Inactive', 'piggy')],
+					'publish' => ['label' => __('Active', 'leat')],
+					'draft' => ['label' => __('Inactive', 'leat')],
 				],
 				'type' => 'select',
-				'description' => __('Set the status of the rule. Inactive spend rules will not be displayed to users.', 'piggy'),
+				'description' => __('Set the status of the rule. Inactive spend rules will not be displayed to users.', 'leat'),
 			],
 			'title' => [
 				'id' => 'title',
-				'label' => __('Title', 'piggy'),
+				'label' => __('Title', 'leat'),
 				'default' => null,
 				'value' => $post->post_title,
 				'type' => 'text',
-				'description' => __( 'This is not displayed to the user and is only used for internal reference. You can manage this in the Piggy dashboard.', 'piggy' ),
+				'description' => __( 'This is not displayed to the user and is only used for internal reference. You can manage this in the Leat dashboard.', 'leat' ),
 			],
 			'type' => [
 				'id' => 'type',
-				'label' => __('Type', 'piggy'),
+				'label' => __('Type', 'leat'),
 				'default' => 'FREE_PRODUCT',
 				'value' => $type,
 				'type' => 'select',
 				'options' => [
-					'FREE_PRODUCT' => ['label' => __('Free / Discounted Product', 'piggy')],
-					'ORDER_DISCOUNT' => ['label' => __('Order Discount', 'piggy')],
-					'FREE_SHIPPING' => ['label' => __('Free Shipping', 'piggy')],
+					'FREE_PRODUCT' => ['label' => __('Free / Discounted Product', 'leat')],
+					'ORDER_DISCOUNT' => ['label' => __('Order Discount', 'leat')],
+					'FREE_SHIPPING' => ['label' => __('Free Shipping', 'leat')],
 				],
-				'description' => __('The type of spend rule.', 'piggy'),
+				'description' => __('The type of spend rule.', 'leat'),
 			],
 			'startsAt' => [
 				'id' => 'starts_at',
-				'label' => __('Starts at', 'piggy'),
+				'label' => __('Starts at', 'leat'),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_starts_at', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_starts_at', null),
 				'type' => 'date',
-				'description' => __('Optional date for when the rule should start.', 'piggy'),
+				'description' => __('Optional date for when the rule should start.', 'leat'),
 			],
 			'expiresAt' => [
 				'id' => 'expires_at',
-				'label' => __('Expires at', 'piggy'),
+				'label' => __('Expires at', 'leat'),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_expires_at', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_expires_at', null),
 				'type' => 'date',
-				'description' => __('Optional date for when the rule should expire.', 'piggy'),
+				'description' => __('Optional date for when the rule should expire.', 'leat'),
 			],
-			'completed' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_completed', null),
+			'completed' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_completed', null),
 			'creditCost' => [
 				'id' => 'credit_cost',
-				'label' => __('Credit cost', 'piggy'),
+				'label' => __('Credit cost', 'leat'),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_credit_cost', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_credit_cost', null),
 				'type' => 'number',
-				'description' => __('The amount of credits it will cost to redeem the reward. This is managed in the Piggy dashboard.', 'piggy'),
+				'description' => __('The amount of credits it will cost to redeem the reward. This is managed in the Leat dashboard.', 'leat'),
 			],
 			'selectedReward' => [
 				'id' => 'selected_reward',
-				'label' => __('Selected reward', 'piggy'),
+				'label' => __('Selected reward', 'leat'),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_selected_reward', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_selected_reward', null),
 				'type' => 'text',
-				'description' => __('The reward that is selected for the spend rule.', 'piggy'),
+				'description' => __('The reward that is selected for the spend rule.', 'leat'),
 			],
 			'image' => [
 				'id' => 'image',
-				'label' => __('Image', 'piggy'),
+				'label' => __('Image', 'leat'),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_image', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_image', null),
 				'type' => 'text',
-				'description' => __('The image that is displayed for the spend rule.', 'piggy'),
+				'description' => __('The image that is displayed for the spend rule.', 'leat'),
 			],
 			'description' => [
 				'id' => 'description',
-				'label' => __('Description', 'piggy'),
+				'label' => __('Description', 'leat'),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_description', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_description', null),
 				'type' => 'translatable_text',
 				'description' => $this->get_description_placeholder($type),
 			],
 			'instructions' => [
 				'id' => 'instructions',
-				'label' => __('Instructions', 'piggy'),
+				'label' => __('Instructions', 'leat'),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_instructions', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_instructions', null),
 				'type' => 'translatable_text',
 				'description' => $this->get_instructions_placeholder($type),
 			],
 			'fulfillment' => [
 				'id' => 'fulfillment',
-				'label' => __('Fulfillment description', 'piggy'),
+				'label' => __('Fulfillment description', 'leat'),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_fulfillment', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_fulfillment', null),
 				'type' => 'translatable_text',
 				'description' => $this->get_fulfillment_placeholder($type),
 			],
-			'piggyRewardUuid' => [
-				'id' => 'piggy_reward_uuid',
-				'label' => __('Piggy Reward UUID', 'piggy'),
+			'leatRewardUuid' => [
+				'id' => 'leat_reward_uuid',
+				'label' => __('Leat Reward UUID', 'leat'),
 				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_piggy_reward_uuid', null),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_reward_uuid', null),
 				'type' => 'text',
-				'description' => __('The UUID of the corresponding Piggy reward.', 'piggy'),
+				'description' => __('The UUID of the corresponding Leat reward.', 'leat'),
 			],
 		];
 
 		$spend_rule['label'] = [
 			'id' => 'label',
-			'label' => __('Label', 'piggy'),
+			'label' => __('Label', 'leat'),
 			'default' => $this->get_default_label($type),
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_label'),
+			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_label'),
 			'type' => 'translatable_text',
 			'description' => $this->get_label_description($type),
 		];
 
 		$spend_rule['selectedProducts'] = [
 			'id' => 'selected_products',
-			'label' => __('Selected products', 'piggy'),
+			'label' => __('Selected products', 'leat'),
 			'default' => [],
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_selected_products', []),
+			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_selected_products', []),
 			'type' => 'products_select',
-			'description' => __('The products that are selected for the spend rule.', 'piggy'),
+			'description' => __('The products that are selected for the spend rule.', 'leat'),
 		];
 
 		$spend_rule['discountValue'] = [
 			'id' => 'discount_value',
-			'label' => __('Discount value', 'piggy'),
+			'label' => __('Discount value', 'leat'),
 			'default' => 10,
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_value', null),
+			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_discount_value', null),
 			'type' => 'number',
-			'description' => __('The value of the discount.', 'piggy'),
+			'description' => __('The value of the discount.', 'leat'),
 		];
 
 		$spend_rule['discountType'] = [
 			'id' => 'discount_type',
-			'label' => __('Discount type', 'piggy'),
+			'label' => __('Discount type', 'leat'),
 			'default' => 'percentage',
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_discount_type', 'percentage'),
+			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_discount_type', 'percentage'),
 			'type' => 'select',
 			'options' => [
-				'percentage' => ['label' => __('Percentage', 'piggy')],
-				'fixed' => ['label' => __('Fixed amount', 'piggy')],
+				'percentage' => ['label' => __('Percentage', 'leat')],
+				'fixed' => ['label' => __('Fixed amount', 'leat')],
 			],
-			'description' => __('The type of discount.', 'piggy'),
+			'description' => __('The type of discount.', 'leat'),
 		];
 
 		$spend_rule['minimumPurchaseAmount'] = [
 			'id' => 'minimum_purchase_amount',
-			'label' => __('Minimum purchase amount', 'piggy'),
+			'label' => __('Minimum purchase amount', 'leat'),
 			'default' => 0,
-			'value' => $this->get_post_meta_data($post->ID, '_piggy_spend_rule_minimum_purchase_amount', 0),
+			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_minimum_purchase_amount', 0),
 			'type' => 'number',
-			'description' => __('The minimum purchase amount required to redeem the reward.', 'piggy'),
+			'description' => __('The minimum purchase amount required to redeem the reward.', 'leat'),
 		];
 
 
@@ -247,7 +247,7 @@ class SpendRules
 	private function get_label_description($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
-		return sprintf(__("The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'piggy'), $placeholders);
+		return sprintf(__("The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat'), $placeholders);
 	}
 
 	private function get_default_label($type)
@@ -260,25 +260,25 @@ class SpendRules
 	private function get_description_placeholder($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
-		return sprintf(__("Add a description of the reward. Available placeholders: %s", 'piggy'), $placeholders);
+		return sprintf(__("Add a description of the reward. Available placeholders: %s", 'leat'), $placeholders);
 	}
 
 	private function get_instructions_placeholder($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
-		return sprintf(__("Add instructions on how to redeem the reward. Available placeholders: %s", 'piggy'), $placeholders);
+		return sprintf(__("Add instructions on how to redeem the reward. Available placeholders: %s", 'leat'), $placeholders);
 	}
 
 	private function get_fulfillment_placeholder($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
-		return sprintf(__("Add instructions on how fulfillment will be handled. Available placeholders: %s", 'piggy'), $placeholders);
+		return sprintf(__("Add instructions on how fulfillment will be handled. Available placeholders: %s", 'leat'), $placeholders);
 	}
 
-	public function delete_spend_rule_by_piggy_uuid($uuid) {
+	public function delete_spend_rule_by_leat_uuid($uuid) {
 		$args = array(
-			'post_type' => 'piggy_spend_rule',
-			'meta_key' => '_piggy_reward_uuid',
+			'post_type' => 'leat_spend_rule',
+			'meta_key' => '_leat_reward_uuid',
 			'meta_value' => $uuid,
 			'posts_per_page' => 1,
 		);
@@ -321,17 +321,17 @@ class SpendRules
 
 	public function create_or_update_spend_rule_from_reward($reward, $existing_post_id = null) {
 		$post_data = array(
-			'post_type' => 'piggy_spend_rule',
+			'post_type' => 'leat_spend_rule',
 			'post_title' => $reward['title'],
 			'meta_input' => array(
-				'_piggy_spend_rule_credit_cost' => $reward['requiredCredits'],
-				'_piggy_reward_uuid' => $reward['uuid'],
-				'_piggy_spend_rule_selected_reward' => $reward['uuid'],
+				'_leat_spend_rule_credit_cost' => $reward['requiredCredits'],
+				'_leat_reward_uuid' => $reward['uuid'],
+				'_leat_spend_rule_selected_reward' => $reward['uuid'],
 			)
 		);
 
 		if(isset($reward['image'])) {
-			$post_data['meta_input']['_piggy_spend_rule_image'] = $reward['image'];
+			$post_data['meta_input']['_leat_spend_rule_image'] = $reward['image'];
 		}
 
 		if ($existing_post_id) {
@@ -341,17 +341,17 @@ class SpendRules
 			// New rules are always draft by default.
 			$post_data['post_status'] = 'draft';
 
-			// _piggy_spend_rule_type
-			$post_data['meta_input']['_piggy_spend_rule_type'] = $reward['type'];
+			// _leat_spend_rule_type
+			$post_data['meta_input']['_leat_spend_rule_type'] = $reward['type'];
 
 			wp_insert_post($post_data);
 		}
 	}
 
-	public function get_spend_rule_by_piggy_uuid($uuid) {
+	public function get_spend_rule_by_leat_uuid($uuid) {
 		$args = array(
-			'post_type' => 'piggy_spend_rule',
-			'meta_key' => '_piggy_reward_uuid',
+			'post_type' => 'leat_spend_rule',
+			'meta_key' => '_leat_reward_uuid',
 			'meta_value' => $uuid,
 			'posts_per_page' => 1,
 		);
@@ -379,7 +379,7 @@ class SpendRules
 
 		foreach ($uuids as $uuid) {
 			$query = $wpdb->prepare(
-				"SELECT post_id FROM $table_name WHERE meta_key = '_piggy_reward_uuid' AND meta_value = %s ORDER BY post_id DESC",
+				"SELECT post_id FROM $table_name WHERE meta_key = '_leat_reward_uuid' AND meta_value = %s ORDER BY post_id DESC",
 				$uuid
 			);
 			$post_ids = $wpdb->get_col($query);
@@ -400,18 +400,18 @@ class SpendRules
 
 	public function delete_spend_rules_with_empty_uuid() {
 		$args = array(
-			'post_type' => 'piggy_spend_rule',
+			'post_type' => 'leat_spend_rule',
 			'posts_per_page' => -1,
 			'post_status' => array('publish', 'draft'),
 			'meta_query' => array(
 				'relation' => 'OR',
 				array(
-					'key' => '_piggy_reward_uuid',
+					'key' => '_leat_reward_uuid',
 					'value' => '',
 					'compare' => '='
 				),
 				array(
-					'key' => '_piggy_reward_uuid',
+					'key' => '_leat_reward_uuid',
 					'compare' => 'NOT EXISTS'
 				)
 			)
@@ -447,18 +447,18 @@ class SpendRules
 
 		$coupon = new \WC_Coupon();
 		$coupon->set_code($coupon_code);
-		$coupon->set_description('Piggy Spend Rule: ' . $formatted_spend_rule['title']['value']);
+		$coupon->set_description('Leat Spend Rule: ' . $formatted_spend_rule['title']['value']);
 		$coupon->set_usage_limit(1);
 		$coupon->set_individual_use(true);
 
-		$coupon->add_meta_data('_piggy_spend_rule_coupon', 'true', true);
-		$coupon->add_meta_data('_piggy_spend_rule_id', $formatted_spend_rule['id'], true);
+		$coupon->add_meta_data('_leat_spend_rule_coupon', 'true', true);
+		$coupon->add_meta_data('_leat_spend_rule_id', $formatted_spend_rule['id'], true);
 
 		if( $user_id ) {
 			$user = get_user_by( 'id', $user_id );
 			$user_email = $user->user_email;
 
-			$coupon->add_meta_data('_piggy_user_id', $user_id, true);
+			$coupon->add_meta_data('_leat_user_id', $user_id, true);
 			$coupon->set_email_restrictions( [ $user_email ] );
 		}
 
@@ -501,7 +501,7 @@ class SpendRules
 			'posts_per_page' => -1,
 			'meta_query' => [
 				[
-					'key' => '_piggy_user_id',
+					'key' => '_leat_user_id',
 					'value' => $user_id,
 					'compare' => '='
 				]
@@ -514,7 +514,7 @@ class SpendRules
 
 		foreach ($coupons as $coupon) {
 			// Tie back to the spend rule
-			$spend_rule_id = get_post_meta($coupon->ID, '_piggy_spend_rule_id', true);
+			$spend_rule_id = get_post_meta($coupon->ID, '_leat_spend_rule_id', true);
 			$spend_rule = $this->get_spend_rule_by_id($spend_rule_id);
 
 			if( !$spend_rule ) {

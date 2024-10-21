@@ -19,13 +19,13 @@
 	});
 </script>
 
-<header class="bg-desert border-b border-gray-200">
+<header class="bg-leat-darkBlue border-b border-gray-200">
 	<div class="app-container">
 		<div class="flex h-16 justify-between">
 			<div class="flex px-2 xl:px-0">
 				<div class="flex flex-shrink-0 items-center">
 					<Link to="/">
-						<Logo />
+						<Logo style="dark" />
 					</Link>
 				</div>
 				<nav

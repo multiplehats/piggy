@@ -11,7 +11,7 @@ const _ACTION_HOOK_NAMES: Record<ActionHookName, `on.${string}` | `do.${string}`
 
 type ActionHookNames = keyof typeof _ACTION_HOOK_NAMES;
 
-const NAMESPACE = "piggy";
+const NAMESPACE = "leat";
 
 export const hooks = {
 	doAction: (hookname: ActionHookNames, ...args: unknown[]) => {

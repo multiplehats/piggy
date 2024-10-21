@@ -1,14 +1,14 @@
-import { api } from "@piggy/lib";
+import { api } from "@leat/lib";
 import type { GetRewardsResponse, GetShopsResponse } from "./types";
 
-export class PiggyApiError extends Error {
+export class LeatApiError extends Error {
 	status: number;
 	statusText: string;
 	data: string;
 	message: string;
 
 	constructor(status: number, statusText: string, data: string) {
-		super(`PiggyApiError: ${statusText}`);
+		super(`LeatApiError: ${statusText}`);
 		this.status = status;
 		this.statusText = statusText;
 		this.data = data;
@@ -16,13 +16,13 @@ export class PiggyApiError extends Error {
 	}
 }
 
-export class PiggyAdminService {
+export class LeatAdminService {
 	async getShops() {
-		const { data, error } = await api.get<GetShopsResponse>("/piggy/private/shops");
+		const { data, error } = await api.get<GetShopsResponse>("/leat/private/shops");
 
 		if (error ?? !data) {
 			if (error) {
-				throw new PiggyApiError(error.status, error.statusText, error.data);
+				throw new LeatApiError(error.status, error.statusText, error.data);
 			}
 
 			throw new Error("No data returned");
@@ -37,13 +37,13 @@ export class PiggyAdminService {
 				id: number;
 				title: string;
 			}[]
-		>(`/piggy/private/wc-products`, {
+		>(`/leat/private/wc-products`, {
 			term,
 		});
 
 		if (error ?? !data) {
 			if (error) {
-				throw new PiggyApiError(error.status, error.statusText, error.data);
+				throw new LeatApiError(error.status, error.statusText, error.data);
 			}
 
 			throw new Error("No data returned");
@@ -63,11 +63,11 @@ export class PiggyAdminService {
 				id: number;
 				title: string;
 			}[]
-		>(`/piggy/private/wc-products?ids=${idsParam}`);
+		>(`/leat/private/wc-products?ids=${idsParam}`);
 
 		if (error ?? !data) {
 			if (error) {
-				throw new PiggyApiError(error.status, error.statusText, error.data);
+				throw new LeatApiError(error.status, error.statusText, error.data);
 			}
 
 			throw new Error("No data returned");
@@ -77,11 +77,11 @@ export class PiggyAdminService {
 	}
 
 	async getRewards() {
-		const { data, error } = await api.get<GetRewardsResponse>("/piggy/private/rewards");
+		const { data, error } = await api.get<GetRewardsResponse>("/leat/private/rewards");
 
 		if (error ?? !data) {
 			if (error) {
-				throw new PiggyApiError(error.status, error.statusText, error.data);
+				throw new LeatApiError(error.status, error.statusText, error.data);
 			}
 
 			throw new Error("No data returned");
@@ -91,4 +91,4 @@ export class PiggyAdminService {
 	}
 }
 
-export const service = new PiggyAdminService();
+export const service = new LeatAdminService();

@@ -1,12 +1,12 @@
 <?php
 
-namespace PiggyWP;
+namespace Leat;
 
-use PiggyWP\Api\Connection;
-use PiggyWP\Settings;
-use PiggyWP\Assets\Api as AssetApi;
-use PiggyWP\Utils\Common;
-use PiggyWP\Utils\Logger;
+use Leat\Api\Connection;
+use Leat\Settings;
+use Leat\Assets\Api as AssetApi;
+use Leat\Utils\Common;
+use Leat\Utils\Logger;
 use WP_Post;
 
 /**
@@ -17,8 +17,8 @@ use WP_Post;
  */
 final class AssetsController
 {
-	const APP_HANDLE = 'piggy-frontend';
-	const ADMIN_APP_HANDLE = 'piggy-admin';
+	const APP_HANDLE = 'leat-frontend';
+	const ADMIN_APP_HANDLE = 'leat-admin';
 
 	/**
 	 * Asset API interface for various asset registration.
@@ -42,7 +42,7 @@ final class AssetsController
 	private $settings;
 
 	/**
-	 * Piggy API connection.
+	 * Leat API connection.
 	 *
 	 * @var Connection
 	 */
@@ -67,7 +67,7 @@ final class AssetsController
 	 *
 	 * @param AssetApi $asset_api Asset API interface for various asset registration.
 	 * @param Settings $settings Settings interface.
-	 * @param Connection $connection Piggy API connection.
+	 * @param Connection $connection Leat API connection.
 	 */
 	public function __construct(AssetApi $asset_api, Settings $settings, Connection $connection)
 	{
@@ -86,22 +86,24 @@ final class AssetsController
 		add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend'], 80);
 		add_action('wp_head', [$this, 'enqueue_frontend_dynamic_css'], 90);
 
+		$icon_svg = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(plugin_dir_path(__FILE__) . 'leat-wp-icon.svg'));
+
 		$this->plugin_screen_hook_suffix = add_menu_page(
-			'Piggy',
-			'Piggy',
+			'Leat',
+			'Leat',
 			'manage_options',
-			'piggy',
+			'leat',
 			[$this, 'render_admin_mount'],
-			'dashicons-cart',
+			$icon_svg,
 			'99.999'
 		);
 
 		add_submenu_page(
-			'piggy',
+			'leat',
 			'Onboarding',
 			'Onboarding',
 			'manage_options',
-			'admin.php?page=piggy#/onboarding',
+			'admin.php?page=leat#/onboarding',
 			''
 		);
 
@@ -128,7 +130,7 @@ final class AssetsController
 
 				$this->assets_api->add_inline_script(
 					self::APP_HANDLE,
-					"window.piggyConfig = JSON.parse(decodeURIComponent('" . esc_js($settings) . "'));",
+					"window.leatConfig = JSON.parse(decodeURIComponent('" . esc_js($settings) . "'));",
 					'before'
 				);
 
@@ -137,7 +139,7 @@ final class AssetsController
 				$wc_settings = rawurlencode(wp_json_encode($this->wc_settings_data));
 				$this->assets_api->add_inline_script(
 					self::APP_HANDLE,
-					"window.piggyWcSettings = JSON.parse(decodeURIComponent('" . esc_js($wc_settings) . "'));",
+					"window.leatWcSettings = JSON.parse(decodeURIComponent('" . esc_js($wc_settings) . "'));",
 					'before'
 				);
 
@@ -180,7 +182,7 @@ final class AssetsController
 
 			$this->assets_api->add_inline_script(
 				self::ADMIN_APP_HANDLE,
-				"window.piggyWcSettings = JSON.parse(decodeURIComponent('" . esc_js($wc_settings) . "'));",
+				"window.leatWcSettings = JSON.parse(decodeURIComponent('" . esc_js($wc_settings) . "'));",
 				'before'
 			);
 
@@ -197,7 +199,7 @@ final class AssetsController
 	 */
 	public function render_admin_mount()
 	{
-		echo '<div id="piggy-admin-mount"></div>';
+		echo '<div id="leat-admin-mount"></div>';
 	}
 
 	/**
@@ -205,7 +207,7 @@ final class AssetsController
 	 */
 	public function enqueue_frontend_dynamic_css()
 	{
-		echo '<style id="piggy-dynamic-css">' . esc_html($this->get_dynamic_css()) . '</style>';
+		echo '<style id="leat-dynamic-css">' . esc_html($this->get_dynamic_css()) . '</style>';
 	}
 
 	/**
@@ -221,11 +223,11 @@ final class AssetsController
 		$user_id = is_user_logged_in() ? get_current_user_id() : null;
 
 		return "
-            window.piggyMiddlewareConfig = {
+            window.leatMiddlewareConfig = {
 				apiKeySet: " . json_encode($api_key_set) . ",
 				loggedIn: " . json_encode(is_user_logged_in()) . ",
 				userId: " . json_encode($user_id) . ",
-				hasPiggyUuid: " . json_encode(get_user_meta( $user_id, 'piggy_uuid', true)) . ",
+				hasLeatUuid: " . json_encode(get_user_meta( $user_id, 'leat_uuid', true)) . ",
                 siteLanguage: '" . esc_js(get_bloginfo('language')) . "',
                 currentLanguage: '" . esc_js($current_language) . "',
                 languages: " . wp_json_encode($all_languages) . ",

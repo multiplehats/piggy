@@ -1,9 +1,9 @@
-# Copyright (C) 2024 Piggy, Chris Jayden
-# This file is distributed under the same license as the Piggy - Loyalty & Marketing plugin.
+# Copyright (C) 2024 Leat, Chris Jayden
+# This file is distributed under the same license as the Leat - Loyalty & Marketing plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Piggy - Loyalty & Marketing 0.0.1\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/piggy\n"
+"Project-Id-Version: Leat - Loyalty & Marketing 0.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/leat\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,31 +12,31 @@ msgstr ""
 "POT-Creation-Date: 2024-09-10T10:41:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
-"X-Domain: piggy\n"
+"X-Domain: leat\n"
 
 #. Plugin Name of the plugin
-#: piggy.php
-msgid "Piggy - Loyalty & Marketing"
+#: leat.php
+msgid "Leat - Loyalty & Marketing"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: piggy.php
+#: leat.php
 msgid "https://github.com/woocommerce/woocommerce-gutenberg-products-block"
 msgstr ""
 
 #. Description of the plugin
-#: piggy.php
+#: leat.php
 msgid "Customer loyalty & Email marketing that works in-store and online."
 msgstr ""
 
 #. Author of the plugin
-#: piggy.php
-msgid "Piggy, Chris Jayden"
+#: leat.php
+msgid "Leat, Chris Jayden"
 msgstr ""
 
 #. Author URI of the plugin
-#: piggy.php
-msgid "https://piggy.com"
+#: leat.php
+msgid "https://leat.com"
 msgstr ""
 
 #: src/Api/Routes/V1/AbstractRoute.php:89
@@ -259,7 +259,7 @@ msgid "Type of the rule"
 msgstr ""
 
 #: src/Api/Schemas/V1/EarnRulesSchema.php:75
-msgid "Piggy tier UUIDs that rule is applicable to."
+msgid "Leat tier UUIDs that rule is applicable to."
 msgstr ""
 
 #: src/Api/Schemas/V1/EarnRulesSchema.php:79
@@ -319,12 +319,12 @@ msgstr ""
 
 #. translators: %s: Required WooCommerce version
 #: src/Domain/Bootstrap.php:150
-msgid "The Piggy plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce."
+msgid "The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce."
 msgstr ""
 
 #. translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command.
 #: src/Domain/Bootstrap.php:210
-msgid "Piggy requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes."
+msgid "Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes."
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:69
@@ -502,7 +502,7 @@ msgid "Set the status of the rule. Inactive spend rules will not be displayed to
 msgstr ""
 
 #: src/Domain/Services/SpendRules.php:104
-msgid "This is not displayed to the user and is only used for internal reference. You can manage this in the Piggy dashboard."
+msgid "This is not displayed to the user and is only used for internal reference. You can manage this in the Leat dashboard."
 msgstr ""
 
 #: src/Domain/Services/SpendRules.php:113
@@ -526,7 +526,7 @@ msgid "Credit cost"
 msgstr ""
 
 #: src/Domain/Services/SpendRules.php:142
-msgid "The amount of credits it will cost to redeem the reward. This is managed in the Piggy dashboard."
+msgid "The amount of credits it will cost to redeem the reward. This is managed in the Leat dashboard."
 msgstr ""
 
 #: src/Domain/Services/SpendRules.php:146
@@ -550,11 +550,11 @@ msgid "Fulfillment description"
 msgstr ""
 
 #: src/Domain/Services/SpendRules.php:178
-msgid "Piggy Reward UUID"
+msgid "Leat Reward UUID"
 msgstr ""
 
 #: src/Domain/Services/SpendRules.php:182
-msgid "The UUID of the corresponding Piggy reward."
+msgid "The UUID of the corresponding Leat reward."
 msgstr ""
 
 #: src/Domain/Services/SpendRules.php:197
@@ -837,7 +837,7 @@ msgid "Enable plugin"
 msgstr ""
 
 #: src/Settings.php:21
-msgid "If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable Piggy without deactivating the entire plugin."
+msgid "If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable Leat without deactivating the entire plugin."
 msgstr ""
 
 #: src/Settings.php:27
@@ -1121,7 +1121,7 @@ msgid "Rule settings"
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
-msgid "The amount of credits customers will earn will be calculated based on the rules you have set up in the Piggy Dashboard."
+msgid "The amount of credits customers will earn will be calculated based on the rules you have set up in the Leat Dashboard."
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
@@ -1133,7 +1133,7 @@ msgid "Credit Calculation"
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
-msgid "These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href=\"%s\" class=\"underline\" target=\"_blank\" rel=\"noopener noreferrer\">Piggy Dashboard</a>."
+msgid "These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href=\"%s\" class=\"underline\" target=\"_blank\" rel=\"noopener noreferrer\">Leat Dashboard</a>."
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
@@ -1157,7 +1157,7 @@ msgid "Create and manage spend rules to allow customers to spend their credits."
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
-msgid "Existing Piggy user?"
+msgid "Existing Leat user?"
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
@@ -1165,7 +1165,7 @@ msgid "Connect your account to get started."
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
-msgid "New to Piggy?"
+msgid "New to Leat?"
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
@@ -1173,7 +1173,7 @@ msgid "Create a new account to get started."
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1
-msgid "Connect to Piggy"
+msgid "Connect to Leat"
 msgstr ""
 
 #: dist/admin/assets/index-de422258.js:1

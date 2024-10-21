@@ -22,8 +22,8 @@
 	export let id: $$Props["id"];
 	export { className as class };
 
-	const languages = window.piggyMiddlewareConfig.languages;
-	const currentLanguage = window.piggyMiddlewareConfig.currentLanguage;
+	const languages = window.leatMiddlewareConfig.languages;
+	const currentLanguage = window.leatMiddlewareConfig.currentLanguage;
 	const items = languages.map((language) => ({
 		value: language,
 		label: language,
@@ -117,12 +117,12 @@
 			<Select.Trigger
 				class="z-10 h-8 w-[120px] flex-shrink-0 rounded-l-none border-l-0 shadow-none focus:ring-0 focus:ring-offset-0"
 			>
-				<Select.Value placeholder={__("Select a language", "piggy")} />
+				<Select.Value placeholder={__("Select a language", "leat")} />
 			</Select.Trigger>
 
 			<Select.Content>
 				<Select.Group>
-					<Select.Label class="sr-only">{__("Languages", "piggy")}</Select.Label>
+					<Select.Label class="sr-only">{__("Languages", "leat")}</Select.Label>
 
 					{#each languages as language}
 						<Select.Item value={language} label={language}>{language}</Select.Item>

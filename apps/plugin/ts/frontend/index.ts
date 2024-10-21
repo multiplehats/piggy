@@ -1,26 +1,26 @@
-import { CustomerDashbaord } from "@piggy/plugin-frontend";
+import { CustomerDashbaord } from "@leat/plugin-frontend";
 
-const piggyConfig = window.piggyConfig;
-const piggyWcSettingsConfig = window.piggyWcSettings;
-const piggyMiddlewareConfig = window.piggyMiddlewareConfig;
-const frontendMounts = document.getElementsByClassName("piggy-customer-dashboard");
+const leatConfig = window.leatConfig;
+const leatWcSettingsConfig = window.leatWcSettings;
+const leatMiddlewareConfig = window.leatMiddlewareConfig;
+const frontendMounts = document.getElementsByClassName("leat-customer-dashboard");
 
 function mountFrontend() {
-	if (!piggyConfig) {
-		console.warn("[piggy] window.piggyConfig is not defined. This is needed to run the app.");
+	if (!leatConfig) {
+		console.warn("[leat] window.leatConfig is not defined. This is needed to run the app.");
 		return;
 	}
 
-	if (!piggyWcSettingsConfig) {
+	if (!leatWcSettingsConfig) {
 		console.warn(
-			"[piggy] window.piggyWcSettingsConfig is not defined. This is needed to run the app."
+			"[leat] window.leatWcSettingsConfig is not defined. This is needed to run the app."
 		);
 		return;
 	}
 
-	if (!piggyMiddlewareConfig) {
+	if (!leatMiddlewareConfig) {
 		console.warn(
-			"[piggy] window.piggyMiddlewareConfig is not defined. This is needed to run the app."
+			"[leat] window.leatMiddlewareConfig is not defined. This is needed to run the app."
 		);
 		return;
 	}
@@ -31,8 +31,8 @@ function mountFrontend() {
 			new CustomerDashbaord({
 				target: frontendMount,
 				props: {
-					pluginSettings: piggyConfig,
-					wcSettings: piggyWcSettingsConfig,
+					pluginSettings: leatConfig,
+					wcSettings: leatWcSettingsConfig,
 				},
 			});
 		});

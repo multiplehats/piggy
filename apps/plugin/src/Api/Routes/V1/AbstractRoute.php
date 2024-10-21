@@ -1,12 +1,12 @@
 <?php
-namespace PiggyWP\Api\Routes\V1;
+namespace Leat\Api\Routes\V1;
 
-use PiggyWP\Api\SchemaController;
-use PiggyWP\Api\Routes\RouteInterface;
-use PiggyWP\Api\Exceptions\RouteException;
-use PiggyWP\Api\Schemas\v1\AbstractSchema;
-use PiggyWP\Api\Connection;
-use PiggyWP\Settings;
+use Leat\Api\SchemaController;
+use Leat\Api\Routes\RouteInterface;
+use Leat\Api\Exceptions\RouteException;
+use Leat\Api\Schemas\v1\AbstractSchema;
+use Leat\Api\Connection;
+use Leat\Settings;
 use WP_Error;
 
 /**
@@ -25,7 +25,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'piggy/v1';
+	protected $namespace = 'leat/v1';
 
 	/**
 	 * Schema Controller instance.
@@ -35,7 +35,7 @@ abstract class AbstractRoute implements RouteInterface {
 	protected $schema_controller;
 
 	/**
-	 * Piggy API Client instance.
+	 * Leat API Client instance.
 	 *
 	 * @var Connection
 	 */
@@ -86,12 +86,12 @@ abstract class AbstractRoute implements RouteInterface {
 			$client = $this->connection->init_client();
 
 			if( $client === null ) {
-				throw new RouteException( 'piggy_rest_invalid_api_key', __( 'Invalid API Key', 'piggy' ), 401 );
+				throw new RouteException( 'leat_rest_invalid_api_key', __( 'Invalid API Key', 'leat' ), 401 );
 			}
 
 			return $client;
 		} catch (\Throwable $th) {
-			throw new RouteException( 'piggy_rest_invalid_api_key', __( 'Invalid API Key', 'piggy' ), 401 );
+			throw new RouteException( 'leat_rest_invalid_api_key', __( 'Invalid API Key', 'leat' ), 401 );
 		}
 	}
 
@@ -136,7 +136,7 @@ abstract class AbstractRoute implements RouteInterface {
 		} catch ( RouteException $error ) {
 			$response = $this->get_route_error_response( $error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData() );
 		} catch ( \Exception $error ) {
-			$response = $this->get_route_error_response( 'piggy_rest_unknown_server_error', $error->getMessage(), 500 );
+			$response = $this->get_route_error_response( 'leat_rest_unknown_server_error', $error->getMessage(), 500 );
 		}
 
 		return is_wp_error( $response ) ? $this->error_to_response( $response ) : $response;
@@ -201,7 +201,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'piggy_rest_invalid_endpoint', __( 'Method not implemented', 'piggy' ), 404 );
+		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat' ), 404 );
 	}
 
 	/**
@@ -214,7 +214,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'piggy_rest_invalid_endpoint', __( 'Method not implemented', 'piggy' ), 404 );
+		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat' ), 404 );
 	}
 
 	/**
@@ -227,7 +227,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_update_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'piggy_rest_invalid_endpoint', __( 'Method not implemented', 'piggy' ), 404 );
+		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat' ), 404 );
 	}
 
 	/**
@@ -240,7 +240,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_delete_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'piggy_rest_invalid_endpoint', __( 'Method not implemented', 'piggy' ), 404 );
+		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat' ), 404 );
 	}
 
 	/**
@@ -295,7 +295,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 */
 	protected function get_context_param( $args = array() ) {
 		$param_details = array(
-			'description'       => __( 'Scope under which the request is made; determines fields present in response.', 'piggy' ),
+			'description'       => __( 'Scope under which the request is made; determines fields present in response.', 'leat' ),
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_key',
 			'validate_callback' => 'rest_validate_request_arg',

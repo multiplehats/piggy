@@ -61,7 +61,7 @@
 		$mutate.mutate({
 			id: $rule.id,
 			type: $rule.type.value,
-			title: $rule.title?.value ?? __("New rule", "piggy"),
+			title: $rule.title?.value ?? __("New rule", "leat"),
 			label: $rule.label.value,
 			status: $rule.status.value,
 			startsAt: $rule?.startsAt?.value,
@@ -120,7 +120,7 @@
 
 			<div class="hidden items-center gap-2 md:ml-auto md:flex">
 				<Button size="sm" on:click={handleSave}>
-					{__("Save rule", "piggy")}
+					{__("Save rule", "leat")}
 				</Button>
 			</div>
 		</div>
@@ -129,7 +129,7 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__("General", "piggy")}</Card.Title>
+						<Card.Title>{__("General", "leat")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -209,7 +209,7 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__("Details", "piggy")}</Card.Title>
+						<Card.Title>{__("Details", "leat")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -247,7 +247,7 @@
 				<!-- Disabled until this feature is implemented -->
 				<!-- <Card.Root>
 					<Card.Header>
-						<Card.Title>{__('Schedule', 'piggy')}</Card.Title>
+						<Card.Title>{__('Schedule', 'leat')}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -270,7 +270,7 @@
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
 			<Button size="sm" on:click={handleSave}>
-				{__("Save rule", "piggy")}
+				{__("Save rule", "leat")}
 			</Button>
 		</div>
 	</div>

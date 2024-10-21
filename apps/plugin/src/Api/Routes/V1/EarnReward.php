@@ -1,11 +1,11 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1;
+namespace Leat\Api\Routes\V1;
 
-use PiggyWP\Api\Exceptions\RouteException;
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Routes\V1\Admin\Middleware;
-use PiggyWP\Domain\Services\EarnRules as EarnRulesService;
+use Leat\Api\Exceptions\RouteException;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Routes\V1\Admin\Middleware;
+use Leat\Domain\Services\EarnRules as EarnRulesService;
 
 /**
  * Shops class.
@@ -49,12 +49,12 @@ class EarnReward extends AbstractRoute {
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'earnRuleId' => [
-						'description' => __( 'The Earn Rule ID', 'piggy' ),
+						'description' => __( 'The Earn Rule ID', 'leat' ),
 						'type'        => 'integer',
 						'required'    => true,
 					],
 					'userId' => [
-						'description' => __( 'The Customer ID', 'piggy' ),
+						'description' => __( 'The Customer ID', 'leat' ),
 						'type'        => 'integer',
 						'required'    => false,
 					],
@@ -92,16 +92,16 @@ class EarnReward extends AbstractRoute {
 			}
 		}
 
-		// Get the Piggy UUID for the user, if not found, create a new contact
-		$piggy_uuid = $this->connection->get_contact_uuid_by_wp_id( $data['user_id'], true );
+		// Get the Leat UUID for the user, if not found, create a new contact
+		$leat_uuid = $this->connection->get_contact_uuid_by_wp_id( $data['user_id'], true );
 
-		if(!$piggy_uuid) {
-			throw new RouteException( 'earn-rule-uuid-null', 'There is no Piggy UUID for this suer.', 400 );
+		if(!$leat_uuid) {
+			throw new RouteException( 'earn-rule-uuid-null', 'There is no Leat UUID for this suer.', 400 );
 		}
 
 		$credits = $post['credits']['value'] ?? 0;
 
-		$this->connection->apply_credits( $piggy_uuid, $credits );
+		$this->connection->apply_credits( $leat_uuid, $credits );
 
 		$this->connection->add_reward_log($data['user_id'], $data['earn_rule_id'], $credits);
 

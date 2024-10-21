@@ -29,7 +29,7 @@ const config = {
 		splitVendorChunkPlugin(),
 		// Order matters for banner.
 		// @ts-expect-error - Doesn't have the right types.
-		createBanner("Piggy: Admin", "/admin"),
+		createBanner("Leat: Admin", "/admin"),
 		...(analyze ? [visualizer({ open: true })] : []),
 	],
 } satisfies UserConfig;

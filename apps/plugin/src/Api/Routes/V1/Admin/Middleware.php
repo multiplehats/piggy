@@ -1,8 +1,8 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1\Admin;
+namespace Leat\Api\Routes\V1\Admin;
 
-use PiggyWP\Api\Exceptions\RouteException;
+use Leat\Api\Exceptions\RouteException;
 
 /**
  * Middleware class.
@@ -19,7 +19,7 @@ class Middleware {
 	public static function is_authorized() {
 		try {
 			if ( ! current_user_can( 'manage_options' ) ) {
-				throw new RouteException( 'piggy_rest_invalid_user', __( 'You are not allowed to make this request. Please make sure you are logged in.', 'piggy' ), 403 );
+				throw new RouteException( 'leat_rest_invalid_user', __( 'You are not allowed to make this request. Please make sure you are logged in.', 'leat' ), 403 );
 			}
 		} catch ( RouteException $error ) {
 			return new \WP_Error(
@@ -41,7 +41,7 @@ class Middleware {
 	public static function is_logged_in() {
 		try {
 			if ( ! is_user_logged_in() ) {
-				throw new RouteException( 'piggy_rest_invalid_user', __( 'You are not allowed to make this request. Please make sure you are logged in.', 'piggy' ), 403 );
+				throw new RouteException( 'leat_rest_invalid_user', __( 'You are not allowed to make this request. Please make sure you are logged in.', 'leat' ), 403 );
 			}
 		} catch ( RouteException $error ) {
 			return new \WP_Error(

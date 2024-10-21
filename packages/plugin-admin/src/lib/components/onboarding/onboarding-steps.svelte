@@ -24,7 +24,7 @@
 								class={cn(
 									"flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2",
 									status === "current"
-										? "border-piggy-primary-600"
+										? "border-leat-primary-600"
 										: "border-gray-300 group-hover:border-gray-400"
 								)}
 							>
@@ -32,7 +32,7 @@
 							</span>
 						{:else}
 							<span
-								class="bg-piggy-primary-600 group-hover:bg-piggy-primary-800 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full"
+								class="bg-leat-primary-600 group-hover:bg-leat-primary-800 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full"
 							>
 								<Check class="h-6 w-6 text-white"></Check>
 							</span>

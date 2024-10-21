@@ -1,9 +1,9 @@
 <?php
 
-namespace PiggyWP\Api\Routes\V1\Admin;
+namespace Leat\Api\Routes\V1\Admin;
 
-use PiggyWP\Api\Routes\V1\AbstractRoute;
-use PiggyWP\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Routes\V1\Admin\Middleware;
 
 /**
  * Shops class.

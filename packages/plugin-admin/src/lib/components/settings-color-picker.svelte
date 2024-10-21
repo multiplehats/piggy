@@ -2,8 +2,8 @@
 	import { debounce } from "lodash-es";
 	import { onMount } from "svelte";
 	import type { RgbaStringColorPicker } from "vanilla-colorful/rgba-string-color-picker.js";
-	import { clickOutsideAction } from "@piggy/lib";
-	import type { PluginOptionsAdminKeys } from "@piggy/types/plugin";
+	import { clickOutsideAction } from "@leat/lib";
+	import type { PluginOptionsAdminKeys } from "@leat/types/plugin";
 	import Input from "$lib/components/settings-input.svelte";
 	import { Label } from "$lib/components/ui/label";
 	import { settingsState, updateSettings } from "$lib/stores/settings";

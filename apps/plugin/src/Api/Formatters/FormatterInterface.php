@@ -1,5 +1,5 @@
 <?php
-namespace PiggyWP\Api\Formatters;
+namespace Leat\Api\Formatters;
 
 /**
  * FormatterInterface.

@@ -1,7 +1,7 @@
 <?php
-namespace PiggyWP\Assets;
+namespace Leat\Assets;
 
-use PiggyWP\Package;
+use Leat\Package;
 
 use Exception;
 use InvalidArgumentException;
@@ -36,7 +36,7 @@ class AssetDataRegistry {
 	 *
 	 * @var string
 	 */
-	private $handle = 'piggy-settings';
+	private $handle = 'leat-settings';
 
 	/**
 	 * Asset API interface for various asset registration.
@@ -64,7 +64,7 @@ class AssetDataRegistry {
 	}
 
 	/**
-	 * Exposes core data via the piggyWcSettings global. This data is shared throughout the client.
+	 * Exposes core data via the leatWcSettings global. This data is shared throughout the client.
 	 *
 	 * Settings that are used by various components or multiple blocks should be added here. Note, that settings here are
 	 * global so be sure not to add anything heavy if possible.
@@ -281,7 +281,7 @@ class AssetDataRegistry {
 			wp_add_inline_script(
 				$this->handle,
 				"
-				var piggyWcSettings = piggyWcSettings || JSON.parse( decodeURIComponent( '" . esc_js( $data ) . "' ) );
+				var leatWcSettings = leatWcSettings || JSON.parse( decodeURIComponent( '" . esc_js( $data ) . "' ) );
 				",
 				'before'
 			);
