@@ -10,7 +10,9 @@
 
 	$: classes = cn(
 		"flex items-center overflow-hidden  rounded-full px-3 py-2 text-sm font-medium hover:bg-white/15",
-		active ? "bg-white/20 text-white" : "bg-transparent text-white"
+		active
+			? "bg-white/20 text-white hover:text-white"
+			: "bg-transparent text-white hover:bg-white/20 hover:text-white"
 	);
 </script>
 
