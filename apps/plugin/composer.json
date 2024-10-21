@@ -40,6 +40,8 @@
 		]
 	},
 	"config": {
+		"prepend-autoloader": false,
+		"optimize-autoloader": true,
 		"platform": {
 			"php": "8.0"
 		},

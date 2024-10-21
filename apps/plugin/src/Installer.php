@@ -176,6 +176,9 @@ class Installer {
 
         // Set flag to indicate migration is complete
         update_option('leat_migration_complete', true);
+
+		// maybe deactivate piggy plugin
+		deactivate_plugins('piggy/piggy.php');
     }
 
     private function migrate_custom_post_type($old_post_type, $new_post_type) {
