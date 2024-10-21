@@ -42,6 +42,7 @@
 	"config": {
 		"prepend-autoloader": false,
 		"optimize-autoloader": true,
+		"autoloader-suffix": "LeatWP",
 		"platform": {
 			"php": "8.0"
 		},
