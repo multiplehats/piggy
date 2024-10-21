@@ -12,7 +12,6 @@
 	"require": {
 		"composer/installers": "^1.7.0",
 		"kucrut/vite-for-wp": "^0.5.1",
-		"freemius/wordpress-sdk": "^2.5",
 		"piggy/piggy-php-sdk": "^3.5",
 		"wplatest/updater": "^1.3"
 	},

@@ -155,10 +155,52 @@ class Installer {
         foreach ($tables as $table) {
             $old_table_name = reset($table);
             $new_table_name = str_replace('piggy_', 'leat_', $old_table_name);
-            $wpdb->query("RENAME TABLE {$old_table_name} TO {$new_table_name}");
+
+            // Check if the new table already exists
+            if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $new_table_name)) != $new_table_name) {
+                // If it doesn't exist, rename the old table
+                $result = $wpdb->query("RENAME TABLE {$old_table_name} TO {$new_table_name}");
+                if ($result === false) {
+                    // Log the error if the rename fails
+                    error_log("Failed to rename table {$old_table_name} to {$new_table_name}");
+                }
+            } else {
+                // If the new table already exists, we might want to merge data or handle this case
+                error_log("Table {$new_table_name} already exists. Skipping rename operation.");
+            }
         }
+
+        // Migrate custom post types
+        $this->migrate_custom_post_type('piggy_earn_rule', 'leat_earn_rule');
+        $this->migrate_custom_post_type('piggy_spend_rule', 'leat_spend_rule');
 
         // Set flag to indicate migration is complete
         update_option('leat_migration_complete', true);
+    }
+
+    private function migrate_custom_post_type($old_post_type, $new_post_type) {
+        $posts = get_posts(array(
+            'post_type' => $old_post_type,
+            'numberposts' => -1,
+            'post_status' => 'any'
+        ));
+
+        foreach ($posts as $post) {
+            // Update post type
+            $post->post_type = $new_post_type;
+            wp_update_post($post);
+
+            // Update post meta
+            $post_meta = get_post_meta($post->ID);
+            foreach ($post_meta as $meta_key => $meta_values) {
+                if (strpos($meta_key, '_piggy_') === 0) {
+                    $new_meta_key = str_replace('_piggy_', '_leat_', $meta_key);
+                    foreach ($meta_values as $meta_value) {
+                        add_post_meta($post->ID, $new_meta_key, $meta_value);
+                    }
+                    delete_post_meta($post->ID, $meta_key);
+                }
+            }
+        }
     }
 }

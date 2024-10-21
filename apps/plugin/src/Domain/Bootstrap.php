@@ -143,7 +143,7 @@ class Bootstrap {
 				add_action(
 					'admin_notices',
 					function() use ( $plugin_data ) {
-						if ( should_display_compatibility_notices() ) {
+						if ( leat_should_display_compatibility_notices() ) {
 							?>
 							<div class="notice notice-error">
 								<p>

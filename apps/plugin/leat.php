@@ -46,7 +46,7 @@ add_action('before_woocommerce_init', function(){
  *
  * @since 2.5.0
  */
-function should_display_compatibility_notices() {
+function leat_should_display_compatibility_notices() {
 	$current_screen = get_current_screen();
 
 	if ( ! isset( $current_screen ) ) {
@@ -70,7 +70,7 @@ if ( version_compare( $GLOBALS['wp_version'], $minimum_wp_version, '<' ) ) {
 	 * @since 2.5.0
 	 */
 	function leat_admin_unsupported_wp_notice() {
-		if ( should_display_compatibility_notices() ) {
+		if ( leat_should_display_compatibility_notices() ) {
 			?>
 			<div class="notice notice-error">
 				<p><?php esc_html_e( 'The Leat plugin requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Leat.', 'leat' ); ?></p>

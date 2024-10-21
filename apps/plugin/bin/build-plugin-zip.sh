@@ -123,4 +123,4 @@ git checkout -- leat.php
 # regenerate classmap for development use
 composer dump-autoload
 
-success "Done. You've built Leat! 🎉"
+success "Done. You've built Leat (v${VERSION}) 🎉"
