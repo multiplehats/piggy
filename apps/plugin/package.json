@@ -20,7 +20,7 @@
 		"dev": "concurrently \"pnpm dev:frontend\" \"pnpm dev:admin\"",
 		"dev:frontend": "NODE_ENV=development vite --config vite-frontend.config.ts --port 4001",
 		"dev:admin": "NODE_ENV=development vite --config vite-admin.config.ts --port 4002",
-		"build": "rimraf ./dist && pnpm build:frontend && pnpm build:admin",
+		"build": "pnpm build:frontend && pnpm build:admin",
 		"build:frontend": "NODE_ENV=production vite build --config vite-frontend.config.ts",
 		"build:admin": "NODE_ENV=production vite build --config vite-admin.config.ts",
 		"analyze": "ANALYZE=true pnpm build",
