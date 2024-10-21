@@ -12,7 +12,7 @@ abstract class AbstractShortcode {
 	 *
 	 * @var array
 	 */
-	protected $namespaces = ['leat', 'piggy'];
+	protected $namespaces = ['leat'];
 
 	/**
 	 * Shortcode name within these namespaces.

@@ -379,7 +379,7 @@ class Connection {
 	}
 
 
-		/**
+	/**
 	 * Get WooCommerce user data.
 	 *
 	 * @param int $user_id

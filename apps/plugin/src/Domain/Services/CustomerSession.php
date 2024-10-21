@@ -411,133 +411,150 @@ class CustomerSession
 
 	public function sync_attributes_on_login($user_login, $user)
 	{
-		$client = $this->connection->init_client();
+		try {
+			$client = $this->connection->init_client();
 
-		if (!$client) {
-			$this->logger->error("Failed to initialize client");
+			if (!$client) {
+				$this->logger->error("Failed to initialize client");
 
-			return;
-		}
-
-		$user_id = $user->ID;
-		$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
-
-		if (!$uuid) {
-			$email = $user->user_email;
-
-			if (!$email) {
 				return;
 			}
 
-			$contact = $this->connection->create_contact($email);
+			$user_id = $user->ID;
+			$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
 
-			if (!$contact) {
-				return;
+			if (!$uuid) {
+				$email = $user->user_email;
+
+				if (!$email) {
+					return;
+				}
+
+				$contact = $this->connection->create_contact($email);
+
+				if (!$contact) {
+					return;
+				}
+
+				$uuid = $contact['uuid'];
+
+				$this->connection->update_user_meta_uuid($uuid, $user_id);
 			}
 
-			$uuid = $contact['uuid'];
+			$this->update_last_login($user_id);
 
-			$this->connection->update_user_meta_uuid($uuid, $user_id);
+			$this->connection->sync_user_attributes($user_id, $uuid);
+		} catch (\Throwable $th) {
+			$this->logger->error("Error syncing attributes on login: " . $th->getMessage());
 		}
-
-		$this->update_last_login($user_id);
-
-		$this->connection->sync_user_attributes($user_id, $uuid);
 	}
 
 	public function sync_attributes_on_logout()
 	{
-		$user_id = get_current_user_id();
+		try {
+			$user_id = get_current_user_id();
 
-		if (!$user_id) {
-			return;
+			if (!$user_id) {
+				return;
+			}
+
+			$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
+
+			if (!$uuid) {
+				return;
+			}
+
+			$this->connection->sync_user_attributes($user_id, $uuid);
+		} catch (\Throwable $th) {
+			$this->logger->error("Error syncing attributes on logout: " . $th->getMessage());
 		}
-
-		$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
-
-		if (!$uuid) {
-			return;
-		}
-
-		$this->connection->sync_user_attributes($user_id, $uuid);
 	}
 
 	public function sync_attributes_on_order_completed($order_id)
 	{
-		$order = wc_get_order($order_id);
-		$user_id = $order->get_user_id();
+		try {
+			$order = wc_get_order($order_id);
+			$user_id = $order->get_user_id();
 
-		if (!$user_id) {
-			return;
-		}
-
-		$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
-
-		if (!$uuid) {
-			return;
-		}
-
-		$this->connection->sync_user_attributes($user_id, $uuid);
-
-		// Apply credits based on PLACE_ORDER earn rule
-		$order_total = $order->get_total();
-		$applicable_rule = $this->earn_rules->get_applicable_place_order_rule( $order_total );
-
-		if ($applicable_rule) {
-			// Note: We don't apply the credits from the rule in WordPress.
-			// Instead, this is managed by a rule in the Leat dashboard.
-			$result = $this->connection->apply_credits($uuid, null, $order_total, 'purchase_amount');
-
-			if (!$result) {
-				$this->logger->error("Failed to apply credits to user $user_id for order $order_id");
-
+			if (!$user_id) {
 				return;
 			}
 
-			$credits = $result->getCredits();
-			$result_uuid = $result->getUuid();
+			$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
 
-			// Save the result UUID in the order meta
-			$order->update_meta_data('_leat_earn_rule_credit_transaction_uuid', $result_uuid);
-			// Save the total credits isssued
-			$order->update_meta_data('_leat_earn_rule_credits_issued', $credits);
+			if (!$uuid) {
+				return;
+			}
 
-			$order->save();
+			$this->connection->sync_user_attributes($user_id, $uuid);
 
-			$this->connection->add_reward_log($user_id, $applicable_rule['id'], $credits);
+			// Apply credits based on PLACE_ORDER earn rule
+			$order_total = $order->get_total();
+			$applicable_rule = $this->earn_rules->get_applicable_place_order_rule( $order_total );
+
+			if ($applicable_rule) {
+				// Note: We don't apply the credits from the rule in WordPress.
+				// Instead, this is managed by a rule in the Leat dashboard.
+				$result = $this->connection->apply_credits($uuid, null, $order_total, 'purchase_amount');
+
+				if (!$result) {
+					$this->logger->error("Failed to apply credits to user $user_id for order $order_id");
+
+					return;
+				}
+
+				$credits = $result->getCredits();
+				$result_uuid = $result->getUuid();
+
+				// Save the result UUID in the order meta
+				$order->update_meta_data('_leat_earn_rule_credit_transaction_uuid', $result_uuid);
+				// Save the total credits isssued
+				$order->update_meta_data('_leat_earn_rule_credits_issued', $credits);
+
+				$order->save();
+
+				$this->connection->add_reward_log($user_id, $applicable_rule['id'], $credits);
+			}
+		} catch (\Throwable $th) {
+			$this->logger->error("Error syncing attributes on order completed: " . $th->getMessage());
 		}
 	}
 
 	public function handle_order_refunded($order_id, $refund_id)
 	{
-		$order = wc_get_order($order_id);
-		if (!$order) {
-			return;
-		}
+		try {
+			$order = wc_get_order($order_id);
 
-		$credit_transaction_uuid = $order->get_meta('_leat_earn_rule_credit_transaction_uuid');
-		$original_credits = $order->get_meta('_leat_earn_rule_credits_issued');
-
-		if (!$credit_transaction_uuid) {
-			$this->logger->error("No Leat credit transaction UUID found for order $order_id");
-			return;
-		}
-
-		$refund = new \WC_Order_Refund($refund_id);
-		$refund_amount = $refund->get_amount();
-		$original_amount = $order->get_total();
-		$is_full_refund = $refund_amount >= $original_amount;
-		$refund_type = $is_full_refund ? "full" : "partial";
-
-		if ($is_full_refund) {
-			$result = $this->connection->refund_credits_full($credit_transaction_uuid);
-
-			if($result) {
-				$this->logger->info("Successfully processed $refund_type refund for credit transaction UUID $credit_transaction_uuid for order $order_id");
+			if (!$order) {
+				return;
 			}
-		} else {
-			// Partial refunds are not yet supported.
-			$this->logger->warn('Partial refunds are not supported yet');
+
+			$credit_transaction_uuid = $order->get_meta('_leat_earn_rule_credit_transaction_uuid');
+			$original_credits = $order->get_meta('_leat_earn_rule_credits_issued');
+
+			if (!$credit_transaction_uuid) {
+				$this->logger->error("No Leat credit transaction UUID found for order $order_id");
+				return;
+			}
+
+			$refund = new \WC_Order_Refund($refund_id);
+			$refund_amount = $refund->get_amount();
+			$original_amount = $order->get_total();
+			$is_full_refund = $refund_amount >= $original_amount;
+			$refund_type = $is_full_refund ? "full" : "partial";
+
+			if ($is_full_refund) {
+				$result = $this->connection->refund_credits_full($credit_transaction_uuid);
+
+				if($result) {
+					$this->logger->info("Successfully processed $refund_type refund for credit transaction UUID $credit_transaction_uuid for order $order_id");
+				}
+			} else {
+				// Partial refunds are not yet supported.
+				$this->logger->error('Partial refunds are not supported yet');
+			}
+		} catch (\Throwable $th) {
+			$this->logger->error("Error handling order refunded: " . $th->getMessage());
 		}
 	}
 }
