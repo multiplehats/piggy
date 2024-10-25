@@ -197,7 +197,23 @@ export class SettingsAdminService {
 	}
 
 	async syncRewards(): Promise<{ ok: true }> {
-		const { data, error } = await api.get<{ ok: true }>(`/leat/v1/spend-rules-sync`, {
+		const { data, error } = await api.get<{ ok: true }>(`/leat/private/spend-rules-sync`, {
+			cache: "no-store",
+		});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async syncPromotions(): Promise<{ ok: true }> {
+		const { data, error } = await api.get<{ ok: true }>(`/leat/private/promotion-rules-sync`, {
 			cache: "no-store",
 		});
 

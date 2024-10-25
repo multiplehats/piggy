@@ -50,7 +50,6 @@ class RoutesController {
 		$this->routes = [
 			'v1'      => [
 				Routes\V1\EarnReward::IDENTIFIER => Routes\V1\EarnReward::class,
-				Routes\V1\SpendRulesSync::IDENTIFIER => Routes\V1\SpendRulesSync::class,
 				Routes\V1\EarnRules::IDENTIFIER => Routes\V1\EarnRules::class,
 				Routes\V1\SpendRules::IDENTIFIER => Routes\V1\SpendRules::class,
 				Routes\V1\SpendRulesClaim::IDENTIFIER => Routes\V1\SpendRulesClaim::class,
@@ -59,6 +58,8 @@ class RoutesController {
 				Routes\V1\Contact::IDENTIFIER => Routes\V1\Contact::class,
 			],
 			'private' => [
+				Routes\V1\SpendRulesSync::IDENTIFIER => Routes\V1\SpendRulesSync::class,
+				Routes\V1\PromotionRulesSync::IDENTIFIER => Routes\V1\PromotionRulesSync::class,
 				Routes\V1\Admin\Settings::IDENTIFIER => Routes\V1\Admin\Settings::class,
 				Routes\V1\Admin\Shops::IDENTIFIER => Routes\V1\Admin\Shops::class,
 				Routes\V1\Admin\Rewards::IDENTIFIER => Routes\V1\Admin\Rewards::class,

@@ -10,7 +10,9 @@ use Piggy\Api\Models\Shops\Shop;
 use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
 use Piggy\Api\Models\Loyalty\Receptions\RewardReception;
 use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Services\PromotionRules;
 use Leat\Utils\Logger;
+use Piggy\Api\Models\Vouchers\Promotion;
 
 class Connection {
 	/**
@@ -26,6 +28,13 @@ class Connection {
 	 * @var SpendRules
 	 */
 	protected $spend_rules_service;
+
+	/**
+	 * PromotionRules service instance.
+	 *
+	 * @var PromotionRules
+	 */
+	protected $promotion_rules_service;
 
 	/**
 	 * Logger instance.
@@ -47,6 +56,7 @@ class Connection {
 		}
 
 		$this->spend_rules_service = new SpendRules();
+		$this->promotion_rules_service = new PromotionRules();
 		$this->logger = new Logger();
 	}
 
@@ -81,6 +91,8 @@ class Connection {
 
 		if( $api_key ) {
 			ApiClient::configure($api_key, "https://api.piggy.eu");
+
+			ApiClient::setPartnerId('P01-267-loyal_minds');
 
 			return $this->client = true;
 		} else {
@@ -295,6 +307,17 @@ class Connection {
 		];
 	}
 
+	public function format_promotion( Promotion $promotion ) {
+		return [
+			'uuid' => $promotion->getUuid(),
+			'title' => $promotion->getName(),
+			'voucherLimit' => $promotion->getVoucherLimit(),
+			'limitPerContact' => $promotion->getLimitPerContact(),
+			'expirationDuration' => $promotion->getExpirationDuration(),
+			'attributes' => $promotion->getAttributes(),
+		];
+	}
+
 	/**
 	 * Get the rewards.
 	 *
@@ -320,6 +343,24 @@ class Connection {
 		}
 
 		return $rewards;
+	}
+
+	public function get_promotions() {
+		$client = $this->init_client();
+
+		if( ! $client ) {
+			return null;
+		}
+
+		$results = Promotion::list();
+
+		$promotions = array();
+
+		foreach( $results as $promotion ) {
+			$promotions[] = $this->format_promotion( $promotion );
+		}
+
+		return $promotions;
 	}
 
 	public function apply_credits(string $contact_uuid, ?int $credits = null, ?float $unit_value = null, ?string $unit_name = null) {
@@ -689,6 +730,11 @@ class Connection {
 		return $inserted !== false;
 	}
 
+	/**
+	 * Syncs rewards in Leat with the spend rules CPT.
+	 *
+	 * @return bool
+	 */
 	public function sync_rewards_with_spend_rules() {
 		$client = $this->init_client();
 		if (!$client) {
@@ -770,8 +816,89 @@ class Connection {
 		return true;
 	}
 
-	public function manual_sync_rewards() {
-		return $this->sync_rewards_with_spend_rules();
+	/**
+	 * Syncs promotions/vouchers in Leat with the promotion rules CPT.
+	 *
+	 * @return bool
+	 */
+	public function sync_promotions_with_promotion_rules() {
+		$client = $this->init_client();
+		if (!$client) {
+			$this->logger->error("Failed to initialize client for reward sync");
+			return false;
+		}
+
+		$promotions = $this->get_promotions();
+		if (!$promotions) {
+			$this->logger->error("Failed to retrieve promotions from Leat");
+			return false;
+		}
+
+		$this->logger->info("Starting promotion sync. Total promotions retrieved: " . count($promotions));
+
+		$prepared_args = array(
+			'post_type' => 'leat_promotion_rule',
+			'posts_per_page' => -1,
+			'post_status' => array('publish', 'draft', 'pending'),
+		);
+
+		$current_promotion_rules = get_posts($prepared_args);
+		$this->logger->info("Current promotion rules in WordPress: " . count($current_promotion_rules));
+
+		// Collect existing Leat UUIDs from CPT
+		$existing_uuids = array_column($current_promotion_rules, '_leat_promotion_uuid', 'ID');
+
+		// Sync Leat rewards with CPT (add/update)
+		$processed_uuids = [];
+		$updated_count = 0;
+		$created_count = 0;
+
+		foreach ($promotions as $promotion) {
+			$mapped_promotion = [
+				'title' => $promotion['title'],
+				'uuid' => $promotion['uuid'],
+				'voucherLimit' => $promotion['voucherLimit'],
+				'limitPerContact' => $promotion['limitPerContact'],
+				'expirationDuration' => $promotion['expirationDuration'],
+			];
+
+			if(isset($promotion['media'])) {
+				$mapped_promotion['image'] = $promotion['media']['value'];
+			}
+
+			// Check if the promotion already exists in CPT
+			$existing_post_id = array_search($promotion['uuid'], $existing_uuids);
+
+			if ($existing_post_id !== false) {
+				// Update existing promotion rule
+				$this->logger->info("Updating existing promotion rule: " . $existing_post_id . " (UUID: " . $promotion['uuid'] . ")");
+
+				$this->promotion_rules_service->create_or_update_promotion_rule_from_promotion($mapped_promotion, $existing_post_id);
+				$updated_count++;
+			} else {
+				// Create new spend rule
+				$this->logger->info("Creating new promotion rule for UUID: " . $promotion['uuid']);
+
+				$this->promotion_rules_service->create_or_update_promotion_rule_from_promotion($mapped_promotion);
+				$created_count++;
+			}
+
+			$processed_uuids[] = $promotion['uuid'];
+		}
+
+		// Delete promotion rules that no longer exist in Leat
+		$uuids_to_delete = array_diff($existing_uuids, $processed_uuids);
+		$delete_count = count($uuids_to_delete);
+		$this->logger->info("Deleting " . $delete_count . " promotion rules that no longer exist in Leat");
+		$this->promotion_rules_service->delete_promotion_rules_by_uuids($uuids_to_delete);
+
+		// Handle duplicated UUIDs
+		$this->logger->info("Handling any duplicated promotion rules");
+		$this->promotion_rules_service->handle_duplicated_promotion_rules($processed_uuids);
+
+		$this->logger->info("Promotion sync completed. Updated: $updated_count, Created: $created_count, Deleted: $delete_count");
+
+		return true;
 	}
 
 	public function create_reward_reception($contact_uuid, $reward_uuid) {
