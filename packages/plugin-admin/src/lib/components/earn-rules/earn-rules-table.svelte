@@ -4,6 +4,7 @@
 	import { WalletMinimal } from "lucide-svelte";
 	import { useNavigate } from "svelte-navigator";
 	import type { EarnRuleType } from "@leat/types/plugin/settings/adminTypes";
+	import TableEmptyState from "../table-empty-state.svelte";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button, buttonVariants } from "$lib/components/ui/button";
 	import * as Card from "$lib/components/ui/card/index.js";
@@ -97,121 +98,117 @@
 	}
 </script>
 
-{#if $query?.data}
-	<div class="grid grid-cols-6 gap-6">
-		<div class="col-span-6 sm:order-1 sm:col-span-1 sm:mt-2">
-			<WalletMinimal class="text-foreground/75 mb-4 h-10 w-10" />
+<div class="grid grid-cols-6 gap-6">
+	<div class="col-span-6 sm:order-1 sm:col-span-1 sm:mt-2">
+		<WalletMinimal class="text-foreground/75 mb-4 h-10 w-10" />
 
-			<h2 class="mb-3 text-lg font-semibold">
-				{__("Add ways for customers to earn credits")}
-			</h2>
+		<h2 class="mb-3 text-lg font-semibold">
+			{__("Earn rules")}
+		</h2>
 
-			<p>
-				{__(
-					"Create rules that reward customers with credits when they perform certain actions. For example, you can reward customers with credits when they create an account or place an order.",
-					"leat"
-				)}
-			</p>
-		</div>
+		<p>
+			{__(
+				"Create rules that reward customers with credits when they perform certain actions.",
+				"leat"
+			)}
+		</p>
+	</div>
 
-		<Card.Root class="col-span-6 sm:order-2 sm:col-span-5">
-			<Card.Header class="flex  items-center justify-between sm:flex-row">
-				<div class="grid gap-2">
-					<Card.Title>{__("Earn rules")}</Card.Title>
+	<Card.Root class="col-span-6 sm:order-2 sm:col-span-5">
+		<Card.Header class="flex  items-center justify-between sm:flex-row">
+			<div class="grid gap-2">
+				<Card.Title>{__("Earn rules overview")}</Card.Title>
+			</div>
 
-					<Card.Description>
-						{__("Create and manage earn rules")}
-					</Card.Description>
-				</div>
+			<div class="flex items-center justify-between gap-2">
+				<Button
+					size="sm"
+					variant="secondary"
+					href="https://business.leat.com/loyalty"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{__("View in Leat")}
+				</Button>
 
-				<div class="flex items-center justify-between gap-2">
-					<Button
-						size="sm"
-						variant="secondary"
-						href="https://business.leat.eu/loyalty"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{__("View in Leat")}
-					</Button>
+				<Dialog.Root>
+					<Dialog.Trigger class={buttonVariants({ variant: "default", size: "sm" })}>
+						{__("Add earn rule")}
+					</Dialog.Trigger>
 
-					<Dialog.Root>
-						<Dialog.Trigger class={buttonVariants({ variant: "default", size: "sm" })}>
-							{__("Add earn rule")}
-						</Dialog.Trigger>
+					<Dialog.Content>
+						<Dialog.Header>
+							<Dialog.Title>
+								{__("Add earn rule")}
+							</Dialog.Title>
+						</Dialog.Header>
 
-						<Dialog.Content>
-							<Dialog.Header>
-								<Dialog.Title>
-									{__("Add earn rule")}
-								</Dialog.Title>
-							</Dialog.Header>
+						<form on:submit={handleCreateRule}>
+							<div class="grid gap-4 py-4">
+								<div class="grid gap-3">
+									<Label for="title">
+										{__("Title (Only visible to you)")}
 
-							<form on:submit={handleCreateRule}>
-								<div class="grid gap-4 py-4">
-									<div class="grid gap-3">
-										<Label for="title">
-											{__("Title (Only visible to you)")}
-
-											{#if titleError}
-												<div class="mt-2 text-red-600">{titleError}</div>
-											{/if}
-										</Label>
-										<Input class="col-span-3" name="title" bind:value={title} />
-									</div>
-
-									<div class="grid gap-3">
-										<Label for="ruleType">
-											{__("Rule type")}
-
-											{#if ruleTypeError}
-												<div class="mt-2 text-red-600">{ruleTypeError}</div>
-											{/if}
-										</Label>
-
-										<Select.Root
-											name="ruleType"
-											items={ruleTypes.filter(
-												(type) => !existingRuleTypes.includes(type.value)
-											)}
-											bind:selected
-										>
-											<Select.Trigger class="w-[180px]">
-												<Select.Value placeholder={__("Select type")} />
-											</Select.Trigger>
-											<Select.Content>
-												<Select.Group>
-													<Select.Label>
-														{__("Select type")}
-													</Select.Label>
-
-													{#each allowedRules as type}
-														<Select.Item
-															value={type.value}
-															label={type.label}
-														>
-															{type.label}
-														</Select.Item>
-													{/each}
-												</Select.Group>
-											</Select.Content>
-
-											<Select.Input name="ruleType" />
-										</Select.Root>
-									</div>
+										{#if titleError}
+											<div class="mt-2 text-red-600">{titleError}</div>
+										{/if}
+									</Label>
+									<Input class="col-span-3" name="title" bind:value={title} />
 								</div>
 
-								<Dialog.Footer>
-									<Button type="submit">
-										{__("Create")}
-									</Button>
-								</Dialog.Footer>
-							</form>
-						</Dialog.Content>
-					</Dialog.Root>
-				</div>
-			</Card.Header>
+								<div class="grid gap-3">
+									<Label for="ruleType">
+										{__("Rule type")}
 
+										{#if ruleTypeError}
+											<div class="mt-2 text-red-600">{ruleTypeError}</div>
+										{/if}
+									</Label>
+
+									<Select.Root
+										name="ruleType"
+										items={ruleTypes.filter(
+											(type) => !existingRuleTypes.includes(type.value)
+										)}
+										bind:selected
+									>
+										<Select.Trigger class="w-[180px]">
+											<Select.Value placeholder={__("Select type")} />
+										</Select.Trigger>
+										<Select.Content>
+											<Select.Group>
+												<Select.Label>
+													{__("Select type")}
+												</Select.Label>
+
+												{#each allowedRules as type}
+													<Select.Item
+														value={type.value}
+														label={type.label}
+													>
+														{type.label}
+													</Select.Item>
+												{/each}
+											</Select.Group>
+										</Select.Content>
+
+										<Select.Input name="ruleType" />
+									</Select.Root>
+								</div>
+							</div>
+
+							<Dialog.Footer>
+								<Button type="submit">
+									{__("Create")}
+								</Button>
+							</Dialog.Footer>
+						</form>
+					</Dialog.Content>
+				</Dialog.Root>
+			</div>
+		</Card.Header>
+
+		{#if $query?.data && $query.data.length > 0}
 			<Card.Content>
 				<Table.Root>
 					<Table.Header>
@@ -221,6 +218,7 @@
 							<Table.Head class="text-right">{__("Status", "leat")}</Table.Head>
 						</Table.Row>
 					</Table.Header>
+
 					<Table.Body>
 						{#each $query.data as rule}
 							<Table.Row
@@ -252,6 +250,16 @@
 					</Table.Body>
 				</Table.Root>
 			</Card.Content>
-		</Card.Root>
-	</div>
-{/if}
+		{:else}
+			<Card.Content>
+				<TableEmptyState
+					title={__("Nothing here yet", "leat")}
+					description={__(
+						"Once you start adding ways to earn credits, they will appear here.",
+						"leat"
+					)}
+				/>
+			</Card.Content>
+		{/if}
+	</Card.Root>
+</div>

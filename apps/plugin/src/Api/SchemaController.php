@@ -45,6 +45,7 @@ class SchemaController {
 				Schemas\V1\EarnRewardSchema::IDENTIFIER => Schemas\V1\EarnRewardSchema::class,
 				Schemas\V1\EarnRulesSchema::IDENTIFIER => Schemas\V1\EarnRulesSchema::class,
 				Schemas\V1\SpendRulesSchema::IDENTIFIER => Schemas\V1\SpendRulesSchema::class,
+				Schemas\V1\PromotionRulesSchema::IDENTIFIER => Schemas\V1\PromotionRulesSchema::class,
 				Schemas\V1\WCProductsSearchSchema::IDENTIFIER => Schemas\V1\WCProductsSearchSchema::class,
 				Schemas\V1\SpendRulesSyncSchema::IDENTIFIER => Schemas\V1\SpendRulesSyncSchema::class,
 				Schemas\V1\PromotionRulesSyncSchema::IDENTIFIER => Schemas\V1\PromotionRulesSyncSchema::class,

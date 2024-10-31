@@ -132,7 +132,7 @@
 											'These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href="%s" class="underline" target="_blank" rel="noopener noreferrer">Leat Dashboard</a>.',
 											"leat"
 										),
-										"https://business.leat.eu/loyalty/1/rules"
+										"https://business.leat.com/loyalty/1/rules"
 									)}
 								</Alert>
 							{/if}

@@ -4,6 +4,7 @@
 	import PageDashboardSettings from "./routes/page-dashboard-settings.svelte";
 	import PageEarnRulesId from "./routes/page-earn-rules-id.svelte";
 	import PageLoyaltyProgram from "./routes/page-loyalty-program.svelte";
+	import PagePromotions from "./routes/page-promotions.svelte";
 	import PageOnboarding from "./routes/page-onboarding.svelte";
 	import PageSpendRulesId from "./routes/page-spend-rules-id.svelte";
 	import { history } from "$lib/utils/custom-history";
@@ -46,6 +47,15 @@
 
 				<!-- Index Route for /loyalty-program -->
 				<Route path="/" component={PageLoyaltyProgram} />
+			</Route>
+
+			<!-- Render the Promotions component at / -->
+			<Route path="promotions/*">
+				<!-- Render specific earn-rules with id "123" at /promotions/earn-rules/123 -->
+				<Route path="promotions/:id" component={PageSpendRulesId} />
+
+				<!-- Index Route for /promotions -->
+				<Route path="/" component={PagePromotions} />
 			</Route>
 		</Layout>
 	</Router>

@@ -6,6 +6,8 @@ export const QueryKeys = {
 	earnRuleById: "earnRuleById",
 	spendRules: "spendRules",
 	spendRuleById: "spendRuleById",
+	promotionRules: "promotionRules",
+	promotionRuleById: "promotionRuleById",
 	apiKey: "apiKey",
 	leatShops: "shops",
 	leatRewards: "leatRewards",

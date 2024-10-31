@@ -179,6 +179,25 @@ export class SettingsAdminService {
 		return data;
 	}
 
+	async getPromotionRules(): Promise<unknown> {
+		const { data, error } = await api.get<unknown>(
+			"/leat/v1/promotion-rules?status=draft,publish",
+			{
+				cache: "no-store",
+			}
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
 	async upsertSpendRule(spendRule: UpsertSpendRuleParams): Promise<UpsertSpendRuleResponse> {
 		const { data, error } = await api.post<UpsertSpendRuleResponse>(
 			"/leat/v1/spend-rules",

@@ -7,10 +7,14 @@ export const headerLinks = [
 		label: __("General", "leat"),
 		type: "link",
 	},
-
 	{
 		href: "/loyalty-program",
 		label: __("Loyalty Program", "leat"),
+		type: "link",
+	},
+	{
+		href: "/promotions",
+		label: __("Promotions", "leat"),
 		type: "link",
 	},
 	{

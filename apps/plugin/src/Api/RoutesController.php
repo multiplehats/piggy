@@ -52,6 +52,7 @@ class RoutesController {
 				Routes\V1\EarnReward::IDENTIFIER => Routes\V1\EarnReward::class,
 				Routes\V1\EarnRules::IDENTIFIER => Routes\V1\EarnRules::class,
 				Routes\V1\SpendRules::IDENTIFIER => Routes\V1\SpendRules::class,
+				Routes\V1\PromotionRules::IDENTIFIER => Routes\V1\PromotionRules::class,
 				Routes\V1\SpendRulesClaim::IDENTIFIER => Routes\V1\SpendRulesClaim::class,
 				Routes\V1\Coupons::IDENTIFIER => Routes\V1\Coupons::class,
 				Routes\V1\JoinProgram::IDENTIFIER => Routes\V1\JoinProgram::class,
