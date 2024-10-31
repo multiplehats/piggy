@@ -115,7 +115,6 @@ class SpendRules extends AbstractRoute {
 				'_leat_spend_rule_discount_type' => $data['discountType'],
 				'_leat_spend_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
 				'_leat_spend_rule_selected_products' => $data['selectedProducts'],
-				'_leat_spend_rule_image' => $data['image'],
 			)
 		);
 

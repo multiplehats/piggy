@@ -64,7 +64,7 @@
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{__("View in Leat")}
+					{__("Add promotion")}
 				</Button>
 
 				<Button

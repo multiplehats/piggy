@@ -12,6 +12,7 @@ use Leat\Api\Api;
 use Leat\Domain\Services\CustomerSession;
 use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Services\VoucherSync;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
@@ -272,6 +273,12 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
+			VoucherSync::class,
+			function (Container $container) {
+				return new VoucherSync( $container->get( Connection::class ) );
+			}
+		);
+		$this->container->register(
 			AssetsController::class,
 			function( Container $container ) {
 				return new AssetsController( $container->get( AssetApi::class ), $container->get( Settings::class, ), $container->get( Connection::class ) );
@@ -303,6 +310,7 @@ class Bootstrap {
 				return new Api();
 			}
 		);
+
 	}
 
 	/**
