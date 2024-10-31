@@ -168,6 +168,6 @@ final class PostTypeController {
 			'supports'           => array('title', 'editor', 'custom-fields'),
 		);
 
-		register_post_type(self::PREFIX . '_promotion', $args);
+		register_post_type(self::PREFIX . '_promotion_rule', $args);
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Leat\Api;
 
+use Error;
 use Piggy\Api\RegisterClient;
 use Piggy\Api\ApiClient;
 use Piggy\Api\Models\Loyalty\Rewards\Reward;
@@ -829,6 +830,7 @@ class Connection {
 		}
 
 		$promotions = $this->get_promotions();
+
 		if (!$promotions) {
 			$this->logger->error("Failed to retrieve promotions from Leat");
 			return false;
@@ -843,6 +845,7 @@ class Connection {
 		);
 
 		$current_promotion_rules = get_posts($prepared_args);
+
 		$this->logger->info("Current promotion rules in WordPress: " . count($current_promotion_rules));
 
 		// Collect existing Leat UUIDs from CPT

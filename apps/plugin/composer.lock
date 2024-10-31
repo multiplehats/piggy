@@ -597,16 +597,16 @@
         },
         {
             "name": "piggy/piggy-php-sdk",
-            "version": "3.9.0",
+            "version": "3.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Piggy-Loyalty/piggy-php-sdk.git",
-                "reference": "4b5d343a697131e19f729415e2428ce8b383b9c1"
+                "reference": "1ef237ec9b1c423bad397a64440a7bf0cab2c9e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Piggy-Loyalty/piggy-php-sdk/zipball/4b5d343a697131e19f729415e2428ce8b383b9c1",
-                "reference": "4b5d343a697131e19f729415e2428ce8b383b9c1",
+                "url": "https://api.github.com/repos/Piggy-Loyalty/piggy-php-sdk/zipball/1ef237ec9b1c423bad397a64440a7bf0cab2c9e4",
+                "reference": "1ef237ec9b1c423bad397a64440a7bf0cab2c9e4",
                 "shasum": ""
             },
             "require": {
@@ -649,9 +649,9 @@
             "description": "php sdk piggy",
             "support": {
                 "issues": "https://github.com/Piggy-Loyalty/piggy-php-sdk/issues",
-                "source": "https://github.com/Piggy-Loyalty/piggy-php-sdk/tree/3.9.0"
+                "source": "https://github.com/Piggy-Loyalty/piggy-php-sdk/tree/3.9.1"
             },
-            "time": "2024-10-15T08:05:37+00:00"
+            "time": "2024-10-25T14:13:49+00:00"
         },
         {
             "name": "psr/http-client",
