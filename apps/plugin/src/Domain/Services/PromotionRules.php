@@ -26,33 +26,6 @@ class PromotionRules
 		return empty($value) ? $fallback_value : $value;
 	}
 
-	public function get_promotion_rules_by_type($type, $post_status = ['publish'])
-	{
-		$args = [
-			'post_type' => 'leat_promotion_rule',
-			'post_status' => $post_status,
-		];
-
-		if($type) {
-			$args['meta_query'] = [
-				[
-					'key' => '_leat_promotion_rule_type',
-					'value' => $type,
-				],
-			];
-		}
-
-		$posts = get_posts($args);
-
-		if (empty($posts)) {
-			return null;
-		}
-
-		$posts = array_map([$this, 'get_formatted_post'], $posts);
-
-		return $posts;
-	}
-
 	/**
 	 * Get a promotion rule by its ID.
 	 *
@@ -78,8 +51,6 @@ class PromotionRules
 	 */
 	public function get_formatted_post($post)
 	{
-		$type = $this->get_post_meta_data($post->ID, '_leat_promotion_rule_type', null);
-
 		$promotion_rule = [
 			'id' => (int) $post->ID,
 			'createdAt' => $post->post_date,
@@ -95,6 +66,14 @@ class PromotionRules
 				],
 				'type' => 'select',
 				'description' => __('Set the status of the rule. Inactive promotion rules will not be displayed to users.', 'leat'),
+			],
+			'label' => [
+				'id' => 'label',
+				'label' => __('Label', 'leat'),
+				'default' => $this->get_default_label(),
+				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_label'),
+				'type' => 'translatable_text',
+				'description' => $this->get_label_description(),
 			],
 			'title' => [
 				'id' => 'title',
@@ -125,6 +104,7 @@ class PromotionRules
 		$promotion_rule['selectedProducts'] = [
 			'id' => 'selected_products',
 			'label' => __('Selected products', 'leat'),
+			'optional' => true,
 			'default' => [],
 			'value' => $this->get_post_meta_data($post->ID, '_leat_promotion_rule_selected_products', []),
 			'type' => 'products_select',
@@ -175,10 +155,10 @@ class PromotionRules
 		$promotion_rule['limitPerContact'] = [
 			'id' => 'limit_per_contact',
 			'label' => __('Limit Per Contact', 'leat'),
-			'default' => 1,
+			'default' => 0,
 			'value' => $this->get_post_meta_data($post->ID, '_leat_promotion_rule_limit_per_contact', 1),
 			'type' => 'number',
-			'description' => __('The maximum number of times a single contact can use this promotion.', 'leat'),
+			'description' => __('The maximum number of times a single contact can use this promotion. 0 means unlimited.', 'leat'),
 		];
 
 		$promotion_rule['expirationDuration'] = [
@@ -208,6 +188,19 @@ class PromotionRules
 		}
 	}
 
+	private function get_label_description()
+	{
+		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
+		return sprintf(__("The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat'), $placeholders);
+	}
+
+	private function get_default_label()
+	{
+		return [
+			'default' => 'Unlock {{ discount }} for {{ credits }} {{ credits_currency }}'
+		];
+	}
+
 	public function create_or_update_promotion_rule_from_promotion($promotion, $existing_post_id = null) {
 		$post_data = array(
 			'post_type' => 'leat_promotion_rule',
@@ -230,9 +223,6 @@ class PromotionRules
 		} else {
 			// New rules are always draft by default.
 			$post_data['post_status'] = 'draft';
-
-			// _leat_promotion_rule_type
-			$post_data['meta_input']['_leat_promotion_rule_type'] = $promotion['type'];
 
 			wp_insert_post($post_data);
 		}

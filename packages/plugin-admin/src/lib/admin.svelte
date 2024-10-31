@@ -7,6 +7,7 @@
 	import PagePromotions from "./routes/page-promotions.svelte";
 	import PageOnboarding from "./routes/page-onboarding.svelte";
 	import PageSpendRulesId from "./routes/page-spend-rules-id.svelte";
+	import PagePromotionRulesId from "./routes/page-promotion-rules-id.svelte";
 	import { history } from "$lib/utils/custom-history";
 	import Layout from "$lib/components/layout-wrapper.svelte";
 	import PageGeneralSettings from "$lib/routes/page-general-settings.svelte";
@@ -52,7 +53,7 @@
 			<!-- Render the Promotions component at / -->
 			<Route path="promotions/*">
 				<!-- Render specific earn-rules with id "123" at /promotions/earn-rules/123 -->
-				<Route path="promotions/:id" component={PageSpendRulesId} />
+				<Route path="promotion-rules/:id" component={PagePromotionRulesId} />
 
 				<!-- Index Route for /promotions -->
 				<Route path="/" component={PagePromotions} />

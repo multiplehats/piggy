@@ -355,6 +355,8 @@ class Connection {
 
 		$results = Promotion::list();
 
+		error_log(print_r($results, true));
+
 		$promotions = array();
 
 		foreach( $results as $promotion ) {

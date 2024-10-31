@@ -12,6 +12,7 @@
 	export let description: $$Props["description"] = undefined;
 	export let hideLabel: $$Props["hideLabel"] = false;
 	export let label: $$Props["label"];
+	export let optional: $$Props["optional"] = false;
 	export { className as class };
 
 	$: hideLabel = !!tooltip;
@@ -21,6 +22,10 @@
 	{#if label}
 		<Label class={cn(hideLabel && "sr-only")} for={id}>
 			{label}
+
+			{#if !optional}
+				<span>*</span>
+			{/if}
 		</Label>
 	{/if}
 

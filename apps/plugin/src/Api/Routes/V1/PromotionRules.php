@@ -102,21 +102,7 @@ class PromotionRules extends AbstractRoute {
 			'post_type' => 'leat_promotion_rule',
 			'post_title' => $data['title'],
 			'post_status' => $data['status'],
-			'meta_input' => array(
-				'_leat_promotion_rule_type' => $data['type'],
-				'_leat_promotion_rule_label' => $data['label'],
-				'_leat_promotion_rule_starts_at' => $data['startsAt'],
-				'_leat_promotion_rule_expires_at' => $data['expiresAt'],
-				'_leat_promotion_rule_completed' => $data['completed'],
-				'_leat_promotion_rule_instructions' => $data['instructions'],
-				'_leat_promotion_rule_description' => $data['description'],
-				'_leat_promotion_rule_fulfillment' => $data['fulfillment'],
-				'_leat_promotion_rule_discount_value' => $data['discountValue'],
-				'_leat_promotion_rule_discount_type' => $data['discountType'],
-				'_leat_promotion_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
-				'_leat_promotion_rule_selected_products' => $data['selectedProducts'],
-				'_leat_promotion_rule_image' => $data['image'],
-			)
+			'meta_input' => array()
 		);
 
 		if ( ! empty( $data['id'] ) ) {

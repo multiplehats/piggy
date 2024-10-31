@@ -23,6 +23,7 @@ export const zSelectOptions = z.record(zSelectOptionsItem);
 export const zSettingsBaseField = z.object({
 	id: z.string(),
 	label: z.string(),
+	optional: z.boolean().optional(),
 	default: z.string(),
 	tooltip: z.string().optional(),
 	placeholder: z.string().optional(),
@@ -257,3 +258,43 @@ export const zEarnRules = zSettingsBaseField.extend({
 });
 
 export type EarnRule = z.infer<typeof zEarnRules>;
+
+// Promotion rules
+export const zPromotionRuleValueItem = z.object({
+	id: z.number(),
+	title: zText,
+	label: zTranslatableText,
+	status: zSelect.extend({
+		default: z.literal("publish").or(z.literal("draft")),
+		value: z.literal("publish").or(z.literal("draft")),
+	}),
+	createdAt: z.string(),
+	updatedAt: z.string(),
+	startsAt: zDate,
+	expiresAt: zDate,
+	completed: z.boolean().nullable().optional(),
+	leatPromotionUuid: z.string(),
+	description: zTranslatableText,
+	fulfillment: zTranslatableText,
+	image: z.object({
+		value: z.string().nullable(),
+	}),
+	selectedProducts: zProductsSelect,
+	discountValue: zNumber,
+	discountType: zSelect.extend({
+		default: z.literal("percentage").or(z.literal("fixed")),
+		value: z.literal("percentage").or(z.literal("fixed")),
+	}),
+	minimumPurchaseAmount: zNumber,
+	voucherLimit: zNumber,
+	limitPerContact: zNumber,
+	expirationDuration: zNumber,
+});
+export type PromotionRuleValueItem = z.infer<typeof zPromotionRuleValueItem>;
+
+export const zPromotionRules = zSettingsBaseField.extend({
+	type: z.literal("promotion_rules"),
+	default: z.array(zPromotionRuleValueItem).or(z.tuple([])),
+	value: z.array(zPromotionRuleValueItem),
+});
+export type PromotionRules = z.infer<typeof zPromotionRules>;

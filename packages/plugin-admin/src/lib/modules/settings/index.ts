@@ -5,6 +5,9 @@ import type {
 	GetEarnRuleByIdParams,
 	GetEarnRuleByIdResponse,
 	GetEarnRulesResponse,
+	GetPromotionRuleByIdParams,
+	GetPromotionRuleByIdResponse,
+	GetPromotionRulesResponse,
 	GetSettingByIdParams,
 	GetSettingByIdResponse,
 	GetSettingsResponse,
@@ -179,25 +182,6 @@ export class SettingsAdminService {
 		return data;
 	}
 
-	async getPromotionRules(): Promise<unknown> {
-		const { data, error } = await api.get<unknown>(
-			"/leat/v1/promotion-rules?status=draft,publish",
-			{
-				cache: "no-store",
-			}
-		);
-
-		if (error ?? !data) {
-			if (error) {
-				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
-			}
-
-			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
-		}
-
-		return data;
-	}
-
 	async upsertSpendRule(spendRule: UpsertSpendRuleParams): Promise<UpsertSpendRuleResponse> {
 		const { data, error } = await api.post<UpsertSpendRuleResponse>(
 			"/leat/v1/spend-rules",
@@ -231,6 +215,25 @@ export class SettingsAdminService {
 		return data;
 	}
 
+	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
+		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
+			`/leat/v1/spend-rules/?id=${id}&status=publish,draft`,
+			{
+				cache: "no-store",
+			}
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
 	async syncPromotions(): Promise<{ ok: true }> {
 		const { data, error } = await api.get<{ ok: true }>(`/leat/private/promotion-rules-sync`, {
 			cache: "no-store",
@@ -247,9 +250,30 @@ export class SettingsAdminService {
 		return data;
 	}
 
-	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
-		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
-			`/leat/v1/spend-rules/?id=${id}&status=publish,draft`,
+	async getPromotionRules(): Promise<GetPromotionRulesResponse> {
+		const { data, error } = await api.get<GetPromotionRulesResponse>(
+			"/leat/v1/promotion-rules?status=draft,publish",
+			{
+				cache: "no-store",
+			}
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async getPromotionRuleById({
+		id,
+	}: GetPromotionRuleByIdParams): Promise<GetPromotionRuleByIdResponse> {
+		const { data, error } = await api.get<GetPromotionRuleByIdResponse>(
+			`/leat/v1/promotion-rules/?id=${id}&status=publish,draft`,
 			{
 				cache: "no-store",
 			}

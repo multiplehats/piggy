@@ -94,6 +94,7 @@
 
 <div class={cn("flex flex-col justify-between", className)}>
 	<SettingsLabel
+		optional={$$props.optional}
 		label={$$props.label}
 		description={$$props.description}
 		hideLabel={$$props.hideLabel}
