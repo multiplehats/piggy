@@ -114,6 +114,7 @@ class Bootstrap {
 		}
 		$this->container->get( CustomerDashboardShortcode::class )->init();
 		$this->container->get( CustomerSession::class );
+		$this->container->get( VoucherSync::class );
 
 		/**
 		* Action triggered after Leat initialization finishes.

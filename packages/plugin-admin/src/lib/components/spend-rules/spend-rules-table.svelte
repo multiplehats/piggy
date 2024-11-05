@@ -56,11 +56,11 @@
 				<Button
 					size="sm"
 					variant="secondary"
-					href="https://business.leat.com/loyalty"
+					href="https://business.leat.com/loyalty/rewards?type=all"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{__("View in Leat")}
+					{__("Add reward")}
 				</Button>
 
 				<Button

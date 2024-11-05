@@ -42,20 +42,20 @@ class VoucherSync {
         add_action('leat_sync_vouchers', [$this, 'sync_vouchers']);
 
         // Add hook for promotion rule save
-        add_action('init', [$this, 'handle_promotion_rule_save'], 10, 1);
+        add_action('save_post', [$this, 'handle_promotion_rule_save'], 10, 1);
     }
 
     public function sync_vouchers() {
         $this->logger->info('Starting voucher sync');
 
-        // Get all active promotion rules
         $active_promotions = $this->get_active_promotions();
+        error_log('Found ' . count($active_promotions) . ' active promotions');
 
-        // Get all users with a Leat UUID
         $users = get_users([
             'meta_key' => 'leat_uuid',
             'fields' => ['ID', 'user_email']
         ]);
+        error_log('Found ' . count($users) . ' users with Leat UUID');
 
         foreach ($active_promotions as $promotion_uuid) {
             foreach ($users as $user) {
@@ -89,16 +89,18 @@ class VoucherSync {
     private function sync_user_vouchers($user, $promotion_uuid) {
         $contact_uuid = get_user_meta($user->ID, 'leat_uuid', true);
         if (!$contact_uuid) {
+            error_log("No contact UUID found for user {$user->ID}");
             return;
         }
 
         $client = $this->connection->init_client();
-
         if (!$client) {
+            error_log("Failed to initialize client for user {$user->ID}");
             return;
         }
 
         try {
+            error_log("Starting voucher sync for user {$user->ID} and promotion {$promotion_uuid}");
             $page = 1;
             $per_page = 100;
 
@@ -111,10 +113,14 @@ class VoucherSync {
                 ]);
 
                 if (!$response || !isset($response['data'])) {
+                    error_log("No voucher data received for user {$user->ID} and promotion {$promotion_uuid}");
                     break;
                 }
 
                 $vouchers = $response['data'];
+                error_log(json_encode($vouchers));
+
+                error_log("Found " . count($vouchers) . " vouchers for user {$user->ID} on page {$page}");
                 $this->update_user_vouchers($user->ID, $vouchers);
 
                 $page++;
@@ -132,6 +138,7 @@ class VoucherSync {
 
     private function update_user_vouchers($user_id, $vouchers) {
         $existing_vouchers = get_user_meta($user_id, 'leat_vouchers', true) ?: [];
+        error_log("Updating vouchers for user {$user_id}. Current count: " . count($existing_vouchers) . ", New count: " . count($vouchers));
         $updated_vouchers = [];
 
         foreach ($vouchers as $voucher) {
@@ -153,6 +160,7 @@ class VoucherSync {
     }
 
     public function handle_promotion_rule_save($post_id) {
+        error_log('handle_promotion_rule_save');
         $this->sync_vouchers();
     }
 }

@@ -11,7 +11,7 @@
 	import { Button } from "$lib/components/ui/button/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { SettingsAdminService } from "$lib/modules/settings";
-	import { upsertSpendRuleMutationConfig } from "$lib/modules/settings/mutations";
+	import { upsertPromotionRuleMutationConfig } from "$lib/modules/settings/mutations";
 	import type { GetPromotionRuleByIdResponse } from "$lib/modules/settings/types";
 	import { QueryKeys } from "$lib/utils/query-keys";
 	import { getStatusText } from "$lib/utils/status-text";
@@ -42,7 +42,7 @@
 		}))
 	);
 	const mutate = createMutation(
-		upsertSpendRuleMutationConfig(
+		upsertPromotionRuleMutationConfig(
 			client,
 			{},
 			{
@@ -57,25 +57,25 @@
 			return;
 		}
 
-		$mutate.mutate({
+		const data = {
 			id: $rule.id,
 			title: $rule.title?.value ?? __("New rule", "leat"),
 			label: $rule.label.value,
 			status: $rule.status.value,
-			startsAt: $rule?.startsAt?.value,
-			expiresAt: $rule?.expiresAt?.value,
 			selectedProducts: $rule?.selectedProducts?.value,
-			description: $rule?.description?.value,
-			fulfillment: $rule?.fulfillment?.value,
 			discountValue: $rule?.discountValue?.value,
 			discountType: $rule?.discountType?.value,
 			minimumPurchaseAmount: $rule?.minimumPurchaseAmount?.value,
-		});
+		};
+
+		$mutate.mutate(data);
 	}
 
 	$: if ($query.data && $query.isSuccess) {
 		rule.set($query.data);
 	}
+
+	$: console.log($rule);
 </script>
 
 {#if $query.isLoading}

@@ -39,21 +39,14 @@
 		</h2>
 
 		<p>
-			{__(
-				"Manage promotions and vouchers, link a promotion to a percentage or fixed discount",
-				"leat"
-			)}
+			{__("Sync promotions from Leat and manage how they are displayed on your website.")}
 		</p>
 	</div>
 
 	<Card.Root class="col-span-6 sm:order-2 sm:col-span-5">
 		<Card.Header class="flex  items-center justify-between sm:flex-row">
 			<div class="grid gap-2">
-				<Card.Title>{__("Promotion rules")}</Card.Title>
-
-				<Card.Description>
-					{__("Create and manage promotion rules")}
-				</Card.Description>
+				<Card.Title>{__("Promotion overview")}</Card.Title>
 			</div>
 
 			<div class="flex items-center justify-between gap-2">

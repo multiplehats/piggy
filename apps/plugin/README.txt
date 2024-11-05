@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: add to cart popup, added to cart, sidecart, shop, shopping cart, cart drawer, floating cart, woo-commerce, woocommerce
 Requires at least: 5.1
-Tested up to: 6.3.2
+Tested up to: 6.6.2
 Requires PHP: 8.0
 Stable tag: 1.4.30
 License: GPLv2 or later

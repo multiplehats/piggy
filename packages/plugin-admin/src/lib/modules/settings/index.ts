@@ -18,6 +18,8 @@ import type {
 	SaveSettingsResponse,
 	UpsertEarnRuleParams,
 	UpsertEarnRuleResponse,
+	UpsertPromotionRuleParams,
+	UpsertPromotionRuleResponse,
 	UpsertSpendRuleParams,
 	UpsertSpendRuleResponse,
 } from "./types";
@@ -277,6 +279,25 @@ export class SettingsAdminService {
 			{
 				cache: "no-store",
 			}
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async upsertPromotionRule(
+		promotionRule: UpsertPromotionRuleParams
+	): Promise<UpsertPromotionRuleResponse> {
+		const { data, error } = await api.post<UpsertPromotionRuleResponse>(
+			"/leat/v1/promotion-rules",
+			promotionRule
 		);
 
 		if (error ?? !data) {

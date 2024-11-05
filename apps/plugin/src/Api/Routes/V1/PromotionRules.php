@@ -85,12 +85,6 @@ class PromotionRules extends AbstractRoute {
 			'status' => $request->get_param( 'status' ),
 			'label' => $request->get_param( 'label' ),
 			'title' => $request->get_param( 'title' ),
-			'type' => $request->get_param( 'type' ),
-			'startsAt' => $request->get_param( 'startsAt' ),
-			'expiresAt' => $request->get_param( 'expiresAt' ),
-			'completed' => $request->get_param( 'completed' ),
-			'instructions' => $request->get_param( 'instructions' ),
-			'description' => $request->get_param( 'description' ),
 			'fulfillment' => $request->get_param( 'fulfillment' ),
 			'discountValue' => $request->get_param( 'discountValue' ),
 			'discountType' => $request->get_param( 'discountType' ),
@@ -102,8 +96,17 @@ class PromotionRules extends AbstractRoute {
 			'post_type' => 'leat_promotion_rule',
 			'post_title' => $data['title'],
 			'post_status' => $data['status'],
-			'meta_input' => array()
+			'meta_input' => array(
+				'_leat_promotion_rule_selected_products' => $data['selectedProducts'],
+				'_leat_promotion_rule_discount_value' => $data['discountValue'],
+				'_leat_promotion_rule_discount_type' => $data['discountType'],
+				'_leat_promotion_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
+				'_leat_promotion_rule_discount_type' => $data['discountType'],
+				'_leat_promotion_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
+			)
 		);
+
+		error_log(json_encode($post_data));
 
 		if ( ! empty( $data['id'] ) ) {
 			$post_data['ID'] = $data['id'];

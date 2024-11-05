@@ -4,6 +4,8 @@ import type {
 	SaveSettingsResponse,
 	UpsertEarnRuleParams,
 	UpsertEarnRuleResponse,
+	UpsertPromotionRuleParams,
+	UpsertPromotionRuleResponse,
 	UpsertSpendRuleParams,
 	UpsertSpendRuleResponse,
 } from "./types";
@@ -117,6 +119,48 @@ export function upsertSpendRuleMutationConfig(
 
 			if (opts.onMutateCb) {
 				opts.onMutateCb(earnRule);
+			}
+		},
+		onSuccess: (newRule) => {
+			if (opts.onSuccessCb) {
+				opts.onSuccessCb(newRule);
+			}
+		},
+		...mutationOpts,
+	};
+}
+
+type UpsertPromotionRuleMutationConfig = CreateMutationOptions<
+	UpsertPromotionRuleResponse,
+	DefaultError,
+	UpsertPromotionRuleParams
+>;
+
+export function upsertPromotionRuleMutationConfig(
+	queryClient: QueryClient,
+	mutationOpts: Partial<
+		Omit<
+			UpsertPromotionRuleMutationConfig,
+			"mutationKey" | "mutationFn" | "onSuccess" | "onMutate"
+		>
+	> = {},
+	opts: {
+		onSuccessCb?: (newRule: UpsertPromotionRuleResponse) => void;
+		onMutateCb?: (promotionRule: UpsertPromotionRuleParams) => void;
+	} = {}
+): UpsertPromotionRuleMutationConfig {
+	return {
+		mutationKey: [MutationKeys.upsertPromotionRule],
+		mutationFn: async (params) => {
+			const data = await service.upsertPromotionRule(params);
+
+			return data;
+		},
+		onMutate: async (promotionRule) => {
+			await queryClient.refetchQueries({ queryKey: [QueryKeys.promotionRules] });
+
+			if (opts.onMutateCb) {
+				opts.onMutateCb(promotionRule);
 			}
 		},
 		onSuccess: (newRule) => {

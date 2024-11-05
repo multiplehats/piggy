@@ -3,6 +3,7 @@ import type {
 	PluginOptionType,
 	PluginOptionsAdmin,
 	PluginOptionsAdminKeys,
+	PluginPromotionRuleItemValues,
 	PluginSpendRuleItemValues,
 } from "@leat/types";
 import type {
@@ -63,3 +64,10 @@ export type GetPromotionRuleByIdParams = {
 	id: number | string;
 };
 export type GetPromotionRuleByIdResponse = [PromotionRuleValueItem];
+
+export type UpsertPromotionRuleParams = Partial<PluginPromotionRuleItemValues> & {
+	id?: string | number;
+	title: string;
+};
+
+export type UpsertPromotionRuleResponse = PromotionRuleValueItem;

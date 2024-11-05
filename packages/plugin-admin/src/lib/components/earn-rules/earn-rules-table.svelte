@@ -121,16 +121,6 @@
 			</div>
 
 			<div class="flex items-center justify-between gap-2">
-				<Button
-					size="sm"
-					variant="secondary"
-					href="https://business.leat.com/loyalty"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					{__("View in Leat")}
-				</Button>
-
 				<Dialog.Root>
 					<Dialog.Trigger class={buttonVariants({ variant: "default", size: "sm" })}>
 						{__("Add earn rule")}

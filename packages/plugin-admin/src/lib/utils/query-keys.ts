@@ -19,4 +19,5 @@ export const MutationKeys = {
 	saveSettings: "saveSettings",
 	upsertEarnRule: "upsertEarnRule",
 	upsertSpendRule: "upsertSpendRule",
+	upsertPromotionRule: "upsertPromotionRule",
 } as const;
