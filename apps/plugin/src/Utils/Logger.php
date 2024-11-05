@@ -30,5 +30,19 @@ class Logger {
     private function log($level, $message, $context) {
         $context['source'] = $this->source;
         $this->logger->$level($message, $context);
+
+        // Add debug logging when WP_DEBUG is enabled
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            $debug_message = sprintf(
+                '[%s] [%s] %s %s',
+                $this->source,
+                strtoupper($level),
+                $message,
+                !empty($context) ? ' Context: ' . wp_json_encode($context) : ''
+            );
+
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+            error_log($debug_message);
+        }
     }
 }

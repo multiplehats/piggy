@@ -150,6 +150,17 @@ class Installer {
             delete_option($option->option_name);
         }
 
+		// Migration users data that's prefixed with piggy_ to leat_
+		$users = get_users([
+			'meta_key' => 'piggy_uuid',
+			'fields' => ['ID', 'user_email']
+		]);
+
+		foreach ($users as $user) {
+			update_user_meta($user->ID, 'leat_uuid', get_user_meta($user->ID, 'piggy_uuid', true));
+			delete_user_meta($user->ID, 'piggy_uuid');
+		}
+
         // Rename database tables
         $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}piggy_%'");
         foreach ($tables as $table) {
@@ -167,6 +178,9 @@ class Installer {
             } else {
                 // If the new table already exists, we might want to merge data or handle this case
                 error_log("Table {$new_table_name} already exists. Skipping rename operation.");
+
+				// Delete the old table
+				$wpdb->query("DROP TABLE IF EXISTS {$old_table_name}");
             }
         }
 

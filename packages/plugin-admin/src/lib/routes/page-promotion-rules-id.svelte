@@ -74,8 +74,6 @@
 	$: if ($query.data && $query.isSuccess) {
 		rule.set($query.data);
 	}
-
-	$: console.log($rule);
 </script>
 
 {#if $query.isLoading}

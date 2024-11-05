@@ -355,8 +355,6 @@ class Connection {
 
 		$results = Promotion::list();
 
-		error_log(print_r($results, true));
-
 		$promotions = array();
 
 		foreach( $results as $promotion ) {
@@ -902,6 +900,8 @@ class Connection {
 		$this->promotion_rules_service->handle_duplicated_promotion_rules($processed_uuids);
 
 		$this->logger->info("Promotion sync completed. Updated: $updated_count, Created: $created_count, Deleted: $delete_count");
+
+		do_action('leat_sync_promotions_complete', $processed_uuids);
 
 		return true;
 	}
