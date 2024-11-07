@@ -31,6 +31,10 @@ class SpendRulesSyncSchema extends AbstractSchema {
 	 */
 	const IDENTIFIER = 'spend-rules-sync';
 
+	public function __construct() {
+		$this->spend_rules_service = new SpendRulesService();
+	}
+
 	/**
 	 * API key schema properties.
 	 *

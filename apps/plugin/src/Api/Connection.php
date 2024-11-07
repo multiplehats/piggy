@@ -420,6 +420,9 @@ class Connection {
 		return $uuid;
 	}
 
+	public function get_user_from_leat_uuid($uuid) {
+		return get_user_by('meta_key', 'leat_uuid', $uuid);
+	}
 
 	/**
 	 * Get WooCommerce user data.

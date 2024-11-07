@@ -57,6 +57,7 @@ class RoutesController {
 				Routes\V1\Coupons::IDENTIFIER => Routes\V1\Coupons::class,
 				Routes\V1\JoinProgram::IDENTIFIER => Routes\V1\JoinProgram::class,
 				Routes\V1\Contact::IDENTIFIER => Routes\V1\Contact::class,
+				Routes\V1\Webhooks::IDENTIFIER => Routes\V1\Webhooks::class,
 			],
 			'private' => [
 				Routes\V1\SpendRulesSync::IDENTIFIER => Routes\V1\SpendRulesSync::class,

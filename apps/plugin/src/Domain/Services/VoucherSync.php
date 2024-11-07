@@ -196,7 +196,7 @@ class VoucherSync {
         ];
     }
 
-    private function update_user_vouchers($user_id, $vouchers) {
+    public function update_user_vouchers($user_id, $vouchers) {
         $existing_vouchers = get_user_meta($user_id, 'leat_vouchers', true) ?: [];
         $this->logger->info("Updating vouchers for user {$user_id}. Current count: " . count($existing_vouchers) . ", New count: " . count($vouchers));
 
