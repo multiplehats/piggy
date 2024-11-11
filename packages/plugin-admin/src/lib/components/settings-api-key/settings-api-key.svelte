@@ -55,14 +55,14 @@
 {#if $apiKeyQuery.isSuccess}
 	{#if $shopQuery.isLoading}
 		<p>
-			{__("Loading your shops...", "leat")}
+			{__("Loading your shops...", "leat-crm")}
 		</p>
 	{:else if $shopQuery.isError}
 		<p class="text-red-500">
 			{#if $shopQuery.error.message.includes("Unauthenticated")}
-				{__("Your API key is invalid. Please check your API key and try again.", "leat")}
+				{__("Your API key is invalid. Please check your API key and try again.", "leat-crm")}
 			{:else}
-				{__("There was an error loading your shops. Please try again later.", "leat")}
+				{__("There was an error loading your shops. Please try again later.", "leat-crm")}
 			{/if}
 		</p>
 	{:else if $shopQuery.isSuccess}

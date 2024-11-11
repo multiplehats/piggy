@@ -32,7 +32,7 @@ class JoinProgramSchema extends AbstractSchema {
     public function get_properties() {
         return [
             'user_id' => [
-                'description' => __('The ID of the user joining the program', 'leat'),
+                'description' => __('The ID of the user joining the program', 'leat-crm'),
                 'type'        => 'integer',
                 'required'    => true,
             ],

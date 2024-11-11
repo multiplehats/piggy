@@ -86,12 +86,12 @@ abstract class AbstractRoute implements RouteInterface {
 			$client = $this->connection->init_client();
 
 			if( $client === null ) {
-				throw new RouteException( 'leat_rest_invalid_api_key', __( 'Invalid API Key', 'leat' ), 401 );
+				throw new RouteException( 'leat_rest_invalid_api_key', __( 'Invalid API Key', 'leat-crm' ), 401 );
 			}
 
 			return $client;
 		} catch (\Throwable $th) {
-			throw new RouteException( 'leat_rest_invalid_api_key', __( 'Invalid API Key', 'leat' ), 401 );
+			throw new RouteException( 'leat_rest_invalid_api_key', __( 'Invalid API Key', 'leat-crm' ), 401 );
 		}
 	}
 
@@ -201,7 +201,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat' ), 404 );
+		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat-crm' ), 404 );
 	}
 
 	/**
@@ -214,7 +214,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat' ), 404 );
+		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat-crm' ), 404 );
 	}
 
 	/**
@@ -227,7 +227,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_update_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat' ), 404 );
+		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat-crm' ), 404 );
 	}
 
 	/**
@@ -240,7 +240,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_delete_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat' ), 404 );
+		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat-crm' ), 404 );
 	}
 
 	/**
@@ -295,7 +295,7 @@ abstract class AbstractRoute implements RouteInterface {
 	 */
 	protected function get_context_param( $args = array() ) {
 		$param_details = array(
-			'description'       => __( 'Scope under which the request is made; determines fields present in response.', 'leat' ),
+			'description'       => __( 'Scope under which the request is made; determines fields present in response.', 'leat-crm' ),
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_key',
 			'validate_callback' => 'rest_validate_request_arg',

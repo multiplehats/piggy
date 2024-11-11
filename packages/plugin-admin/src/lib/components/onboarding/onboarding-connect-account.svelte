@@ -13,7 +13,7 @@
 	}
 </script>
 
-<SettingsSection title={__("Connect to Leat", "leat")}>
+<SettingsSection title={__("Connect to Leat", "leat-crm")}>
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<SettingsApiKey bind:isLoading={initialising} />
 	</div>

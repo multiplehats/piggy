@@ -316,7 +316,7 @@ final class ExtendSchema {
 		if ( ARRAY_N === $schema_type ) {
 			return [
 				/* translators: %s: extension namespace */
-				'description' => sprintf( __( 'Extension data registered by %s', 'leat' ), $namespace ),
+				'description' => sprintf( __( 'Extension data registered by %s', 'leat-crm' ), $namespace ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
 				'items'       => $schema,
@@ -324,7 +324,7 @@ final class ExtendSchema {
 		}
 		return [
 			/* translators: %s: extension namespace */
-			'description' => sprintf( __( 'Extension data registered by %s', 'leat' ), $namespace ),
+			'description' => sprintf( __( 'Extension data registered by %s', 'leat-crm' ), $namespace ),
 			'type'        => 'object',
 			'context'     => [ 'view', 'edit' ],
 			'properties'  => $schema,

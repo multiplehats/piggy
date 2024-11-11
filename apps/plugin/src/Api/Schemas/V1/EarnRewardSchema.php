@@ -45,12 +45,12 @@ class EarnRewardSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'earnRuleId' => [
-				'description' => __( 'The Earn Rule ID', 'leat' ),
+				'description' => __( 'The Earn Rule ID', 'leat-crm' ),
 				'type'        => 'integer',
 				'required'    => true,
 			],
 			'userId' => [
-				'description' => __( 'The Customer ID', 'leat' ),
+				'description' => __( 'The Customer ID', 'leat-crm' ),
 				'type'        => 'integer',
 				'required'    => false,
 			],

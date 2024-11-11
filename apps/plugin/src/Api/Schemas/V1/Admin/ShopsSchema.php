@@ -31,12 +31,12 @@ class ShopsSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'uuid'          => [
-				'description' => __( 'The shops\'s unique id.', 'leat' ),
+				'description' => __( 'The shops\'s unique id.', 'leat-crm' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'name'          => [
-				'description' => __( 'The shops\'s name.', 'leat' ),
+				'description' => __( 'The shops\'s name.', 'leat-crm' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],

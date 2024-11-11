@@ -85,81 +85,81 @@ class SpendRules
 			'updatedAt' => $post->post_modified,
 			'status' => [
 				'id' => 'status',
-				'label' => __('Status', 'leat'),
+				'label' => __('Status', 'leat-crm'),
 				'default' => 'publish',
 				'value' => $post->post_status,
 				'options' => [
-					'publish' => ['label' => __('Active', 'leat')],
-					'draft' => ['label' => __('Inactive', 'leat')],
+					'publish' => ['label' => __('Active', 'leat-crm')],
+					'draft' => ['label' => __('Inactive', 'leat-crm')],
 				],
 				'type' => 'select',
-				'description' => __('Set the status of the rule. Inactive spend rules will not be displayed to users.', 'leat'),
+				'description' => __('Set the status of the rule. Inactive spend rules will not be displayed to users.', 'leat-crm'),
 			],
 			'title' => [
 				'id' => 'title',
-				'label' => __('Title', 'leat'),
+				'label' => __('Title', 'leat-crm'),
 				'default' => null,
 				'value' => $post->post_title,
 				'type' => 'text',
-				'description' => __( 'This is not displayed to the user and is only used for internal reference. You can manage this in the Leat dashboard.', 'leat' ),
+				'description' => __( 'This is not displayed to the user and is only used for internal reference. You can manage this in the Leat dashboard.', 'leat-crm' ),
 			],
 			'type' => [
 				'id' => 'type',
-				'label' => __('Type', 'leat'),
+				'label' => __('Type', 'leat-crm'),
 				'default' => 'FREE_PRODUCT',
 				'value' => $type,
 				'type' => 'select',
 				'options' => [
-					'FREE_PRODUCT' => ['label' => __('Free / Discounted Product', 'leat')],
-					'ORDER_DISCOUNT' => ['label' => __('Order Discount', 'leat')],
-					'FREE_SHIPPING' => ['label' => __('Free Shipping', 'leat')],
+					'FREE_PRODUCT' => ['label' => __('Free / Discounted Product', 'leat-crm')],
+					'ORDER_DISCOUNT' => ['label' => __('Order Discount', 'leat-crm')],
+					'FREE_SHIPPING' => ['label' => __('Free Shipping', 'leat-crm')],
 				],
-				'description' => __('The type of spend rule.', 'leat'),
+				'description' => __('The type of spend rule.', 'leat-crm'),
 			],
 			'startsAt' => [
 				'id' => 'starts_at',
-				'label' => __('Starts at', 'leat'),
+				'label' => __('Starts at', 'leat-crm'),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_starts_at', null),
 				'type' => 'date',
-				'description' => __('Optional date for when the rule should start.', 'leat'),
+				'description' => __('Optional date for when the rule should start.', 'leat-crm'),
 			],
 			'expiresAt' => [
 				'id' => 'expires_at',
-				'label' => __('Expires at', 'leat'),
+				'label' => __('Expires at', 'leat-crm'),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_expires_at', null),
 				'type' => 'date',
-				'description' => __('Optional date for when the rule should expire.', 'leat'),
+				'description' => __('Optional date for when the rule should expire.', 'leat-crm'),
 			],
 			'completed' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_completed', null),
 			'creditCost' => [
 				'id' => 'credit_cost',
-				'label' => __('Credit cost', 'leat'),
+				'label' => __('Credit cost', 'leat-crm'),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_credit_cost', null),
 				'type' => 'number',
-				'description' => __('The amount of credits it will cost to redeem the reward. This is managed in the Leat dashboard.', 'leat'),
+				'description' => __('The amount of credits it will cost to redeem the reward. This is managed in the Leat dashboard.', 'leat-crm'),
 			],
 			'selectedReward' => [
 				'id' => 'selected_reward',
-				'label' => __('Selected reward', 'leat'),
+				'label' => __('Selected reward', 'leat-crm'),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_selected_reward', null),
 				'type' => 'text',
-				'description' => __('The reward that is selected for the spend rule.', 'leat'),
+				'description' => __('The reward that is selected for the spend rule.', 'leat-crm'),
 			],
 			'image' => [
 				'id' => 'image',
-				'label' => __('Image', 'leat'),
+				'label' => __('Image', 'leat-crm'),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_image', null),
 				'type' => 'text',
-				'description' => __('The image that is displayed for the spend rule.', 'leat'),
+				'description' => __('The image that is displayed for the spend rule.', 'leat-crm'),
 			],
 			'description' => [
 				'id' => 'description',
-				'label' => __('Description', 'leat'),
+				'label' => __('Description', 'leat-crm'),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_description', null),
 				'type' => 'translatable_text',
@@ -167,7 +167,7 @@ class SpendRules
 			],
 			'instructions' => [
 				'id' => 'instructions',
-				'label' => __('Instructions', 'leat'),
+				'label' => __('Instructions', 'leat-crm'),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_instructions', null),
 				'type' => 'translatable_text',
@@ -175,7 +175,7 @@ class SpendRules
 			],
 			'fulfillment' => [
 				'id' => 'fulfillment',
-				'label' => __('Fulfillment description', 'leat'),
+				'label' => __('Fulfillment description', 'leat-crm'),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_fulfillment', null),
 				'type' => 'translatable_text',
@@ -183,17 +183,17 @@ class SpendRules
 			],
 			'leatRewardUuid' => [
 				'id' => 'leat_reward_uuid',
-				'label' => __('Leat Reward UUID', 'leat'),
+				'label' => __('Leat Reward UUID', 'leat-crm'),
 				'default' => null,
 				'value' => $this->get_post_meta_data($post->ID, '_leat_reward_uuid', null),
 				'type' => 'text',
-				'description' => __('The UUID of the corresponding Leat reward.', 'leat'),
+				'description' => __('The UUID of the corresponding Leat reward.', 'leat-crm'),
 			],
 		];
 
 		$spend_rule['label'] = [
 			'id' => 'label',
-			'label' => __('Label', 'leat'),
+			'label' => __('Label', 'leat-crm'),
 			'default' => $this->get_default_label($type),
 			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_label'),
 			'type' => 'translatable_text',
@@ -202,42 +202,42 @@ class SpendRules
 
 		$spend_rule['selectedProducts'] = [
 			'id' => 'selected_products',
-			'label' => __('Selected products', 'leat'),
+			'label' => __('Selected products', 'leat-crm'),
 			'default' => [],
 			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_selected_products', []),
 			'type' => 'products_select',
-			'description' => __('The products that are selected for the spend rule.', 'leat'),
+			'description' => __('The products that are selected for the spend rule.', 'leat-crm'),
 		];
 
 		$spend_rule['discountValue'] = [
 			'id' => 'discount_value',
-			'label' => __('Discount value', 'leat'),
+			'label' => __('Discount value', 'leat-crm'),
 			'default' => 10,
 			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_discount_value', null),
 			'type' => 'number',
-			'description' => __('The value of the discount.', 'leat'),
+			'description' => __('The value of the discount.', 'leat-crm'),
 		];
 
 		$spend_rule['discountType'] = [
 			'id' => 'discount_type',
-			'label' => __('Discount type', 'leat'),
+			'label' => __('Discount type', 'leat-crm'),
 			'default' => 'percentage',
 			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_discount_type', 'percentage'),
 			'type' => 'select',
 			'options' => [
-				'percentage' => ['label' => __('Percentage', 'leat')],
-				'fixed' => ['label' => __('Fixed amount', 'leat')],
+				'percentage' => ['label' => __('Percentage', 'leat-crm')],
+				'fixed' => ['label' => __('Fixed amount', 'leat-crm')],
 			],
-			'description' => __('The type of discount.', 'leat'),
+			'description' => __('The type of discount.', 'leat-crm'),
 		];
 
 		$spend_rule['minimumPurchaseAmount'] = [
 			'id' => 'minimum_purchase_amount',
-			'label' => __('Minimum purchase amount', 'leat'),
+			'label' => __('Minimum purchase amount', 'leat-crm'),
 			'default' => 0,
 			'value' => $this->get_post_meta_data($post->ID, '_leat_spend_rule_minimum_purchase_amount', 0),
 			'type' => 'number',
-			'description' => __('The minimum purchase amount required to redeem the reward.', 'leat'),
+			'description' => __('The minimum purchase amount required to redeem the reward.', 'leat-crm'),
 		];
 
 
@@ -247,7 +247,7 @@ class SpendRules
 	private function get_label_description($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
-		return sprintf(__("The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat'), $placeholders);
+		return sprintf(__("The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat-crm'), $placeholders);
 	}
 
 	private function get_default_label($type)
@@ -260,19 +260,19 @@ class SpendRules
 	private function get_description_placeholder($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
-		return sprintf(__("Add a description of the reward. Available placeholders: %s", 'leat'), $placeholders);
+		return sprintf(__("Add a description of the reward. Available placeholders: %s", 'leat-crm'), $placeholders);
 	}
 
 	private function get_instructions_placeholder($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
-		return sprintf(__("Add instructions on how to redeem the reward. Available placeholders: %s", 'leat'), $placeholders);
+		return sprintf(__("Add instructions on how to redeem the reward. Available placeholders: %s", 'leat-crm'), $placeholders);
 	}
 
 	private function get_fulfillment_placeholder($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
-		return sprintf(__("Add instructions on how fulfillment will be handled. Available placeholders: %s", 'leat'), $placeholders);
+		return sprintf(__("Add instructions on how fulfillment will be handled. Available placeholders: %s", 'leat-crm'), $placeholders);
 	}
 
 	public function delete_spend_rule_by_leat_uuid($uuid) {

@@ -61,7 +61,7 @@
 			type: $rule.type.value,
 			label: $rule.label.value,
 			status: $rule.status.value,
-			title: $rule.title?.value ?? __("New rule", "leat"),
+			title: $rule.title?.value ?? __("New rule", "leat-crm"),
 			startsAt: $rule.startsAt.value,
 			expiresAt: $rule.expiresAt.value,
 			minimumOrderAmount: $rule.minimumOrderAmount.value,
@@ -110,7 +110,7 @@
 
 			<div class="hidden items-center gap-2 md:ml-auto md:flex">
 				<Button size="sm" on:click={handleSave}>
-					{__("Save rule", "leat")}
+					{__("Save rule", "leat-crm")}
 				</Button>
 			</div>
 		</div>
@@ -119,18 +119,18 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__("General", "leat")}</Card.Title>
+						<Card.Title>{__("General", "leat-crm")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
 						<div class="grid gap-6">
 							{#if $rule.type.value === "PLACE_ORDER"}
-								<Alert title={__("Credit Calculation", "leat")} type="info">
+								<Alert title={__("Credit Calculation", "leat-crm")} type="info">
 									<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 									{@html sprintf(
 										__(
 											'These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href="%s" class="underline" target="_blank" rel="noopener noreferrer">Leat Dashboard</a>.',
-											"leat"
+											"leat-crm"
 										),
 										"https://business.leat.eu/loyalty/1/rules"
 									)}
@@ -166,7 +166,7 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__("Details", "leat")}</Card.Title>
+						<Card.Title>{__("Details", "leat-crm")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -203,7 +203,7 @@
 
 				<!-- <Card.Root>
 					<Card.Header>
-						<Card.Title>{__('Schedule', 'leat')}</Card.Title>
+						<Card.Title>{__('Schedule', 'leat-crm')}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -226,7 +226,7 @@
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
 			<Button size="sm" on:click={handleSave}>
-				{__("Save rule", "leat")}
+				{__("Save rule", "leat-crm")}
 			</Button>
 		</div>
 	</div>

@@ -8,6 +8,6 @@
 
 <div class="mt-8 flex w-full items-center justify-end gap-4">
 	<Button size="sm" variant="default" loading={saving} {disabled} type="submit">
-		{__("Save", "leat")}
+		{__("Save", "leat-crm")}
 	</Button>
 </div>
