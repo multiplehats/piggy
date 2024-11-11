@@ -35,6 +35,7 @@ rsync ./ "$2"/ --recursive --delete --delete-excluded \
 	--exclude=tsconfig.base.json \
 	--exclude=tsconfig.node.json \
 	--exclude=*.zip \
+	--exclude=leat-crm.zip \
 	--exclude="zip-file/" \
 	--exclude=packages/ \
     --exclude=patches/ \
