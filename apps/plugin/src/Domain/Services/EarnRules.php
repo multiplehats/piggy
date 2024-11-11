@@ -245,6 +245,12 @@ class EarnRules {
 	private function get_svg($type) {
 		$svg = '';
 
+		if(!$type) {
+			error_log('Invalid earn rule type: ' . $type);
+
+			return $svg;
+		}
+
 		switch ($type) {
 			case 'LIKE_ON_FACEBOOK':
 				$svg = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="widget__icons-color"><path d="M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3"></path></svg>';
@@ -267,8 +273,6 @@ class EarnRules {
 			case 'ORDER':
 				$svg = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="widget__icons-color"><path d="M12.5 21h-3.926a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304h11.339a2 2 0 0 1 1.977 2.304l-.263 1.708"></path><path d="M16 19h6"></path><path d="M19 16v6"></path><path d="M9 11v-5a3 3 0 0 1 6 0v5"></path></svg>';
 				break;
-			default:
-				throw new \Exception('Invalid earn rule type');
 		}
 
 		return apply_filters('leat_earn_rule_svg', $svg, $type);
