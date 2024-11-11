@@ -129,6 +129,7 @@
 									<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 									{@html sprintf(
 										__(
+											/* translators: %s: Link to the Leat Dashboard */
 											'These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href="%s" class="underline" target="_blank" rel="noopener noreferrer">Leat Dashboard</a>.',
 											"leat-crm"
 										),

@@ -260,18 +260,24 @@ class SpendRules
 	private function get_description_placeholder($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
+
+		/* translators: %s: List of available placeholders that can be used in the description text */
 		return sprintf(__("Add a description of the reward. Available placeholders: %s", 'leat-crm'), $placeholders);
 	}
 
 	private function get_instructions_placeholder($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
+
+		/* translators: %s: List of available placeholders that can be used in the instructions text */
 		return sprintf(__("Add instructions on how to redeem the reward. Available placeholders: %s", 'leat-crm'), $placeholders);
 	}
 
 	private function get_fulfillment_placeholder($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
+
+		/* translators: %s: List of available placeholders that can be used in the fulfillment text */
 		return sprintf(__("Add instructions on how fulfillment will be handled. Available placeholders: %s", 'leat-crm'), $placeholders);
 	}
 

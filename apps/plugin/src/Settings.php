@@ -58,8 +58,8 @@ class Settings {
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Credits balance', 'leat-crm' ),
-			'description' =>
-			sprintf( __( 'The format of the credits balance message that will be displayed to the user. The following placeholders can be used: %s', 'leat-crm' ), '{{ credits }}, {{ credits_currency }} and {{ credits_required }}' ),
+			/* translators: %s: a list of placeholders */
+			'description' => sprintf( __( 'The format of the credits balance message that will be displayed to the user. The following placeholders can be used: %s', 'leat-crm' ), '{{ credits }}, {{ credits_currency }} and {{ credits_required }}' ),
 		);
 		$settings[] = array(
 			'id'       => 'include_guests',
@@ -201,6 +201,7 @@ class Settings {
 			),
 			'type'     => 'translatable_text',
 			'label'    => __( 'Earn navigation item', 'leat-crm' ),
+			/* translators: %s: a list of placeholders */
 			'description' => sprintf( __( 'The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s', 'leat-crm' ), '{{ credits_currency }}' ),
 		);
 		$settings[] = array(
