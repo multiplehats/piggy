@@ -1,4 +1,4 @@
-=== Leat ===
+=== Leat CRM ===
 Contributors: leat
 Donate link: https://leat.com
 Tags: woocommerce, loyalty program, rewards, customer loyalty, vouchers, promotions, marketing automation, analytics, customer engagement, points system, store credit, customer retention

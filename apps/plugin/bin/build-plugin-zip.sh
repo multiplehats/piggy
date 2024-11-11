@@ -112,7 +112,7 @@ mkdir zip-file
 mkdir zip-file/build
 sh "$CURR_DIR/bin/copy-plugin-files.sh" "$CURR_DIR" "$CURR_DIR/zip-file"
 cd "$(pwd)/zip-file"
-zip -r ../leat.zip ./
+zip -r ../leat-crm.zip ./
 cd ..
 rm -r zip-file
 
