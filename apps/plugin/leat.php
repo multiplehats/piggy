@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Leat - Customer Loyalty & Rewards Platform for WooCommerce
+ * Plugin Name: Leat
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
  * Version: 0.2.2
