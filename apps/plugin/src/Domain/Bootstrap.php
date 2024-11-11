@@ -132,7 +132,7 @@ class Bootstrap {
 
 		if ( $has_needed_dependencies ) {
 			$plugin_data = \get_file_data(
-				$this->package->get_path( 'leat.php' ),
+				$this->package->get_path( 'leat-crm.php' ),
 				[
 					'RequiredWCVersion' => 'WC requires at least',
 				]

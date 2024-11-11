@@ -30,6 +30,7 @@ class SpendRules
 		$args = [
 			'post_type' => 'leat_spend_rule',
 			'post_status' => $post_status,
+			'suppress_filters' => false,
 		];
 
 		if($type) {
@@ -41,7 +42,13 @@ class SpendRules
 			];
 		}
 
-		$posts = get_posts($args);
+		$cache_key = 'leat_spend_rules_' . md5(serialize($args));
+		$posts = wp_cache_get($cache_key);
+
+		if (false === $posts) {
+			$posts = get_posts($args);
+			wp_cache_set($cache_key, $posts, '', 3600);
+		}
 
 		if (empty($posts)) {
 			return null;
@@ -247,6 +254,8 @@ class SpendRules
 	private function get_label_description($type)
 	{
 		$placeholders = "{{ credits }}, {{ credits_currency }}, {{ discount }}";
+
+		/* translators: %s: List of available placeholders that can be used in the label text */
 		return sprintf(__("The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat-crm'), $placeholders);
 	}
 
@@ -282,17 +291,19 @@ class SpendRules
 	}
 
 	public function delete_spend_rule_by_leat_uuid($uuid) {
-		$args = array(
+		$posts = get_posts([
 			'post_type' => 'leat_spend_rule',
+			'posts_per_page' => 1,
+			'fields' => 'ids',
 			'meta_key' => '_leat_reward_uuid',
 			'meta_value' => $uuid,
-			'posts_per_page' => 1,
-		);
-
-		$posts = get_posts($args);
+			'no_found_rows' => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		]);
 
 		if (!empty($posts)) {
-			wp_delete_post($posts[0]->ID);
+			wp_delete_post($posts[0]);
 		}
 	}
 
@@ -355,14 +366,18 @@ class SpendRules
 	}
 
 	public function get_spend_rule_by_leat_uuid($uuid) {
-		$args = array(
-			'post_type' => 'leat_spend_rule',
-			'meta_key' => '_leat_reward_uuid',
-			'meta_value' => $uuid,
-			'posts_per_page' => 1,
-		);
+		$cache_key = 'leat_spend_rule_' . md5($uuid);
+		$posts = wp_cache_get($cache_key);
 
-		$posts = get_posts($args);
+		if (false === $posts) {
+			$posts = get_posts([
+				'post_type' => 'leat_spend_rule',
+				'meta_key' => '_leat_reward_uuid',
+				'meta_value' => $uuid,
+				'posts_per_page' => 1,
+			]);
+			wp_cache_set($cache_key, $posts, '', 3600);
+		}
 
 		if (!empty($posts)) {
 			return $this->get_formatted_post($posts[0]);
@@ -379,16 +394,24 @@ class SpendRules
 
 	public function handle_duplicated_spend_rules($uuids) {
 		global $wpdb;
-		$table_name = $wpdb->postmeta;
 
 		$this->logger->info("Handling duplicated spend rules for UUIDs: " . implode(', ', $uuids));
 
 		foreach ($uuids as $uuid) {
 			$query = $wpdb->prepare(
-				"SELECT post_id FROM $table_name WHERE meta_key = '_leat_reward_uuid' AND meta_value = %s ORDER BY post_id DESC",
+				"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s ORDER BY post_id DESC",
+				'_leat_reward_uuid',
 				$uuid
 			);
-			$post_ids = $wpdb->get_col($query);
+
+			$cache_key = 'leat_duplicate_rules_' . md5($uuid);
+			$post_ids = wp_cache_get($cache_key);
+
+			if (false === $post_ids) {
+				// @phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				$post_ids = $wpdb->get_col($query);
+				wp_cache_set($cache_key, $post_ids, '', 3600);
+			}
 
 			if (count($post_ids) > 1) {
 				$keep_id = array_shift($post_ids);
@@ -405,25 +428,29 @@ class SpendRules
 	}
 
 	public function delete_spend_rules_with_empty_uuid() {
-		$args = array(
-			'post_type' => 'leat_spend_rule',
-			'posts_per_page' => -1,
-			'post_status' => array('publish', 'draft'),
-			'meta_query' => array(
-				'relation' => 'OR',
-				array(
-					'key' => '_leat_reward_uuid',
-					'value' => '',
-					'compare' => '='
-				),
-				array(
-					'key' => '_leat_reward_uuid',
-					'compare' => 'NOT EXISTS'
-				)
-			)
-		);
+		$cache_key = 'leat_empty_uuid_rules';
+		$posts = wp_cache_get($cache_key);
 
-		$posts = get_posts($args);
+		if (false === $posts) {
+			$posts = get_posts([
+				'post_type' => 'leat_spend_rule',
+				'posts_per_page' => -1,
+				'post_status' => ['publish', 'draft'],
+				'meta_query' => [
+					'relation' => 'OR',
+					[
+						'key' => '_leat_reward_uuid',
+						'value' => '',
+						'compare' => '='
+					],
+					[
+						'key' => '_leat_reward_uuid',
+						'compare' => 'NOT EXISTS'
+					]
+				]
+			]);
+			wp_cache_set($cache_key, $posts, '', 3600);
+		}
 
 		foreach ($posts as $post) {
 			wp_delete_post($post->ID, true);

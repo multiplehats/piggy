@@ -36,7 +36,7 @@
 			"phpcbf -p --extensions=php"
 		],
 		"makepot": [
-			"wp i18n make-pot . ./languages/leat.pot --include=\"leat.php,src,dist/frontend/assets, dist/admin/assets\""
+			"wp i18n make-pot . ./languages/leat.pot --include=\"leat-crm.php,src,dist/frontend/assets, dist/admin/assets\""
 		]
 	},
 	"config": {

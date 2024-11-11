@@ -32,7 +32,7 @@ class CouponsSchema extends AbstractSchema {
     public function get_properties() {
         return [
             'coupons' => [
-                'description' => __( 'List of coupon codes', 'leat' ),
+                'description' => __( 'List of coupon codes', 'leat-crm' ),
                 'type'        => 'array',
                 'items'       => [
                     'type' => 'string',

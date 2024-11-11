@@ -1,8 +1,6 @@
 <?php
 namespace Leat\Assets;
 
-use Leat\Package;
-
 use Exception;
 use InvalidArgumentException;
 

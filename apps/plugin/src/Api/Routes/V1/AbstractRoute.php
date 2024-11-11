@@ -86,12 +86,12 @@ abstract class AbstractRoute implements RouteInterface {
 			$client = $this->connection->init_client();
 
 			if( $client === null ) {
-				throw new RouteException( 'leat_rest_invalid_api_key', __( 'Invalid API Key', 'leat-crm' ), 401 );
+				throw new RouteException( 'leat_rest_invalid_api_key', esc_html__( 'Invalid API Key', 'leat-crm' ), 401 );
 			}
 
 			return $client;
 		} catch (\Throwable $th) {
-			throw new RouteException( 'leat_rest_invalid_api_key', __( 'Invalid API Key', 'leat-crm' ), 401 );
+			throw new RouteException( 'leat_rest_invalid_api_key', esc_html__( 'Invalid API Key', 'leat-crm' ), 401 );
 		}
 	}
 

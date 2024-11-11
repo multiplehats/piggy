@@ -76,9 +76,9 @@ class Settings {
 			'default'  => array('paid' => 'on'),
 			'options'  => array(
 				'paid'      => array('label' => __( 'Pending payment', 'leat-crm' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat-crm' )),
-				'pending'   => array('label' => __( 'On hold', 'cartpops' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'cartpops' )),
-				'processing'=> array('label' => __( 'Processing', 'cartpops' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'cartpops' )),
-				'completed' => array('label' => __( 'Completed', 'cartpops' ), 'tooltip' => __( 'Order fulfilled and complete.', 'cartpops' )),
+				'pending'   => array('label' => __( 'On hold', 'leat-crm' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'leat-crm' )),
+				'processing'=> array('label' => __( 'Processing', 'leat-crm' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'leat-crm' )),
+				'completed' => array('label' => __( 'Completed', 'leat-crm' ), 'tooltip' => __( 'Order fulfilled and complete.', 'leat-crm' )),
 			),
 		);
 		$settings[] = array(
@@ -89,9 +89,9 @@ class Settings {
 			'default'  => array('paid' => 'on'),
 			'options'  => array(
 				'paid'      => array('label' => __( 'Pending payment', 'leat-crm' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat-crm' )),
-				'pending'   => array('label' => __( 'On hold', 'cartpops' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'cartpops' )),
-				'processing'=> array('label' => __( 'Processing', 'cartpops' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'cartpops' )),
-				'completed' => array('label' => __( 'Completed', 'cartpops' ), 'tooltip' => __( 'Order fulfilled and complete.', 'cartpops' )),
+				'pending'   => array('label' => __( 'On hold', 'leat-crm' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'leat-crm' )),
+				'processing'=> array('label' => __( 'Processing', 'leat-crm' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'leat-crm' )),
+				'completed' => array('label' => __( 'Completed', 'leat-crm' ), 'tooltip' => __( 'Order fulfilled and complete.', 'leat-crm' )),
 			),
 		);
 		$settings[] = array(
@@ -354,11 +354,11 @@ class Settings {
 			$value = $setting['value'];
 
 			if ($setting['type'] === 'translatable_text' && is_array($value)) {
-				$value = json_encode($value);
+				$value = wp_json_encode($value);
 			}
 
 			if ($setting['type'] === 'checkboxes' && is_array($value)) {
-				$value = json_encode($value);
+				$value = wp_json_encode($value);
 			}
 
 			update_option('leat_' . $setting['id'], $value);

@@ -164,7 +164,13 @@ class Api {
 		$manifest = $this->package->get_path( "dist/$folder" );
 
 		if ( ! file_exists( $manifest ) ) {
-			throw new \Exception( "Manifest path not found: $manifest", 500 );
+			throw new \Exception(
+				sprintf(
+					'Manifest path not found: %s',
+					esc_html( $manifest )
+				),
+				500
+			);
 		}
 
 		return $manifest;

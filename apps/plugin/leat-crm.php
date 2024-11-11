@@ -15,15 +15,10 @@
  * Requires Plugins: woocommerce
  * WC requires at least: 6.9
  * WC tested up to: 8.8.3
+ * License: GPL v2 or later
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  *
  * Copyright (c) 2024 Leat. All rights reserved.
- *
- * Released under the GPL license
- * http://www.opensource.org/licenses/gpl-license.php
- *
- * Leat is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
  * @package Leat
  */
