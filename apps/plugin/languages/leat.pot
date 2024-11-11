@@ -1,37 +1,41 @@
 # Copyright (C) 2024 Leat
-# This file is distributed under the same license as the Leat plugin.
+# This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Leat 0.2.2\n"
+"Project-Id-Version: Leat CRM 0.2.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/leat-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-11T10:38:46+00:00\n"
+"POT-Creation-Date: 2024-11-11T14:23:53+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: leat-crm\n"
 
 #. Plugin Name of the plugin
-#. Author of the plugin
-#: leat.php
-msgid "Leat"
+#: leat-crm.php
+msgid "Leat CRM"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: leat.php
+#: leat-crm.php
 msgid "https://github.com/woocommerce/woocommerce-gutenberg-products-block"
 msgstr ""
 
 #. Description of the plugin
-#: leat.php
+#: leat-crm.php
 msgid "Customer loyalty & Email marketing that works in-store and online."
 msgstr ""
 
+#. Author of the plugin
+#: leat-crm.php
+msgid "Leat"
+msgstr ""
+
 #. Author URI of the plugin
-#: leat.php
+#: leat-crm.php
 msgid "https://leat.com"
 msgstr ""
 
@@ -120,8 +124,8 @@ msgid "Exclude IDs"
 msgstr ""
 
 #. translators: %s: extension namespace
-#: src/Api/Schemas/ExtendSchema.php:319
-#: src/Api/Schemas/ExtendSchema.php:327
+#: src/Api/Schemas/ExtendSchema.php:325
+#: src/Api/Schemas/ExtendSchema.php:333
 msgid "Extension data registered by %s"
 msgstr ""
 
@@ -200,6 +204,10 @@ msgstr ""
 
 #: src/Api/Schemas/V1/Admin/ShopsSchema.php:39
 msgid "The shops's name."
+msgstr ""
+
+#: src/Api/Schemas/V1/CouponsSchema.php:35
+msgid "List of coupon codes"
 msgstr ""
 
 #: src/Api/Schemas/V1/EarnRulesSchema.php:47
@@ -325,19 +333,19 @@ msgid "Leat requires files to be built—it looks like the dist folder is empty.
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:69
-#: src/Domain/Services/SpendRules.php:88
+#: src/Domain/Services/SpendRules.php:95
 #: dist/admin/assets/index-ec98b707.js:1
 msgid "Status"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:73
-#: src/Domain/Services/SpendRules.php:92
+#: src/Domain/Services/SpendRules.php:99
 #: dist/admin/assets/index-ec98b707.js:1
 msgid "Active"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:74
-#: src/Domain/Services/SpendRules.php:93
+#: src/Domain/Services/SpendRules.php:100
 #: dist/admin/assets/index-ec98b707.js:1
 msgid "Inactive"
 msgstr ""
@@ -347,7 +355,7 @@ msgid "Set the status of the rule. Inactive earn rules will not be displayed to 
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:81
-#: src/Domain/Services/SpendRules.php:100
+#: src/Domain/Services/SpendRules.php:107
 #: dist/admin/assets/index-ec98b707.js:1
 msgid "Title"
 msgstr ""
@@ -357,7 +365,7 @@ msgid "This is not displayed to the user and is only used for internal reference
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:89
-#: src/Domain/Services/SpendRules.php:108
+#: src/Domain/Services/SpendRules.php:115
 msgid "Type"
 msgstr ""
 
@@ -391,22 +399,22 @@ msgid "The type of earn rule."
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:106
-#: src/Domain/Services/SpendRules.php:121
+#: src/Domain/Services/SpendRules.php:128
 msgid "Starts at"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:110
-#: src/Domain/Services/SpendRules.php:125
+#: src/Domain/Services/SpendRules.php:132
 msgid "Optional date for when the rule should start."
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:114
-#: src/Domain/Services/SpendRules.php:129
+#: src/Domain/Services/SpendRules.php:136
 msgid "Expires at"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:118
-#: src/Domain/Services/SpendRules.php:133
+#: src/Domain/Services/SpendRules.php:140
 msgid "Optional date for when the rule should expire."
 msgstr ""
 
@@ -428,13 +436,13 @@ msgid "The number of credits awarded for completing this action."
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:159
-#: src/Domain/Services/SpendRules.php:196
+#: src/Domain/Services/SpendRules.php:203
 msgid "Label"
 msgstr ""
 
-#. translators: %s: a list of placeholders
+#. translators: %s: List of available placeholders that can be used in the label text
 #: src/Domain/Services/EarnRules.php:187
-#: src/Domain/Services/SpendRules.php:250
+#: src/Domain/Services/SpendRules.php:259
 msgid "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s"
 msgstr ""
 
@@ -494,127 +502,132 @@ msgstr ""
 msgid "The handle of the social network account that the user must like or follow"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:96
+#: src/Domain/Services/SpendRules.php:103
 msgid "Set the status of the rule. Inactive spend rules will not be displayed to users."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:104
+#: src/Domain/Services/SpendRules.php:111
 msgid "This is not displayed to the user and is only used for internal reference. You can manage this in the Leat dashboard."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:113
+#: src/Domain/Services/SpendRules.php:120
 msgid "Free / Discounted Product"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:114
+#: src/Domain/Services/SpendRules.php:121
 msgid "Order Discount"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:115
+#: src/Domain/Services/SpendRules.php:122
 msgid "Free Shipping"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:117
+#: src/Domain/Services/SpendRules.php:124
 msgid "The type of spend rule."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:138
+#: src/Domain/Services/SpendRules.php:145
 msgid "Credit cost"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:142
+#: src/Domain/Services/SpendRules.php:149
 msgid "The amount of credits it will cost to redeem the reward. This is managed in the Leat dashboard."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:146
+#: src/Domain/Services/SpendRules.php:153
 msgid "Selected reward"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:150
+#: src/Domain/Services/SpendRules.php:157
 msgid "The reward that is selected for the spend rule."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:154
+#: src/Domain/Services/SpendRules.php:161
 msgid "Image"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:158
+#: src/Domain/Services/SpendRules.php:165
 msgid "The image that is displayed for the spend rule."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:162
+#: src/Domain/Services/SpendRules.php:169
 msgid "Description"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:170
+#: src/Domain/Services/SpendRules.php:177
 msgid "Instructions"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:178
+#: src/Domain/Services/SpendRules.php:185
 msgid "Fulfillment description"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:186
+#: src/Domain/Services/SpendRules.php:193
 msgid "Leat Reward UUID"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:190
+#: src/Domain/Services/SpendRules.php:197
 msgid "The UUID of the corresponding Leat reward."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:205
+#: src/Domain/Services/SpendRules.php:212
 msgid "Selected products"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:209
+#: src/Domain/Services/SpendRules.php:216
 msgid "The products that are selected for the spend rule."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:214
+#: src/Domain/Services/SpendRules.php:221
 msgid "Discount value"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:218
+#: src/Domain/Services/SpendRules.php:225
 msgid "The value of the discount."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:223
+#: src/Domain/Services/SpendRules.php:230
 msgid "Discount type"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:228
+#: src/Domain/Services/SpendRules.php:235
 msgid "Percentage"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:229
+#: src/Domain/Services/SpendRules.php:236
 msgid "Fixed amount"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:231
+#: src/Domain/Services/SpendRules.php:238
 msgid "The type of discount."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:236
+#: src/Domain/Services/SpendRules.php:243
 msgid "Minimum purchase amount"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:240
+#: src/Domain/Services/SpendRules.php:247
 msgid "The minimum purchase amount required to redeem the reward."
 msgstr ""
 
 #. translators: %s: List of available placeholders that can be used in the description text
-#: src/Domain/Services/SpendRules.php:265
+#: src/Domain/Services/SpendRules.php:274
 msgid "Add a description of the reward. Available placeholders: %s"
 msgstr ""
 
 #. translators: %s: List of available placeholders that can be used in the instructions text
-#: src/Domain/Services/SpendRules.php:273
+#: src/Domain/Services/SpendRules.php:282
 msgid "Add instructions on how to redeem the reward. Available placeholders: %s"
 msgstr ""
 
 #. translators: %s: List of available placeholders that can be used in the fulfillment text
-#: src/Domain/Services/SpendRules.php:281
+#: src/Domain/Services/SpendRules.php:290
 msgid "Add instructions on how fulfillment will be handled. Available placeholders: %s"
+msgstr ""
+
+#. translators: %1$s table name, %2$s database user, %3$s database name.
+#: src/Installer.php:131
+msgid "Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?"
 msgstr ""
 
 #: src/Integrations/IntegrationRegistry.php:35
@@ -917,6 +930,36 @@ msgstr ""
 #: src/Settings.php:78
 #: src/Settings.php:91
 msgid "The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action."
+msgstr ""
+
+#: src/Settings.php:79
+#: src/Settings.php:92
+msgid "On hold"
+msgstr ""
+
+#: src/Settings.php:79
+#: src/Settings.php:92
+msgid "The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment."
+msgstr ""
+
+#: src/Settings.php:80
+#: src/Settings.php:93
+msgid "Processing"
+msgstr ""
+
+#: src/Settings.php:80
+#: src/Settings.php:93
+msgid "Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment."
+msgstr ""
+
+#: src/Settings.php:81
+#: src/Settings.php:94
+msgid "Completed"
+msgstr ""
+
+#: src/Settings.php:81
+#: src/Settings.php:94
+msgid "Order fulfilled and complete."
 msgstr ""
 
 #: src/Settings.php:87

@@ -183,7 +183,7 @@ class EarnRules {
 				break;
 		}
 
-		/* translators: %s: a list of placeholders */
+		/* translators: %s: List of available placeholders that can be used in the label text */
 		return sprintf( __( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat-crm' ), $placeholders );
 	}
 
