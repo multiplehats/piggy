@@ -40,8 +40,8 @@
 
 		<p>
 			{__(
-				"Sync rewards from Leat and manage how they are displayed on your website.",
-				"leat"
+				"Create and manage spend rules to allow customers to spend their credits.",
+				"leat-crm"
 			)}
 		</p>
 	</div>
@@ -79,9 +79,9 @@
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
-							<Table.Head>{__("Title", "leat")}</Table.Head>
-							<Table.Head>{__("Created at", "leat")}</Table.Head>
-							<Table.Head class="text-right">{__("Status", "leat")}</Table.Head>
+							<Table.Head>{__("Title", "leat-crm")}</Table.Head>
+							<Table.Head>{__("Created at", "leat-crm")}</Table.Head>
+							<Table.Head class="text-right">{__("Status", "leat-crm")}</Table.Head>
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>

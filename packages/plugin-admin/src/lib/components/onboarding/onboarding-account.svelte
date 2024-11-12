@@ -13,8 +13,8 @@
 		{
 			id: "connect-account-option",
 			variant: "primary",
-			title: __("Existing Leat user?", "leat"),
-			description: __("Connect your account to get started.", "leat"),
+			title: __("Existing Leat user?", "leat-crm"),
+			description: __("Connect your account to get started.", "leat-crm"),
 			cta: "Connect account",
 			action: () => {
 				const { href } = onboarding.completeAndNavigate(
@@ -27,8 +27,8 @@
 		{
 			id: "create-account-option",
 			variant: "secondary",
-			title: __("New to Leat?", "leat"),
-			description: __("Create a new account to get started.", "leat"),
+			title: __("New to Leat?", "leat-crm"),
+			description: __("Create a new account to get started.", "leat-crm"),
 			cta: "Create an account",
 			link: outboundUrl({
 				url: "https://business.leat.com/sign-up",

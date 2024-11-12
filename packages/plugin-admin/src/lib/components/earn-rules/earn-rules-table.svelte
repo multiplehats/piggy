@@ -42,12 +42,12 @@
 	);
 
 	const ruleTypes = [
-		{ label: __("Like on Facebook", "leat"), value: "LIKE_ON_FACEBOOK" },
-		{ label: __("Follow on TikTok", "leat"), value: "FOLLOW_ON_TIKTOK" },
-		{ label: __("Follow on Instagram", "leat"), value: "FOLLOW_ON_INSTAGRAM" },
-		{ label: __("Place an order", "leat"), value: "PLACE_ORDER" },
-		// { label: __('Celebrate your birthday', 'leat'), value: 'CELEBRATE_BIRTHDAY' },
-		{ label: __("Create an account", "leat"), value: "CREATE_ACCOUNT" },
+		{ label: __("Like on Facebook", "leat-crm"), value: "LIKE_ON_FACEBOOK" },
+		{ label: __("Follow on TikTok", "leat-crm"), value: "FOLLOW_ON_TIKTOK" },
+		{ label: __("Follow on Instagram", "leat-crm"), value: "FOLLOW_ON_INSTAGRAM" },
+		{ label: __("Place an order", "leat-crm"), value: "PLACE_ORDER" },
+		// { label: __('Celebrate your birthday', 'leat-crm'), value: 'CELEBRATE_BIRTHDAY' },
+		{ label: __("Create an account", "leat-crm"), value: "CREATE_ACCOUNT" },
 	] satisfies { label: string; value: EarnRuleType }[];
 
 	let title: string | undefined = undefined;
@@ -108,8 +108,8 @@
 
 		<p>
 			{__(
-				"Create rules that reward customers with credits when they perform certain actions.",
-				"leat"
+				"Create rules that reward customers with credits when they perform certain actions. For example, you can reward customers with credits when they create an account or place an order.",
+				"leat-crm"
 			)}
 		</p>
 	</div>
@@ -203,9 +203,9 @@
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
-							<Table.Head>{__("Title", "leat")}</Table.Head>
-							<Table.Head>{__("Created at", "leat")}</Table.Head>
-							<Table.Head class="text-right">{__("Status", "leat")}</Table.Head>
+							<Table.Head>{__("Title", "leat-crm")}</Table.Head>
+							<Table.Head>{__("Created at", "leat-crm")}</Table.Head>
+							<Table.Head class="text-right">{__("Status", "leat-crm")}</Table.Head>
 						</Table.Row>
 					</Table.Header>
 

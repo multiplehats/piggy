@@ -73,10 +73,10 @@ if [ -z "$NO_CHECKS" ]; then
 fi
 
 # Add version to plugin header
-perl -i -pe "s/Version:.*$/Version: ${VERSION}/" leat.php
+perl -i -pe "s/Version:.*$/Version: ${VERSION}/" leat-crm.php
 
 # Update the LEAT_VERSION constant
-perl -i -pe "s/LEAT_VERSION,.*$/LEAT_VERSION, '${VERSION}' );/" leat.php
+perl -i -pe "s/LEAT_VERSION,.*$/LEAT_VERSION, '${VERSION}' );/" leat-crm.php
 
 # Run the build.
 if [ $TYPE = 'DEV' ]; then
@@ -112,13 +112,13 @@ mkdir zip-file
 mkdir zip-file/build
 sh "$CURR_DIR/bin/copy-plugin-files.sh" "$CURR_DIR" "$CURR_DIR/zip-file"
 cd "$(pwd)/zip-file"
-zip -r ../leat.zip ./
+zip -r ../leat-crm.zip ./
 cd ..
 rm -r zip-file
 
 # cleanup composer.json
 git checkout -- composer.json
-git checkout -- leat.php
+git checkout -- leat-crm.php
 
 # regenerate classmap for development use
 composer dump-autoload

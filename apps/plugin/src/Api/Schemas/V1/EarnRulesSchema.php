@@ -44,67 +44,67 @@ class EarnRulesSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'id' => [
-				'description' => __( 'Unique identifier for the rule', 'leat' ),
+				'description' => __( 'Unique identifier for the rule', 'leat-crm' ),
 				'type'        => 'integer',
 			],
 			'status' => [
-				'description' => __( 'Status of the rule', 'leat' ),
+				'description' => __( 'Status of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
 			'title' => [
-				'description' => __( 'Title of the rule', 'leat' ),
+				'description' => __( 'Title of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
 			'createdAt' => [
-				'description' => __( 'Date rule was created.', 'leat' ),
+				'description' => __( 'Date rule was created.', 'leat-crm' ),
 				'type'        => 'string',
 			],
 			'updatedAt' => [
-				'description' => __( 'Date rule was last updated.', 'leat' ),
+				'description' => __( 'Date rule was last updated.', 'leat-crm' ),
 				'type'        => 'string',
 			],
 			'description' => [
-				'description' => __( 'Description of the rule', 'leat' ),
+				'description' => __( 'Description of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
 			'type' => [
-				'description' => __( 'Type of the rule', 'leat' ),
+				'description' => __( 'Type of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
 			'leatTierUuids' => [
-				'description' => __( 'Leat tier UUIDs that rule is applicable to.', 'leat' ),
+				'description' => __( 'Leat tier UUIDs that rule is applicable to.', 'leat-crm' ),
 				'type'        => 'array',
 			],
 			'startsAt' => [
-				'description' => __( 'Date rule starts.', 'leat' ),
+				'description' => __( 'Date rule starts.', 'leat-crm' ),
 				'type'        => 'string',
 			],
 			'expiresAt' => [
-				'description' => __( 'Date rule expires.', 'leat' ),
+				'description' => __( 'Date rule expires.', 'leat-crm' ),
 				'type'        => 'string',
 			],
 			'completed' => [
-				'description' => __( 'Whether rule has been completed.', 'leat' ),
+				'description' => __( 'Whether rule has been completed.', 'leat-crm' ),
 				'type'        => 'boolean',
 			],
 			'credits' => [
-				'description' => __( 'Credits awarded for completing the rule', 'leat' ),
+				'description' => __( 'Credits awarded for completing the rule', 'leat-crm' ),
 				'type'        => 'integer',
 			],
 			'socialHandle' => [
-				'description' => __( 'URL of the social network.', 'leat' ),
+				'description' => __( 'URL of the social network.', 'leat-crm' ),
 				'type'        => 'string',
 			],
 			'excludedCollectionIds' => [
-				'description' => __( 'Collection IDs that are excluded from the rule', 'leat' ),
+				'description' => __( 'Collection IDs that are excluded from the rule', 'leat-crm' ),
 				'type'        => 'array',
 			],
 			'excludedProductIds' => [
-				'description' => __( 'Product IDs that are excluded from the rule', 'leat' ),
+				'description' => __( 'Product IDs that are excluded from the rule', 'leat-crm' ),
 				'type'        => 'array',
 			],
 			'minimumOrderAmount' => [
-				'description' => __( 'Minimum order subtotal in cents.', 'leat' ),
+				'description' => __( 'Minimum order subtotal in cents.', 'leat-crm' ),
 				'type'        => 'integer',
 			],
 		];

@@ -13,229 +13,230 @@ class Settings {
 		$settings = [];
 
 		$settings[] = array(
-			'title'    => __( 'Quick actions', 'leat' ),
+			'title'    => __( 'Quick actions', 'leat-crm' ),
 			'id'       => 'plugin_enable',
 			'default'  => 'on',
 			'type'     => 'switch',
-			'label'    => __( 'Enable plugin', 'leat' ),
-			'tooltip'  => __( 'If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable plugin functionality without deactivating the entire plugin.', 'leat' ),
+			'label'    => __( 'Enable plugin', 'leat-crm' ),
+			'tooltip'  => __( 'If you disable this, the plugin will stop working on the front-end of your website. This is useful if you temporarily want to disable plugin functionality without deactivating the entire plugin.', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'plugin_reset',
 			'default'  => 'off',
 			'type'     => 'switch',
-			'label'    => __( 'Delete plugin settings upon deactivation', 'leat' ),
-			'tooltip'  => __( 'This will delete all plugins settings upon deactivation. Use with caution!', 'leat' ),
+			'label'    => __( 'Delete plugin settings upon deactivation', 'leat-crm' ),
+			'tooltip'  => __( 'This will delete all plugins settings upon deactivation. Use with caution!', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'api_key',
 			'default'  => '',
 			'type'     => 'text',
-			'label'    => __( 'API Key', 'leat' ),
-			'tooltip'  => __( 'Enter your API key here.', 'leat' ),
+			'label'    => __( 'API Key', 'leat-crm' ),
+			'tooltip'  => __( 'Enter your API key here.', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'shop_uuid',
 			'default'  => '',
 			'type'     => 'text',
-			'label'    => __( 'Shop ID', 'leat' ),
-			'tooltip'  => __( 'Select the shop you want to connect to.', 'leat' ),
+			'label'    => __( 'Shop ID', 'leat-crm' ),
+			'tooltip'  => __( 'Select the shop you want to connect to.', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'credits_name',
 			'default'  => array(
-				'default' => __( 'Credits', 'leat' ),
+				'default' => __( 'Credits', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Credits name', 'leat' ),
-			'description' => __( 'The name of the credits in your shop.', 'leat' ),
+			'label'    => __( 'Credits name', 'leat-crm' ),
+			'description' => __( 'The name of the credits in your shop.', 'leat-crm' ),
 		);
 
 		$settings[] = array(
 			'id'       => 'credits_spend_rule_progress',
 			'default'  => array(
-				'default' => __( 'You have {{ credits }} {{ credits_currency }} out of {{ credits_required }}', 'leat' ),
+				'default' => __( 'You have {{ credits }} {{ credits_currency }} out of {{ credits_required }}', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Credits balance', 'leat' ),
-			'description' =>
-			sprintf( __( 'The format of the credits balance message that will be displayed to the user. The following placeholders can be used: %s', 'leat' ), '{{ credits }}, {{ credits_currency }} and {{ credits_required }}' ),
+			'label'    => __( 'Credits balance', 'leat-crm' ),
+			/* translators: %s: a list of placeholders */
+			'description' => sprintf( __( 'The format of the credits balance message that will be displayed to the user. The following placeholders can be used: %s', 'leat-crm' ), '{{ credits }}, {{ credits_currency }} and {{ credits_required }}' ),
 		);
 		$settings[] = array(
 			'id'       => 'include_guests',
 			'default'  => 'off',
 			'type'     => 'switch',
-			'label'    => __( 'Include guests', 'leat' ),
-			'description' => __( 'Include customers without an account (guests) in your loyalty program.', 'leat' ),
+			'label'    => __( 'Include guests', 'leat-crm' ),
+			'description' => __( 'Include customers without an account (guests) in your loyalty program.', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'reward_order_statuses',
 			'type'     => 'checkboxes',
-			'label'    => __( 'Reward order statuses', 'leat' ),
-			'description' => __( 'Reward customers when the financial status of the order is one of the following', 'leat' ),
+			'label'    => __( 'Reward order statuses', 'leat-crm' ),
+			'description' => __( 'Reward customers when the financial status of the order is one of the following', 'leat-crm' ),
 			'default'  => array('paid' => 'on'),
 			'options'  => array(
-				'paid'      => array('label' => __( 'Pending payment', 'leat' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat' )),
-				'pending'   => array('label' => __( 'On hold', 'cartpops' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'cartpops' )),
-				'processing'=> array('label' => __( 'Processing', 'cartpops' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'cartpops' )),
-				'completed' => array('label' => __( 'Completed', 'cartpops' ), 'tooltip' => __( 'Order fulfilled and complete.', 'cartpops' )),
+				'paid'      => array('label' => __( 'Pending payment', 'leat-crm' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat-crm' )),
+				'pending'   => array('label' => __( 'On hold', 'leat-crm' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'leat-crm' )),
+				'processing'=> array('label' => __( 'Processing', 'leat-crm' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'leat-crm' )),
+				'completed' => array('label' => __( 'Completed', 'leat-crm' ), 'tooltip' => __( 'Order fulfilled and complete.', 'leat-crm' )),
 			),
 		);
 		$settings[] = array(
 			'id'       => 'withdraw_order_statuses',
 			'type'     => 'checkboxes',
-			'label'    => __( 'Withdraw credits order statuses', 'leat' ),
-			'description' => __( 'Withdraw credits from customers when the order financial status is one of the following', 'leat'),
+			'label'    => __( 'Withdraw credits order statuses', 'leat-crm' ),
+			'description' => __( 'Withdraw credits from customers when the order financial status is one of the following', 'leat-crm'),
 			'default'  => array('paid' => 'on'),
 			'options'  => array(
-				'paid'      => array('label' => __( 'Pending payment', 'leat' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat' )),
-				'pending'   => array('label' => __( 'On hold', 'cartpops' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'cartpops' )),
-				'processing'=> array('label' => __( 'Processing', 'cartpops' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'cartpops' )),
-				'completed' => array('label' => __( 'Completed', 'cartpops' ), 'tooltip' => __( 'Order fulfilled and complete.', 'cartpops' )),
+				'paid'      => array('label' => __( 'Pending payment', 'leat-crm' ), 'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat-crm' )),
+				'pending'   => array('label' => __( 'On hold', 'leat-crm' ), 'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'leat-crm' )),
+				'processing'=> array('label' => __( 'Processing', 'leat-crm' ), 'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'leat-crm' )),
+				'completed' => array('label' => __( 'Completed', 'leat-crm' ), 'tooltip' => __( 'Order fulfilled and complete.', 'leat-crm' )),
 			),
 		);
 		$settings[] = array(
 			'id'       => 'reward_order_parts',
 			'type'     => 'checkboxes',
-			'label'    => __( 'Reward order parts', 'leat' ),
-			'description' => __( 'Reward customers for the following parts of an order', 'leat' ),
+			'label'    => __( 'Reward order parts', 'leat-crm' ),
+			'description' => __( 'Reward customers for the following parts of an order', 'leat-crm' ),
 			'default'  => array('subtotal' => 'on'),
 			'options'  => array(
-				'subtotal' => array('label' => __( 'Subtotal', 'leat' ), 'tooltip' => __( 'The total amount of the order before taxes and shipping.', 'leat' )),
-				'shipping' => array('label' => __( 'Shipping', 'leat' ), 'tooltip' => __( 'The cost of shipping the order.', 'leat' )),
-				'tax'      => array('label' => __( 'Tax', 'leat' ), 'tooltip' => __( 'The amount of tax on the order.', 'leat' )),
-				'discount' => array('label' => __( 'Discount', 'leat' ), 'tooltip' => __( 'The amount of discount on the order.', 'leat' )),
+				'subtotal' => array('label' => __( 'Subtotal', 'leat-crm' ), 'tooltip' => __( 'The total amount of the order before taxes and shipping.', 'leat-crm' )),
+				'shipping' => array('label' => __( 'Shipping', 'leat-crm' ), 'tooltip' => __( 'The cost of shipping the order.', 'leat-crm' )),
+				'tax'      => array('label' => __( 'Tax', 'leat-crm' ), 'tooltip' => __( 'The amount of tax on the order.', 'leat-crm' )),
+				'discount' => array('label' => __( 'Discount', 'leat-crm' ), 'tooltip' => __( 'The amount of discount on the order.', 'leat-crm' )),
 			),
 		);
 
 		$settings[] = array(
 			'id'       => 'marketing_consent_subscription',
 			'type'     => 'select',
-			'label'    => __( 'Marketing consent subscription', 'leat' ),
-			'description' => __( 'Opt-in users to receive marketing emails.', 'leat' ),
+			'label'    => __( 'Marketing consent subscription', 'leat-crm' ),
+			'description' => __( 'Opt-in users to receive marketing emails.', 'leat-crm' ),
 			'default'  => 'off'
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_in',
 			'default'  => array(
-				'default' => __( 'You have {{ credits }} {{ credits_currency }}', 'leat' ),
+				'default' => __( 'You have {{ credits }} {{ credits_currency }}', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Title (Logged in)', 'leat' ),
+			'label'    => __( 'Title (Logged in)', 'leat-crm' ),
 			/* translators: %s: a list of placeholders */
-			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged in. You can use the following placeholders: %s', 'leat' ), '{{ credits }} {{ credits_currency }}' ),
+			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged in. You can use the following placeholders: %s', 'leat-crm' ), '{{ credits }} {{ credits_currency }}' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_title_logged_out',
 			'default'  => array(
-				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us. Get your first {{ credits }} {{ credits_currency }} when you sign up now', 'leat' ),
+				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us. Get your first {{ credits }} {{ credits_currency }} when you sign up now', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Title (Logged out)', 'leat' ),
+			'label'    => __( 'Title (Logged out)', 'leat-crm' ),
 			/* translators: %s: a list of placeholders */
-			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged out. You can use the following placeholders: %s', 'leat' ), '{{ credits }} {{ credits_currency }}' ),
+			'description' => sprintf( __( 'The title that will be displayed on the dashboard when the user is logged out. You can use the following placeholders: %s', 'leat-crm' ), '{{ credits }} {{ credits_currency }}' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_join_cta',
 			'default'  => array(
-				'default' => __( 'Join now', 'leat' ),
+				'default' => __( 'Join now', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Join program button', 'leat' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'leat' ),
+			'label'    => __( 'Join program button', 'leat-crm' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_title_join_program',
 			'default'  => array(
-				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us.', 'leat' ),
+				'default' => __( 'Join our Loyalty Program and get rewarded when you shop with us.', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Title (Join program)', 'leat' ),
+			'label'    => __( 'Title (Join program)', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_join_program_cta',
 			'default'  => array(
-				'default' => __( 'Join program', 'leat' ),
+				'default' => __( 'Join program', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Join program button', 'leat' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'leat' ),
+			'label'    => __( 'Join program button', 'leat-crm' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to join the loyalty program.', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_login_cta',
 			'default'  => array(
-				'default' => __( 'Log in', 'leat' ),
+				'default' => __( 'Log in', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Log in button', 'leat' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to log in.', 'leat' ),
+			'label'    => __( 'Log in button', 'leat-crm' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to log in.', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_coupons',
 			'default'  => array(
-				'default' => __( 'Your coupons', 'leat' ),
+				'default' => __( 'Your coupons', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Coupons navigation item', 'leat' ),
+			'label'    => __( 'Coupons navigation item', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_coupons_empty_state',
 			'default'  => array(
-				'default' => __( 'You don\'t have any coupons yet.', 'leat' ),
+				'default' => __( 'You don\'t have any coupons yet.', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Coupons empty state', 'leat' ),
+			'label'    => __( 'Coupons empty state', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_coupons_loading_state',
 			'default'  => array(
-				'default' => __( 'Loading your coupons...', 'leat' ),
+				'default' => __( 'Loading your coupons...', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Coupons loading state', 'leat' ),
+			'label'    => __( 'Coupons loading state', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_earn',
 			'default'  => array(
-				'default' => __( 'Earn {{ credits_currency }}', 'leat' ),
+				'default' => __( 'Earn {{ credits_currency }}', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Earn navigation item', 'leat' ),
-			'description' => sprintf( __( 'The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s', 'leat' ), '{{ credits_currency }}' ),
+			'label'    => __( 'Earn navigation item', 'leat-crm' ),
+			/* translators: %s: a list of placeholders */
+			'description' => sprintf( __( 'The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s', 'leat-crm' ), '{{ credits_currency }}' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_rewards',
 			'default'  => array(
-				'default' => __( 'Rewards', 'leat' ),
+				'default' => __( 'Rewards', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Rewards navigation item', 'leat' ),
+			'label'    => __( 'Rewards navigation item', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_nav_activity',
 			'default'  => array(
-				'default' => __( 'Your activity', 'leat' ),
+				'default' => __( 'Your activity', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Activity navigation item', 'leat' ),
+			'label'    => __( 'Activity navigation item', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_earn_cta',
 			'default'  => array(
-				'default' => __( 'Claim reward', 'leat' ),
+				'default' => __( 'Claim reward', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Claim reward button', 'leat' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to claim their reward.', 'leat' ),
+			'label'    => __( 'Claim reward button', 'leat-crm' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to claim their reward.', 'leat-crm' ),
 		);
 		$settings[] = array(
 			'id'       => 'dashboard_spend_cta',
 			'default'  => array(
-				'default' => __( 'Unlock', 'leat' ),
+				'default' => __( 'Unlock', 'leat-crm' ),
 			),
 			'type'     => 'translatable_text',
-			'label'    => __( 'Spend credits button', 'leat' ),
-			'description' => __( 'The text that will be displayed on the button that allows users to spend their credits.', 'leat' ),
+			'label'    => __( 'Spend credits button', 'leat-crm' ),
+			'description' => __( 'The text that will be displayed on the button that allows users to spend their credits.', 'leat-crm' ),
 		);
 
 		/**
@@ -353,11 +354,11 @@ class Settings {
 			$value = $setting['value'];
 
 			if ($setting['type'] === 'translatable_text' && is_array($value)) {
-				$value = json_encode($value);
+				$value = wp_json_encode($value);
 			}
 
 			if ($setting['type'] === 'checkboxes' && is_array($value)) {
-				$value = json_encode($value);
+				$value = wp_json_encode($value);
 			}
 
 			update_option('leat_' . $setting['id'], $value);

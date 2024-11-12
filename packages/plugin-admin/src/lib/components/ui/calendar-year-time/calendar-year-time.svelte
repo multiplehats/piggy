@@ -23,18 +23,18 @@
 	export let onChange: $$Props["onChange"] = undefined;
 
 	const monthOptions = [
-		__("January", "leat"),
-		__("February", "leat"),
-		__("March", "leat"),
-		__("April", "leat"),
-		__("May", "leat"),
-		__("June", "leat"),
-		__("July", "leat"),
-		__("August", "leat"),
-		__("September", "leat"),
-		__("October", "leat"),
-		__("November", "leat"),
-		__("December", "leat"),
+		__("January", "leat-crm"),
+		__("February", "leat-crm"),
+		__("March", "leat-crm"),
+		__("April", "leat-crm"),
+		__("May", "leat-crm"),
+		__("June", "leat-crm"),
+		__("July", "leat-crm"),
+		__("August", "leat-crm"),
+		__("September", "leat-crm"),
+		__("October", "leat-crm"),
+		__("November", "leat-crm"),
+		__("December", "leat-crm"),
 	].map((month, i) => ({ value: i + 1, label: month }));
 
 	const monthFmt = new DateFormatter(window.leatMiddlewareConfig.siteLanguage, {

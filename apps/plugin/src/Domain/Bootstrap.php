@@ -134,7 +134,7 @@ class Bootstrap {
 
 		if ( $has_needed_dependencies ) {
 			$plugin_data = \get_file_data(
-				$this->package->get_path( 'leat.php' ),
+				$this->package->get_path( 'leat-crm.php' ),
 				[
 					'RequiredWCVersion' => 'WC requires at least',
 				]
@@ -151,7 +151,7 @@ class Bootstrap {
 								<p>
 								<?php
 									/* translators: %s: Required WooCommerce version */
-									printf( esc_html__( 'The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce.', 'leat' ), esc_html( $plugin_data['RequiredWCVersion'] ) );
+									printf( esc_html__( 'The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce.', 'leat-crm' ), esc_html( $plugin_data['RequiredWCVersion'] ) );
 								?>
 								</p>
 							</div>
@@ -211,7 +211,7 @@ class Bootstrap {
 				echo '<div class="error"><p>';
 				printf(
 					/* translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command. */
-					esc_html__( 'Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes.', 'leat' ),
+					esc_html__( 'Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes.', 'leat-crm' ),
 					'<code>pnpm install</code>',
 					'<code>pnpm run build</code>',
 					'<code>pnpm start</code>'

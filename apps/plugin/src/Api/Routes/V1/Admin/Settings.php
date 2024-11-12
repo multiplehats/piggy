@@ -47,7 +47,7 @@ class Settings extends AbstractRoute {
 				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Settings', 'leat' ),
+						'description' => __( 'Settings', 'leat-crm' ),
 						'type'        => 'object',
 					],
 				],
@@ -58,7 +58,7 @@ class Settings extends AbstractRoute {
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'id' => [
-						'description' => __( 'Setting ID', 'leat' ),
+						'description' => __( 'Setting ID', 'leat-crm' ),
 						'type'        => 'string',
 					],
 				],

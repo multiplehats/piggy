@@ -4,12 +4,12 @@ import type { HeaderLinkProps } from "$lib/types";
 export const headerLinks = [
 	{
 		href: "/",
-		label: __("General", "leat"),
+		label: __("General", "leat-crm"),
 		type: "link",
 	},
 	{
 		href: "/loyalty-program",
-		label: __("Loyalty Program", "leat"),
+		label: __("Loyalty Program", "leat-crm"),
 		type: "link",
 	},
 	{
@@ -19,7 +19,7 @@ export const headerLinks = [
 	},
 	{
 		href: "/dashboard",
-		label: __("Customer Dashboard settings", "leat"),
+		label: __("Customer Dashboard settings", "leat-crm"),
 		type: "link",
 	},
 ] as HeaderLinkProps[];

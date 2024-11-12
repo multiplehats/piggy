@@ -74,7 +74,7 @@ class SchemaController {
 		$schema = $this->schemas[ "v{$version}" ][ $name ] ?? false;
 
 		if ( ! $schema ) {
-			throw new \Exception( "{$name} v{$version} schema does not exist" );
+			throw new \Exception( esc_html( sprintf( '%s v%d schema does not exist', $name, $version ) ) );
 		}
 
 		return new $schema( $this->extend, $this, $this->settings );

@@ -31,22 +31,22 @@ class WCProductsSearch extends AbstractRoute
 				'permission_callback'    => [Middleware::class, 'is_authorized'],
 				'args'                => [
 					'term' => [
-						'description' => __( 'Search term', 'leat' ),
+						'description' => __( 'Search term', 'leat-crm' ),
 						'type'        => 'string',
 					],
 					'limit' => [
-						'description' => __( 'Limit', 'leat' ),
+						'description' => __( 'Limit', 'leat-crm' ),
 						'type'        => 'integer',
 					],
 					'include' => [
-						'description' => __( 'Include IDs', 'leat' ),
+						'description' => __( 'Include IDs', 'leat-crm' ),
 						'type'        => 'array',
 						'items'       => [
 							'type' => 'integer',
 						],
 					],
 					'exclude' => [
-						'description' => __( 'Exclude IDs', 'leat' ),
+						'description' => __( 'Exclude IDs', 'leat-crm' ),
 						'type'        => 'array',
 						'items'       => [
 							'type' => 'integer',

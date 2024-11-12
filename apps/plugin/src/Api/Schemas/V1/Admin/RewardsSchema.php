@@ -31,32 +31,32 @@ class RewardsSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'uuid'          => [
-				'description' => __( 'The reward\'s unique id.', 'leat' ),
+				'description' => __( 'The reward\'s unique id.', 'leat-crm' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'name'          => [
-				'description' => __( 'The reward\'s name.', 'leat' ),
+				'description' => __( 'The reward\'s name.', 'leat-crm' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'requiredCredits' => [
-				'description' => __( 'The reward\'s required credits.', 'leat' ),
+				'description' => __( 'The reward\'s required credits.', 'leat-crm' ),
 				'type'        => 'integer',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'type'          => [
-				'description' => __( 'The reward\'s type.', 'leat' ),
+				'description' => __( 'The reward\'s type.', 'leat-crm' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'active'        => [
-				'description' => __( 'The reward\'s active status.', 'leat' ),
+				'description' => __( 'The reward\'s active status.', 'leat-crm' ),
 				'type'        => 'boolean',
 				'context'     => [ 'view', 'edit' ],
 			],
 			'attributes'    => [
-				'description' => __( 'The reward\'s attributes.', 'leat' ),
+				'description' => __( 'The reward\'s attributes.', 'leat-crm' ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],
 			],

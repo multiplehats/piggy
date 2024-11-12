@@ -24,7 +24,7 @@
 	<p>Loading...</p>
 {:else if $query.isError}
 	<Alert
-		description={__(`Error retrieving rewards: ${$query.error.message}`, "leat")}
+		description={__(`Error retrieving rewards: ${$query.error.message}`, "leat-crm")}
 		type="error"
 	/>
 {:else if $query.isSuccess}
@@ -36,7 +36,7 @@
 						value: reward.uuid,
 					}))
 				: []}
-			itemName={__("Reward", "leat")}
+			itemName={__("Reward", "leat-crm")}
 			label={selectedReward.label}
 			description={selectedReward.description}
 			id={selectedReward.id}

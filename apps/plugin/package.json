@@ -1,6 +1,6 @@
 {
 	"name": "@leat/plugin",
-	"version": "0.2.0",
+	"version": "0.2.4",
 	"description": "Leat WordPress plugin",
 	"homepage": "https://leat.com",
 	"contributors": [
@@ -24,7 +24,7 @@
 		"build:frontend": "NODE_ENV=production vite build --config vite-frontend.config.ts",
 		"build:admin": "NODE_ENV=production vite build --config vite-admin.config.ts",
 		"analyze": "ANALYZE=true pnpm build",
-		"i18n": "WP_CLI_PHP_ARGS='-d memory_limit=4096M' wp i18n --allow-root make-pot . languages/leat.pot --slug=leat --domain=leat --include=src,dist/admin/assets,dist/frontend/assets --exclude=bin,node_modules,tests,vendor,dist/admin/assets/codemirror-*.js,dist/admin/assets/vendor-*.js,dist/admin/assets/*.js.map",
+		"i18n": "WP_CLI_PHP_ARGS='-d memory_limit=4096M' wp i18n --allow-root make-pot . languages/leat.pot --slug=leat-crm --domain=leat-crm --include=src,dist/admin/assets,dist/frontend/assets --exclude=bin,node_modules,tests,vendor,dist/admin/assets/codemirror-*.js,dist/admin/assets/vendor-*.js,dist/admin/assets/*.js.map",
 		"typecheck": "svelte-check --tsconfig ./tsconfig.json",
 		"typecheck:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"package-plugin": "rimraf leat.zip && ./bin/build-plugin-zip.sh",
