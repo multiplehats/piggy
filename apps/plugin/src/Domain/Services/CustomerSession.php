@@ -369,7 +369,7 @@ class CustomerSession
 									echo '<li>';
 									echo 'Earn Rule ID: ' . esc_html($log['earn_rule_id']) . '<br>';
 									echo 'Credits: ' . esc_html($log['credits']) . '<br>';
-									echo 'Timestamp: ' . esc_html(date('Y-m-d H:i:s', (int)$log['timestamp']));
+									echo 'Timestamp: ' . esc_html(gmdate('Y-m-d H:i:s', (int)$log['timestamp']));
 									echo '</li>';
 								}
 							echo '</ul>';
@@ -395,7 +395,7 @@ class CustomerSession
 					<?php
 					$uuid = $this->connection->get_contact_uuid_by_wp_id($user->ID);
 
-					echo $uuid ? $uuid : '—';
+					echo esc_html($uuid ? $uuid : '—');
 					?>
 				</td>
 			</tr>

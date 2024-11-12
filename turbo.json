@@ -55,7 +55,7 @@
 				"dist/**",
 				"src/**",
 				"vendor/**",
-				"leat.php"
+				"leat-crm.php"
 			]
 		},
 		"format": {

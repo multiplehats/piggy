@@ -53,7 +53,7 @@ abstract class AbstractShortcode {
 	 */
 	public function init() {
 		if ( empty( $this->shortcode_name ) ) {
-			throw new \Exception(esc_html__('Shortcode name is required.', 'leat'));
+			throw new \Exception(esc_html__('Shortcode name is required.', 'leat-crm'));
 		}
 
 		$this->init_hooks();

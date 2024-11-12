@@ -49,12 +49,12 @@ class EarnReward extends AbstractRoute {
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'earnRuleId' => [
-						'description' => __( 'The Earn Rule ID', 'leat' ),
+						'description' => __( 'The Earn Rule ID', 'leat-crm' ),
 						'type'        => 'integer',
 						'required'    => true,
 					],
 					'userId' => [
-						'description' => __( 'The Customer ID', 'leat' ),
+						'description' => __( 'The Customer ID', 'leat-crm' ),
 						'type'        => 'integer',
 						'required'    => false,
 					],

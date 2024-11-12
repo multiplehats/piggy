@@ -47,7 +47,7 @@ class EarnRules extends AbstractRoute {
 				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Earn rules', 'leat' ),
+						'description' => __( 'Earn rules', 'leat-crm' ),
 						'type'        => 'object',
 					],
 				],
@@ -58,11 +58,11 @@ class EarnRules extends AbstractRoute {
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'id' => [
-						'description' => __( 'Earn rule ID', 'leat' ),
+						'description' => __( 'Earn rule ID', 'leat-crm' ),
 						'type'        => 'string',
 					],
 					'status' => [
-						'description' => __( 'Spend rule status', 'leat' ),
+						'description' => __( 'Spend rule status', 'leat-crm' ),
 						'type'        => 'string',
 					],
 				],
@@ -124,7 +124,7 @@ class EarnRules extends AbstractRoute {
 		}
 
 		if ( is_wp_error( $post_id ) ) {
-			return new \WP_Error( 'post_save_failed', __( 'Failed to save earn rule', 'leat' ), array( 'status' => 500 ) );
+			return new \WP_Error( 'post_save_failed', __( 'Failed to save earn rule', 'leat-crm' ), array( 'status' => 500 ) );
 		}
 
 		$response = $this->prepare_item_for_response( get_post( $post_id ), $request );

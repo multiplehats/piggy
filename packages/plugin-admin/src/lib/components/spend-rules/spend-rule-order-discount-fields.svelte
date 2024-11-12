@@ -12,7 +12,7 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="mb-2">{__("Rule settings", "leat")}</Card.Title>
+		<Card.Title class="mb-2">{__("Rule settings", "leat-crm")}</Card.Title>
 	</Card.Header>
 
 	<Card.Content>

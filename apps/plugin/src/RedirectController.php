@@ -8,7 +8,11 @@ class RedirectController {
     }
 
     public function maybe_redirect_to_onboarding() {
-        // Remove the $screen variable as it's not reliable in this context
+        // Check for nonce if this is a form submission
+        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce(wp_unslash($_REQUEST['_wpnonce']), 'leat_redirect')) {
+            return;
+        }
+
         $api_key = get_option('leat_api_key', null);
         $first_activation = get_option('leat_first_activation', false);
 

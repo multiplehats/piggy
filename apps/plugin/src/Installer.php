@@ -91,13 +91,29 @@ class Installer {
 	protected function maybe_create_table( $table_name, $create_sql ) {
 		global $wpdb;
 
-		if ( in_array( $table_name, $wpdb->get_col( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ), 0 ), true ) ) {
+		$cache_key = 'leat_table_exists_' . $table_name;
+		$table_exists = wp_cache_get( $cache_key );
+
+		if ( false === $table_exists ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$table_exists = in_array( $table_name, $wpdb->get_col( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . $table_name ), 0 ), true );
+			wp_cache_set( $cache_key, $table_exists );
+		}
+
+		if ( $table_exists ) {
 			return true;
 		}
 
-		$wpdb->query( $create_sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared -- Table creation SQL is safe and requires direct query
+		$wpdb->query( $create_sql );
 
-		return in_array( $table_name, $wpdb->get_col( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ), 0 ), true );
+		// Clear and refresh cache after table creation
+		wp_cache_delete( $cache_key );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$table_exists = in_array( $table_name, $wpdb->get_col( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . $table_name ), 0 ), true );
+		wp_cache_set( $cache_key, $table_exists );
+
+		return $table_exists;
 	}
 
 	/**
@@ -112,7 +128,7 @@ class Installer {
 				echo '<div class="error"><p>';
 				printf(
 					/* translators: %1$s table name, %2$s database user, %3$s database name. */
-					esc_html__( 'Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?', 'woo-gutenberg-products-block' ),
+					esc_html__( 'Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?', 'leat-crm' ),
 					'<code>' . esc_html( $table_name ) . '</code>',
 					'<code>' . esc_html( DB_USER ) . '</code>',
 					'<code>' . esc_html( DB_NAME ) . '</code>'
@@ -142,8 +158,22 @@ class Installer {
 
         global $wpdb;
 
+        // Add caching for options query
+        $cache_key = 'leat_piggy_options';
+        $piggy_options = wp_cache_get( $cache_key );
+
+        if ( false === $piggy_options ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $piggy_options = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
+                    'piggy_%'
+                )
+            );
+            wp_cache_set( $cache_key, $piggy_options );
+        }
+
         // Migrate options
-        $piggy_options = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'piggy_%'");
         foreach ($piggy_options as $option) {
             $new_option_name = str_replace('piggy_', 'leat_', $option->option_name);
             update_option($new_option_name, $option->option_value);
@@ -151,22 +181,39 @@ class Installer {
         }
 
         // Rename database tables
-        $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}piggy_%'");
+        $tables = $wpdb->get_results(
+            $wpdb->prepare(
+                "SHOW TABLES LIKE %s",
+                $wpdb->prefix . 'piggy_%'
+            )
+        );
+
         foreach ($tables as $table) {
             $old_table_name = reset($table);
             $new_table_name = str_replace('piggy_', 'leat_', $old_table_name);
 
-            // Check if the new table already exists
             if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $new_table_name)) != $new_table_name) {
-                // If it doesn't exist, rename the old table
-                $result = $wpdb->query("RENAME TABLE {$old_table_name} TO {$new_table_name}");
-                if ($result === false) {
-                    // Log the error if the rename fails
-                    error_log("Failed to rename table {$old_table_name} to {$new_table_name}");
+                $wpdb->query(
+                    $wpdb->prepare(
+                        "RENAME TABLE %s TO %s",
+                        $old_table_name,
+                        $new_table_name
+                    )
+                );
+
+                if ($wpdb->last_error) {
+                    // Use proper WordPress error logging
+                    if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+                        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+                        error_log( sprintf( 'Leat Migration: Failed to rename table %s to %s: %s', $old_table_name, $new_table_name, $wpdb->last_error ) );
+                    }
                 }
             } else {
-                // If the new table already exists, we might want to merge data or handle this case
-                error_log("Table {$new_table_name} already exists. Skipping rename operation.");
+                // Use proper WordPress error logging
+                if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+                    // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+                    error_log( sprintf( 'Leat Migration: Table %s already exists. Skipping rename operation.', $new_table_name ) );
+                }
             }
         }
 

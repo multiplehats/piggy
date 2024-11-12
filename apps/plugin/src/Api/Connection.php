@@ -659,8 +659,20 @@ class Connection {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'leat_reward_logs';
 
-		$query = $wpdb->prepare("SELECT * FROM $table_name WHERE wp_user_id = %d", $wp_user_id);
-		$reward_logs = $wpdb->get_results($query, ARRAY_A);
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
+		$query = $wpdb->prepare(
+			"SELECT * FROM {$wpdb->prefix}leat_reward_logs WHERE wp_user_id = %d",
+			$wp_user_id
+		);
+
+		$cache_key = 'leat_reward_logs_' . $wp_user_id;
+		$reward_logs = wp_cache_get($cache_key);
+
+		if (false === $reward_logs) {
+			$reward_logs = $wpdb->get_results($query, ARRAY_A);
+			wp_cache_set($cache_key, $reward_logs, '', 3600);
+		}
+		// phpcs:enable
 
 		return $reward_logs;
 	}
@@ -677,14 +689,26 @@ class Connection {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'leat_reward_logs';
 
-		$reward_log = [
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$data = [
 			'wp_user_id' => $wp_user_id,
 			'earn_rule_id' => $earn_rule_id,
 			'credits' => $credits,
 			'timestamp' => current_time('mysql', 1),
 		];
 
-		$inserted = $wpdb->insert($table_name, $reward_log);
+		$format = [
+			'%d', // wp_user_id
+			'%d', // earn_rule_id
+			'%d', // credits
+			'%s', // timestamp
+		];
+
+		$inserted = $wpdb->insert($table_name, $data, $format);
+		// phpcs:enable
+
+		// Clear cache after inserting new log
+		wp_cache_delete('leat_reward_logs_' . $wp_user_id);
 
 		return $inserted !== false;
 	}

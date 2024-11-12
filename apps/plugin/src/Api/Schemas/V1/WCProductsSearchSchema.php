@@ -11,11 +11,11 @@ class WCProductsSearchSchema extends AbstractSchema {
     public function get_properties() {
         return [
             'id' => [
-                'description' => __('Unique identifier for the product or variation', 'leat'),
+                'description' => __('Unique identifier for the product or variation', 'leat-crm'),
                 'type'        => 'integer',
             ],
             'title' => [
-                'description' => __('Title of the product or variation', 'leat'),
+                'description' => __('Title of the product or variation', 'leat-crm'),
                 'type'        => 'string',
             ],
         ];

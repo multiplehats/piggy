@@ -149,7 +149,7 @@ class Api {
 		);
 
 		if ( $has_i18n && function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( $handle, 'leat', $this->package->get_path( 'languages' ) );
+			wp_set_script_translations( $handle, 'leat-crm', $this->package->get_path( 'languages' ) );
 		}
 	}
 
@@ -164,7 +164,13 @@ class Api {
 		$manifest = $this->package->get_path( "dist/$folder" );
 
 		if ( ! file_exists( $manifest ) ) {
-			throw new \Exception( "Manifest path not found: $manifest", 500 );
+			throw new \Exception(
+				sprintf(
+					'Manifest path not found: %s',
+					esc_html( $manifest )
+				),
+				500
+			);
 		}
 
 		return $manifest;

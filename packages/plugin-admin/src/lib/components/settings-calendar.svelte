@@ -50,7 +50,7 @@
 				builders={[builder]}
 			>
 				<CalendarIcon class="mr-2 h-4 w-4" />
-				{rawValue || __("Select date", "leat")}
+				{rawValue || __("Select date", "leat-crm")}
 			</Button>
 		</Popover.Trigger>
 		<Popover.Content class="w-auto p-0" align="start">

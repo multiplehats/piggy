@@ -55,7 +55,7 @@
 						<Alert
 							description={__(
 								'Only customers who have an account on your store will be included in the loyalty program.',
-								'leat'
+								'leat-crm'
 							)}
 							type="warning"
 							class="mt-4"
@@ -80,7 +80,7 @@
 					<Alert
 						description={__(
 							'If no order status is selected, credits will not be deducted from customers when an order is refunded, partially refunded, or when the payment is voided.',
-							'leat'
+							'leat-crm'
 						)}
 						type="info"
 						class="mt-4"

@@ -31,25 +31,25 @@ class SettingsSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'reward_order_statuses' => [
-				'description' => __( 'Reward order statuses.', 'leat' ),
+				'description' => __( 'Reward order statuses.', 'leat-crm' ),
 				'type'        => 'object',
 				'context'     => [ 'view', 'edit' ],
 				'properties'  => [
 					'paid' => [
 						'type'        => 'string',
-						'description' => __( 'Pending payment.', 'leat' ),
+						'description' => __( 'Pending payment.', 'leat-crm' ),
 					],
 					'pending' => [
 						'type'        => 'string',
-						'description' => __( 'On hold.', 'leat' ),
+						'description' => __( 'On hold.', 'leat-crm' ),
 					],
 					'processing' => [
 						'type'        => 'string',
-						'description' => __( 'Processing.', 'leat' ),
+						'description' => __( 'Processing.', 'leat-crm' ),
 					],
 					'completed' => [
 						'type'        => 'string',
-						'description' => __( 'Completed.', 'leat' ),
+						'description' => __( 'Completed.', 'leat-crm' ),
 					],
 				],
 			],

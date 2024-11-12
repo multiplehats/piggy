@@ -58,7 +58,7 @@
 				{#if selected}
 					{selected.name}
 				{:else}
-					{__("Select an option", "leat")}
+					{__("Select an option", "leat-crm")}
 				{/if}
 			</Select.Value>
 		</Select.Trigger>

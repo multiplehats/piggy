@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Plugin Name: Leat
+ * Plugin Name: Leat CRM
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
- * Version: 0.2.2
+ * Version: 0.2.4
  * Author: Leat
  * Author URI: https://leat.com
- * Text Domain: leat
+ * Text Domain: leat-crm
  * Requires at least: 5.9
  * Domain Path: /languages
  * Requires PHP: 8.0
@@ -15,16 +15,10 @@
  * Requires Plugins: woocommerce
  * WC requires at least: 6.9
  * WC tested up to: 8.8.3
- * Update URI: https://wplatest.co
+ * License: GPL v2 or later
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  *
  * Copyright (c) 2024 Leat. All rights reserved.
- *
- * Released under the GPL license
- * http://www.opensource.org/licenses/gpl-license.php
- *
- * Leat is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
  * @package Leat
  */
@@ -38,7 +32,7 @@ if ( ! defined( 'LEAT_URL' ) ) {
 }
 
 if ( ! defined( 'LEAT_VERSION' ) ) {
-	define( 'LEAT_VERSION', '0.2.2' );
+	define( 'LEAT_VERSION', '0.2.4' );
 }
 
 /**
@@ -82,7 +76,7 @@ if ( version_compare( $GLOBALS['wp_version'], $minimum_wp_version, '<' ) ) {
 		if ( leat_should_display_compatibility_notices() ) {
 			?>
 			<div class="notice notice-error">
-				<p><?php esc_html_e( 'The Leat plugin requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Leat.', 'leat' ); ?></p>
+				<p><?php esc_html_e( 'The Leat plugin requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Leat.', 'leat-crm' ); ?></p>
 			</div>
 			<?php
 		}
@@ -106,25 +100,12 @@ if ( is_readable( $autoloader ) ) {
 		error_log(  // phpcs:ignore
 			sprintf(
 				/* translators: 1: composer command. 2: plugin directory */
-				esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat' ),
+				esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat-crm' ),
 				'`composer install`',
 				'`' . esc_html( str_replace( ABSPATH, '', __DIR__ ) ) . '`'
 			)
 		);
 	}
-
-	/**
-	 * Temporary solution to update the plugin using WPLatest Updater until
-	 * we release the plugin in the WordPress repository.
-	 */
-	add_action('init', function() {
-		$options = array(
-			'file'   => __FILE__,
-			'id'     => 'plugin_t7jfygltvh47e88f6c6nfubb',
-		);
-
-		new WPLatest\Updater\PluginUpdater($options);
-	});
 
 	/**
 	 * Outputs an admin notice if composer install has not been ran.
@@ -138,7 +119,7 @@ if ( is_readable( $autoloader ) ) {
 				<?php
 				printf(
 					/* translators: 1: composer command. 2: plugin directory */
-					esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat' ),
+					esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat-crm' ),
 					'<code>composer install</code>',
 					'<code>' . esc_html( str_replace( ABSPATH, '', __DIR__ ) ) . '</code>'
 				);

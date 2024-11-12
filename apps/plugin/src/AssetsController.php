@@ -224,10 +224,10 @@ final class AssetsController
 
 		return "
             window.leatMiddlewareConfig = {
-				apiKeySet: " . json_encode($api_key_set) . ",
-				loggedIn: " . json_encode(is_user_logged_in()) . ",
-				userId: " . json_encode($user_id) . ",
-				hasLeatUuid: " . json_encode(get_user_meta( $user_id, 'leat_uuid', true)) . ",
+				apiKeySet: " . wp_json_encode($api_key_set) . ",
+				loggedIn: " . wp_json_encode(is_user_logged_in()) . ",
+				userId: " . wp_json_encode($user_id) . ",
+				hasLeatUuid: " . wp_json_encode(get_user_meta( $user_id, 'leat_uuid', true)) . ",
                 siteLanguage: '" . esc_js(get_bloginfo('language')) . "',
                 currentLanguage: '" . esc_js($current_language) . "',
                 languages: " . wp_json_encode($all_languages) . ",
