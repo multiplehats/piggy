@@ -10,7 +10,7 @@
 
 	const query = createQuery({
 		queryKey: [QueryKeys.contact],
-		queryFn: async () => await apiService.getContact(),
+		queryFn: async () => await apiService.getContact(window.leatMiddlewareConfig.userId),
 		enabled: window.leatMiddlewareConfig.userId !== null,
 	});
 
