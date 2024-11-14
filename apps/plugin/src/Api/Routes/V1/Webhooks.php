@@ -31,12 +31,6 @@ class Webhooks extends AbstractRoute {
      */
     private $webhook_manager;
 
-    public function __construct() {
-        parent::__construct();
-
-        $this->webhook_manager = new WebhookManager($this->connection);
-    }
-
     /**
      * Get the path of this REST route.
      *
@@ -76,6 +70,8 @@ class Webhooks extends AbstractRoute {
      * @return bool
      */
     public function verify_webhook_signature(\WP_REST_Request $request) {
+        $webhook_manager = new WebhookManager($this->connection);
+
         $signature = $request->get_header('X-Piggy-Signature');
 
         if (!$signature) {
@@ -103,6 +99,8 @@ class Webhooks extends AbstractRoute {
      * @return \WP_REST_Response|\WP_Error
      */
     protected function get_route_post_response(\WP_REST_Request $request) {
+        $webhook_manager = new WebhookManager($this->connection);
+
         $event_type = $request->get_header('X-Piggy-Event');
 
         if (!$event_type) {
