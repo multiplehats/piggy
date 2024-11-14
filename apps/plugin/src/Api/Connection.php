@@ -469,7 +469,9 @@ class Connection {
 
 		foreach ($customer_orders as $order) {
 			foreach ($order->get_items() as $item) {
-				$product = $item->get_product();
+				$total_products += $item->get_quantity();
+				$product_id = $item instanceof \WC_Order_Item_Product ? ($item->get_variation_id() ?: $item->get_product_id()) : 0;
+				$product = wc_get_product($product_id);
 				if ($product) {
 					$product_categories = $product->get_category_ids();
 					$categories = array_merge($categories, $product_categories);
@@ -861,6 +863,100 @@ class Connection {
 			return $refund_result;
 		} catch (\Exception $e) {
 			$this->logger->error("Error processing partial refund: " . $e->getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Get WooCommerce guest data from order history
+	 *
+	 * @param string $email Customer email
+	 * @param WC_Order $current_order Current order being processed
+	 * @return array
+	 */
+	private function get_woocommerce_guest_data($email, $current_order)
+	{
+		$currency = strtolower(get_woocommerce_currency());
+
+		// Get guest's order history
+		$customer_orders = wc_get_orders(array(
+			'customer' => $email,
+			'status' => array('completed'),
+			'limit' => -1,
+		));
+
+		// Calculate order statistics
+		$total_spent = 0;
+		$total_products = 0;
+		$orders_count = count($customer_orders);
+		$purchased_categories = array();
+		$first_order_date = '';
+		$last_order_date = '';
+		$last_order_amount = 0;
+
+		foreach ($customer_orders as $order) {
+			$total_spent += $order->get_total();
+
+			$order_date = $order->get_date_created()->format('Y-m-d H:i:s');
+			if (empty($first_order_date) || $order_date < $first_order_date) {
+				$first_order_date = $order_date;
+			}
+			if (empty($last_order_date) || $order_date > $last_order_date) {
+				$last_order_date = $order_date;
+				$last_order_amount = $order->get_total();
+			}
+
+			foreach ($order->get_items() as $item) {
+				$total_products += $item->get_quantity();
+				$product_id = $item instanceof \WC_Order_Item_Product ? ($item->get_variation_id() ?: $item->get_product_id()) : 0;
+				$product = wc_get_product($product_id);
+				if ($product) {
+					$product_categories = $product->get_category_ids();
+					$purchased_categories = array_merge($purchased_categories, $product_categories);
+				}
+			}
+		}
+
+		$purchased_categories = array_unique($purchased_categories);
+		$average_order_value = $orders_count > 0 ? round($total_spent / $orders_count, 2) : 0;
+
+		return [
+			'first_name' => $current_order->get_billing_first_name(),
+			'last_name' => $current_order->get_billing_last_name(),
+			'email' => $email,
+			'phone' => $current_order->get_billing_phone(),
+			'wp_wc_total_spent_' . $currency => (float)$total_spent,
+			'wp_wc_orders_count' => (int)$orders_count,
+			'wp_wc_last_order_amount_' . $currency => (float)$last_order_amount,
+			'wp_wc_last_order_date' => $last_order_date,
+			'wp_wc_average_order_value_' . $currency => (float)$average_order_value,
+			'wp_wc_first_order_date' => $first_order_date,
+			'wp_wc_product_categories_purchased' => $purchased_categories,
+			'wp_wc_total_products_purchased' => (int)$total_products,
+		];
+	}
+
+	/**
+	 * Sync guest order attributes with Leat
+	 *
+	 * @param WC_Order $order
+	 * @param string $uuid
+	 * @return array|null
+	 */
+	public function sync_guest_attributes($order, $uuid)
+	{
+		try {
+			$email = $order->get_billing_email();
+			if (!$email) {
+				throw new \Exception('No email provided for guest order');
+			}
+
+			$attributes = $this->get_woocommerce_guest_data($email, $order);
+
+			return $this->update_contact($uuid, $attributes);
+
+		} catch (\Exception $e) {
+			$this->logger->error("Failed to sync guest attributes: " . $e->getMessage());
 			return false;
 		}
 	}

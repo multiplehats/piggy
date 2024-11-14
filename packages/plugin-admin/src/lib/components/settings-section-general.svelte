@@ -2,6 +2,8 @@
 	import { createQuery } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
 	import SettingsApiKey from "./settings-api-key/settings-api-key.svelte";
+	import SettingsSwitch from "./settings-switch.svelte";
+	import { Alert } from "./ui/alert";
 	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
 	import { SettingsSection } from "$lib/components/ui/settings-section";
 	import { SettingsAdminService } from "$lib/modules/settings";
@@ -44,25 +46,25 @@
 				bind:value={$settingsState.credits_spend_rule_progress.value}
 			/>
 
-			<!-- <div class="py-4">
+			<div class="py-4">
 				<SettingsSwitch
 					{...$settingsState.include_guests}
 					bind:value={$settingsState.include_guests.value}
 				/>
 
-				{#if $settingsState.include_guests.value === 'off'}
+				{#if $settingsState.include_guests.value === "off"}
 					<div class="mt-2 text-sm">
 						<Alert
 							description={__(
-								'Only customers who have an account on your store will be included in the loyalty program.',
-								'leat-crm'
+								"Only customers who have an account on your store will be included in the loyalty program.",
+								"leat-crm"
 							)}
 							type="warning"
 							class="mt-4"
 						></Alert>
 					</div>
 				{/if}
-			</div> -->
+			</div>
 
 			<!-- <SettingsCheckboxes
 				class="py-4"
