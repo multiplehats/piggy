@@ -499,13 +499,19 @@ class CustomerSession
 
 			// If credits are already issued, we don't need to apply them again
 			$credit_transaction_uuid = $order->get_meta('_leat_earn_rule_credit_transaction_uuid');
-
 			if ($credit_transaction_uuid) {
 				return;
 			}
 
 			if (!$uuid) {
 				return;
+			}
+
+			// Sync all attributes including order-related data
+			if ($guest_checkout) {
+				$this->connection->sync_guest_attributes($order, $uuid);
+			} else {
+				$this->connection->sync_user_attributes($user_id, $uuid);
 			}
 
 			// Apply credits based on PLACE_ORDER earn rule
@@ -587,10 +593,7 @@ class CustomerSession
 	 */
 	public function handle_checkout_order_processed($order_id)
 	{
-		error_log('handle_checkout_order_processed');
-
 		try {
-			// Convert order ID to WC_Order object
 			$order = wc_get_order($order_id);
 			if (!$order) {
 				$this->logger->error("Could not find order with ID: " . $order_id);
@@ -600,8 +603,7 @@ class CustomerSession
 			$user_id = $order->get_user_id();
 			$guest_checkout = empty($user_id);
 
-			error_log('Handling checkout order processed for order: ' . $order->get_id());
-			$this->logger->info('Handling checkout order processed for order: ' . $order->get_id());
+			$this->logger->info('Handling initial checkout processing for order: ' . $order->get_id());
 
 			// Skip if it's a guest checkout and guest users are not included
 			if ($guest_checkout) {
@@ -627,7 +629,6 @@ class CustomerSession
 					return;
 				}
 
-				// Try to create contact for guest
 				$contact = $this->connection->create_contact($email);
 				if (!$contact) {
 					$this->logger->error("Failed to create contact for guest order: " . $order->get_id());
@@ -647,11 +648,10 @@ class CustomerSession
 				return;
 			}
 
-			// Sync user attributes (for both guests and registered users)
-			$this->sync_order_attributes($order, $uuid);
+			// Only sync non-order related attributes during checkout
+			$this->connection->sync_basic_attributes_from_order($order, $uuid, $guest_checkout);
 
 		} catch (\Throwable $th) {
-			error_log('Error processing checkout order: ' . $th->getMessage());
 			$this->logger->error("Error processing checkout order: " . $th->getMessage());
 		}
 	}

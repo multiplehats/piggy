@@ -695,6 +695,37 @@ class Connection {
 		}
 	}
 
+	public function sync_basic_attributes_from_order($order, $uuid, $is_guest)
+	{
+		try {
+			if ($is_guest) {
+				$attributes = [
+					'firstname' => $order->get_billing_first_name(),
+					'lastname' => $order->get_billing_last_name(),
+					'wp_user_role' => 'guest',
+				];
+			} else {
+				$user_id = $order->get_user_id();
+				$user = get_userdata($user_id);
+
+				$attributes = [
+					'wp_user_id' => $user_id,
+					'firstname' => $user->first_name,
+					'lastname' => $user->last_name,
+					'wp_user_role' => implode(', ', $user->roles),
+					'wp_account_age_days' => floor((time() - strtotime($user->user_registered)) / (60 * 60 * 24)),
+					'wp_last_login' => get_user_meta($user_id, 'leat_last_login', true) ?: '',
+					'wp_post_count' => count_user_posts($user_id),
+				];
+			}
+
+			return $this->sync_attributes_with_category_update($uuid, $attributes);
+		} catch (\Exception $e) {
+			$this->logger->error("Failed to sync basic attributes: " . $e->getMessage());
+			return false;
+		}
+	}
+
 	/**
 	 * Update sync_guest_attributes to use the new method
 	 */
