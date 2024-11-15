@@ -64,8 +64,12 @@ class CustomerSession
 		add_filter('woocommerce_product_get_sale_price', [$this, 'remove_sale_price_for_discounted_products'], 10, 2);
 		add_filter('woocommerce_product_get_price', [$this, 'adjust_price_for_discounted_products'], 10, 2);
 		add_action('woocommerce_order_refunded', [$this, 'handle_order_refunded'], 10, 2);
+
+		// Only apply credits and log rewards when order is fully completed
 		add_action('woocommerce_order_status_completed', [$this, 'sync_attributes_on_order_completed'], 10, 1);
-		add_action('woocommerce_checkout_order_created', [$this, 'handle_checkout_order_processed'], 10, 1);
+
+		// Initial contact creation and attribute syncing when order is first placed
+		add_action('woocommerce_checkout_order_processed', [$this, 'handle_checkout_order_processed'], 10, 1);
 	}
 
 	/**
@@ -493,14 +497,16 @@ class CustomerSession
 				? $order->get_meta('_leat_contact_uuid')
 				: $this->connection->get_contact_uuid_by_wp_id($user_id);
 
-			if (!$uuid) {
+			// If credits are already issued, we don't need to apply them again
+			$credit_transaction_uuid = $order->get_meta('_leat_earn_rule_credit_transaction_uuid');
+
+			if ($credit_transaction_uuid) {
 				return;
 			}
 
-			// For registered users, sync their WordPress attributes
-			// if (!$guest_checkout) {
-			// 	$this->connection->sync_user_attributes($user_id, $uuid);
-			// }
+			if (!$uuid) {
+				return;
+			}
 
 			// Apply credits based on PLACE_ORDER earn rule
 			$order_total = $order->get_total();
@@ -528,6 +534,8 @@ class CustomerSession
 				$order->save();
 
 				if ($user_id) {
+					$this->logger->info("Adding $credits credits to user $user_id for order $order_id");
+
 					$this->connection->add_reward_log($user_id, $applicable_rule['id'], $credits);
 				}
 			}
@@ -577,11 +585,23 @@ class CustomerSession
 	/**
 	 * Handle order processing for both logged-in and guest users
 	 */
-	public function handle_checkout_order_processed($order)
+	public function handle_checkout_order_processed($order_id)
 	{
+		error_log('handle_checkout_order_processed');
+
 		try {
+			// Convert order ID to WC_Order object
+			$order = wc_get_order($order_id);
+			if (!$order) {
+				$this->logger->error("Could not find order with ID: " . $order_id);
+				return;
+			}
+
 			$user_id = $order->get_user_id();
 			$guest_checkout = empty($user_id);
+
+			error_log('Handling checkout order processed for order: ' . $order->get_id());
+			$this->logger->info('Handling checkout order processed for order: ' . $order->get_id());
 
 			// Skip if it's a guest checkout and guest users are not included
 			if ($guest_checkout) {
@@ -603,14 +623,14 @@ class CustomerSession
 			if ($guest_checkout) {
 				$email = $order->get_billing_email();
 				if (!$email) {
-					$this->logger->error("No email provided for guest order: $order_id");
+					$this->logger->error("No email provided for guest order: " . $order->get_id());
 					return;
 				}
 
 				// Try to create contact for guest
 				$contact = $this->connection->create_contact($email);
 				if (!$contact) {
-					$this->logger->error("Failed to create contact for guest order: $order_id");
+					$this->logger->error("Failed to create contact for guest order: " . $order->get_id());
 					return;
 				}
 				$uuid = $contact['uuid'];
@@ -623,7 +643,7 @@ class CustomerSession
 			}
 
 			if (!$uuid) {
-				$this->logger->error("No UUID found/created for order: $order->get_id()");
+				$this->logger->error("No UUID found/created for order: " . $order->get_id());
 				return;
 			}
 
@@ -631,6 +651,7 @@ class CustomerSession
 			$this->sync_order_attributes($order, $uuid);
 
 		} catch (\Throwable $th) {
+			error_log('Error processing checkout order: ' . $th->getMessage());
 			$this->logger->error("Error processing checkout order: " . $th->getMessage());
 		}
 	}
@@ -645,8 +666,10 @@ class CustomerSession
 			$guest_checkout = empty($user_id);
 
 			if ($guest_checkout) {
+				$this->logger->info('Syncing guest attributes for order: ' . $order->get_id());
 				return $this->connection->sync_guest_attributes($order, $uuid);
 			} else {
+				$this->logger->info('Syncing user attributes for order: ' . $order->get_id());
 				return $this->connection->sync_user_attributes($user_id, $uuid);
 			}
 

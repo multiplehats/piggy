@@ -202,6 +202,10 @@ class Connection {
 
 		$contact = Contact::update($id, ["attributes" => $attributes]);
 
+		$this->logger->info('Updated contact attributes: ' . $id);
+		$this->logger->info(json_encode($attributes));
+		$this->logger->info(json_encode($contact));
+
 		if (!$contact) {
 			return null;
 		}
@@ -462,24 +466,43 @@ class Connection {
 		return '';
 	}
 
-	private function get_purchased_categories($user_id)
+	private function get_purchased_categories($user_id, $current_order = null)
 	{
-		$categories = array();
-		$customer_orders = wc_get_orders(array('customer' => $user_id));
+		$categories = [];
 
+		// Handle current order if provided (for guests)
+		if ($current_order) {
+			foreach ($current_order->get_items() as $item) {
+				$product = $item->get_product();
+				if ($product) {
+					$categories = array_merge($categories, $product->get_category_ids());
+				}
+			}
+
+			// Get previous orders excluding current order
+			$customer_orders = wc_get_orders(array(
+				'customer' => $current_order->get_billing_email(),
+				'status' => array('completed', 'processing', 'on-hold'),
+				'limit' => -1,
+				'exclude' => [$current_order->get_id()],
+			));
+		} else {
+			// Get all orders for registered user
+			$customer_orders = wc_get_orders(array('customer' => $user_id));
+		}
+
+		// Process historical orders
 		foreach ($customer_orders as $order) {
 			foreach ($order->get_items() as $item) {
-				$total_products += $item->get_quantity();
-				$product_id = $item instanceof \WC_Order_Item_Product ? ($item->get_variation_id() ?: $item->get_product_id()) : 0;
-				$product = wc_get_product($product_id);
+				$product = $item->get_product();
 				if ($product) {
-					$product_categories = $product->get_category_ids();
-					$categories = array_merge($categories, $product_categories);
+					$categories = array_merge($categories, $product->get_category_ids());
 				}
 			}
 		}
 
-		return array_unique($categories);
+		// Convert to strings and ensure unique values
+		return array_map('strval', array_unique($categories));
 	}
 
 	private function get_total_products_purchased($user_id) {
@@ -494,8 +517,6 @@ class Connection {
 
 		return $total_products;
 	}
-
-
 
 	/**
 	 * Get user attributes for Leat.
@@ -558,13 +579,23 @@ class Connection {
 
 		if (!$client) {
 			$this->logger->error("Failed to initialize client");
-
 			return;
 		}
 
 		$attributes_list = CustomAttribute::list(["entity" => "contact"]);
-
 		$currency = strtolower(get_woocommerce_currency());
+
+		// Find the product categories attribute if it exists
+		$categories_attribute = null;
+		foreach ($attributes_list as $attribute) {
+			if ($attribute->getName() === 'wp_wc_product_categories_purchased') {
+				$categories_attribute = $attribute;
+				break;
+			}
+		}
+
+		// Get current category options
+		$current_options = $this->get_product_categories_options();
 
 		$required_attributes = [
 			["name" => "wp_user_id", "label" => "WordPress User ID", "type" => "number"],
@@ -579,12 +610,13 @@ class Connection {
 			["name" => "wp_wc_last_order_date", "label" => "WooCommerce Last Order Date", "type" => "date_time"],
 			["name" => "wp_wc_average_order_value_" . $currency, "label" => "WooCommerce Average Order Value (" . strtoupper($currency) . ")", "type" => "float"],
 			["name" => "wp_wc_first_order_date", "label" => "WooCommerce First Order Date", "type" => "date_time"],
-			["name" => "wp_wc_product_categories_purchased", "label" => "WooCommerce Product Categories Purchased", "type" => "multi_select"],
+			["name" => "wp_wc_product_categories_purchased", "label" => "WooCommerce Product Categories Purchased", "type" => "multi_select", "options" => $current_options],
 			["name" => "wp_wc_total_products_purchased", "label" => "WooCommerce Total Products Purchased", "type" => "number"],
 		];
 
 		foreach($required_attributes as $attr) {
 			if (!$this->attribute_exists($attributes_list, $attr['name'])) {
+				// Create new attribute
 				$attribute_data = [
 					"entity" => "contact",
 					"name" => $attr['name'],
@@ -593,14 +625,59 @@ class Connection {
 				];
 
 				if ($attr['name'] === 'wp_wc_product_categories_purchased') {
-					$attribute_data['options'] = $this->get_product_categories_options();
+					$this->logger->info("Creating new categories attribute with options: " . print_r($attr['options'], true));
+
+					$attribute_data['options'] = array_map(function($option) {
+						return [
+							'value' => (string)$option['value'],
+							'label' => $option['label']
+						];
+					}, $attr['options']);
 				}
 
-				CustomAttribute::create($attribute_data);
+				CustomAttribute::create([$attribute_data]);
+			} else if ($attr['name'] === 'wp_wc_product_categories_purchased' && $categories_attribute) {
+				// Update existing categories attribute with new options
+				$options = array_map(function($option) {
+					return [
+						'value' => (string)$option['value'],
+						'label' => $option['label']
+					];
+				}, $current_options);
+
+				$this->logger->info("Updating categories attribute with options: " . print_r($options, true));
+
+				$this->logger->info("Updating categories attribute with URL: " . CustomAttribute::resourceUri . '/' . $categories_attribute->getId());
+
+				$url = CustomAttribute::resourceUri . '/' . $categories_attribute->getName();
+
+				ApiClient::put($url, [
+					"entity" => "contact",
+					"options" => $options
+				]);
 			}
 		}
 	}
 
+	/**
+	 * Sync user/guest attributes with Leat, ensuring categories are up to date
+	 */
+	private function sync_attributes_with_category_update($uuid, $attributes)
+	{
+		try {
+			$this->ensure_custom_attributes_exist();
+			$update_result = $this->update_contact($uuid, $attributes);
+
+			return $update_result;
+		} catch (\Exception $e) {
+			$this->logger->error("Failed to sync attributes: " . $e->getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Update sync_user_attributes to use the new method
+	 */
 	public function sync_user_attributes($user_id, $uuid)
 	{
 		try {
@@ -611,13 +688,28 @@ class Connection {
 			}
 
 			$attributes = $this->get_user_attributes($user_id);
-
-			$update_result = $this->update_contact($uuid, $attributes);
-
-			return $update_result;
+			return $this->sync_attributes_with_category_update($uuid, $attributes);
 		} catch (\Exception $e) {
 			$this->logger->error("Failed to sync user attributes: " . $e->getMessage());
+			return false;
+		}
+	}
 
+	/**
+	 * Update sync_guest_attributes to use the new method
+	 */
+	public function sync_guest_attributes($order, $uuid)
+	{
+		try {
+			$email = $order->get_billing_email();
+			if (!$email) {
+				throw new \Exception('No email provided for guest order');
+			}
+
+			$attributes = $this->get_woocommerce_guest_data($email, $order);
+			return $this->sync_attributes_with_category_update($uuid, $attributes);
+		} catch (\Exception $e) {
+			$this->logger->error("Failed to sync guest attributes: " . $e->getMessage());
 			return false;
 		}
 	}
@@ -878,86 +970,49 @@ class Connection {
 	{
 		$currency = strtolower(get_woocommerce_currency());
 
-		// Get guest's order history
+		// Get guest's order history - exclude current order
 		$customer_orders = wc_get_orders(array(
 			'customer' => $email,
-			'status' => array('completed'),
+			'status' => array('completed', 'processing', 'on-hold'),
 			'limit' => -1,
+			'exclude' => [$current_order->get_id()], // Explicitly exclude current order
 		));
 
-		// Calculate order statistics
-		$total_spent = 0;
+		$this->logger->info("Found " . count($customer_orders) . " previous orders for guest email: " . $email);
+
+		// Initialize statistics
+		$total_spent = $current_order->get_total(); // Start with current order
 		$total_products = 0;
-		$orders_count = count($customer_orders);
-		$purchased_categories = array();
-		$first_order_date = '';
-		$last_order_date = '';
-		$last_order_amount = 0;
+		$orders_count = 1; // Start with 1 for current order
 
-		foreach ($customer_orders as $order) {
-			$total_spent += $order->get_total();
+		// Set initial dates from current order
+		$current_order_date = $current_order->get_date_created()->format('Y-m-d H:i:s');
+		$first_order_date = $current_order_date;
+		$last_order_date = $current_order_date;
+		$last_order_amount = $current_order->get_total();
 
-			$order_date = $order->get_date_created()->format('Y-m-d H:i:s');
-			if (empty($first_order_date) || $order_date < $first_order_date) {
-				$first_order_date = $order_date;
-			}
-			if (empty($last_order_date) || $order_date > $last_order_date) {
-				$last_order_date = $order_date;
-				$last_order_amount = $order->get_total();
-			}
+		$average_order_value = $orders_count > 0 ? $total_spent / $orders_count : 0;
 
-			foreach ($order->get_items() as $item) {
-				$total_products += $item->get_quantity();
-				$product_id = $item instanceof \WC_Order_Item_Product ? ($item->get_variation_id() ?: $item->get_product_id()) : 0;
-				$product = wc_get_product($product_id);
-				if ($product) {
-					$product_categories = $product->get_category_ids();
-					$purchased_categories = array_merge($purchased_categories, $product_categories);
-				}
-			}
-		}
-
-		$purchased_categories = array_unique($purchased_categories);
-		$average_order_value = $orders_count > 0 ? round($total_spent / $orders_count, 2) : 0;
+		$this->logger->info("Guest order statistics: " . json_encode([
+			'total_spent' => $total_spent,
+			'orders_count' => $orders_count,
+			'total_products' => $total_products,
+			'is_first_order' => empty($customer_orders)
+		]));
 
 		return [
-			'first_name' => $current_order->get_billing_first_name(),
-			'last_name' => $current_order->get_billing_last_name(),
-			'email' => $email,
-			'phone' => $current_order->get_billing_phone(),
 			'wp_wc_total_spent_' . $currency => (float)$total_spent,
 			'wp_wc_orders_count' => (int)$orders_count,
 			'wp_wc_last_order_amount_' . $currency => (float)$last_order_amount,
 			'wp_wc_last_order_date' => $last_order_date,
 			'wp_wc_average_order_value_' . $currency => (float)$average_order_value,
 			'wp_wc_first_order_date' => $first_order_date,
-			'wp_wc_product_categories_purchased' => $purchased_categories,
+			'wp_wc_product_categories_purchased' => $this->get_purchased_categories(null, $current_order),
 			'wp_wc_total_products_purchased' => (int)$total_products,
+			'wp_user_id' => $current_order->get_user_id(),
+			'firstname' => $current_order->get_billing_first_name(),
+			'lastname' => $current_order->get_billing_last_name(),
+			'wp_user_role' => 'guest',
 		];
-	}
-
-	/**
-	 * Sync guest order attributes with Leat
-	 *
-	 * @param WC_Order $order
-	 * @param string $uuid
-	 * @return array|null
-	 */
-	public function sync_guest_attributes($order, $uuid)
-	{
-		try {
-			$email = $order->get_billing_email();
-			if (!$email) {
-				throw new \Exception('No email provided for guest order');
-			}
-
-			$attributes = $this->get_woocommerce_guest_data($email, $order);
-
-			return $this->update_contact($uuid, $attributes);
-
-		} catch (\Exception $e) {
-			$this->logger->error("Failed to sync guest attributes: " . $e->getMessage());
-			return false;
-		}
 	}
 }
