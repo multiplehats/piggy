@@ -36,12 +36,12 @@ class Installer {
 		$collate     = $wpdb->has_cap( 'collation' ) ? $wpdb->get_charset_collate() : '';
 
 		$tables = [
-			"CREATE TABLE {$wpdb->prefix}leat_reward_logs (
+			"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}leat_reward_logs (
 				`id` mediumint(9) NOT NULL AUTO_INCREMENT,
 				`wp_user_id` bigint(20) NOT NULL,
 				`earn_rule_id` bigint(20) NOT NULL,
 				`credits` bigint(20) NOT NULL,
-				`timestamp` datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+				`timestamp` datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
 				PRIMARY KEY (id)
 			) $collate;"
 		];

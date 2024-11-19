@@ -303,6 +303,10 @@ class EarnRules {
 			}
 		}
 
+		if (!$applicable_rule) {
+			$applicable_rule = $place_order_rules[0];
+		}
+
 		return $applicable_rule;
 	}
 
