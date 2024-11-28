@@ -3,7 +3,8 @@ rsync ./ "$2"/ --recursive --delete --delete-excluded \
 	--exclude=".*/" \
 	--exclude="*.md" \
 	--exclude=".*" \
-	--exclude="composer.*" \
+	## Do not exclude composer.json as it's required by WordPress guideliens.
+	--exclude="composer.lock" \
 	--exclude="*.lock" \
 	--exclude=bin/ \
 	--exclude=node_modules/ \
