@@ -1,7 +1,7 @@
 import banner from "vite-plugin-banner";
+import type { PluginOption } from "vite";
 import pkg from "../package.json";
 import { distDir } from "./common";
-
 /**
  * Create a banner for the assets.
  *
@@ -17,10 +17,10 @@ export function createBanner(name: string, suffix?: string) {
  * name: ${name + (suffix ? ` - ${suffix}` : "")}
  * version: v${pkg.version} - Build: ${new Date().toISOString()}
  * description: ${pkg.description}
- * author: ${pkg.author}
- * author_url: https://chrisjayden.com
+ * author: ${pkg.contributors ? pkg.contributors.map((c) => c.name).join(", ") : "unknown"}
+ * author_url: ${pkg.contributors ? pkg.contributors.map((c) => c.url).join(", ") : "unknown"}
  * homepage: ${pkg.homepage}
  */`,
 		verify: true,
-	}) as string;
+	}) as PluginOption;
 }
