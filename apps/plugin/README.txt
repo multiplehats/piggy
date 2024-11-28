@@ -25,6 +25,21 @@ connected and engaged.
 ● Seamlessly manage your loyalty program both online and offline with Leat's extensive
 integrations, eliminating any gaps in your customer experience.
 
+### External services
+
+This plugin requires an API connection to [Leat](https://www.leat.com) for core functionality including reward management, customer tracking, and loyalty point calculations.
+
+**Data transmitted includes, but is not limited to**:
+- Customer information (email, name, order history, purchase categories)
+- WooCommerce order data (order totals, products purchased, dates)
+- Store configuration data
+- Reward and voucher definitions
+
+Users of this plugin should ensure they comply with the terms and privacy policies of Leat before using this plugin:
+
+- [Terms of Service](https://www.leat.com/legal/terms-and-conditions)
+- [Privacy Policy](https://www.leat.com/legal/privacy-policy)
+
 == Installation ==
 
 1. Upload `leat.zip` to the `/wp-content/plugins/` directory
