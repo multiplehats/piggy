@@ -5,7 +5,7 @@
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
  * Version: 0.3.0
- * Author: Leat
+ * Author: rensleat, chrisjayden
  * Author URI: https://leat.com
  * Text Domain: leat-crm
  * Requires at least: 5.9
