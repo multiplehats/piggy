@@ -200,7 +200,7 @@ final class AssetsController
 	 */
 	public function render_admin_mount()
 	{
-		echo '<div id="leat-admin-mount"></div>';
+		echo wp_kses_post('<div id="leat-admin-mount"></div>');
 	}
 
 	/**
