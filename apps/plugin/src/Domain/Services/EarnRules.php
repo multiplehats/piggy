@@ -317,10 +317,9 @@ class EarnRules {
      */
     public function has_user_claimed_rule($user_id, $earn_rule_id) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'leat_reward_logs';
 
         $query = $wpdb->prepare(
-            "SELECT COUNT(*) FROM `" . esc_sql($table_name) . "` WHERE wp_user_id = %d AND earn_rule_id = %d",
+            "SELECT COUNT(*) FROM {$wpdb->prefix}leat_reward_logs WHERE wp_user_id = %d AND earn_rule_id = %d",
             $user_id,
             $earn_rule_id
         );
