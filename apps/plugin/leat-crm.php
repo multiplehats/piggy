@@ -14,7 +14,7 @@
  * Requires PHP Architecture: 64 bits
  * Requires Plugins: woocommerce
  * WC requires at least: 6.9
- * WC tested up to: 8.8.3
+ * WC tested up to: 9.4.3
  * License: GPL v2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  *
