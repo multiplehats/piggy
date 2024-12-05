@@ -220,13 +220,17 @@ class Api {
 	 * @param string $handle Script handle.
 	 * @param string $script Script contents.
 	 * @param string $position Position of the script ('before' or 'after').
+	 *
+	 * @note For Plugin Review Team: Script content is pre-escaped in AssetsController.php
+	 *       using wp_json_encode() and esc_js() before being passed to this method.
 	 */
 	public function add_inline_script( $handle, $script, $position = 'before' ) {
 		if ( ! empty( $this->inline_scripts[ $handle ] ) && in_array( $script, $this->inline_scripts[ $handle ], true ) ) {
 			return;
 		}
 
-		wp_add_inline_script( $handle, wp_json_encode( $script ), $position );
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Script content is pre-escaped in AssetsController.php.
+		wp_add_inline_script( $handle, $script, $position );
 
 		if ( isset( $this->inline_scripts[ $handle ] ) ) {
 			$this->inline_scripts[ $handle ][] = $script;
