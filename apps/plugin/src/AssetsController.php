@@ -151,7 +151,7 @@ final class AssetsController
 
 				wp_add_inline_style(
 					self::APP_HANDLE,
-					$this->get_dynamic_css()
+					esc_html($this->get_dynamic_css())
 				);
 			}
 		}
@@ -199,7 +199,7 @@ final class AssetsController
 	 */
 	public function render_admin_mount()
 	{
-		echo '<div id="leat-admin-mount"></div>';
+		echo wp_kses_post('<div id="leat-admin-mount"></div>');
 	}
 
 	/**
