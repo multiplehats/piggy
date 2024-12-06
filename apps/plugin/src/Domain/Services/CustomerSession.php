@@ -5,6 +5,7 @@ namespace Leat\Domain\Services;
 use Leat\Api\Connection;
 use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\SpendRules;
+use Leat\Settings;
 use Leat\Utils\Logger;
 
 /**
@@ -33,15 +34,21 @@ class CustomerSession
 	private $logger;
 
 	/**
+	 * @var Settings
+	 */
+	private $settings;
+
+	/**
 	 * CustomerSession constructor.
 	 *
 	 * @param Connection $connection
 	 */
-	public function __construct(Connection $connection, EarnRules $earn_rules, SpendRules $spend_rules)
+	public function __construct(Connection $connection, EarnRules $earn_rules, SpendRules $spend_rules, Settings $settings)
 	{
 		$this->connection = $connection;
 		$this->earn_rules = $earn_rules;
 		$this->spend_rules = $spend_rules;
+		$this->settings = $settings;
 		$this->logger = new Logger();
 
 		add_action('woocommerce_created_customer', [$this, 'handle_customer_creation'], 10, 3);
@@ -51,13 +58,18 @@ class CustomerSession
 		add_action('edit_user_profile', [$this, 'show_claimed_rewards_on_profile']);
 		add_action('wp_login', [$this, 'sync_attributes_on_login'], 10, 2);
 		add_action('wp_logout', [$this, 'sync_attributes_on_logout']);
-		add_action('woocommerce_order_status_completed', [$this, 'sync_attributes_on_order_completed'], 10, 1);
 		add_action('woocommerce_applied_coupon', [$this, 'handle_applied_coupon'], 10, 1);
 		add_action('woocommerce_removed_coupon', [$this, 'handle_removed_coupon'], 10, 1);
 		add_action('woocommerce_before_calculate_totals', [$this, 'adjust_cart_item_prices'], 10, 1);
 		add_filter('woocommerce_product_get_sale_price', [$this, 'remove_sale_price_for_discounted_products'], 10, 2);
 		add_filter('woocommerce_product_get_price', [$this, 'adjust_price_for_discounted_products'], 10, 2);
 		add_action('woocommerce_order_refunded', [$this, 'handle_order_refunded'], 10, 2);
+
+		// Only apply credits and log rewards when order is fully completed
+		add_action('woocommerce_order_status_completed', [$this, 'sync_attributes_on_order_completed'], 10, 1);
+
+		// Initial contact creation and attribute syncing when order is first placed
+		add_action('woocommerce_checkout_order_processed', [$this, 'handle_checkout_order_processed'], 10, 1);
 	}
 
 	/**
@@ -470,27 +482,41 @@ class CustomerSession
 		}
 	}
 
+	/**
+	 * Only when the order is completed, we sync the attributes and apply credits
+	 */
 	public function sync_attributes_on_order_completed($order_id)
 	{
 		try {
 			$order = wc_get_order($order_id);
 			$user_id = $order->get_user_id();
+			$guest_checkout = empty($user_id);
 
-			if (!$user_id) {
+			// Get UUID either from user meta or order meta for guests
+			$uuid = $guest_checkout
+				? $order->get_meta('_leat_contact_uuid')
+				: $this->connection->get_contact_uuid_by_wp_id($user_id);
+
+			// If credits are already issued, we don't need to apply them again
+			$credit_transaction_uuid = $order->get_meta('_leat_earn_rule_credit_transaction_uuid');
+			if ($credit_transaction_uuid) {
 				return;
 			}
-
-			$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
 
 			if (!$uuid) {
 				return;
 			}
 
-			$this->connection->sync_user_attributes($user_id, $uuid);
+			// Sync all attributes including order-related data
+			if ($guest_checkout) {
+				$this->connection->sync_guest_attributes($order, $uuid);
+			} else {
+				$this->connection->sync_user_attributes($user_id, $uuid);
+			}
 
 			// Apply credits based on PLACE_ORDER earn rule
 			$order_total = $order->get_total();
-			$applicable_rule = $this->earn_rules->get_applicable_place_order_rule( $order_total );
+			$applicable_rule = $this->earn_rules->get_applicable_place_order_rule($order_total);
 
 			if ($applicable_rule) {
 				// Note: We don't apply the credits from the rule in WordPress.
@@ -513,7 +539,11 @@ class CustomerSession
 
 				$order->save();
 
-				$this->connection->add_reward_log($user_id, $applicable_rule['id'], $credits);
+				if ($user_id) {
+					$this->logger->info("Adding $credits credits to user $user_id for order $order_id");
+
+					$this->connection->add_reward_log($user_id, $applicable_rule['id'], $credits);
+				}
 			}
 		} catch (\Throwable $th) {
 			$this->logger->error("Error syncing attributes on order completed: " . $th->getMessage());
@@ -555,6 +585,97 @@ class CustomerSession
 			}
 		} catch (\Throwable $th) {
 			$this->logger->error("Error handling order refunded: " . $th->getMessage());
+		}
+	}
+
+	/**
+	 * Handle order processing for both logged-in and guest users
+	 */
+	public function handle_checkout_order_processed($order_id)
+	{
+		try {
+			$order = wc_get_order($order_id);
+			if (!$order) {
+				$this->logger->error("Could not find order with ID: " . $order_id);
+				return;
+			}
+
+			$user_id = $order->get_user_id();
+			$guest_checkout = empty($user_id);
+
+			$this->logger->info('Handling initial checkout processing for order: ' . $order->get_id());
+
+			// Skip if it's a guest checkout and guest users are not included
+			if ($guest_checkout) {
+				$include_guests = $this->settings->get_setting_by_id('include_guests')['value'] ?? 'off';
+				if ($include_guests !== 'on') {
+					$this->logger->info("Guest checkout detected but include_guests is disabled. Skipping Leat processing.");
+					return;
+				}
+			}
+
+			$client = $this->connection->init_client();
+			if (!$client) {
+				$this->logger->error("Failed to initialize client");
+				return;
+			}
+
+			// Get or create contact UUID
+			$uuid = null;
+			if ($guest_checkout) {
+				$email = $order->get_billing_email();
+				if (!$email) {
+					$this->logger->error("No email provided for guest order: " . $order->get_id());
+					return;
+				}
+
+				$contact = $this->connection->create_contact($email);
+				if (!$contact) {
+					$this->logger->error("Failed to create contact for guest order: " . $order->get_id());
+					return;
+				}
+				$uuid = $contact['uuid'];
+
+				// Store UUID in order meta for future reference
+				$order->update_meta_data('_leat_contact_uuid', $uuid);
+				$order->save();
+			} else {
+				$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
+			}
+
+			if (!$uuid) {
+				$this->logger->error("No UUID found/created for order: " . $order->get_id());
+				return;
+			}
+
+			// Only sync non-order related attributes during checkout
+			$this->connection->sync_basic_attributes_from_order($order, $uuid, $guest_checkout);
+
+		} catch (\Throwable $th) {
+			$this->logger->error("Error processing checkout order: " . $th->getMessage());
+		}
+	}
+
+	/**
+	 * Sync order attributes to Leat for both guest and registered users
+	 */
+	private function sync_order_attributes($order, $uuid)
+	{
+		try {
+			$user_id = $order->get_user_id();
+			$guest_checkout = empty($user_id);
+
+			if ($guest_checkout) {
+				$this->logger->info('Syncing guest attributes for order: ' . $order->get_id());
+				return $this->connection->sync_guest_attributes($order, $uuid);
+			} else {
+				$this->logger->info('Syncing user attributes for order: ' . $order->get_id());
+				return $this->connection->sync_user_attributes($user_id, $uuid);
+			}
+
+		} catch (\Throwable $th) {
+			$this->logger->error("Error syncing order attributes: " . $th->getMessage());
+			return false;
 		}
 	}
 }

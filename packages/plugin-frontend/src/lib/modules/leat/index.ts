@@ -65,8 +65,11 @@ export class LeatFrontendService {
 		return data;
 	}
 
-	async getContact() {
-		const { data, error } = await api.get<GetContactResponse>(`/leat/v1/contact`);
+	async getContact(userId: number | null) {
+		const endpoint = "/leat/v1/contact";
+		const url = userId !== null ? `${endpoint}?userId=${userId}` : endpoint;
+
+		const { data, error } = await api.get<GetContactResponse>(url);
 
 		if (error) {
 			throw new LeatApiError(error.status, error.statusText, error.data);

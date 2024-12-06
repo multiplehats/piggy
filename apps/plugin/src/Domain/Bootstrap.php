@@ -288,7 +288,7 @@ class Bootstrap {
 		$this->container->register(
 			CustomerSession::class,
 			function( Container $container ) {
-				return new CustomerSession( $container->get( Connection::class ), $container->get( EarnRules::class ), $container->get( SpendRules::class ) );
+				return new CustomerSession( $container->get( Connection::class ), $container->get( EarnRules::class ), $container->get( SpendRules::class ), $container->get( Settings::class ) );
 			}
 		);
 		$this->container->register(
