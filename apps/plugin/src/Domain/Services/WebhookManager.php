@@ -7,6 +7,8 @@ use Leat\Utils\Logger;
 use Piggy\Api\Models\WebhookSubscriptions\WebhookSubscription;
 
 class WebhookManager {
+    private const WEBHOOK_PREFIX = 'WordPress: ';
+
     /**
      * @var Connection
      */
@@ -19,18 +21,23 @@ class WebhookManager {
 
     private const REQUIRED_WEBHOOKS = [
         'voucher_created' => [
-            'name' => 'Voucher Created',
+            'name' => 'WordPress: Voucher Created',
             'event_type' => 'voucher_created',
         ],
         'voucher_updated' => [
-            'name' => 'Voucher Updated',
+            'name' => 'WordPress: Voucher Updated',
             'event_type' => 'voucher_updated',
         ],
         'voucher_redeemed' => [
-            'name' => 'Voucher Redeemed',
+            'name' => 'WordPress: Voucher Redeemed',
             'event_type' => 'voucher_redeemed',
-        ]
+        ],
+        'contact_updated' => [
+            'name' => 'WordPress: Contact Updated',
+            'event_type' => 'contact_updated',
+        ],
     ];
+
 
     public function __construct(Connection $connection) {
         $this->connection = $connection;
@@ -44,39 +51,63 @@ class WebhookManager {
         }
 
         try {
-            $existing_webhooks = WebhookSubscription::list();
+            $existing_webhooks = WebhookSubscription::list([]);
             $site_url = get_site_url();
             $webhook_url = trailingslashit($site_url) . 'wp-json/leat/v1/webhooks';
 
-            foreach (self::REQUIRED_WEBHOOKS as $key => $webhook_config) {
-                $exists = false;
-                foreach ($existing_webhooks as $existing_webhook) {
-                    if ($existing_webhook->getEventType() === $webhook_config['event_type']) {
-                        $exists = true;
-                        // Update webhook if URL is wrong
-                        if ($existing_webhook->getUrl() !== $webhook_url) {
-                            WebhookSubscription::update($existing_webhook->getUuid(), [
-                                'url' => $webhook_url,
-                                'status' => 'ACTIVE'
-                            ]);
+            // First, clean up any old WordPress webhooks that are not in our required list
+            foreach ($existing_webhooks as $existing_webhook) {
+                if (strpos($existing_webhook->getName(), self::WEBHOOK_PREFIX) === 0) {
+                    $event_type = $existing_webhook->getEventType();
+                    $is_required = false;
+                    foreach (self::REQUIRED_WEBHOOKS as $webhook_config) {
+                        if ($webhook_config['event_type'] === $event_type) {
+                            $is_required = true;
+                            break;
                         }
-                        break;
+                    }
+                    if (!$is_required) {
+                        WebhookSubscription::delete($existing_webhook->getUuid());
                     }
                 }
+            }
 
-                if (!$exists) {
-                    WebhookSubscription::create([
-                        'name' => $webhook_config['name'],
-                        'event_type' => $webhook_config['event_type'],
-                        'url' => $webhook_url,
-                        'status' => 'ACTIVE'
-                    ]);
+            // Then process required webhooks
+            foreach (self::REQUIRED_WEBHOOKS as $key => $webhook_config) {
+                try {
+                    $exists = false;
+                    foreach ($existing_webhooks as $existing_webhook) {
+                        if ($existing_webhook->getEventType() === $webhook_config['event_type']
+                            && strpos($existing_webhook->getName(), self::WEBHOOK_PREFIX) === 0) {
+                            $exists = true;
+                            // Update webhook if URL is wrong
+                            if ($existing_webhook->getUrl() !== $webhook_url) {
+                                WebhookSubscription::update($existing_webhook->getUuid(), [
+                                    'url' => $webhook_url,
+                                    'status' => 'ACTIVE'
+                                ]);
+                            }
+                            break;
+                        }
+                    }
+
+                    if (!$exists) {
+                        WebhookSubscription::create([
+                            'name' => $webhook_config['name'],
+                            'event_type' => $webhook_config['event_type'],
+                            'url' => $webhook_url,
+                            'status' => 'ACTIVE'
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    $this->logger->error('Failed to process webhook ' . $webhook_config['event_type'] . ': ' . $e->getMessage());
+                    continue;
                 }
             }
 
             return true;
         } catch (\Throwable $th) {
-            $this->logger->error('Failed to install webhooks: ' . $th->getMessage());
+            $this->logger->error('Failed to list existing webhooks: ' . $th->getMessage());
             return false;
         }
     }
