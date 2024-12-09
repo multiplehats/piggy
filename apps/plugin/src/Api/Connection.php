@@ -984,8 +984,7 @@ class Connection {
 		$promotions = $this->get_promotions();
 
 		if (!$promotions) {
-			$this->logger->error("Failed to retrieve promotions from Leat");
-			return false;
+			return true;
 		}
 
 		$this->logger->info("Starting promotion sync. Total promotions retrieved: " . count($promotions));

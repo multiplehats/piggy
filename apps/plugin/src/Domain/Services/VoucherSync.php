@@ -125,6 +125,8 @@ class VoucherSync {
                 ]);
 
                 if (!empty($vouchers)) {
+                    $this->logger->info("Found " . count($vouchers) . " vouchers for user {$user_id} and promotion {$promotion_uuid}");
+
                     $this->update_user_vouchers($user_id, $vouchers);
                 } else {
                     $this->logger->info("No vouchers found for user {$user_id} and promotion {$promotion_uuid}");
