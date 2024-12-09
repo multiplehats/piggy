@@ -216,8 +216,6 @@ class Connection {
 		$contact = Contact::update($id, ["attributes" => $attributes]);
 
 		$this->logger->info('Updated contact attributes: ' . $id);
-		$this->logger->info(json_encode($attributes));
-		$this->logger->info(json_encode($contact));
 
 		if (!$contact) {
 			return null;
@@ -670,8 +668,6 @@ class Connection {
 				];
 
 				if ($attr['name'] === 'wp_wc_product_categories_purchased') {
-					$this->logger->info("Creating new categories attribute with options: " . print_r($attr['options'], true));
-
 					$attribute_data['options'] = array_map(function($option) {
 						return [
 							'value' => (string)$option['value'],
@@ -689,10 +685,6 @@ class Connection {
 						'label' => $option['label']
 					];
 				}, $current_options);
-
-				$this->logger->info("Updating categories attribute with options: " . print_r($options, true));
-
-				$this->logger->info("Updating categories attribute with URL: " . CustomAttribute::resourceUri . '/' . $categories_attribute->getId());
 
 				$url = CustomAttribute::resourceUri . '/' . $categories_attribute->getName();
 
@@ -1157,13 +1149,6 @@ class Connection {
 		$last_order_amount = $current_order->get_total();
 
 		$average_order_value = $orders_count > 0 ? $total_spent / $orders_count : 0;
-
-		$this->logger->info("Guest order statistics: " . json_encode([
-			'total_spent' => $total_spent,
-			'orders_count' => $orders_count,
-			'total_products' => $total_products,
-			'is_first_order' => empty($customer_orders)
-		]));
 
 		return [
 			'wp_wc_total_spent_' . $currency => (float)$total_spent,

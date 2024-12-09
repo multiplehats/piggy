@@ -5,7 +5,7 @@ Tags: loyalty program, rewards, customer loyalty, vouchers, marketing automation
 Requires at least: 6.0
 Tested up to: 6.7.1
 Requires PHP: 8.0
-Stable tag: 0.3.2
+Stable tag: 0.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,21 @@ automated marketing tools.
 connected and engaged.
 ● Seamlessly manage your loyalty program both online and offline with Leat's extensive
 integrations, eliminating any gaps in your customer experience.
+
+### External services
+
+This plugin requires an API connection to [Leat](https://www.leat.com) for core functionality including reward management, customer tracking, and loyalty point calculations.
+
+**Data transmitted includes, but is not limited to**:
+- Customer information (email, name, order history, purchase categories)
+- WooCommerce order data (order totals, products purchased, dates)
+- Store configuration data
+- Reward and voucher definitions
+
+Users of this plugin should ensure they comply with the terms and privacy policies of Leat before using this plugin:
+
+- [Terms of Service](https://www.leat.com/legal/terms-and-conditions)
+- [Privacy Policy](https://www.leat.com/legal/privacy-policy)
 
 == Installation ==
 

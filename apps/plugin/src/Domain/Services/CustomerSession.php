@@ -369,24 +369,24 @@ class CustomerSession
 		$reward_logs = $this->connection->get_user_reward_logs($user->ID);
 
 		?>
-			<h3>Leat Claimed Rewards</h3>
+			<h3><?php esc_html_e('Leat Claimed Rewards', 'leat-crm'); ?></h3>
 			<table class="form-table">
 				<tr>
-					<th><label for="leat_claimed_rewards">Claimed Rewards</label></th>
+					<th><label for="leat_claimed_rewards"><?php esc_html_e('Claimed Rewards', 'leat-crm'); ?></label></th>
 					<td>
 						<?php
 						if (!empty($reward_logs)) {
 							echo '<ul>';
 								foreach ($reward_logs as $log) {
 									echo '<li>';
-									echo 'Earn Rule ID: ' . esc_html($log['earn_rule_id']) . '<br>';
-									echo 'Credits: ' . esc_html($log['credits']) . '<br>';
-									echo 'Timestamp: ' . esc_html(gmdate('Y-m-d H:i:s', (int)$log['timestamp']));
+									echo esc_html__('Earn Rule ID: ', 'leat-crm') . esc_html($log['earn_rule_id']) . '<br>';
+									echo esc_html__('Credits: ', 'leat-crm') . esc_html($log['credits']) . '<br>';
+									echo esc_html__('Timestamp: ', 'leat-crm') . esc_html(gmdate('Y-m-d H:i:s', (int)$log['timestamp']));
 									echo '</li>';
 								}
 							echo '</ul>';
 						} else {
-							echo 'No claimed rewards.';
+							esc_html_e('No claimed rewards.', 'leat-crm');
 						}
 						?>
 					</td>
@@ -398,11 +398,11 @@ class CustomerSession
 	public function show_uuid_on_profile($user)
 	{
 		?>
-		<h3>Leat</h3>
+		<h3><?php esc_html_e('Leat', 'leat-crm'); ?></h3>
 
 		<table class="form-table">
 			<tr>
-				<th><label for="leat_uuid">Contact ID</label></th>
+				<th><label for="leat_uuid"><?php esc_html_e('Contact ID', 'leat-crm'); ?></label></th>
 				<td>
 					<?php
 					$uuid = $this->connection->get_contact_uuid_by_wp_id($user->ID);

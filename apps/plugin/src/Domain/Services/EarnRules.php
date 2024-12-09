@@ -246,8 +246,6 @@ class EarnRules {
 		$svg = '';
 
 		if(!$type) {
-			error_log('Invalid earn rule type: ' . $type);
-
 			return $svg;
 		}
 
@@ -319,13 +317,14 @@ class EarnRules {
      */
     public function has_user_claimed_rule($user_id, $earn_rule_id) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'leat_reward_logs';
 
-		$result = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM $table_name WHERE wp_user_id = %d AND earn_rule_id = %d",
+        $query = $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}leat_reward_logs WHERE wp_user_id = %d AND earn_rule_id = %d",
             $user_id,
             $earn_rule_id
-        ));
+        );
+
+        $result = $wpdb->get_var($query);
 
         return $result > 0;
     }

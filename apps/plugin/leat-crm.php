@@ -4,8 +4,8 @@
  * Plugin Name: Leat CRM
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
- * Version: 0.3.0
- * Author: Leat
+ * Version: 0.3.3
+ * Author: rensleat, chrisjayden
  * Author URI: https://leat.com
  * Text Domain: leat-crm
  * Requires at least: 5.9
@@ -102,7 +102,7 @@ if ( is_readable( $autoloader ) ) {
 				/* translators: 1: composer command. 2: plugin directory */
 				esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat-crm' ),
 				'`composer install`',
-				'`' . esc_html( str_replace( ABSPATH, '', __DIR__ ) ) . '`'
+				'`' . esc_html( plugin_dir_path( __FILE__ ) ) . '`'
 			)
 		);
 	}
@@ -121,7 +121,7 @@ if ( is_readable( $autoloader ) ) {
 					/* translators: 1: composer command. 2: plugin directory */
 					esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat-crm' ),
 					'<code>composer install</code>',
-					'<code>' . esc_html( str_replace( ABSPATH, '', __DIR__ ) ) . '</code>'
+					'<code>' . esc_html( plugin_dir_path( __FILE__ ) ) . '</code>'
 				);
 				?>
 			</p>

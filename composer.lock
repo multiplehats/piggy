@@ -34,10 +34,17 @@
 			},
 			"type": "library",
 			"notification-url": "https://packagist.org/downloads/",
-			"license": ["MIT"],
+			"license": [
+				"MIT"
+			],
 			"description": "WooCommerce function and class declaration stubs for static analysis.",
 			"homepage": "https://github.com/php-stubs/woocommerce-stubs",
-			"keywords": ["PHPStan", "static analysis", "woocommerce", "wordpress"],
+			"keywords": [
+				"PHPStan",
+				"static analysis",
+				"woocommerce",
+				"wordpress"
+			],
 			"support": {
 				"issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
 				"source": "https://github.com/php-stubs/woocommerce-stubs/tree/v7.1.0"
@@ -75,10 +82,16 @@
 			},
 			"type": "library",
 			"notification-url": "https://packagist.org/downloads/",
-			"license": ["MIT"],
+			"license": [
+				"MIT"
+			],
 			"description": "WordPress function and class declaration stubs for static analysis.",
 			"homepage": "https://github.com/php-stubs/wordpress-stubs",
-			"keywords": ["PHPStan", "static analysis", "wordpress"],
+			"keywords": [
+				"PHPStan",
+				"static analysis",
+				"wordpress"
+			],
 			"support": {
 				"issues": "https://github.com/php-stubs/wordpress-stubs/issues",
 				"source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.1.0"
@@ -88,10 +101,10 @@
 	],
 	"aliases": [],
 	"minimum-stability": "stable",
-	"stability-flags": [],
+	"stability-flags": {},
 	"prefer-stable": false,
 	"prefer-lowest": false,
-	"platform": [],
-	"platform-dev": [],
+	"platform": {},
+	"platform-dev": {},
 	"plugin-api-version": "2.6.0"
 }

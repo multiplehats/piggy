@@ -87,7 +87,7 @@ class Bootstrap {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'before_leat_init' );
+		do_action( 'leat_before_init' );
 
 		$this->register_dependencies();
 
