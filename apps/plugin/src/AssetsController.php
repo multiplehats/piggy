@@ -84,7 +84,7 @@ final class AssetsController
 	protected function init()
 	{
 		add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend'], 80);
-		add_action('wp_head', [$this, 'enqueue_frontend_dynamic_css'], 90);
+		add_action('admin_enqueue_scripts', [$this, 'enqueue_admin'], 100);
 
 		$icon_svg = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(plugin_dir_path(__FILE__) . 'leat-wp-icon.svg'));
 
@@ -106,8 +106,6 @@ final class AssetsController
 			'admin.php?page=leat#/onboarding',
 			''
 		);
-
-		add_action('admin_enqueue_scripts', [$this, 'enqueue_admin'], 100);
 	}
 
 	/**
@@ -125,7 +123,10 @@ final class AssetsController
 				['wp-api-fetch', 'wp-i18n', 'wp-a11y', 'wp-keycodes', 'wp-html-entities']
 			);
 
-			if (wp_script_is(self::APP_HANDLE, 'enqueued') ) {
+			wp_register_style(self::APP_HANDLE . '-dynamic', false);
+			wp_enqueue_style(self::APP_HANDLE . '-dynamic');
+
+			if (wp_script_is(self::APP_HANDLE, 'enqueued')) {
 				$settings = rawurlencode(wp_json_encode($this->get_plugin_settings()));
 
 				$this->assets_api->add_inline_script(
@@ -150,8 +151,8 @@ final class AssetsController
 				);
 
 				wp_add_inline_style(
-					self::APP_HANDLE,
-					esc_html($this->get_dynamic_css())
+					self::APP_HANDLE . '-dynamic',
+					$this->get_dynamic_css()
 				);
 			}
 		}
@@ -200,14 +201,6 @@ final class AssetsController
 	public function render_admin_mount()
 	{
 		echo wp_kses_post('<div id="leat-admin-mount"></div>');
-	}
-
-	/**
-	 * Enqueue dynamic CSS.
-	 */
-	public function enqueue_frontend_dynamic_css()
-	{
-		echo '<style id="leat-dynamic-css">' . esc_html($this->get_dynamic_css()) . '</style>';
 	}
 
 	/**
