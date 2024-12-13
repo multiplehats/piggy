@@ -132,18 +132,19 @@ class Connection {
 	/**
 	 * Get a contact.
 	 *
-	 * @param string $id The contact ID.
-	 *
-	 * @return array|null
+	 * @param string $wp_user_id The WordPress user ID.
+	 * @return array
 	 */
-	public function get_contact( string $id ) {
+	public function get_contact( string $wp_user_id ) {
 		$client = $this->init_client();
 
 		if( ! $client ) {
 			return null;
 		}
 
-		$contact = Contact::get( $id );
+		$wp_user = get_user_by('id', $wp_user_id);
+
+		$contact = Contact::findOrCreate( array( 'email' => $wp_user->user_email ) );
 
 		if( ! $contact ) {
 			return null;
@@ -357,29 +358,6 @@ class Connection {
 
 		return $reception ?: false;
 	}
-
-	/**
-	 * Get the contact UUID by WordPress user ID.
-	 *
-	 * @param int $wp_id
-	 * @return string|null
-	 */
-	public function get_contact_uuid_by_wp_id($wp_id, $create = false)
-	{
-		$uuid = get_user_meta( $wp_id, 'leat_uuid', true);
-
-		if( ! $uuid && $create ) {
-			$contact = $this->create_contact( get_the_author_meta( 'email', $wp_id ) );
-			$uuid = $contact['uuid'];
-
-			$this->sync_user_attributes($wp_id, $uuid);
-
-			return $uuid;
-		}
-
-		return $uuid;
-	}
-
 
 	/**
 	 * Get WooCommerce user data.
@@ -735,18 +713,6 @@ class Connection {
 			$this->logger->error("Failed to sync guest attributes: " . $e->getMessage());
 			return false;
 		}
-	}
-
-	/**
-	 * Set the user meta for the Leat UUID.
-	 *
-	 * @param string $uuid
-	 * @param int $wp_id
-	 * @return bool
-	 */
-	public function update_user_meta_uuid($uuid, $wp_user_id)
-	{
-		return update_user_meta($wp_user_id, 'leat_uuid', $uuid);
 	}
 
 	/**

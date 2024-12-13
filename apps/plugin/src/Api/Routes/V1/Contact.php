@@ -64,17 +64,8 @@ class Contact extends AbstractRoute {
             throw new RouteException( 'no_user_id', 'User ID is required', 400 );
         }
 
-		$contact = $this->connection->get_contact_uuid_by_wp_id( $user_id );
+		$contact = $this->connection->get_contact( $user_id );
 		$claimed_rewards = $this->connection->get_user_reward_logs( $user_id );
-
-		$uuid = get_user_meta( $user_id, 'leat_uuid', true);
-
-        if ( ! $uuid ) {
-            throw new RouteException( 'no_uuid', 'User has no Leat UUID', 400 );
-        }
-
-		$contact = $this->connection->get_contact( $uuid );
-		$claimed_rewards = $uuid ? $this->connection->get_user_reward_logs( $user_id ) : null;
 
 		$response = rest_ensure_response( array(
             'contact' => $contact,
