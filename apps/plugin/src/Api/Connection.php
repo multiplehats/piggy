@@ -15,6 +15,9 @@ use Piggy\Api\Exceptions\PiggyRequestException;
 use Leat\Domain\Services\SpendRules;
 use Leat\Domain\Services\PromotionRules;
 use Leat\Utils\Logger;
+use Piggy\Api\Models\Giftcards\Giftcard;
+use Piggy\Api\Models\Giftcards\GiftcardProgram;
+use Piggy\Api\Models\Giftcards\GiftcardTransaction;
 use Piggy\Api\Models\Vouchers\Promotion;
 
 class Connection
@@ -230,8 +233,6 @@ class Connection
 				$this->logger->error('Contact not found with ID: ' . $id);
 				return null;
 			}
-
-			$this->logger->info('Attempting to update contact with attributes: ' . json_encode($attributes, JSON_PRETTY_PRINT));
 
 			$contact = Contact::update($id, ['attributes' => $attributes]);
 
@@ -1250,6 +1251,45 @@ class Connection
 	}
 
 	/**
+	 * List all gift card programs
+	 *
+	 * @return array|null
+	 */
+	public function list_giftcard_programs() {
+		$client = $this->init_client();
+		if (!$client) {
+			return null;
+		}
+
+		try {
+			$response = GiftcardProgram::list();
+
+			$programs = [];
+
+			foreach ($response as $program) {
+				$programs[] = $this->format_giftcard_program($program);
+			}
+
+			return $programs;
+		} catch (\Exception $e) {
+			$this->logException($e, 'List Giftcard Programs Error');
+
+			throw $e;
+		}
+	}
+
+	private function format_giftcard_program(GiftcardProgram $program): array {
+		return [
+			'uuid' => $program->getUuid(),
+			'name' => $program->getName(),
+			'active' => $program->isActive(),
+			'max_amount_in_cents' => $program->getMaxAmountInCents(),
+			'calculator_flow' => $program->getCalculatorFlow(),
+			'expiration_days' => $program->getExpirationDays(),
+		];
+	}
+
+	/**
 	 * Log API errors.
 	 *
 	 * @param \Exception $e The exception to log
@@ -1280,6 +1320,91 @@ class Connection
 					'trace' => $e->getTraceAsString(),
 				]),
 			);
+		}
+	}
+
+	public function create_giftcard($giftcard_program_uuid) {
+		$client = $this->init_client();
+		if (!$client) {
+			return null;
+		}
+
+		try {
+			$response = Giftcard::create([
+				'type' => 1,
+				'giftcard_program_uuid' => $giftcard_program_uuid,
+			]);
+
+			return $this->format_giftcard($response);
+		} catch (\Exception $e) {
+			$this->logException($e, 'Create Giftcard Error');
+			throw $e;
+		}
+	}
+
+	public function create_giftcard_transaction($giftcard_uuid, $amount_in_cents) {
+		$client = $this->init_client();
+		if (!$client) {
+			return null;
+		}
+
+		$shop_uuid = get_option('leat_shop_uuid', null);
+		if (!$shop_uuid) {
+			return false;
+		}
+
+		$response = GiftcardTransaction::create([
+			'shop_uuid' => $shop_uuid,
+			'giftcard_uuid' => $giftcard_uuid,
+			'amount_in_cents' => $amount_in_cents,
+			'type' => 1,
+		]);
+
+		return $this->format_giftcard_transaction($response);
+	}
+
+	private function format_giftcard(Giftcard $giftcard) {
+		return [
+			'id' => $giftcard->getId(),
+			'uuid' => $giftcard->getUuid(),
+			'hash' => $giftcard->getHash(),
+		];
+	}
+
+	private function format_giftcard_transaction( GiftcardTransaction $giftcard_transaction) {
+		return [
+			'id' => $giftcard_transaction->getId(),
+			'uuid' => $giftcard_transaction->getUuid(),
+			'amount_in_cents' => $giftcard_transaction->getAmountInCents(),
+		];
+	}
+
+	public function send_giftcard_email($giftcard_uuid, $recipient_email, $email_uuid = null, $merge_tags = []) {
+		$client = $this->init_client();
+		if (!$client) {
+			return false;
+		}
+
+		// Prepare request payload
+		$payload = [
+			'contact_uuid' => $recipient_email, // REQUIRED parameter
+		];
+
+		// Add optional parameters if provided
+		if ($email_uuid) {
+			$payload['email_uuid'] = $email_uuid;
+		}
+
+		if (!empty($merge_tags)) {
+			$payload['merge_tags'] = $merge_tags;
+		}
+
+		try {
+			$response = ApiClient::post('giftcards/' . $giftcard_uuid . '/send-by-email', $payload);
+			return $response;
+		} catch (\Exception $e) {
+			$this->logException($e, 'Send Giftcard Email Error');
+			return false;
 		}
 	}
 }

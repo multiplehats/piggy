@@ -11,6 +11,7 @@ use Leat\Migration;
 use Leat\Api\Api;
 use Leat\Domain\Services\CustomerSession;
 use Leat\Domain\Services\EarnRules;
+use Leat\Domain\Services\GiftcardProduct;
 use Leat\Domain\Services\SpendRules;
 use Leat\Domain\Services\VoucherSync;
 use Leat\PostTypeController;
@@ -115,6 +116,7 @@ class Bootstrap {
 		$this->container->get( CustomerDashboardShortcode::class )->init();
 		$this->container->get( CustomerSession::class );
 		$this->container->get( VoucherSync::class );
+		$this->container->get( GiftcardProduct::class )->init();
 
 		/**
 		* Action triggered after Leat initialization finishes.
@@ -289,6 +291,12 @@ class Bootstrap {
 			CustomerSession::class,
 			function( Container $container ) {
 				return new CustomerSession( $container->get( Connection::class ), $container->get( EarnRules::class ), $container->get( SpendRules::class ), $container->get( Settings::class ) );
+			}
+		);
+		$this->container->register(
+			GiftcardProduct::class,
+			function( Container $container ) {
+				return new GiftcardProduct( $container->get( Connection::class ) );
 			}
 		);
 		$this->container->register(
