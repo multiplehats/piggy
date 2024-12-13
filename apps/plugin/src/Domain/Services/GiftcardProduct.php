@@ -116,9 +116,7 @@ class GiftcardProduct {
     private function send_giftcard_email($giftcard_uuid, $recipient_email) {
         try {
             // Create a contact for the recipient
-            $contact = $this->connection->create_contact([
-                'email' => $recipient_email,
-            ]);
+            $contact = $this->connection->create_contact($recipient_email);
 
             // Send the giftcard email
             $response = $this->connection->send_giftcard_email($giftcard_uuid, [
