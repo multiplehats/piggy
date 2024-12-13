@@ -333,12 +333,7 @@ class CustomerSession
 		}
 
 		$uuid = $contact['uuid'];
-
-		$this->logger->info("Created contact with UUID: $uuid for user ID: $wp_user_id");
-
-		$this->connection->update_user_meta_uuid($uuid, $wp_user_id);
 		$this->connection->sync_user_attributes($wp_user_id, $uuid);
-
 		$earn_rules = $this->earn_rules->get_earn_rules_by_type('CREATE_ACCOUNT');
 
 		if ($earn_rules) {
@@ -405,7 +400,8 @@ class CustomerSession
 				<th><label for="leat_uuid"><?php esc_html_e('Contact ID', 'leat-crm'); ?></label></th>
 				<td>
 					<?php
-					$uuid = $this->connection->get_contact_uuid_by_wp_id($user->ID);
+					$contact = $this->connection->get_contact($user->ID);
+					$uuid = $contact['uuid'];
 
 					echo esc_html($uuid ? $uuid : '—');
 					?>
@@ -433,25 +429,8 @@ class CustomerSession
 			}
 
 			$user_id = $user->ID;
-			$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
-
-			if (!$uuid) {
-				$email = $user->user_email;
-
-				if (!$email) {
-					return;
-				}
-
-				$contact = $this->connection->create_contact($email);
-
-				if (!$contact) {
-					return;
-				}
-
-				$uuid = $contact['uuid'];
-
-				$this->connection->update_user_meta_uuid($uuid, $user_id);
-			}
+			$contact = $this->connection->get_contact($user_id);
+			$uuid = $contact['uuid'];
 
 			$this->update_last_login($user_id);
 
@@ -470,11 +449,8 @@ class CustomerSession
 				return;
 			}
 
-			$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
-
-			if (!$uuid) {
-				return;
-			}
+			$contact = $this->connection->get_contact($user_id);
+			$uuid = $contact['uuid'];
 
 			$this->connection->sync_user_attributes($user_id, $uuid);
 		} catch (\Throwable $th) {
@@ -493,9 +469,18 @@ class CustomerSession
 			$guest_checkout = empty($user_id);
 
 			// Get UUID either from user meta or order meta for guests
-			$uuid = $guest_checkout
-				? $order->get_meta('_leat_contact_uuid')
-				: $this->connection->get_contact_uuid_by_wp_id($user_id);
+			$uuid = null;
+
+			if($guest_checkout) {
+				$uuid = $order->get_meta('_leat_contact_uuid');
+			} else {
+				$contact = $this->connection->get_contact($user_id);
+				$uuid = $contact['uuid'];
+			}
+
+			if (!$uuid) {
+				throw new \Exception("No UUID found for order $order_id");
+			}
 
 			// If credits are already issued, we don't need to apply them again
 			$credit_transaction_uuid = $order->get_meta('_leat_earn_rule_credit_transaction_uuid');
@@ -640,7 +625,8 @@ class CustomerSession
 				$order->update_meta_data('_leat_contact_uuid', $uuid);
 				$order->save();
 			} else {
-				$uuid = $this->connection->get_contact_uuid_by_wp_id($user_id);
+				$contact = $this->connection->get_contact($user_id);
+				$uuid = $contact['uuid'];
 			}
 
 			if (!$uuid) {

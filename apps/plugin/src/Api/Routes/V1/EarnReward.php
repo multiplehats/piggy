@@ -93,15 +93,12 @@ class EarnReward extends AbstractRoute {
 		}
 
 		// Get the Leat UUID for the user, if not found, create a new contact
-		$leat_uuid = $this->connection->get_contact_uuid_by_wp_id( $data['user_id'], true );
-
-		if(!$leat_uuid) {
-			throw new RouteException( 'earn-rule-uuid-null', 'There is no Leat UUID for this suer.', 400 );
-		}
+		$contact = $this->connection->get_contact( $data['user_id'] );
+		$uuid = $contact['uuid'];
 
 		$credits = $post['credits']['value'] ?? 0;
 
-		$this->connection->apply_credits( $leat_uuid, $credits );
+		$this->connection->apply_credits( $uuid, $credits );
 
 		$this->connection->add_reward_log($data['user_id'], $data['earn_rule_id'], $credits);
 

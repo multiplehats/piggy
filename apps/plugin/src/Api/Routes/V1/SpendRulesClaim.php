@@ -98,9 +98,10 @@ class SpendRulesClaim extends AbstractRoute {
 		}
 
 		// Get the contact UUID for the user
-		$contact_uuid = $connection->get_contact_uuid_by_wp_id( $user_id );
+		$contact = $connection->get_contact( $user_id );
+		$uuid = $contact['uuid'];
 
-		if ( ! $contact_uuid ) {
+		if ( ! $uuid ) {
 			throw new RouteException( 'spend-rules-claim', 'User not found in Leat', 404 );
 		}
 
@@ -112,7 +113,7 @@ class SpendRulesClaim extends AbstractRoute {
 
 		// Create a Reward Reception
 		try {
-			$reception = $connection->create_reward_reception( $contact_uuid, $reward_uuid );
+			$reception = $connection->create_reward_reception( $uuid, $reward_uuid );
 		} catch (\Throwable $th) {
 			// If the message sdtars with "You have insufficient credits" we return a 400
 			if ( strpos( $th->getMessage(), 'You have insufficient credits' ) !== false ) {
