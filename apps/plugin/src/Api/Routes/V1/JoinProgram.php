@@ -53,15 +53,10 @@ class JoinProgram extends AbstractRoute {
             throw new RouteException('join-program', 'User email not found', 400);
         }
 
-        $result = $this->connection->create_contact($email);
-        $uuid = $result['uuid'];
+        $contact = $this->connection->create_contact($email);
+        $uuid = $contact['uuid'];
 
-        $this->connection->update_user_meta_uuid($uuid, $user_id);
 		$this->connection->sync_user_attributes($user_id, $uuid);
-
-        if (!$result) {
-            throw new RouteException('join-program', 'Failed to join the program', 500);
-        }
 
         return rest_ensure_response(['success' => true, 'message' => 'Successfully joined the program']);
     }
