@@ -315,4 +315,24 @@ class PromotionRules
 
 		return $this->get_formatted_post($post);
 	}
+
+	public function get_active_promotions() {
+        $args = array(
+            'post_type' => 'leat_promotion_rule',
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+        );
+
+        $posts = get_posts($args);
+        $promotion_uuids = [];
+
+        foreach ($posts as $post) {
+            $uuid = get_post_meta($post->ID, '_leat_promotion_uuid', true);
+            if ($uuid) {
+                $promotion_uuids[] = $uuid;
+            }
+        }
+
+        return $promotion_uuids;
+    }
 }

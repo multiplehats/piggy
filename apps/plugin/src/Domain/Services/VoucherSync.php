@@ -70,7 +70,7 @@ class VoucherSync {
             // Cancel any existing pending batch processes
             $this->cancel_pending_batches();
 
-            $active_promotions = $this->get_active_promotions();
+            $active_promotions = $this->promotion_rule_service->get_active_promotions();
             $this->logger->info('Found ' . count($active_promotions) . ' active promotions');
 
             $users = get_users([
@@ -160,26 +160,6 @@ class VoucherSync {
         return as_has_scheduled_action(self::HOOK_PROCESS_BATCH, [], 'leat-voucher-sync');
     }
 
-    private function get_active_promotions() {
-        $args = array(
-            'post_type' => 'leat_promotion_rule',
-            'post_status' => 'publish',
-            'posts_per_page' => -1,
-        );
-
-        $posts = get_posts($args);
-        $promotion_uuids = [];
-
-        foreach ($posts as $post) {
-            $uuid = get_post_meta($post->ID, '_leat_promotion_uuid', true);
-            if ($uuid) {
-                $promotion_uuids[] = $uuid;
-            }
-        }
-
-        return $promotion_uuids;
-    }
-
     private function voucherToArray(Voucher $voucher): array {
         return [
             'uuid' => $voucher->getUuid(),
@@ -223,5 +203,9 @@ class VoucherSync {
         }
 
         update_user_meta($user_id, 'leat_vouchers', $updated_vouchers);
+    }
+
+    public function get_vouchers_for_user($user_id) {
+        return get_user_meta($user_id, 'leat_vouchers', true) ?: [];
     }
 }
