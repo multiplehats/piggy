@@ -214,8 +214,8 @@ final class AssetsController
 		$current_language = Common::get_current_language();
 		$api_key_set = $this->connection->has_api_key();
 		$user_id = is_user_logged_in() ? get_current_user_id() : null;
-		$contact = $this->connection->get_contact($user_id);
-		$uuid = $contact['uuid'];
+		$contact = $user_id ? $this->connection->get_contact($user_id) : null;
+		$uuid = $contact ? $contact['uuid'] : null;
 
 		return "
             window.leatMiddlewareConfig = {
