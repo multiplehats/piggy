@@ -99,15 +99,15 @@ class Webhooks extends AbstractRoute {
      * @return \WP_REST_Response|\WP_Error
      */
     protected function get_route_post_response(\WP_REST_Request $request) {
-        $webhook_manager = new WebhookManager($this->connection);
+        // $webhook_manager = new WebhookManager($this->connection);
 
-        $event_type = $request->get_header('X-Piggy-Event');
+        // $event_type = $request->get_header('X-Piggy-Event');
 
-        if (!$event_type) {
-            throw new RouteException('invalid_webhook', 'Missing event type header', 400);
-        }
+        // if (!$event_type) {
+        //     throw new RouteException('invalid_webhook', 'Missing event type header', 400);
+        // }
 
-        $this->webhook_manager->handle_webhook($event_type, $request->get_json_params());
+        // $this->webhook_manager->handle_webhook($event_type, $request->get_json_params());
 
         return rest_ensure_response(new \WP_REST_Response(['status' => 'success'], 200));
     }
