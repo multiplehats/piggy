@@ -3,10 +3,8 @@
 namespace Leat\Domain\Services;
 
 use Leat\Api\Connection;
-use WC_Product_Simple;
 use Leat\Utils\Logger;
 use Leat\Utils\OrderNotes;
-
 
 class GiftcardProduct {
     private Connection $connection;
@@ -285,13 +283,11 @@ class GiftcardProduct {
     }
 
     public function format_giftcard_meta_display($display_value, $meta, $item) {
-        // If gift card id desn't exist yet, don't show anything
         $meta_key = $meta->key;
         if (!str_starts_with($meta_key, '_leat_giftcard_id_')) {
             return $display_value;
         }
 
-        // Only modify display for giftcard ID fields
         if (!str_starts_with($meta->key, '_leat_giftcard_id_')) {
             return $display_value;
         }
@@ -305,7 +301,6 @@ class GiftcardProduct {
     }
 
     public function validate_giftcard_recipient_email() {
-        // Check if cart has giftcard
         $has_giftcard = false;
         foreach (WC()->cart->get_cart() as $cart_item) {
             $product_id = $cart_item['product_id'];
