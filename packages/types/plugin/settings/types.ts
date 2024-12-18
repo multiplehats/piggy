@@ -144,6 +144,17 @@ export const zPluginSpendRuleItemValues = transformSchema(
 );
 export type PluginSpendRuleItemValues = z.infer<typeof zPluginSpendRuleItemValues>;
 
+export const zPluginPromotionRuleItemValues = transformSchema(
+	adminFields.zPromotionRuleValueItem.pick({
+		label: true,
+		selectedProducts: true,
+		discountValue: true,
+		discountType: true,
+		minimumPurchaseAmount: true,
+	})
+);
+export type PluginPromotionRuleItemValues = z.infer<typeof zPluginPromotionRuleItemValues>;
+
 /**
  * Frontend options interface.
  * This schema extracts the `value` field from each property of the base schema.

@@ -27,8 +27,7 @@ final class PostTypeController {
 	protected function init() {
 		add_action('init', array($this, 'register_earn_rules_post_type'));
 		add_action('init', array($this, 'register_spend_rules_post_type'));
-		add_action('init', array($this, 'schedule_daily_reward_sync'));
-		// add_action('leat_daily_reward_sync', array($this, 'sync_rewards_cron'));
+		add_action('init', array($this, 'register_promotion_rules_post_type'));
 	}
 
 	/**
@@ -67,7 +66,7 @@ final class PostTypeController {
 			'public'             => true,
 			'publicly_queryable' => true,
 			'show_ui'            => true,
-			'show_in_menu'       => false, // Change this to false
+			'show_in_menu'       => false,
 			'query_var'          => true,
 			'rewrite'            => array('slug' => self::PREFIX . '_earn_rule'),
 			'capability_type'    => 'post',
@@ -113,7 +112,7 @@ final class PostTypeController {
 			'public'             => true,
 			'publicly_queryable' => true,
 			'show_ui'            => true,
-			'show_in_menu'       => false, // Change this to false
+			'show_in_menu'       => false,
 			'query_var'          => true,
 			'rewrite'            => array('slug' => self::PREFIX . '_spend_rule'),
 			'capability_type'    => 'post',
@@ -126,13 +125,49 @@ final class PostTypeController {
 		register_post_type(self::PREFIX . '_spend_rule', $args);
 	}
 
-	public function schedule_daily_reward_sync() {
-		if (!wp_next_scheduled('leat_daily_reward_sync')) {
-			wp_schedule_event(time(), 'daily', 'leat_daily_reward_sync');
-		}
-	}
+	public function register_promotion_rules_post_type() {
+		$labels = array(
+			'name'                  => _x('Promotions', 'Post type general name', 'leat'),
+			'singular_name'         => _x('Promotion', 'Post type singular name', 'leat'),
+			'menu_name'             => _x('Promotions', 'Admin Menu text', 'leat'),
+			'name_admin_bar'        => _x('Promotion', 'Add New on Toolbar', 'leat'),
+			'add_new'               => __('Add New', 'leat'),
+			'add_new_item'          => __('Add New Promotion', 'leat'),
+			'new_item'              => __('New Promotion', 'leat'),
+			'edit_item'             => __('Edit Promotion', 'leat'),
+			'view_item'             => __('View Promotion', 'leat'),
+			'all_items'             => __('All Promotions', 'leat'),
+			'search_items'          => __('Search Promotions', 'leat'),
+			'parent_item_colon'     => __('Parent Promotions:', 'leat'),
+			'not_found'             => __('No promotions found.', 'leat'),
+			'not_found_in_trash'    => __('No promotions found in Trash.', 'leat'),
+			'featured_image'        => _x('Promotion Cover Image', 'Overrides the "Featured Image" phrase for this post type. Added in 4.3', 'leat'),
+			'set_featured_image'    => _x('Set cover image', 'Overrides the "Set featured image" phrase for this post type. Added in 4.3', 'leat'),
+			'remove_featured_image' => _x('Remove cover image', 'Overrides the "Remove featured image" phrase for this post type. Added in 4.3', 'leat'),
+			'use_featured_image'    => _x('Use as cover image', 'Overrides the "Use as featured image" phrase for this post type. Added in 4.3', 'leat'),
+			'archives'              => _x('Promotion archives', 'The post type archive label used in nav menus. Default "Post Archives". Added in 4.4', 'leat'),
+			'insert_into_item'      => _x('Insert into promotion', 'Overrides the "Insert into post"/"Insert into page" phrase (used when inserting media into a post). Added in 4.4', 'leat'),
+			'uploaded_to_this_item' => _x('Uploaded to this promotion', 'Overrides the "Uploaded to this post/page" phrase (used when viewing media attached to a post). Added in 4.4', 'leat'),
+			'filter_items_list'     => _x('Filter promotions list', 'Screen reader text for the filter links heading on the post type listing screen. Default "Filter posts list"/"Filter pages list". Added in 4.4', 'leat'),
+			'items_list_navigation' => _x('Promotions list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default "Posts list navigation"/"Pages list navigation". Added in 4.4', 'leat'),
+			'items_list'            => _x('Promotions list', 'Screen reader text for the items list heading on the post type listing screen. Default "Posts list"/"Pages list". Added in 4.4', 'leat'),
+		);
 
-	public function sync_rewards_cron() {
-		$this->connection->sync_rewards_with_spend_rules();
+		$args = array(
+			'labels'             => $labels,
+			'public'             => true,
+			'publicly_queryable' => true,
+			'show_ui'            => true,
+			'show_in_menu'       => true,
+			'query_var'          => true,
+			'rewrite'            => array('slug' => self::PREFIX . '_promotion'),
+			'capability_type'    => 'post',
+			'has_archive'        => true,
+			'hierarchical'       => false,
+			'menu_position'      => null,
+			'supports'           => array('title', 'editor', 'custom-fields'),
+		);
+
+		register_post_type(self::PREFIX . '_promotion_rule', $args);
 	}
 }

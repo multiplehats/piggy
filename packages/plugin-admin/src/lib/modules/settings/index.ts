@@ -5,6 +5,9 @@ import type {
 	GetEarnRuleByIdParams,
 	GetEarnRuleByIdResponse,
 	GetEarnRulesResponse,
+	GetPromotionRuleByIdParams,
+	GetPromotionRuleByIdResponse,
+	GetPromotionRulesResponse,
 	GetSettingByIdParams,
 	GetSettingByIdResponse,
 	GetSettingsResponse,
@@ -15,6 +18,8 @@ import type {
 	SaveSettingsResponse,
 	UpsertEarnRuleParams,
 	UpsertEarnRuleResponse,
+	UpsertPromotionRuleParams,
+	UpsertPromotionRuleResponse,
 	UpsertSpendRuleParams,
 	UpsertSpendRuleResponse,
 } from "./types";
@@ -197,7 +202,7 @@ export class SettingsAdminService {
 	}
 
 	async syncRewards(): Promise<{ ok: true }> {
-		const { data, error } = await api.get<{ ok: true }>(`/leat/v1/spend-rules-sync`, {
+		const { data, error } = await api.get<{ ok: true }>(`/leat/private/spend-rules-sync`, {
 			cache: "no-store",
 		});
 
@@ -218,6 +223,81 @@ export class SettingsAdminService {
 			{
 				cache: "no-store",
 			}
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async syncPromotions(): Promise<{ ok: true }> {
+		const { data, error } = await api.get<{ ok: true }>(`/leat/private/promotion-rules-sync`, {
+			cache: "no-store",
+		});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async getPromotionRules(): Promise<GetPromotionRulesResponse> {
+		const { data, error } = await api.get<GetPromotionRulesResponse>(
+			"/leat/v1/promotion-rules?status=draft,publish",
+			{
+				cache: "no-store",
+			}
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async getPromotionRuleById({
+		id,
+	}: GetPromotionRuleByIdParams): Promise<GetPromotionRuleByIdResponse> {
+		const { data, error } = await api.get<GetPromotionRuleByIdResponse>(
+			`/leat/v1/promotion-rules/?id=${id}&status=publish,draft`,
+			{
+				cache: "no-store",
+			}
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async upsertPromotionRule(
+		promotionRule: UpsertPromotionRuleParams
+	): Promise<UpsertPromotionRuleResponse> {
+		const { data, error } = await api.post<UpsertPromotionRuleResponse>(
+			"/leat/v1/promotion-rules",
+			promotionRule
 		);
 
 		if (error ?? !data) {

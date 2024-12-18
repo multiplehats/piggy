@@ -28,14 +28,15 @@
 						<Logo style="dark" />
 					</Link>
 				</div>
+
 				<nav
 					aria-label="Global"
 					class="hidden xl:ml-6 xl:flex xl:items-center xl:space-x-4"
 				>
 					{#each headerLinks as { href, label, target, type }, index (index)}
-						<NavigationLink {href} {target} {type} active={$location.pathname === href}
-							>{label}</NavigationLink
-						>
+						<NavigationLink {href} {target} {type} active={$location.pathname === href}>
+							{label}
+						</NavigationLink>
 					{/each}
 				</nav>
 			</div>
@@ -49,7 +50,7 @@
 					on:click={() => (mobileMenuOpen = !mobileMenuOpen)}
 				>
 					<span class="sr-only">Open main menu</span>
-					<!-- Heroicon name: outline/bars-3 -->
+
 					<svg
 						class="block h-6 w-6"
 						xmlns="http://www.w3.org/2000/svg"

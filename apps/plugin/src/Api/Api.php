@@ -6,6 +6,7 @@ use Leat\Api\Formatters;
 use Leat\Api\RoutesController;
 use Leat\Api\SchemaController;
 use Leat\Api\Schemas\ExtendSchema;
+use Leat\Domain\Services\WebhookManager;
 use Leat\Settings;
 
 /**
@@ -16,12 +17,16 @@ final class Api {
 	 * Init and hook in Leat API functionality.
 	 */
 	public function init() {
-		add_action(
-			'rest_api_init',
-			function() {
-				self::container()->get( RoutesController::class )->register_all_routes();
-			}
-		);
+		// add_action(
+		// 	'rest_api_init',
+		// 	function() {
+		// 		self::container()->get( RoutesController::class )->register_all_routes();
+
+		// 		$connection = self::container()->get( Connection::class );
+		// 		$webhook_manager = new WebhookManager($connection);
+		// 		$webhook_manager->ensure_webhooks_installed();
+		// 	}
+		// );
 	}
 
 	/**

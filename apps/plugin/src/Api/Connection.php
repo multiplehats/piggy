@@ -2,6 +2,7 @@
 
 namespace Leat\Api;
 
+use Error;
 use Piggy\Api\RegisterClient;
 use Piggy\Api\ApiClient;
 use Piggy\Api\Models\Loyalty\Rewards\Reward;
@@ -12,7 +13,12 @@ use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
 use Piggy\Api\Models\Loyalty\Receptions\RewardReception;
 use Piggy\Api\Exceptions\PiggyRequestException;
 use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Services\PromotionRules;
 use Leat\Utils\Logger;
+use Piggy\Api\Models\Giftcards\Giftcard;
+use Piggy\Api\Models\Giftcards\GiftcardProgram;
+use Piggy\Api\Models\Giftcards\GiftcardTransaction;
+use Piggy\Api\Models\Vouchers\Promotion;
 
 class Connection
 {
@@ -29,6 +35,13 @@ class Connection
 	 * @var SpendRules
 	 */
 	protected $spend_rules_service;
+
+	/**
+	 * PromotionRules service instance.
+	 *
+	 * @var PromotionRules
+	 */
+	protected $promotion_rules_service;
 
 	/**
 	 * Logger instance.
@@ -51,6 +64,7 @@ class Connection
 		}
 
 		$this->spend_rules_service = new SpendRules();
+		$this->promotion_rules_service = new PromotionRules();
 		$this->logger = new Logger();
 	}
 
@@ -88,6 +102,8 @@ class Connection
 
 		if ($api_key) {
 			ApiClient::configure($api_key, 'https://api.piggy.eu');
+
+			ApiClient::setPartnerId('P01-267-loyal_minds');
 
 			return $this->client = true;
 		} else {
@@ -218,8 +234,6 @@ class Connection
 				return null;
 			}
 
-			$this->logger->info('Attempting to update contact with attributes: ' . json_encode($attributes, JSON_PRETTY_PRINT));
-
 			$contact = Contact::update($id, ['attributes' => $attributes]);
 
 			if (!$contact) {
@@ -324,6 +338,17 @@ class Connection
 		];
 	}
 
+	public function format_promotion( Promotion $promotion ) {
+		return [
+			'uuid' => $promotion->getUuid(),
+			'title' => $promotion->getName(),
+			'voucherLimit' => $promotion->getVoucherLimit(),
+			'limitPerContact' => $promotion->getLimitPerContact(),
+			'expirationDuration' => $promotion->getExpirationDuration(),
+			'attributes' => $promotion->getAttributes(),
+		];
+	}
+
 	/**
 	 * Get the rewards.
 	 *
@@ -352,8 +377,25 @@ class Connection
 		return $rewards;
 	}
 
-	public function apply_credits(string $contact_uuid, ?int $credits = null, ?float $unit_value = null, ?string $unit_name = null)
-	{
+	public function get_promotions() {
+		$client = $this->init_client();
+
+		if( ! $client ) {
+			return null;
+		}
+
+		$results = Promotion::list();
+
+		$promotions = array();
+
+		foreach( $results as $promotion ) {
+			$promotions[] = $this->format_promotion( $promotion );
+		}
+
+		return $promotions;
+	}
+
+	public function apply_credits(string $contact_uuid, ?int $credits = null, ?float $unit_value = null, ?string $unit_name = null) {
 		$client = $this->init_client();
 		if (!$client) {
 			return false;
@@ -389,6 +431,32 @@ class Connection
 		$reception = CreditReception::create($params);
 
 		return $reception ?: false;
+	}
+
+	/**
+	 * Get the contact UUID by WordPress user ID.
+	 *
+	 * @param int $wp_id
+	 * @return string|null
+	 */
+	public function get_contact_uuid_by_wp_id($wp_id, $create = false)
+	{
+		$uuid = get_user_meta( $wp_id, 'leat_uuid', true);
+
+		if( ! $uuid && $create ) {
+			$contact = $this->create_contact( get_the_author_meta( 'email', $wp_id ) );
+			$uuid = $contact['uuid'];
+
+			$this->sync_user_attributes($wp_id, $uuid);
+
+			return $uuid;
+		}
+
+		return $uuid;
+	}
+
+	public function get_user_from_leat_uuid($uuid) {
+		return get_user_by('meta_key', 'leat_uuid', $uuid);
 	}
 
 	/**
@@ -886,8 +954,12 @@ class Connection
 		return $inserted !== false;
 	}
 
-	public function sync_rewards_with_spend_rules()
-	{
+	/**
+	 * Syncs rewards in Leat with the spend rules CPT.
+	 *
+	 * @return bool
+	 */
+	public function sync_rewards_with_spend_rules() {
 		$client = $this->init_client();
 		if (!$client) {
 			$this->logger->error('Failed to initialize client for reward sync');
@@ -968,9 +1040,92 @@ class Connection
 		return true;
 	}
 
-	public function manual_sync_rewards()
-	{
-		return $this->sync_rewards_with_spend_rules();
+	/**
+	 * Syncs promotions/vouchers in Leat with the promotion rules CPT.
+	 *
+	 * @return bool
+	 */
+	public function sync_promotions_with_promotion_rules() {
+		$client = $this->init_client();
+		if (!$client) {
+			$this->logger->error("Failed to initialize client for reward sync");
+			return false;
+		}
+
+		$promotions = $this->get_promotions();
+
+		if (!$promotions) {
+			return true;
+		}
+
+		$this->logger->info("Starting promotion sync. Total promotions retrieved: " . count($promotions));
+
+		$prepared_args = array(
+			'post_type' => 'leat_promotion_rule',
+			'posts_per_page' => -1,
+			'post_status' => array('publish', 'draft', 'pending'),
+		);
+
+		$current_promotion_rules = get_posts($prepared_args);
+
+		$this->logger->info("Current promotion rules in WordPress: " . count($current_promotion_rules));
+
+		// Collect existing Leat UUIDs from CPT
+		$existing_uuids = array_column($current_promotion_rules, '_leat_promotion_uuid', 'ID');
+
+		// Sync Leat rewards with CPT (add/update)
+		$processed_uuids = [];
+		$updated_count = 0;
+		$created_count = 0;
+
+		foreach ($promotions as $promotion) {
+			$mapped_promotion = [
+				'title' => $promotion['title'],
+				'uuid' => $promotion['uuid'],
+				'voucherLimit' => $promotion['voucherLimit'],
+				'limitPerContact' => $promotion['limitPerContact'],
+				'expirationDuration' => $promotion['expirationDuration'],
+			];
+
+			if(isset($promotion['media'])) {
+				$mapped_promotion['image'] = $promotion['media']['value'];
+			}
+
+			// Check if the promotion already exists in CPT
+			$existing_post_id = array_search($promotion['uuid'], $existing_uuids);
+
+			if ($existing_post_id !== false) {
+				// Update existing promotion rule
+				$this->logger->info("Updating existing promotion rule: " . $existing_post_id . " (UUID: " . $promotion['uuid'] . ")");
+
+				$this->promotion_rules_service->create_or_update_promotion_rule_from_promotion($mapped_promotion, $existing_post_id);
+				$updated_count++;
+			} else {
+				// Create new spend rule
+				$this->logger->info("Creating new promotion rule for UUID: " . $promotion['uuid']);
+
+				$this->promotion_rules_service->create_or_update_promotion_rule_from_promotion($mapped_promotion);
+				$created_count++;
+			}
+
+			$processed_uuids[] = $promotion['uuid'];
+		}
+
+		// Delete promotion rules that no longer exist in Leat
+		$uuids_to_delete = array_diff($existing_uuids, $processed_uuids);
+		$delete_count = count($uuids_to_delete);
+		$this->logger->info("Deleting " . $delete_count . " promotion rules that no longer exist in Leat");
+		$this->promotion_rules_service->delete_promotion_rules_by_uuids($uuids_to_delete);
+
+		// Handle duplicated UUIDs
+		$this->logger->info("Handling any duplicated promotion rules");
+		$this->promotion_rules_service->handle_duplicated_promotion_rules($processed_uuids);
+
+		$this->logger->info("Promotion sync completed. Updated: $updated_count, Created: $created_count, Deleted: $delete_count");
+
+		do_action('leat_sync_promotions_complete', $processed_uuids);
+
+		return true;
 	}
 
 	public function create_reward_reception($contact_uuid, $reward_uuid)
@@ -1096,6 +1251,45 @@ class Connection
 	}
 
 	/**
+	 * List all gift card programs
+	 *
+	 * @return array|null
+	 */
+	public function list_giftcard_programs() {
+		$client = $this->init_client();
+		if (!$client) {
+			return null;
+		}
+
+		try {
+			$response = GiftcardProgram::list();
+
+			$programs = [];
+
+			foreach ($response as $program) {
+				$programs[] = $this->format_giftcard_program($program);
+			}
+
+			return $programs;
+		} catch (\Exception $e) {
+			$this->logException($e, 'List Giftcard Programs Error');
+
+			throw $e;
+		}
+	}
+
+	private function format_giftcard_program(GiftcardProgram $program): array {
+		return [
+			'uuid' => $program->getUuid(),
+			'name' => $program->getName(),
+			'active' => $program->isActive(),
+			'max_amount_in_cents' => $program->getMaxAmountInCents(),
+			'calculator_flow' => $program->getCalculatorFlow(),
+			'expiration_days' => $program->getExpirationDays(),
+		];
+	}
+
+	/**
 	 * Log API errors.
 	 *
 	 * @param \Exception $e The exception to log
@@ -1107,7 +1301,7 @@ class Connection
 			$error_bag = $e->getErrorBag();
 			$this->logger->error(
 				'API Error Details: ' .
-				json_encode(
+				wp_json_encode(
 					[
 						'message' => $e->getMessage(),
 						'code' => $e->getCode(),
@@ -1126,6 +1320,105 @@ class Connection
 					'trace' => $e->getTraceAsString(),
 				]),
 			);
+		}
+	}
+
+	public function create_giftcard($giftcard_program_uuid) {
+		$client = $this->init_client();
+		if (!$client) {
+			return null;
+		}
+
+		try {
+			$response = Giftcard::create([
+				'type' => 1,
+				'giftcard_program_uuid' => $giftcard_program_uuid,
+			]);
+
+			return $this->format_giftcard($response);
+		} catch (\Exception $e) {
+			$this->logException($e, 'Create Giftcard Error');
+			throw $e;
+		}
+	}
+
+	public function create_giftcard_transaction($giftcard_uuid, $amount_in_cents) {
+		$client = $this->init_client();
+		if (!$client) {
+			return null;
+		}
+
+		$shop_uuid = get_option('leat_shop_uuid', null);
+		if (!$shop_uuid) {
+			return false;
+		}
+
+		$response = GiftcardTransaction::create([
+			'shop_uuid' => $shop_uuid,
+			'giftcard_uuid' => $giftcard_uuid,
+			'amount_in_cents' => $amount_in_cents,
+			'type' => 1,
+		]);
+
+		return $this->format_giftcard_transaction($response);
+	}
+
+	private function format_giftcard(Giftcard $giftcard) {
+		return [
+			'id' => $giftcard->getId(),
+			'uuid' => $giftcard->getUuid(),
+			'hash' => $giftcard->getHash(),
+		];
+	}
+
+	private function format_giftcard_transaction( GiftcardTransaction $giftcard_transaction) {
+		return [
+			'id' => $giftcard_transaction->getId(),
+			'uuid' => $giftcard_transaction->getUuid(),
+			'amount_in_cents' => $giftcard_transaction->getAmountInCents(),
+		];
+	}
+
+	public function send_giftcard_email($giftcard_uuid, $contact_uuid, $email_uuid = null, $merge_tags = []) {
+		$client = $this->init_client();
+
+		if (!$client) {
+			return false;
+		}
+
+		try {
+			$payload = [
+				'contact_uuid' => $contact_uuid
+			];
+
+			if ($email_uuid) {
+				$payload['email_uuid'] = $email_uuid;
+			}
+
+			if (!empty($merge_tags)) {
+				// Ensure merge tags are prefixed with 'custom.'
+				$formatted_tags = [];
+
+				foreach ($merge_tags as $key => $value) {
+					$key = strpos($key, 'custom.') === 0 ? $key : 'custom.' . $key;
+					$formatted_tags[$key] = $value;
+				}
+				$payload['merge_tags'] = $formatted_tags;
+			}
+
+			// Use the correct API endpoint
+			$response = ApiClient::post("/api/v3/oauth/clients/giftcards/{$giftcard_uuid}/send-by-email", $payload);
+
+			$this->logger->info('Giftcard email sent successfully', [
+				'giftcard_uuid' => $giftcard_uuid,
+				'contact_uuid' => $contact_uuid,
+				'response' => $response
+			]);
+
+			return $response;
+		} catch (\Exception $e) {
+			$this->logException($e, 'Send Giftcard Email Error');
+			return false;
 		}
 	}
 }

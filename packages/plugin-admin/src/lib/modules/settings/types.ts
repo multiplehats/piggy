@@ -3,9 +3,14 @@ import type {
 	PluginOptionType,
 	PluginOptionsAdmin,
 	PluginOptionsAdminKeys,
+	PluginPromotionRuleItemValues,
 	PluginSpendRuleItemValues,
 } from "@leat/types";
-import type { EarnRuleValueItem, SpendRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
+import type {
+	EarnRuleValueItem,
+	PromotionRuleValueItem,
+	SpendRuleValueItem,
+} from "@leat/types/plugin/settings/adminTypes";
 import type { settingsState } from "$lib/stores/settings";
 
 export type SaveSettingsParams = typeof settingsState;
@@ -50,3 +55,19 @@ export type UpsertSpendRuleParams = Partial<PluginSpendRuleItemValues> & {
 };
 
 export type UpsertSpendRuleResponse = SpendRuleValueItem;
+
+// Promotion rules
+export type GetPromotionRulesResponse = PromotionRuleValueItem[];
+export type GetPromotionRulesParams = void;
+
+export type GetPromotionRuleByIdParams = {
+	id: number | string;
+};
+export type GetPromotionRuleByIdResponse = [PromotionRuleValueItem];
+
+export type UpsertPromotionRuleParams = Partial<PluginPromotionRuleItemValues> & {
+	id?: string | number;
+	title: string;
+};
+
+export type UpsertPromotionRuleResponse = PromotionRuleValueItem;

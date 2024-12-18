@@ -7,6 +7,7 @@ use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\SpendRules;
 use Leat\Settings;
 use Leat\Utils\Logger;
+use Leat\Utils\OrderNotes;
 
 /**
  * Class CustomerSession
@@ -510,18 +511,17 @@ class CustomerSession
 
 				if (!$result) {
 					$this->logger->error("Failed to apply credits to user $user_id for order $order_id");
-
+					OrderNotes::addError($order, 'Failed to apply loyalty credits for this order.');
 					return;
 				}
 
 				$credits = $result->getCredits();
 				$result_uuid = $result->getUuid();
 
-				// Save the result UUID in the order meta
+				// Save metadata and add order note
 				$order->update_meta_data('_leat_earn_rule_credit_transaction_uuid', $result_uuid);
-				// Save the total credits isssued
 				$order->update_meta_data('_leat_earn_rule_credits_issued', $credits);
-
+				OrderNotes::addSuccess($order, sprintf('Added %d loyalty credits (Transaction ID: %s)', $credits, $result_uuid));
 				$order->save();
 
 				if ($user_id) {
@@ -532,6 +532,7 @@ class CustomerSession
 			}
 		} catch (\Throwable $th) {
 			$this->logger->error("Error syncing attributes on order completed: " . $th->getMessage());
+			OrderNotes::addError($order, 'Error processing loyalty credits: ' . $th->getMessage());
 		}
 	}
 
@@ -563,13 +564,18 @@ class CustomerSession
 
 				if($result) {
 					$this->logger->info("Successfully processed $refund_type refund for credit transaction UUID $credit_transaction_uuid for order $order_id");
+					OrderNotes::addSuccess($order, sprintf('Refunded %d loyalty credits due to full order refund', $original_credits));
+				} else {
+					OrderNotes::addError($order, 'Failed to process loyalty credit refund');
 				}
 			} else {
 				// Partial refunds are not yet supported.
 				$this->logger->error('Partial refunds are not supported yet');
+				OrderNotes::addWarning($order, 'Partial refunds of loyalty credits are not supported');
 			}
 		} catch (\Throwable $th) {
 			$this->logger->error("Error handling order refunded: " . $th->getMessage());
+			OrderNotes::addError($order, 'Error processing loyalty credit refund: ' . $th->getMessage());
 		}
 	}
 
@@ -595,6 +601,7 @@ class CustomerSession
 				$include_guests = $this->settings->get_setting_by_id('include_guests')['value'] ?? 'off';
 				if ($include_guests !== 'on') {
 					$this->logger->info("Guest checkout detected but include_guests is disabled. Skipping Leat processing.");
+					OrderNotes::addWarning($order, 'Guest loyalty program disabled - no points awarded');
 					return;
 				}
 			}
@@ -631,14 +638,17 @@ class CustomerSession
 
 			if (!$uuid) {
 				$this->logger->error("No UUID found/created for order: " . $order->get_id());
+				OrderNotes::addError($order, 'Failed to create/find loyalty account');
 				return;
 			}
 
+			OrderNotes::addSuccess($order, sprintf('Successfully linked to loyalty account %s', $uuid));
+
 			// Only sync non-order related attributes during checkout
 			$this->connection->sync_basic_attributes_from_order($order, $uuid, $guest_checkout);
-
 		} catch (\Throwable $th) {
 			$this->logger->error("Error processing checkout order: " . $th->getMessage());
+			OrderNotes::addError($order, 'Error processing loyalty account: ' . $th->getMessage());
 		}
 	}
 

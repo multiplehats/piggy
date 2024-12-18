@@ -31,7 +31,7 @@
 			description: __("Create a new account to get started.", "leat-crm"),
 			cta: "Create an account",
 			link: outboundUrl({
-				url: "https://business.leat.eu/sign-up",
+				url: "https://business.leat.com/sign-up",
 				source: "woocommerce",
 				medium: "onboarding",
 				campaign: "wp-plugin",

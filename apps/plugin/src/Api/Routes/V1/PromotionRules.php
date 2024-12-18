@@ -10,20 +10,20 @@ use Leat\Api\Routes\V1\Admin\Middleware;
  *
  * @internal
  */
-class SpendRules extends AbstractRoute {
+class PromotionRules extends AbstractRoute {
 	/**
 	 * The route identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'spend-rules';
+	const IDENTIFIER = 'promotion-rules';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const SCHEMA_TYPE = 'spend-rules';
+	const SCHEMA_TYPE = 'promotion-rules';
 
 	/**
 	 * Get the path of this REST route.
@@ -31,7 +31,7 @@ class SpendRules extends AbstractRoute {
 	 * @return string
 	 */
 	public function get_path() {
-		return '/spend-rules';
+		return '/promotion-rules';
 	}
 
 	/**
@@ -47,7 +47,7 @@ class SpendRules extends AbstractRoute {
 				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Spend rules', 'leat-crm' ),
+						'description' => __( 'Promotion rules', 'leat' ),
 						'type'        => 'object',
 					],
 				],
@@ -58,11 +58,11 @@ class SpendRules extends AbstractRoute {
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'id' => [
-						'description' => __( 'Spend rule ID', 'leat-crm' ),
+						'description' => __( 'Promotion rule ID', 'leat' ),
 						'type'        => 'string',
 					],
 					'status' => [
-						'description' => __( 'Spend rule status', 'leat-crm' ),
+						'description' => __( 'Promotion rule status', 'leat' ),
 						'type'        => 'string',
 					],
 				],
@@ -73,7 +73,7 @@ class SpendRules extends AbstractRoute {
 	}
 
 	/**
-	 * Saves spend rule
+	 * Saves promotion rule
 	 *
 	 * @param  \WP_REST_Request $request Request object.
 	 *
@@ -85,12 +85,6 @@ class SpendRules extends AbstractRoute {
 			'status' => $request->get_param( 'status' ),
 			'label' => $request->get_param( 'label' ),
 			'title' => $request->get_param( 'title' ),
-			'type' => $request->get_param( 'type' ),
-			'startsAt' => $request->get_param( 'startsAt' ),
-			'expiresAt' => $request->get_param( 'expiresAt' ),
-			'completed' => $request->get_param( 'completed' ),
-			'instructions' => $request->get_param( 'instructions' ),
-			'description' => $request->get_param( 'description' ),
 			'fulfillment' => $request->get_param( 'fulfillment' ),
 			'discountValue' => $request->get_param( 'discountValue' ),
 			'discountType' => $request->get_param( 'discountType' ),
@@ -99,24 +93,20 @@ class SpendRules extends AbstractRoute {
 		);
 
 		$post_data = array(
-			'post_type' => 'leat_spend_rule',
+			'post_type' => 'leat_promotion_rule',
 			'post_title' => $data['title'],
 			'post_status' => $data['status'],
 			'meta_input' => array(
-				'_leat_spend_rule_type' => $data['type'],
-				'_leat_spend_rule_label' => $data['label'],
-				'_leat_spend_rule_starts_at' => $data['startsAt'],
-				'_leat_spend_rule_expires_at' => $data['expiresAt'],
-				'_leat_spend_rule_completed' => $data['completed'],
-				'_leat_spend_rule_instructions' => $data['instructions'],
-				'_leat_spend_rule_description' => $data['description'],
-				'_leat_spend_rule_fulfillment' => $data['fulfillment'],
-				'_leat_spend_rule_discount_value' => $data['discountValue'],
-				'_leat_spend_rule_discount_type' => $data['discountType'],
-				'_leat_spend_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
-				'_leat_spend_rule_selected_products' => $data['selectedProducts'],
+				'_leat_promotion_rule_selected_products' => $data['selectedProducts'],
+				'_leat_promotion_rule_discount_value' => $data['discountValue'],
+				'_leat_promotion_rule_discount_type' => $data['discountType'],
+				'_leat_promotion_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
+				'_leat_promotion_rule_discount_type' => $data['discountType'],
+				'_leat_promotion_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
 			)
 		);
+
+		error_log(json_encode($post_data));
 
 		if ( ! empty( $data['id'] ) ) {
 			$post_data['ID'] = $data['id'];
@@ -126,7 +116,7 @@ class SpendRules extends AbstractRoute {
 		}
 
 		if ( is_wp_error( $post_id ) ) {
-			return new \WP_Error( 'post_save_failed', __( 'Failed to save spend rule', 'leat-crm' ), array( 'status' => 500 ) );
+			return new \WP_Error( 'post_save_failed', __( 'Failed to save promotion rule', 'leat' ), array( 'status' => 500 ) );
 		}
 
 		$response = $this->prepare_item_for_response( get_post( $post_id ), $request );
@@ -135,7 +125,7 @@ class SpendRules extends AbstractRoute {
 	}
 
 	/**
-	 * Get spend rules or a specific spend rule
+	 * Get promotion rules or a specific promotion rule
 	 *
 	 * @param  \WP_REST_Request $request Request object.
 	 *
@@ -143,7 +133,7 @@ class SpendRules extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$prepared_args = array(
-			'post_type' => 'leat_spend_rule',
+			'post_type' => 'leat_promotion_rule',
 			'posts_per_page' => -1,
 			'post_status' => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array('publish'),
 		);

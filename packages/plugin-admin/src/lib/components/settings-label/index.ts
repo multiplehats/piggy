@@ -7,6 +7,7 @@ type Props = {
 	description?: string | undefined;
 	hideLabel?: boolean;
 	label: string;
+	optional?: boolean;
 };
 
 export { Root as SettingsLabel, type Props as SettingsLabelProps };
