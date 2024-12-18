@@ -1,4 +1,4 @@
-<?php
+e<?php
 
 namespace Leat\Api\Routes\V1;
 
@@ -78,7 +78,7 @@ class Vouchers extends AbstractRoute {
             throw new RouteException( 'no_user_id', 'User ID is required', 400 );
         }
 
-        $voucher_sync_service = new VoucherSync();
+        $voucher_sync_service = new VoucherSync( $this->connection );
         $vouchers = $voucher_sync_service->get_vouchers_for_user( $user_id );
 
         $response_objects = array();
