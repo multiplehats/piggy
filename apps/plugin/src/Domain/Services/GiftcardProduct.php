@@ -145,6 +145,7 @@ class GiftcardProduct {
         // Check if we've already processed this order
         if (get_post_meta($order_id, '_leat_giftcards_created', true)) {
             $this->logger->info('Giftcards already created for order', ['order_id' => $order_id]);
+            $order->add_order_note(__('Attempted to process gift cards again, but they were already created.', 'leat-crm'));
             return;
         }
 
@@ -156,9 +157,16 @@ class GiftcardProduct {
             $program_uuid = get_post_meta($product_id, '_leat_giftcard_program_uuid', true);
 
             if ($program_uuid) {
-                // Get the quantity and create that many gift cards
                 $quantity = $item->get_quantity();
-                $amount_in_cents = $product->get_price() * 100; // Convert price to cents
+                $amount_in_cents = $product->get_price() * 100;
+
+                $order->add_order_note(
+                    sprintf(
+                        __('Starting to create %d gift card(s) for %s.', 'leat-crm'),
+                        $quantity,
+                        $product->get_name()
+                    )
+                );
 
                 for ($i = 0; $i < $quantity; $i++) {
                     try {
@@ -173,19 +181,46 @@ class GiftcardProduct {
                             $item->add_meta_data('_leat_giftcard_tx_id_' . $i + 1, $data['tx']['id']);
 
                             $giftcard_uuid = $data['giftcard']['uuid'];
+                            $giftcard_id = $data['giftcard']['id'];
 
                             if (!$giftcard_uuid) {
-                                $this->logger->error('Failed to create giftcard', [
+                                $error_message = __('Failed to create gift card - UUID not found', 'leat-crm');
+                                $order->add_order_note($error_message);
+                                $this->logger->error($error_message, [
                                     'order_id' => $order_id,
-                                    'program_uuid' => $program_uuid,
-                                    'error' => 'Giftcard UUID not found'
+                                    'program_uuid' => $program_uuid
                                 ]);
                                 continue;
                             }
 
+                            $order->add_order_note(
+                                sprintf(
+                                    __('Gift card #%s created successfully.', 'leat-crm'),
+                                    $giftcard_id
+                                )
+                            );
+
                             // Send email if recipient email exists
                             if ($recipient_email && $giftcard_uuid) {
-                                $this->send_giftcard_email($giftcard_uuid, $recipient_email);
+                                $email_sent = $this->send_giftcard_email($giftcard_uuid, $recipient_email);
+
+                                if ($email_sent) {
+                                    $order->add_order_note(
+                                        sprintf(
+                                            __('Gift card #%s email sent to %s.', 'leat-crm'),
+                                            $giftcard_id,
+                                            $recipient_email
+                                        )
+                                    );
+                                } else {
+                                    $order->add_order_note(
+                                        sprintf(
+                                            __('Failed to send gift card #%s email to %s.', 'leat-crm'),
+                                            $giftcard_id,
+                                            $recipient_email
+                                        )
+                                    );
+                                }
                             }
 
                             $item->save();
@@ -199,10 +234,14 @@ class GiftcardProduct {
                             ]);
                         }
                     } catch (\Exception $e) {
-                        $this->logger->error('Failed to create giftcard', [
+                        $error_message = sprintf(
+                            __('Error creating gift card: %s', 'leat-crm'),
+                            $e->getMessage()
+                        );
+                        $order->add_order_note($error_message);
+                        $this->logger->error($error_message, [
                             'order_id' => $order_id,
-                            'program_uuid' => $program_uuid,
-                            'error' => $e->getMessage()
+                            'program_uuid' => $program_uuid
                         ]);
                     }
                 }
@@ -211,6 +250,7 @@ class GiftcardProduct {
 
         // Mark order as processed for giftcards
         update_post_meta($order_id, '_leat_giftcards_created', true);
+        $order->add_order_note(__('Gift card processing completed.', 'leat-crm'));
     }
 
     private function create_giftcard($program_uuid, $amount_in_cents) {

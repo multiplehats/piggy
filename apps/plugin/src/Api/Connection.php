@@ -1407,7 +1407,7 @@ class Connection
 			}
 
 			// Use the correct API endpoint
-			$response = ApiClient::post("/api/v3/register/giftcards/{$giftcard_uuid}/send-by-email", $payload);
+			$response = ApiClient::post("/api/v3/oauth/clients/giftcards/{$giftcard_uuid}/send-by-email", $payload);
 
 			$this->logger->info('Giftcard email sent successfully', [
 				'giftcard_uuid' => $giftcard_uuid,
