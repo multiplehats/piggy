@@ -5,6 +5,7 @@ namespace Leat\Domain\Services;
 use Leat\Api\Connection;
 use WC_Product_Simple;
 use Leat\Utils\Logger;
+use Leat\Utils\OrderNotes;
 
 
 class GiftcardProduct {
@@ -145,7 +146,7 @@ class GiftcardProduct {
         // Check if we've already processed this order
         if (get_post_meta($order_id, '_leat_giftcards_created', true)) {
             $this->logger->info('Giftcards already created for order', ['order_id' => $order_id]);
-            $order->add_order_note(__('Attempted to process gift cards again, but they were already created.', 'leat-crm'));
+            OrderNotes::addWarning($order, 'Attempted to process gift cards again, but they were already created.');
             return;
         }
 
@@ -160,7 +161,7 @@ class GiftcardProduct {
                 $quantity = $item->get_quantity();
                 $amount_in_cents = $product->get_price() * 100;
 
-                $order->add_order_note(
+                OrderNotes::add($order,
                     sprintf(
                         __('Starting to create %d gift card(s) for %s.', 'leat-crm'),
                         $quantity,
@@ -184,8 +185,7 @@ class GiftcardProduct {
                             $giftcard_id = $data['giftcard']['id'];
 
                             if (!$giftcard_uuid) {
-                                $error_message = __('Failed to create gift card - UUID not found', 'leat-crm');
-                                $order->add_order_note($error_message);
+                                OrderNotes::addError($order, __('Failed to create gift card - UUID not found', 'leat-crm'));
                                 $this->logger->error($error_message, [
                                     'order_id' => $order_id,
                                     'program_uuid' => $program_uuid
@@ -193,7 +193,7 @@ class GiftcardProduct {
                                 continue;
                             }
 
-                            $order->add_order_note(
+                            OrderNotes::addSuccess($order,
                                 sprintf(
                                     __('Gift card #%s created successfully.', 'leat-crm'),
                                     $giftcard_id
@@ -205,7 +205,7 @@ class GiftcardProduct {
                                 $email_sent = $this->send_giftcard_email($giftcard_uuid, $recipient_email);
 
                                 if ($email_sent) {
-                                    $order->add_order_note(
+                                    OrderNotes::addSuccess($order,
                                         sprintf(
                                             __('Gift card #%s email sent to %s.', 'leat-crm'),
                                             $giftcard_id,
@@ -213,7 +213,7 @@ class GiftcardProduct {
                                         )
                                     );
                                 } else {
-                                    $order->add_order_note(
+                                    OrderNotes::addError($order,
                                         sprintf(
                                             __('Failed to send gift card #%s email to %s.', 'leat-crm'),
                                             $giftcard_id,
@@ -234,11 +234,12 @@ class GiftcardProduct {
                             ]);
                         }
                     } catch (\Exception $e) {
-                        $error_message = sprintf(
-                            __('Error creating gift card: %s', 'leat-crm'),
-                            $e->getMessage()
+                        OrderNotes::addError($order,
+                            sprintf(
+                                __('Error creating gift card: %s', 'leat-crm'),
+                                $e->getMessage()
+                            )
                         );
-                        $order->add_order_note($error_message);
                         $this->logger->error($error_message, [
                             'order_id' => $order_id,
                             'program_uuid' => $program_uuid
@@ -250,7 +251,7 @@ class GiftcardProduct {
 
         // Mark order as processed for giftcards
         update_post_meta($order_id, '_leat_giftcards_created', true);
-        $order->add_order_note(__('Gift card processing completed.', 'leat-crm'));
+        OrderNotes::addSuccess($order, __('Gift card processing completed.', 'leat-crm'));
     }
 
     private function create_giftcard($program_uuid, $amount_in_cents) {
