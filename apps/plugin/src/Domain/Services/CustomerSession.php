@@ -642,11 +642,10 @@ class CustomerSession
 				return;
 			}
 
-			OrderNotes::addSuccess($order, 'Successfully linked to loyalty account');
+			OrderNotes::addSuccess($order, sprintf('Successfully linked to loyalty account %s', $uuid));
 
 			// Only sync non-order related attributes during checkout
 			$this->connection->sync_basic_attributes_from_order($order, $uuid, $guest_checkout);
-
 		} catch (\Throwable $th) {
 			$this->logger->error("Error processing checkout order: " . $th->getMessage());
 			OrderNotes::addError($order, 'Error processing loyalty account: ' . $th->getMessage());

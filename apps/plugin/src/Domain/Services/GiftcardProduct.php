@@ -183,15 +183,26 @@ class GiftcardProduct {
 
                             $giftcard_uuid = $data['giftcard']['uuid'];
                             $giftcard_id = $data['giftcard']['id'];
+                            $giftcard_hash = $data['giftcard']['hash'];
 
                             if (!$giftcard_uuid) {
-                                OrderNotes::addError($order, __('Failed to create gift card - UUID not found', 'leat-crm'));
+                                $error_message = 'Failed to create gift card - UUID not found';
+                                OrderNotes::addError($order, $error_message);
                                 $this->logger->error($error_message, [
                                     'order_id' => $order_id,
                                     'program_uuid' => $program_uuid
                                 ]);
                                 continue;
                             }
+
+                            // Add customer-facing note with the giftcard hash
+                            $order->add_order_note(
+                                sprintf(
+                                    __('Gift Card Code: %s', 'leat-crm'),
+                                    $giftcard_hash
+                                ),
+                                true
+                            );
 
                             OrderNotes::addSuccess($order,
                                 sprintf(
