@@ -18,17 +18,19 @@ class GiftcardProduct {
     }
 
     public function init() {
-        // Remove product type specific code
+        // Add giftcard product settings.
         add_filter('woocommerce_product_data_tabs', [$this, 'add_giftcard_product_tab']);
         add_action('woocommerce_product_data_panels', [$this, 'add_giftcard_program_settings']);
         add_action('woocommerce_process_product_meta', [$this, 'save_giftcard_program_settings']);
         add_filter('woocommerce_order_item_display_meta_value', [$this, 'format_giftcard_meta_display'], 10, 3);
 
+        // Process giftcards after order is completed.
         add_action('woocommerce_order_status_completed', [$this, 'process_giftcard_order'], 10, 1);
 
-        // Add new hooks for recipient email
+        // Recipient email.
         add_action('woocommerce_before_order_notes', [$this, 'add_giftcard_recipient_field']);
         add_action('woocommerce_checkout_update_order_meta', [$this, 'save_giftcard_recipient_email']);
+        add_action('woocommerce_checkout_process', [$this, 'validate_giftcard_recipient_email']);
     }
 
     public function add_giftcard_product_tab($tabs) {
@@ -91,7 +93,7 @@ class GiftcardProduct {
                 'class' => ['form-row-wide'],
                 'label' => __('Gift Card Recipient Email', 'leat-crm'),
                 'placeholder' => __('Enter recipient email address', 'leat-crm'),
-                'required' => false,
+                'required' => true,
             ], $checkout->get_value('giftcard_recipient_email'));
 
             // Add notice if multiple gift cards
@@ -115,13 +117,10 @@ class GiftcardProduct {
 
     private function send_giftcard_email($giftcard_uuid, $recipient_email) {
         try {
-            // Create a contact for the recipient
+            // Sending a giftcard email requires a Leat contact.
             $contact = $this->connection->create_contact($recipient_email);
 
-            // Send the giftcard email
-            $response = $this->connection->send_giftcard_email($giftcard_uuid, [
-                'contact_uuid' => $contact['uuid'],
-            ]);
+            $response = $this->connection->send_giftcard_email($giftcard_uuid, $contact['uuid']);
 
             $this->logger->info('Sent giftcard email', [
                 'giftcard_uuid' => $giftcard_uuid,
@@ -173,9 +172,20 @@ class GiftcardProduct {
                             $item->add_meta_data('_leat_giftcard_id_' . $i + 1, $data['giftcard']['id']);
                             $item->add_meta_data('_leat_giftcard_tx_id_' . $i + 1, $data['tx']['id']);
 
+                            $giftcard_uuid = $data['giftcard']['uuid'];
+
+                            if (!$giftcard_uuid) {
+                                $this->logger->error('Failed to create giftcard', [
+                                    'order_id' => $order_id,
+                                    'program_uuid' => $program_uuid,
+                                    'error' => 'Giftcard UUID not found'
+                                ]);
+                                continue;
+                            }
+
                             // Send email if recipient email exists
-                            if ($recipient_email) {
-                                $this->send_giftcard_email($data['giftcard']['uuid'], $recipient_email);
+                            if ($recipient_email && $giftcard_uuid) {
+                                $this->send_giftcard_email($giftcard_uuid, $recipient_email);
                             }
 
                             $item->save();
@@ -240,5 +250,22 @@ class GiftcardProduct {
             esc_url('https://business.leat.com/store/giftcards/program/cards?card_id=' . $giftcard_id),
             esc_html($giftcard_id)
         );
+    }
+
+    public function validate_giftcard_recipient_email() {
+        // Check if cart has giftcard
+        $has_giftcard = false;
+        foreach (WC()->cart->get_cart() as $cart_item) {
+            $product_id = $cart_item['product_id'];
+            if (get_post_meta($product_id, '_leat_giftcard_program_uuid', true)) {
+                $has_giftcard = true;
+                break;
+            }
+        }
+
+        // Validate recipient email if cart has giftcard
+        if ($has_giftcard && empty($_POST['giftcard_recipient_email'])) {
+            wc_add_notice(__('Gift Card Recipient Email is required.', 'leat-crm'), 'error');
+        }
     }
 }

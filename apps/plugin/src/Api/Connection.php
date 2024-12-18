@@ -1379,28 +1379,42 @@ class Connection
 		];
 	}
 
-	public function send_giftcard_email($giftcard_uuid, $recipient_email, $email_uuid = null, $merge_tags = []) {
+	public function send_giftcard_email($giftcard_uuid, $contact_uuid, $email_uuid = null, $merge_tags = []) {
 		$client = $this->init_client();
+
 		if (!$client) {
 			return false;
 		}
 
-		// Prepare request payload
-		$payload = [
-			'contact_uuid' => $recipient_email, // REQUIRED parameter
-		];
-
-		// Add optional parameters if provided
-		if ($email_uuid) {
-			$payload['email_uuid'] = $email_uuid;
-		}
-
-		if (!empty($merge_tags)) {
-			$payload['merge_tags'] = $merge_tags;
-		}
-
 		try {
-			$response = ApiClient::post('giftcards/' . $giftcard_uuid . '/send-by-email', $payload);
+			$payload = [
+				'contact_uuid' => $contact_uuid
+			];
+
+			if ($email_uuid) {
+				$payload['email_uuid'] = $email_uuid;
+			}
+
+			if (!empty($merge_tags)) {
+				// Ensure merge tags are prefixed with 'custom.'
+				$formatted_tags = [];
+
+				foreach ($merge_tags as $key => $value) {
+					$key = strpos($key, 'custom.') === 0 ? $key : 'custom.' . $key;
+					$formatted_tags[$key] = $value;
+				}
+				$payload['merge_tags'] = $formatted_tags;
+			}
+
+			// Use the correct API endpoint
+			$response = ApiClient::post("/api/v3/register/giftcards/{$giftcard_uuid}/send-by-email", $payload);
+
+			$this->logger->info('Giftcard email sent successfully', [
+				'giftcard_uuid' => $giftcard_uuid,
+				'contact_uuid' => $contact_uuid,
+				'response' => $response
+			]);
+
 			return $response;
 		} catch (\Exception $e) {
 			$this->logException($e, 'Send Giftcard Email Error');
