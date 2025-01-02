@@ -8,8 +8,18 @@
 	// Auto fix
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit",
-		"source.organizeImports": "never"
+		"source.organizeImports": "never",
+		"source.fixAll.php": "explicit",
+		"source.fixAll": "explicit"
 	},
+	// PHP Settings
+	"php.validate.enable": true,
+	"phpcbf.enable": true,
+	"phpcbf.executablePath": "/Users/jayden/.composer/vendor/bin/phpcbf",
+	"phpcbf.standard": "/Users/jayden/Code/leat/apps/plugin/phpcs.xml",
+	"phpcs.enable": true,
+	"phpcs.executablePath": "/Users/jayden/.composer/vendor/bin/phpcs",
+	"phpcs.standard": "/Users/jayden/Code/leat/apps/plugin/phpcs.xml",
 	// Enable eslint for all supported languages
 	"eslint.validate": [
 		"javascript",
@@ -26,5 +36,19 @@
 		"yaml",
 		"toml",
 		"astro"
-	]
+	],
+	// PHP formatting
+	"[php]": {
+		"editor.defaultFormatter": "persoderlind.vscode-phpcbf",
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.fixAll.php": "explicit"
+		}
+	},
+	// Add workspace settings
+	"files.associations": {
+		"*.php": "php"
+	},
+	"editor.formatOnSave": true,
+	"editor.formatOnPaste": true
 }
