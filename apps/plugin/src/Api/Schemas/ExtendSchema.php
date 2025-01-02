@@ -183,17 +183,21 @@ final class ExtendSchema {
 		}
 
 		if ( ! array_key_exists( $namespace, $this->callback_methods ) ) {
-			throw new \Exception( sprintf(
+			throw new \Exception(
+				sprintf(
 				'There is no such namespace registered: %1$s.',
 				esc_html( $namespace )
-			) );
+			)
+				);
 		}
 
 		if ( ! array_key_exists( 'callback', $this->callback_methods[ $namespace ] ) || ! is_callable( $this->callback_methods[ $namespace ]['callback'] ) ) {
-			throw new \Exception( sprintf(
+			throw new \Exception(
+				sprintf(
 				'There is no valid callback registered for: %1$s.',
 				esc_html( $namespace )
-			) );
+			)
+				);
 		}
 
 		return $this->callback_methods[ $namespace ]['callback'];

@@ -49,7 +49,7 @@ class EarnRewardSchema extends AbstractSchema {
 				'type'        => 'integer',
 				'required'    => true,
 			],
-			'userId' => [
+			'userId'     => [
 				'description' => __( 'The Customer ID', 'leat-crm' ),
 				'type'        => 'integer',
 				'required'    => false,
@@ -66,7 +66,7 @@ class EarnRewardSchema extends AbstractSchema {
 	public function get_item_response( $data ) {
 		$post = $this->earn_rules_service->get_by_id( $data['earn_rule_id'] );
 
-		if( empty( $post ) || is_wp_error( $post ) ) {
+		if ( empty( $post ) || is_wp_error( $post ) ) {
 			throw new RouteException( 'earn-rule-not-found', 'Earn rule not found', 404 );
 		}
 

@@ -1,6 +1,6 @@
 {
 	"intelephense.environment.includePaths": [
-		"${workspaceFolder}/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php"
+		"/Users/jayden/Code/leat/apps/plugin/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php"
 	],
 	// Enable the ESlint flat config support
 	"eslint.useFlatConfig": true,

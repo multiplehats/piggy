@@ -42,23 +42,23 @@ class SpendRulesSyncSchema extends AbstractSchema {
 	 */
 	public function get_properties() {
 		return [
-			'id' => [
+			'id'          => [
 				'description' => __( 'Unique identifier for the rule', 'leat-crm' ),
 				'type'        => 'integer',
 			],
-			'status' => [
+			'status'      => [
 				'description' => __( 'Status of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'title' => [
+			'title'       => [
 				'description' => __( 'Title of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'createdAt' => [
+			'createdAt'   => [
 				'description' => __( 'Date rule was created.', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'updatedAt' => [
+			'updatedAt'   => [
 				'description' => __( 'Date rule was last updated.', 'leat-crm' ),
 				'type'        => 'string',
 			],
@@ -66,23 +66,23 @@ class SpendRulesSyncSchema extends AbstractSchema {
 				'description' => __( 'Description of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'type' => [
+			'type'        => [
 				'description' => __( 'Type of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'startsAt' => [
+			'startsAt'    => [
 				'description' => __( 'Date rule starts.', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'expiresAt' => [
+			'expiresAt'   => [
 				'description' => __( 'Date rule expires.', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'completed' => [
+			'completed'   => [
 				'description' => __( 'Whether rule has been completed.', 'leat-crm' ),
 				'type'        => 'boolean',
 			],
-			'creditCost' => [
+			'creditCost'  => [
 				'description' => __( 'Credit cost to redeem the reward', 'leat-crm' ),
 				'type'        => 'number',
 			],
@@ -95,7 +95,7 @@ class SpendRulesSyncSchema extends AbstractSchema {
 	 * @param \WP_Post $post Spent Rule post object.
 	 * @return array
 	 */
-	public function get_item_response($post) {
-		return $this->spend_rules_service->get_formatted_post($post);
+	public function get_item_response( $post ) {
+		return $this->spend_rules_service->get_formatted_post( $post );
 	}
 }

@@ -277,7 +277,7 @@ class Bootstrap {
 		);
 		$this->container->register(
 			VoucherSync::class,
-			function (Container $container) {
+			function ( Container $container ) {
 				return new VoucherSync( $container->get( Connection::class ) );
 			}
 		);

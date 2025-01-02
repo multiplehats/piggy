@@ -68,11 +68,11 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param SchemaController $schema_controller Schema Controller instance.
 	 * @param AbstractSchema   $schema Schema class for this route.
 	 */
-	public function __construct( SchemaController $schema_controller, AbstractSchema $schema, Connection $connection, Settings $settings) {
+	public function __construct( SchemaController $schema_controller, AbstractSchema $schema, Connection $connection, Settings $settings ) {
 		$this->schema_controller = $schema_controller;
 		$this->schema            = $schema;
-		$this->connection      = $connection;
-		$this->settings = $settings;
+		$this->connection        = $connection;
+		$this->settings          = $settings;
 	}
 
 	/**
@@ -85,12 +85,12 @@ abstract class AbstractRoute implements RouteInterface {
 		try {
 			$client = $this->connection->init_client();
 
-			if( $client === null ) {
+			if ( $client === null ) {
 				throw new RouteException( 'leat_rest_invalid_api_key', esc_html__( 'Invalid API Key', 'leat-crm' ), 401 );
 			}
 
 			return $client;
-		} catch (\Throwable $th) {
+		} catch ( \Throwable $th ) {
 			throw new RouteException( 'leat_rest_invalid_api_key', esc_html__( 'Invalid API Key', 'leat-crm' ), 401 );
 		}
 	}

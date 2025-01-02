@@ -30,12 +30,12 @@ class RewardsSchema extends AbstractSchema {
 	 */
 	public function get_properties() {
 		return [
-			'uuid'          => [
+			'uuid'            => [
 				'description' => __( 'The reward\'s unique id.', 'leat-crm' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'name'          => [
+			'name'            => [
 				'description' => __( 'The reward\'s name.', 'leat-crm' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
@@ -45,17 +45,17 @@ class RewardsSchema extends AbstractSchema {
 				'type'        => 'integer',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'type'          => [
+			'type'            => [
 				'description' => __( 'The reward\'s type.', 'leat-crm' ),
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'active'        => [
+			'active'          => [
 				'description' => __( 'The reward\'s active status.', 'leat-crm' ),
 				'type'        => 'boolean',
 				'context'     => [ 'view', 'edit' ],
 			],
-			'attributes'    => [
+			'attributes'      => [
 				'description' => __( 'The reward\'s attributes.', 'leat-crm' ),
 				'type'        => 'array',
 				'context'     => [ 'view', 'edit' ],

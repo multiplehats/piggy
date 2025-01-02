@@ -12,7 +12,7 @@ abstract class AbstractShortcode {
 	 *
 	 * @var array
 	 */
-	protected $namespaces = ['leat'];
+	protected $namespaces = [ 'leat' ];
 
 	/**
 	 * Shortcode name within these namespaces.
@@ -38,11 +38,11 @@ abstract class AbstractShortcode {
 	/**
 	 * Constructor.
 	 *
-	 * @param AssetApi            $asset_api Instance of the asset API.
-	 * @param AssetDataRegistry   $asset_data_registry Instance of the asset data registry.
+	 * @param AssetApi          $asset_api Instance of the asset API.
+	 * @param AssetDataRegistry $asset_data_registry Instance of the asset data registry.
 	 */
 	public function __construct( AssetApi $asset_api ) {
-		$this->asset_api            = $asset_api;
+		$this->asset_api = $asset_api;
 	}
 
 	/**
@@ -53,7 +53,7 @@ abstract class AbstractShortcode {
 	 */
 	public function init() {
 		if ( empty( $this->shortcode_name ) ) {
-			throw new \Exception(esc_html__('Shortcode name is required.', 'leat-crm'));
+			throw new \Exception( esc_html__( 'Shortcode name is required.', 'leat-crm' ) );
 		}
 
 		$this->init_hooks();
@@ -69,10 +69,10 @@ abstract class AbstractShortcode {
 	 * Registers the shortcode type with WordPress.
 	 */
 	protected function register_shortcode_type() {
-		foreach ($this->namespaces as $namespace) {
+		foreach ( $this->namespaces as $namespace ) {
 			$shortcode_type = $namespace . '_' . $this->shortcode_name;
-			if (!shortcode_exists($shortcode_type)) {
-				add_shortcode($shortcode_type, [$this, 'render_callback']);
+			if ( ! shortcode_exists( $shortcode_type ) ) {
+				add_shortcode( $shortcode_type, [ $this, 'render_callback' ] );
 			}
 		}
 	}
@@ -92,9 +92,9 @@ abstract class AbstractShortcode {
 	 * @param string $content The shortcode content.
 	 * @return string The rendered shortcode content.
 	 */
-	public function render_callback($attributes, string $content = '') {
+	public function render_callback( $attributes, string $content = '' ) {
 		// If admin, return empty string
-		if ( is_admin() ){
+		if ( is_admin() ) {
 			return '';
 		}
 
@@ -107,7 +107,7 @@ abstract class AbstractShortcode {
 		$attributes = shortcode_atts( $this->get_shortcode_type_attributes(), $attributes );
 
 		// Generate the output
-		$output = $this->shortcode_output($attributes, $content);
+		$output = $this->shortcode_output( $attributes, $content );
 
 		return $output;
 	}
@@ -119,7 +119,7 @@ abstract class AbstractShortcode {
 	 * @param string $content The shortcode content.
 	 * @return string The rendered shortcode content.
 	 */
-	abstract protected function shortcode_output($attributes, $content = '');
+	abstract protected function shortcode_output( $attributes, $content = '');
 
 	/**
 	 * Get the shortcode types.
@@ -127,9 +127,12 @@ abstract class AbstractShortcode {
 	 * @return array
 	 */
 	protected function get_shortcode_types() {
-		return array_map(function($namespace) {
-			return $namespace . '_' . $this->shortcode_name;
-		}, $this->namespaces);
+		return array_map(
+			function( $namespace ) {
+				return $namespace . '_' . $this->shortcode_name;
+			},
+			$this->namespaces
+			);
 	}
 
 	/**
@@ -138,9 +141,9 @@ abstract class AbstractShortcode {
 	 * @param string $content The content to search in.
 	 * @return bool
 	 */
-	protected function has_shortcode(string $content) {
-		foreach ($this->get_shortcode_types() as $shortcode_type) {
-			if (has_shortcode($content, $shortcode_type)) {
+	protected function has_shortcode( string $content ) {
+		foreach ( $this->get_shortcode_types() as $shortcode_type ) {
+			if ( has_shortcode( $content, $shortcode_type ) ) {
 				return true;
 			}
 		}
@@ -156,8 +159,8 @@ abstract class AbstractShortcode {
 			return;
 		}
 
-		foreach ($assets as $asset) {
-				$this->register_script($asset);
+		foreach ( $assets as $asset ) {
+				$this->register_script( $asset );
 		}
 	}
 

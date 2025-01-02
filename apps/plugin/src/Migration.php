@@ -17,7 +17,7 @@ class Migration {
 	 */
 	private $db_upgrades = array(
 		// '1.0.0' => array(
-		// 	'leat_update_example_callback',
+		// 'leat_update_example_callback',
 		// ),
 	);
 
@@ -47,11 +47,11 @@ class Migration {
 	}
 
 	// /**
-	//  * Example callback.
-	//  */
+	// * Example callback.
+	// */
 	// public static function leat_update_example_callback() {
-	// 	global $wpdb;
+	// global $wpdb;
 
-	// 	// Do work.
+	// Do work.
 	// }
 }

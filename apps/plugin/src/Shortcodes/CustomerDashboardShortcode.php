@@ -27,10 +27,11 @@ class CustomerDashboardShortcode extends AbstractShortcode {
 		return array();
 	}
 
-	public function shortcode_output($attributes, $content = '') {
+	public function shortcode_output( $attributes, $content = '' ) {
 		$output = ob_start();
 
-		?><div class="leat-customer-dashboard"></div><?php
+		?><div class="leat-customer-dashboard"></div>
+		<?php
 
 		$output = ob_get_clean();
 

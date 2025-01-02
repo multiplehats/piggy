@@ -21,7 +21,7 @@ class Common {
 	 * @param  mixed $product The product to check.
 	 * @return bool
 	 */
-	public static function is_woocommerce_product ( $product ) {
+	public static function is_woocommerce_product( $product ) {
 		return ( $product instanceof \WC_Product );
 	}
 
@@ -36,13 +36,13 @@ class Common {
 
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
 			// WPML
-			$wpml_languages = apply_filters( 'wpml_active_languages', NULL, 'orderby=id&order=desc' );
+			$wpml_languages = apply_filters( 'wpml_active_languages', null, 'orderby=id&order=desc' );
 			if ( ! empty( $wpml_languages ) ) {
 				foreach ( $wpml_languages as $language ) {
 					$languages[] = $language['default_locale'];
 				}
 			}
-		} elseif ( function_exists('pll_languages_list') ) {
+		} elseif ( function_exists( 'pll_languages_list' ) ) {
 			// Polylang
 			$pll_languages = pll_languages_list( array( 'fields' => 'locale' ) );
 			if ( ! empty( $pll_languages ) ) {
@@ -66,19 +66,19 @@ class Common {
 
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
 			// WPML
-			$current_language = apply_filters('wpml_current_language', NULL);
-			if ($current_language) {
-				$wpml_languages = apply_filters( 'wpml_active_languages', NULL, 'orderby=id&order=desc' );
-				if (!empty($wpml_languages) && isset($wpml_languages[$current_language])) {
-					$current_language = $wpml_languages[$current_language]['default_locale'];
+			$current_language = apply_filters( 'wpml_current_language', null );
+			if ( $current_language ) {
+				$wpml_languages = apply_filters( 'wpml_active_languages', null, 'orderby=id&order=desc' );
+				if ( ! empty( $wpml_languages ) && isset( $wpml_languages[ $current_language ] ) ) {
+					$current_language = $wpml_languages[ $current_language ]['default_locale'];
 				}
 			}
-		} elseif ( function_exists('pll_current_language') ) {
+		} elseif ( function_exists( 'pll_current_language' ) ) {
 			// Polylang
-			$current_language = pll_current_language('locale');
+			$current_language = pll_current_language( 'locale' );
 		}
 
-		if (!$current_language) {
+		if ( ! $current_language ) {
 			// Default to single language
 			$current_language = get_locale();
 		}

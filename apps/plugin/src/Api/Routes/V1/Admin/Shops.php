@@ -64,7 +64,7 @@ class Shops extends AbstractRoute {
 
 		$id = $request->get_param( 'id' );
 
-		if( $id ) {
+		if ( $id ) {
 			return $this->connection->get_shop( $id );
 		}
 

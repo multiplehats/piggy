@@ -6,30 +6,30 @@ namespace Leat\Domain\Services;
  * Class EarnRules
  */
 class EarnRules {
-	private function get_post_meta_data($post_id, $key, $fallback_value = null) {
-		$value = get_post_meta($post_id, $key, true);
-		return empty($value) ? $fallback_value : $value;
+	private function get_post_meta_data( $post_id, $key, $fallback_value = null ) {
+		$value = get_post_meta( $post_id, $key, true );
+		return empty( $value ) ? $fallback_value : $value;
 	}
 
-	public function get_earn_rules_by_type($type, $post_status = ['publish']) {
+	public function get_earn_rules_by_type( $type, $post_status = [ 'publish' ] ) {
 		$args = [
-			'post_type' => 'leat_earn_rule',
+			'post_type'   => 'leat_earn_rule',
 			'post_status' => $post_status,
-			'meta_query' => [
+			'meta_query'  => [
 				[
-					'key' => '_leat_earn_rule_type',
+					'key'   => '_leat_earn_rule_type',
 					'value' => $type,
 				],
 			],
 		];
 
-		$posts = get_posts($args);
+		$posts = get_posts( $args );
 
-		if (empty($posts)) {
+		if ( empty( $posts ) ) {
 			return null;
 		}
 
-		$posts = array_map([$this, 'get_formatted_post'], $posts);
+		$posts = array_map( [ $this, 'get_formatted_post' ], $posts );
 
 		return $posts;
 	}
@@ -40,14 +40,14 @@ class EarnRules {
 	 * @param int $id Earn Rule ID.
 	 * @return array|null
 	 */
-	public function get_by_id($id) {
-		$post = get_post($id);
+	public function get_by_id( $id ) {
+		$post = get_post( $id );
 
-		if (empty($post)) {
+		if ( empty( $post ) ) {
 			return null;
 		}
 
-		return $this->get_formatted_post($post);
+		return $this->get_formatted_post( $post );
 	}
 
 	/**
@@ -57,129 +57,129 @@ class EarnRules {
 	 * @return array
 	 */
 	public function get_formatted_post( $post ) {
-		$type = $this->get_post_meta_data($post->ID, '_leat_earn_rule_type', null);
+		$type = $this->get_post_meta_data( $post->ID, '_leat_earn_rule_type', null );
 
 		$earn_rule = [
-			'id' => (int) $post->ID,
-			'createdAt' => $post->post_date,
-			'updatedAt' => $post->post_modified,
-			'svg' => $this->get_svg($type),
-			'status' => [
-				'id' => 'status',
-				'label' => __( 'Status', 'leat-crm' ),
-				'default' => 'publish',
-				'value' => $post->post_status,
-				'options' => [
+			'id'                 => (int) $post->ID,
+			'createdAt'          => $post->post_date,
+			'updatedAt'          => $post->post_modified,
+			'svg'                => $this->get_svg( $type ),
+			'status'             => [
+				'id'          => 'status',
+				'label'       => __( 'Status', 'leat-crm' ),
+				'default'     => 'publish',
+				'value'       => $post->post_status,
+				'options'     => [
 					'publish' => [ 'label' => __( 'Active', 'leat-crm' ) ],
-					'draft' => [ 'label' => __( 'Inactive', 'leat-crm' ) ],
+					'draft'   => [ 'label' => __( 'Inactive', 'leat-crm' ) ],
 				],
-				'type' => 'select',
+				'type'        => 'select',
 				'description' => __( 'Set the status of the rule. Inactive earn rules will not be displayed to users.', 'leat-crm' ),
 			],
-			'title' => [
-				'id' => 'title',
-				'label' => __( 'Title', 'leat-crm' ),
-				'default' => null,
-				'value' => $post->post_title,
-				'type' => 'text',
-				'description' => __('This is not displayed to the user and is only used for internal reference.', 'leat-crm'),
+			'title'              => [
+				'id'          => 'title',
+				'label'       => __( 'Title', 'leat-crm' ),
+				'default'     => null,
+				'value'       => $post->post_title,
+				'type'        => 'text',
+				'description' => __( 'This is not displayed to the user and is only used for internal reference.', 'leat-crm' ),
 			],
-			'type' => [
-				'id' => 'type',
-				'label' => __( 'Type', 'leat-crm' ),
-				'default' => 'PLACE_ORDER',
-				'value' => $type,
-				'type' => 'select',
-				'options' => [
-					'LIKE_ON_FACEBOOK' => [ 'label' => __( 'Like on Facebook', 'leat-crm' ) ],
-					'FOLLOW_ON_TIKTOK' => [ 'label' => __( 'Follow on TikTok', 'leat-crm' ) ],
+			'type'               => [
+				'id'          => 'type',
+				'label'       => __( 'Type', 'leat-crm' ),
+				'default'     => 'PLACE_ORDER',
+				'value'       => $type,
+				'type'        => 'select',
+				'options'     => [
+					'LIKE_ON_FACEBOOK'    => [ 'label' => __( 'Like on Facebook', 'leat-crm' ) ],
+					'FOLLOW_ON_TIKTOK'    => [ 'label' => __( 'Follow on TikTok', 'leat-crm' ) ],
 					'FOLLOW_ON_INSTAGRAM' => [ 'label' => __( 'Follow on Instagram', 'leat-crm' ) ],
-					'PLACE_ORDER' => [ 'label' => __( 'Place an order', 'leat-crm' ) ],
+					'PLACE_ORDER'         => [ 'label' => __( 'Place an order', 'leat-crm' ) ],
 					// 'CELEBRATE_BIRTHDAY' => [ 'label' => __( 'Celebrate your birthday', 'leat-crm' ) ],
-					'CREATE_ACCOUNT' => [ 'label' => __( 'Create an account', 'leat-crm' ) ],
+					'CREATE_ACCOUNT'      => [ 'label' => __( 'Create an account', 'leat-crm' ) ],
 				],
 				'description' => __( 'The type of earn rule.', 'leat-crm' ),
 			],
-			'leatTierUuids' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_leat_tier_uuids', null),
-			'startsAt' => [
-				'id' => 'startsAt',
-				'label' => __( 'Starts at', 'leat-crm' ),
-				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_starts_at', null),
-				'type' => 'date',
+			'leatTierUuids'      => $this->get_post_meta_data( $post->ID, '_leat_earn_rule_leat_tier_uuids', null ),
+			'startsAt'           => [
+				'id'          => 'startsAt',
+				'label'       => __( 'Starts at', 'leat-crm' ),
+				'default'     => null,
+				'value'       => $this->get_post_meta_data( $post->ID, '_leat_earn_rule_starts_at', null ),
+				'type'        => 'date',
 				'description' => __( 'Optional date for when the rule should start.', 'leat-crm' ),
 			],
-			'expiresAt' => [
-				'id' => 'expiresAt',
-				'label' => __( 'Expires at', 'leat-crm' ),
-				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_expires_at', null),
-				'type' => 'date',
+			'expiresAt'          => [
+				'id'          => 'expiresAt',
+				'label'       => __( 'Expires at', 'leat-crm' ),
+				'default'     => null,
+				'value'       => $this->get_post_meta_data( $post->ID, '_leat_earn_rule_expires_at', null ),
+				'type'        => 'date',
 				'description' => __( 'Optional date for when the rule should expire.', 'leat-crm' ),
 			],
-			'completed' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_completed', null),
+			'completed'          => $this->get_post_meta_data( $post->ID, '_leat_earn_rule_completed', null ),
 			'minimumOrderAmount' => [
-				'id' => 'minimumOrderAmount',
-				'label' => __( 'Minimum order amount', 'leat-crm' ),
-				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_min_order_subtotal_cents', null),
-				'type' => 'number',
+				'id'          => 'minimumOrderAmount',
+				'label'       => __( 'Minimum order amount', 'leat-crm' ),
+				'default'     => null,
+				'value'       => $this->get_post_meta_data( $post->ID, '_leat_earn_rule_min_order_subtotal_cents', null ),
+				'type'        => 'number',
 				'description' => __( 'The minimum order amount required to satisfy the rule', 'leat-crm' ),
-				'attributes' => [
-					'min' => 0,
+				'attributes'  => [
+					'min'  => 0,
 					'step' => 1,
 				],
 			],
-			'credits' => [
-				'id' => 'credits',
-				'label' => __( 'Credits', 'leat-crm' ),
-				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_points', null),
-				'type' => 'number',
+			'credits'            => [
+				'id'          => 'credits',
+				'label'       => __( 'Credits', 'leat-crm' ),
+				'default'     => null,
+				'value'       => $this->get_post_meta_data( $post->ID, '_leat_earn_rule_points', null ),
+				'type'        => 'number',
 				'description' => __( 'The number of credits awarded for completing this action.', 'leat-crm' ),
-				'attributes' => [
-					'min' => 0,
+				'attributes'  => [
+					'min'  => 0,
 					'step' => 1,
 				],
 			],
-			'socialHandle' => [
-				'id' => 'social_handle',
-				'label' => $this->get_social_network_label($type),
-				'default' => null,
-				'value' => $this->get_post_meta_data($post->ID, '_leat_earn_rule_social_handle', null),
-				'type' => 'text',
-				'description' => $this->get_social_network_description($type),
-			]
+			'socialHandle'       => [
+				'id'          => 'social_handle',
+				'label'       => $this->get_social_network_label( $type ),
+				'default'     => null,
+				'value'       => $this->get_post_meta_data( $post->ID, '_leat_earn_rule_social_handle', null ),
+				'type'        => 'text',
+				'description' => $this->get_social_network_description( $type ),
+			],
 		];
 
-		$label_value = $this->get_post_meta_data($post->ID, '_leat_earn_rule_label', null);
+		$label_value = $this->get_post_meta_data( $post->ID, '_leat_earn_rule_label', null );
 
 		$earn_rule['label'] = [
-			'id' => 'label',
-			'label' => __( 'Label', 'leat-crm' ),
-			'default' => $this->get_label_default($type),
-			'value' => isset($label_value) ? $label_value : $this->get_label_default($type),
-			'type' => 'translatable_text',
-			'description' => $this->get_label_description($type),
+			'id'          => 'label',
+			'label'       => __( 'Label', 'leat-crm' ),
+			'default'     => $this->get_label_default( $type ),
+			'value'       => isset( $label_value ) ? $label_value : $this->get_label_default( $type ),
+			'type'        => 'translatable_text',
+			'description' => $this->get_label_description( $type ),
 		];
 
 		return $earn_rule;
 	}
 
-	private function get_label_description($type) {
+	private function get_label_description( $type ) {
 		$placeholders = '';
-		switch ($type) {
+		switch ( $type ) {
 			case 'PLACE_ORDER':
-				$placeholders = "{{ credits_currency }}";
+				$placeholders = '{{ credits_currency }}';
 				break;
 			case 'CREATE_ACCOUNT':
 			case 'CELEBRATE_BIRTHDAY':
-				$placeholders = "{{ credits }}, {{ credits_currency }}";
+				$placeholders = '{{ credits }}, {{ credits_currency }}';
 				break;
 			case 'LIKE_ON_FACEBOOK':
 			case 'FOLLOW_ON_TIKTOK':
 			case 'FOLLOW_ON_INSTAGRAM':
-				$placeholders = "{{ handle }}, {{ credits }}, {{ credits_currency }}";
+				$placeholders = '{{ handle }}, {{ credits }}, {{ credits_currency }}';
 				break;
 		}
 
@@ -187,10 +187,10 @@ class EarnRules {
 		return sprintf( __( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat-crm' ), $placeholders );
 	}
 
-	private function get_label_default($type) {
+	private function get_label_default( $type ) {
 		$default = '';
 
-		switch ($type) {
+		switch ( $type ) {
 			case 'LIKE_ON_FACEBOOK':
 				$default = __( 'Follow us on Facebook and earn {{ credits }} {{ credits_currency }}', 'leat-crm' );
 				break;
@@ -212,12 +212,12 @@ class EarnRules {
 		}
 
 		return array(
-			'default' => $default
+			'default' => $default,
 		);
 	}
 
-	private function get_social_network_label($type) {
-		switch ($type) {
+	private function get_social_network_label( $type ) {
+		switch ( $type ) {
 			case 'LIKE_ON_FACEBOOK':
 				return __( 'Facebook handle', 'leat-crm' );
 			case 'FOLLOW_ON_TIKTOK':
@@ -229,8 +229,8 @@ class EarnRules {
 		}
 	}
 
-	private function get_social_network_description($type) {
-		switch ($type) {
+	private function get_social_network_description( $type ) {
+		switch ( $type ) {
 			case 'LIKE_ON_FACEBOOK':
 				return __( 'The handle of the Facebook account (without the @) that the user must like', 'leat-crm' );
 			case 'FOLLOW_ON_TIKTOK':
@@ -242,14 +242,14 @@ class EarnRules {
 		}
 	}
 
-	private function get_svg($type) {
+	private function get_svg( $type ) {
 		$svg = '';
 
-		if(!$type) {
+		if ( ! $type ) {
 			return $svg;
 		}
 
-		switch ($type) {
+		switch ( $type ) {
 			case 'LIKE_ON_FACEBOOK':
 				$svg = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="widget__icons-color"><path d="M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3"></path></svg>';
 				break;
@@ -273,7 +273,7 @@ class EarnRules {
 				break;
 		}
 
-		return apply_filters('leat_earn_rule_svg', $svg, $type);
+		return apply_filters( 'leat_earn_rule_svg', $svg, $type );
 	}
 
 	/**
@@ -282,66 +282,66 @@ class EarnRules {
 	 * @param float $order_amount The order amount in the store's currency.
 	 * @return array|null The applicable earn rule, or null if none found.
 	 */
-	public function get_applicable_place_order_rule($order_amount) {
-		$place_order_rules = $this->get_earn_rules_by_type('PLACE_ORDER');
+	public function get_applicable_place_order_rule( $order_amount ) {
+		$place_order_rules = $this->get_earn_rules_by_type( 'PLACE_ORDER' );
 
-		if (!$place_order_rules) {
+		if ( ! $place_order_rules ) {
 			return null;
 		}
 
 		$applicable_rule = null;
 		$highest_minimum = 0;
 
-		foreach ($place_order_rules as $rule) {
+		foreach ( $place_order_rules as $rule ) {
 			$minimum_order_amount = $rule['minimumOrderAmount']['value'] ?? 0;
 
-			if ($order_amount >= $minimum_order_amount && $minimum_order_amount > $highest_minimum) {
+			if ( $order_amount >= $minimum_order_amount && $minimum_order_amount > $highest_minimum ) {
 				$applicable_rule = $rule;
 				$highest_minimum = $minimum_order_amount;
 			}
 		}
 
-		if (!$applicable_rule) {
+		if ( ! $applicable_rule ) {
 			$applicable_rule = $place_order_rules[0];
 		}
 
 		return $applicable_rule;
 	}
 
-    /**
-     * Check if a user has already claimed a specific earn rule.
-     *
-     * @param int $user_id The user ID.
-     * @param int $earn_rule_id The earn rule ID.
-     * @return bool
-     */
-    public function has_user_claimed_rule($user_id, $earn_rule_id) {
-        global $wpdb;
+	/**
+	 * Check if a user has already claimed a specific earn rule.
+	 *
+	 * @param int $user_id The user ID.
+	 * @param int $earn_rule_id The earn rule ID.
+	 * @return bool
+	 */
+	public function has_user_claimed_rule( $user_id, $earn_rule_id ) {
+		global $wpdb;
 
-        $query = $wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->prefix}leat_reward_logs WHERE wp_user_id = %d AND earn_rule_id = %d",
-            $user_id,
-            $earn_rule_id
-        );
+		$query = $wpdb->prepare(
+			"SELECT COUNT(*) FROM {$wpdb->prefix}leat_reward_logs WHERE wp_user_id = %d AND earn_rule_id = %d",
+			$user_id,
+			$earn_rule_id
+		);
 
-        $result = $wpdb->get_var($query);
+		$result = $wpdb->get_var( $query );
 
-        return $result > 0;
-    }
+		return $result > 0;
+	}
 
-    /**
-     * Check if an earn rule is claimable only once.
-     *
-     * @param int $earn_rule_id The earn rule ID.
-     * @return bool
-     */
-    public function is_rule_claimable_once($earn_rule_id) {
-        $rule = $this->get_by_id($earn_rule_id);
-        if (!$rule) {
-            return false;
-        }
+	/**
+	 * Check if an earn rule is claimable only once.
+	 *
+	 * @param int $earn_rule_id The earn rule ID.
+	 * @return bool
+	 */
+	public function is_rule_claimable_once( $earn_rule_id ) {
+		$rule = $this->get_by_id( $earn_rule_id );
+		if ( ! $rule ) {
+			return false;
+		}
 
-        $once_only_types = ['LIKE_ON_FACEBOOK', 'FOLLOW_ON_TIKTOK', 'FOLLOW_ON_INSTAGRAM', 'CREATE_ACCOUNT'];
-        return in_array($rule['type']['value'], $once_only_types);
-    }
+		$once_only_types = [ 'LIKE_ON_FACEBOOK', 'FOLLOW_ON_TIKTOK', 'FOLLOW_ON_INSTAGRAM', 'CREATE_ACCOUNT' ];
+		return in_array( $rule['type']['value'], $once_only_types );
+	}
 }

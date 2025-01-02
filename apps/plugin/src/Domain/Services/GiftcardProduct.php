@@ -167,6 +167,11 @@ class GiftcardProduct {
 		$recipient_email = get_post_meta( $order_id, '_giftcard_recipient_email', true );
 
 		foreach ( $order->get_items() as $item ) {
+			/**
+			 * Process each order item to create gift cards.
+			 *
+			 * @var \WC_Order_Item_Product $item
+			 */
 			$product      = $item->get_product();
 			$product_id   = $product->get_parent_id() ?: $product->get_id();
 			$program_uuid = get_post_meta( $product_id, '_leat_giftcard_program_uuid', true );
@@ -349,3 +354,4 @@ class GiftcardProduct {
 		}
 	}
 }
+
