@@ -70,53 +70,19 @@ class Settings {
 		);
 		$settings[] = array(
 			'id'          => 'reward_order_statuses',
-			'type'        => 'checkboxes',
+			'type'        => 'select',
 			'label'       => __( 'Reward order statuses', 'leat-crm' ),
-			'description' => __( 'Reward customers when the financial status of the order is one of the following', 'leat-crm' ),
-			'default'     => array( 'paid' => 'on' ),
-			'options'     => array(
-				'paid'       => array(
-					'label'   => __( 'Pending payment', 'leat-crm' ),
-					'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat-crm' ),
-				),
-				'pending'    => array(
-					'label'   => __( 'On hold', 'leat-crm' ),
-					'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'leat-crm' ),
-				),
-				'processing' => array(
-					'label'   => __( 'Processing', 'leat-crm' ),
-					'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'leat-crm' ),
-				),
-				'completed'  => array(
-					'label'   => __( 'Completed', 'leat-crm' ),
-					'tooltip' => __( 'Order fulfilled and complete.', 'leat-crm' ),
-				),
-			),
+			'description' => __( 'Select which order status will trigger a credit reward for customers', 'leat-crm' ),
+			'default'     => 'completed',
+			'options'     => $this->woocommerce_order_statuses_options(),
 		);
 		$settings[] = array(
 			'id'          => 'withdraw_order_statuses',
 			'type'        => 'checkboxes',
 			'label'       => __( 'Withdraw credits order statuses', 'leat-crm' ),
-			'description' => __( 'Withdraw credits from customers when the order financial status is one of the following', 'leat-crm' ),
-			'default'     => array( 'paid' => 'on' ),
-			'options'     => array(
-				'paid'       => array(
-					'label'   => __( 'Pending payment', 'leat-crm' ),
-					'tooltip' => __( 'The order has been received, but no payment has been made. Pending payment orders are generally awaiting customer action.', 'leat-crm' ),
-				),
-				'pending'    => array(
-					'label'   => __( 'On hold', 'leat-crm' ),
-					'tooltip' => __( 'The order is awaiting payment confirmation. Stock is reduced, but you need to confirm payment.', 'leat-crm' ),
-				),
-				'processing' => array(
-					'label'   => __( 'Processing', 'leat-crm' ),
-					'tooltip' => __( 'Payment has been received (paid), and the stock has been reduced. The order is awaiting fulfillment.', 'leat-crm' ),
-				),
-				'completed'  => array(
-					'label'   => __( 'Completed', 'leat-crm' ),
-					'tooltip' => __( 'Order fulfilled and complete.', 'leat-crm' ),
-				),
-			),
+			'description' => __( 'Select which order statuses will trigger a credit refund to the customer. Credits will be refunded only once, when the order first reaches any of the selected statuses. For example, if both "Refunded" and "Cancelled" are selected, credits will be returned to the customer when the order is either refunded or cancelled, whichever happens first.', 'leat-crm' ),
+			'default'     => array( 'refunded' => 'on' ),
+			'options'     => $this->woocommerce_order_statuses_options(),
 		);
 		$settings[] = array(
 			'id'          => 'reward_order_parts',
@@ -274,6 +240,14 @@ class Settings {
 			'label'       => __( 'Spend credits button', 'leat-crm' ),
 			'description' => __( 'The text that will be displayed on the button that allows users to spend their credits.', 'leat-crm' ),
 		);
+		$settings[] = array(
+			'id'          => 'giftcard_order_status',
+			'type'        => 'select',
+			'label'       => __( 'Gift Card Order Status', 'leat-crm' ),
+			'description' => __( 'When should gift cards be created and sent to customers?', 'leat-crm' ),
+			'default'     => 'completed',
+			'options'     => $this->woocommerce_order_statuses_options(),
+		);
 
 		/**
 		 * Filter the default settings.
@@ -281,6 +255,43 @@ class Settings {
 		 * @since 1.0.0
 		 */
 		return apply_filters( 'leat_default_settings', $settings, $this );
+	}
+
+	/**
+	 * Taken directly from WooCommerce (This class has no access to the wc_get_order_statuses function.
+	 *
+	 * @see https://github.com/woocommerce/woocommerce/blob/5c800958781a6e699d17f28932c296c51e074a14/plugins/woocommerce/includes/wc-order-functions.php#L100
+	 */
+	private function woocommerce_order_statuses_options() {
+		$order_statuses = [
+			'wc-pending'        => __( 'Pending payment', 'leat-crm' ),
+			'wc-processing'     => __( 'Processing', 'leat-crm' ),
+			'wc-on-hold'        => __( 'On hold', 'leat-crm' ),
+			'wc-completed'      => __( 'Completed', 'leat-crm' ),
+			'wc-cancelled'      => __( 'Cancelled', 'leat-crm' ),
+			'wc-refunded'       => __( 'Refunded', 'leat-crm' ),
+			'wc-failed'         => __( 'Failed', 'leat-crm' ),
+			'wc-checkout-draft' => __( 'Draft', 'leat-crm' ),
+		];
+
+		$filtered_statuses = array_filter(
+			$order_statuses,
+			function( $status_key ) {
+				return strpos( $status_key, 'wc-' ) === 0;
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		$formatted_statuses = array();
+
+		foreach ( $filtered_statuses as $status_key => $status_label ) {
+			$clean_key                        = str_replace( 'wc-', '', $status_key );
+			$formatted_statuses[ $clean_key ] = array(
+				'label' => $status_label,
+			);
+		}
+
+		return $formatted_statuses;
 	}
 
 	/**
@@ -334,14 +345,20 @@ class Settings {
 		$all_settings = $this->get_all_settings();
 		$setting      = current(
 			array_filter(
-			$all_settings,
-			function( $setting ) use ( $id ) {
-				return $setting['id'] === $id;
-			}
+				$all_settings,
+				function( $setting ) use ( $id ) {
+					return $setting['id'] === $id;
+				}
 			)
-			);
+		);
 
 		return $setting ? $this->get_setting_with_value( $setting ) : null;
+	}
+
+	public function get_setting_value_by_id( $id ) {
+		$setting = $this->get_setting_by_id( $id );
+
+		return $setting ? $setting['value'] : null;
 	}
 
 	/**
@@ -356,11 +373,11 @@ class Settings {
 
 		$setting['value'] = get_option( 'leat_' . $id, $default );
 
-		if ( $setting['type'] === 'translatable_text' && is_string( $setting['value'] ) ) {
+		if ( 'translatable_text' === $setting['type'] && is_string( $setting['value'] ) ) {
 			$setting['value'] = json_decode( $setting['value'], true );
 		}
 
-		if ( $setting['type'] === 'checkboxes' && is_string( $setting['value'] ) ) {
+		if ( 'checkboxes' === $setting['type'] && is_string( $setting['value'] ) ) {
 			$setting['value'] = json_decode( $setting['value'], true );
 		}
 
@@ -397,11 +414,11 @@ class Settings {
 		foreach ( $settings as $setting ) {
 			$value = $setting['value'];
 
-			if ( $setting['type'] === 'translatable_text' && is_array( $value ) ) {
+			if ( 'translatable_text' === $setting['type'] && is_array( $value ) ) {
 				$value = wp_json_encode( $value );
 			}
 
-			if ( $setting['type'] === 'checkboxes' && is_array( $value ) ) {
+			if ( 'checkboxes' === $setting['type'] && is_array( $value ) ) {
 				$value = wp_json_encode( $value );
 			}
 

@@ -296,7 +296,7 @@ class Bootstrap {
 		$this->container->register(
 			GiftcardProduct::class,
 			function( Container $container ) {
-				return new GiftcardProduct( $container->get( Connection::class ) );
+				return new GiftcardProduct( $container->get( Connection::class ), $container->get( Settings::class ) );
 			}
 		);
 		$this->container->register(

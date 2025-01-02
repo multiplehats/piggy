@@ -1401,7 +1401,7 @@ class Connection {
 			}
 
 			if ( ! empty( $merge_tags ) ) {
-				// Ensure merge tags are prefixed with 'custom.'
+				// Ensure merge tags are prefixed with 'custom.'.
 				$formatted_tags = [];
 
 				foreach ( $merge_tags as $key => $value ) {
@@ -1411,7 +1411,7 @@ class Connection {
 				$payload['merge_tags'] = $formatted_tags;
 			}
 
-			// Use the correct API endpoint
+			// TODO: this endpoint is not in the SDK yet.
 			$response = ApiClient::post( "/api/v3/oauth/clients/giftcards/{$giftcard_uuid}/send-by-email", $payload );
 
 			$this->logger->info(
@@ -1426,6 +1426,49 @@ class Connection {
 			return $response;
 		} catch ( \Exception $e ) {
 			$this->logException( $e, 'Send Giftcard Email Error' );
+			return false;
+		}
+	}
+
+	/**
+	 * Reverse a giftcard transaction (full refund)
+	 *
+	 * @param string $transaction_uuid UUID of the transaction to reverse.
+	 * @return array|false The reversed transaction data or false on failure.
+	 */
+	public function reverse_giftcard_transaction( $transaction_uuid ) {
+		$client = $this->init_client();
+		if ( ! $client ) {
+			return false;
+		}
+
+		try {
+			$response = GiftcardTransaction::reverse( $transaction_uuid );
+
+			return $this->format_giftcard_transaction( $response );
+		} catch ( \Exception $e ) {
+			$this->logException( $e, 'Reverse Giftcard Transaction Error' );
+			return false;
+		}
+	}
+
+	/**
+	 * Create a partial refund transaction for a giftcard
+	 *
+	 * @param string $giftcard_uuid UUID of the giftcard.
+	 * @param int    $amount_in_cents Amount to refund in cents (should be negative).
+	 * @return array|false The transaction data or false on failure
+	 */
+	public function create_giftcard_refund_transaction( $giftcard_uuid, $amount_in_cents ) {
+		if ( $amount_in_cents >= 0 ) {
+			// Ensure amount is negative for refunds.
+			$amount_in_cents = -$amount_in_cents;
+		}
+
+		try {
+			return $this->create_giftcard_transaction( $giftcard_uuid, $amount_in_cents );
+		} catch ( \Exception $e ) {
+			$this->logException( $e, 'Create Giftcard Refund Transaction Error' );
 			return false;
 		}
 	}

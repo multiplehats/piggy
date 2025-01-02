@@ -8,17 +8,20 @@
 namespace Leat\Domain\Services;
 
 use Leat\Api\Connection;
+use Leat\Settings;
 use Leat\Utils\Logger;
 use Leat\Utils\OrderNotes;
 
 class GiftcardProduct {
 	private Connection $connection;
+	private Settings $settings;
 	private Logger $logger;
 
-	public function __construct( Connection $connection ) {
+	public function __construct( Connection $connection, Settings $settings ) {
 		$this->logger = new Logger();
 
 		$this->connection = $connection;
+		$this->settings   = $settings;
 	}
 
 	public function init() {
@@ -28,13 +31,18 @@ class GiftcardProduct {
 		add_action( 'woocommerce_process_product_meta', [ $this, 'save_giftcard_program_settings' ] );
 		add_filter( 'woocommerce_order_item_display_meta_value', [ $this, 'format_giftcard_meta_display' ], 10, 3 );
 
-		// Process giftcards after order is completed.
-		add_action( 'woocommerce_order_status_completed', [ $this, 'process_giftcard_order' ], 10, 1 );
+		// Process giftcards after order status changes.
+		$trigger_status = $this->settings->get_setting_value_by_id( 'giftcard_order_status' );
+		add_action( "woocommerce_order_status_{$trigger_status}", [ $this, 'process_giftcard_order' ], 10, 1 );
 
 		// Recipient email.
 		add_action( 'woocommerce_before_order_notes', [ $this, 'add_giftcard_recipient_field' ] );
 		add_action( 'woocommerce_checkout_update_order_meta', [ $this, 'save_giftcard_recipient_email' ] );
 		add_action( 'woocommerce_checkout_process', [ $this, 'validate_giftcard_recipient_email' ] );
+
+		// Handle refunds for giftcard orders.
+		add_action( 'woocommerce_order_refunded', [ $this, 'handle_giftcard_refund' ], 10, 2 );
+		add_action( 'woocommerce_order_item_add_action_buttons', [ $this, 'add_refund_field_script' ] );
 	}
 
 	public function add_giftcard_product_tab( $tabs ) {
@@ -105,13 +113,13 @@ class GiftcardProduct {
 				$checkout->get_value( 'giftcard_recipient_email' )
 				);
 
-			// Add notice if multiple gift cards
+			// Add notice if multiple gift cards.
 			if ( $giftcard_count > 1 ) {
 				echo '<p class="giftcard-notice"><em>' .
 					sprintf(
 						/* translators: %d: number of gift cards */
-						__( 'Important: You are purchasing %d gift cards. All gift cards will be sent to the same recipient email address entered above. If you want to send gift cards to different recipients, please place separate orders.', 'leat-crm' ),
-						$giftcard_count
+						esc_html__( 'Important: You are purchasing %d gift cards. All gift cards will be sent to the same recipient email address entered above. If you want to send gift cards to different recipients, please place separate orders.', 'leat-crm' ),
+						esc_html( $giftcard_count )
 					) .
 					'</em></p>';
 			}
@@ -160,7 +168,7 @@ class GiftcardProduct {
 		// Check if we've already processed this order.
 		if ( get_post_meta( $order_id, '_leat_giftcards_created', true ) ) {
 			$this->logger->info( 'Giftcards already created for order', [ 'order_id' => $order_id ] );
-			OrderNotes::addWarning( $order, 'Attempted to process gift cards again, but they were already created.' );
+			OrderNotes::add_warning( $order, 'Attempted to process gift cards again, but they were already created.' );
 			return;
 		}
 
@@ -207,7 +215,7 @@ class GiftcardProduct {
 
 							if ( ! $giftcard_uuid ) {
 								$error_message = 'Failed to create gift card - UUID not found';
-								OrderNotes::addError( $order, $error_message );
+								OrderNotes::add_error( $order, $error_message );
 								$this->logger->error(
 									$error_message,
 									[
@@ -227,7 +235,7 @@ class GiftcardProduct {
 								true
 							);
 
-							OrderNotes::addSuccess(
+							OrderNotes::add_success(
 								$order,
 								sprintf(
 									__( 'Gift card #%s created successfully.', 'leat-crm' ),
@@ -240,7 +248,7 @@ class GiftcardProduct {
 								$email_sent = $this->send_giftcard_email( $giftcard_uuid, $recipient_email );
 
 								if ( $email_sent ) {
-									OrderNotes::addSuccess(
+									OrderNotes::add_success(
 										$order,
 										sprintf(
 											__( 'Gift card #%s email sent to %s.', 'leat-crm' ),
@@ -249,7 +257,7 @@ class GiftcardProduct {
 										)
 									);
 								} else {
-									OrderNotes::addError(
+									OrderNotes::add_error(
 										$order,
 										sprintf(
 											__( 'Failed to send gift card #%s email to %s.', 'leat-crm' ),
@@ -274,7 +282,7 @@ class GiftcardProduct {
 								);
 						}
 					} catch ( \Exception $e ) {
-						OrderNotes::addError(
+						OrderNotes::add_error(
 							$order,
 							sprintf(
 								__( 'Error creating gift card: %s', 'leat-crm' ),
@@ -295,7 +303,7 @@ class GiftcardProduct {
 
 		// Mark order as processed for giftcards.
 		update_post_meta( $order_id, '_leat_giftcards_created', true );
-		OrderNotes::addSuccess( $order, __( 'Gift card processing completed.', 'leat-crm' ) );
+		OrderNotes::add_success( $order, __( 'Gift card processing completed.', 'leat-crm' ) );
 	}
 
 	private function create_giftcard( $program_uuid, $amount_in_cents ) {
@@ -351,6 +359,198 @@ class GiftcardProduct {
 		// Validate recipient email if cart has giftcard.
 		if ( $has_giftcard && empty( $_POST['giftcard_recipient_email'] ) ) {
 			wc_add_notice( __( 'Gift Card Recipient Email is required.', 'leat-crm' ), 'error' );
+		}
+	}
+
+	/**
+	 * Handle refunds for giftcard orders.
+	 *
+	 * @param int $order_id The order ID.
+	 * @param int $refund_id The refund ID.
+	 */
+	public function handle_giftcard_refund( $order_id, $refund_id ) {
+		error_log( 'Handling giftcard refund' );
+
+		$order  = wc_get_order( $order_id );
+		$refund = wc_get_order( $refund_id );
+
+		if ( ! $order || ! $refund ) {
+			return;
+		}
+
+		foreach ( $refund->get_items() as $refund_item ) {
+			$refunded_qty = abs( $refund_item->get_quantity() );
+			if ( $refunded_qty <= 0 ) {
+				continue;
+			}
+
+			// Get the original order item.
+			$original_item = $this->find_matching_refunded_order_item( $order, $refund_item );
+			if ( ! $original_item ) {
+				continue;
+			}
+
+			error_log( 'Found matching order item' );
+
+			$product = $original_item->get_product();
+
+			$product_id = $product->get_parent_id() ?: $product->get_id();
+
+			if ( ! get_post_meta( $product_id, '_leat_giftcard_program_uuid', true ) ) {
+				continue;
+			}
+
+			// Calculate refund percentage for this item.
+			$refund_percentage = abs( $refund_item->get_total() ) / $original_item->get_total();
+
+			error_log( 'Refund percentage: ' . $refund_percentage );
+
+			// Process refund for each giftcard in the item.
+			for ( $i = 1; $i <= $refunded_qty; $i++ ) {
+				$tx_uuid       = $original_item->get_meta( '_leat_giftcard_tx_uuid_' . $i );
+				$giftcard_uuid = $original_item->get_meta( '_leat_giftcard_uuid_' . $i );
+				$giftcard_id   = $original_item->get_meta( '_leat_giftcard_id_' . $i );
+
+				error_log( 'Giftcard UUID: ' . $giftcard_uuid );
+
+				if ( ! $tx_uuid || ! $giftcard_uuid ) {
+					OrderNotes::add_error(
+						$order,
+						sprintf(
+							__( 'Could not process refund for gift card #%s - missing transaction data.', 'leat-crm' ),
+							$giftcard_id ?: $i
+						)
+					);
+					continue;
+				}
+
+				try {
+					if ( $refund_percentage >= 1 ) {
+						// Full refund for this giftcard.
+						$result = $this->connection->reverse_giftcard_transaction( $tx_uuid );
+
+						error_log( 'Full refund result: ' . json_encode( $result ) );
+					} else {
+						// Partial refund.
+						$original_amount = $original_item->get_total() * 100; // Convert to cents.
+						$refund_amount   = round( $original_amount * $refund_percentage );
+						$result          = $this->connection->create_giftcard_refund_transaction( $giftcard_uuid, $refund_amount );
+
+						error_log( 'Partial refund result: ' . json_encode( $result ) );
+					}
+
+					if ( $result ) {
+						// Store refund transaction data.
+						$refund_item->add_meta_data(
+							'_leat_giftcard_refund_tx_uuid_' . $i,
+							$result['uuid']
+						);
+						$refund_item->save();
+
+						OrderNotes::add_success(
+							$order,
+							sprintf(
+								__( 'Gift card #%s refunded successfully (%s%%).', 'leat-crm' ),
+								$giftcard_id,
+								round( $refund_percentage * 100 )
+							)
+						);
+
+						$this->logger->info(
+							'Processed giftcard refund',
+							[
+								'order_id'          => $order_id,
+								'refund_id'         => $refund_id,
+								'giftcard_id'       => $giftcard_id,
+								'giftcard_uuid'     => $giftcard_uuid,
+								'refund_percentage' => $refund_percentage,
+								'refund_tx_uuid'    => $result['uuid'],
+							]
+						);
+					} else {
+						OrderNotes::add_error(
+							$order,
+							sprintf(
+								__( 'Failed to process refund for gift card #%s.', 'leat-crm' ),
+								$giftcard_id
+							)
+						);
+					}
+				} catch ( \Exception $e ) {
+					OrderNotes::add_error(
+						$order,
+						sprintf(
+							__( 'Error processing refund for gift card #%s: %s', 'leat-crm' ),
+							$giftcard_id,
+							$e->getMessage()
+						)
+					);
+					$this->logger->error(
+						'Error processing giftcard refund',
+						[
+							'order_id'    => $order_id,
+							'refund_id'   => $refund_id,
+							'giftcard_id' => $giftcard_id,
+							'error'       => $e->getMessage(),
+						]
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Find the matching original order item for a refund item
+	 *
+	 * @param WC_Order              $order The original order.
+	 * @param WC_Order_Item_Product $refund_item The refund item.
+	 * @return WC_Order_Item_Product|null
+	 */
+	private function find_matching_refunded_order_item( $order, $refund_item ) {
+		foreach ( $order->get_items() as $order_item ) {
+			if ( $order_item->get_product_id() === $refund_item->get_product_id() ) {
+				return $order_item;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Ensure the refund amount field is disabled for gift card orders.
+	 * Otherwise the shop admin can accidentally refund the entire order or partially refund an order, and we can't handle that.
+	 */
+	public function add_refund_field_script( $order_id ) {
+		$this->logger->info( 'Adding refund field script', [ 'order_id' => $order_id ] );
+
+		$order        = wc_get_order( $order_id );
+		$has_giftcard = false;
+
+		foreach ( $order->get_items() as $item ) {
+			/**
+			 * Process each order item.
+			 *
+			 * @var \WC_Order_Item_Product $item
+			 */
+			$product    = $item->get_product();
+			$product_id = $product->get_parent_id() ?: $product->get_id();
+
+			if ( get_post_meta( $product_id, '_leat_giftcard_program_uuid', true ) ) {
+				$has_giftcard = true;
+				break;
+			}
+		}
+
+		if ( $has_giftcard ) {
+			?>
+			<script type="text/javascript">
+				jQuery(document).ready(function($) {
+					console.log('Giftcard order detected');
+					const refundAmount = $('#refund_amount');
+					refundAmount.prop('readonly', true);
+					refundAmount.after('<p class="description">This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards.</p>');
+				});
+			</script>
+			<?php
 		}
 	}
 }

@@ -27,15 +27,15 @@ class OrderNotes {
 		$order->add_order_note( $formatted_message );
 	}
 
-	public static function addError( $order, $message ) {
+	public static function add_error( $order, $message ) {
 		self::add( $order, $message, 'error' );
 	}
 
-	public static function addSuccess( $order, $message ) {
+	public static function add_success( $order, $message ) {
 		self::add( $order, $message, 'success' );
 	}
 
-	public static function addWarning( $order, $message ) {
+	public static function add_warning( $order, $message ) {
 		self::add( $order, $message, 'warning' );
 	}
 }

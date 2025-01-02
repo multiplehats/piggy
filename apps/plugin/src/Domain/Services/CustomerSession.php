@@ -63,13 +63,25 @@ class CustomerSession {
 		add_action( 'woocommerce_before_calculate_totals', [ $this, 'adjust_cart_item_prices' ], 10, 1 );
 		add_filter( 'woocommerce_product_get_sale_price', [ $this, 'remove_sale_price_for_discounted_products' ], 10, 2 );
 		add_filter( 'woocommerce_product_get_price', [ $this, 'adjust_price_for_discounted_products' ], 10, 2 );
-		add_action( 'woocommerce_order_refunded', [ $this, 'handle_order_refunded' ], 10, 2 );
 
-		// Only apply credits and log rewards when order is fully completed
+		// Only apply credits and log rewards when order is fully completed.
 		add_action( 'woocommerce_order_status_completed', [ $this, 'sync_attributes_on_order_completed' ], 10, 1 );
 
-		// Initial contact creation and attribute syncing when order is first placed
+		// Initial contact creation and attribute syncing when order is first placed.
 		add_action( 'woocommerce_checkout_order_processed', [ $this, 'handle_checkout_order_processed' ], 10, 1 );
+
+		// Replace the existing woocommerce_order_refunded hook with status-specific hooks.
+		$withdraw_statuses = $this->settings->get_setting_value_by_id( 'withdraw_order_statuses' ) ?? [ 'refunded' => 'on' ];
+
+		foreach ( $withdraw_statuses as $status => $enabled ) {
+			if ( $enabled === 'on' ) {
+				if ( 'refunded' === $status ) {
+					add_action( 'woocommerce_order_refunded', [ $this, 'handle_order_credit_withdrawal_refund' ], 10, 2 );
+				} else {
+					add_action( 'woocommerce_order_status_' . $status, [ $this, 'handle_order_credit_withdrawal' ], 10, 1 );
+				}
+			}
+		}
 	}
 
 	/**
@@ -225,19 +237,19 @@ class CustomerSession {
 		$cart      = WC()->cart;
 		$cart_item = $cart->get_cart_item( $cart_item_key );
 
-		// Update the price
+		// Update the price.
 		$cart_item['data']->set_price( $discounted_price );
 
-		// Add Leat-specific data
+		// Add Leat-specific data.
 		$cart_item['leat_discounted_product'] = true;
 		$cart_item['leat_spend_rule_id']      = $spend_rule_id;
 		$cart_item['leat_original_price']     = $original_price;
 		$cart_item['leat_discounted_price']   = $discounted_price;
 
-		// Set quantity to 1
+		// Set quantity to 1.
 		$cart->set_quantity( $cart_item_key, 1 );
 
-		// Update the cart item
+		// Update the cart item.
 		$cart->cart_contents[ $cart_item_key ] = $cart_item;
 	}
 
@@ -261,7 +273,7 @@ class CustomerSession {
 	 */
 	private function remove_free_or_discounted_products_from_cart( $spend_rule ) {
 		foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-			if ( isset( $cart_item['leat_discounted_product'] ) && $cart_item['leat_spend_rule_id'] == $spend_rule['id'] ) {
+			if ( isset( $cart_item['leat_discounted_product'] ) && $cart_item['leat_spend_rule_id'] === $spend_rule['id'] ) {
 				WC()->cart->remove_cart_item( $cart_item_key );
 			}
 		}
@@ -282,16 +294,16 @@ class CustomerSession {
 		foreach ( $cart->get_cart() as $cart_item ) {
 			if ( isset( $cart_item['leat_discounted_product'] ) ) {
 				$cart_item['data']->set_price( $cart_item['leat_discounted_price'] );
-				// Remove sale price to avoid sale badge
+				// Remove sale price to avoid sale badge.
 				$cart_item['data']->set_sale_price( '' );
 
-				// Ensure quantity is 1 for discounted products
+				// Ensure quantity is 1 for discounted products.
 				if ( $cart_item['quantity'] > 1 ) {
 					WC()->cart->set_quantity( $cart_item['key'], 1 );
 				}
 			} elseif ( isset( $cart_item['leat_discount'] ) ) {
 				$cart_item['data']->set_price( $cart_item['data']->get_price() );
-				// Remove sale price to avoid sale badge
+				// Remove sale price to avoid sale badge.
 				$cart_item['data']->set_sale_price( '' );
 			}
 		}
@@ -330,7 +342,7 @@ class CustomerSession {
 
 		if ( $earn_rules ) {
 			// Here we have at least one earn rule of type 'CREATE_ACCOUNT'. We always grab the first one
-			// We check $earnRule['credits']['value'] to see how much credit we should give
+			// We check $earnRule['credits']['value'] to see how much credit we should give.
 			$earn_rule = $earn_rules[0];
 
 			if ( $earn_rule['credits']['value'] > 0 ) {
@@ -455,7 +467,7 @@ class CustomerSession {
 			$user_id        = $order->get_user_id();
 			$guest_checkout = empty( $user_id );
 
-			// Get UUID either from user meta or order meta for guests
+			// Get UUID either from user meta or order meta for guests.
 			$uuid = null;
 
 			if ( $guest_checkout ) {
@@ -469,7 +481,7 @@ class CustomerSession {
 				throw new \Exception( "No UUID found for order $order_id" );
 			}
 
-			// If credits are already issued, we don't need to apply them again
+			// If credits are already issued, we don't need to apply them again.
 			$credit_transaction_uuid = $order->get_meta( '_leat_earn_rule_credit_transaction_uuid' );
 			if ( $credit_transaction_uuid ) {
 				return;
@@ -486,7 +498,7 @@ class CustomerSession {
 				$this->connection->sync_user_attributes( $user_id, $uuid );
 			}
 
-			// Apply credits based on PLACE_ORDER earn rule
+			// Apply credits based on PLACE_ORDER earn rule.
 			$order_total     = $order->get_total();
 			$applicable_rule = $this->earn_rules->get_applicable_place_order_rule( $order_total );
 
@@ -497,17 +509,17 @@ class CustomerSession {
 
 				if ( ! $result ) {
 					$this->logger->error( "Failed to apply credits to user $user_id for order $order_id" );
-					OrderNotes::addError( $order, 'Failed to apply loyalty credits for this order.' );
+					OrderNotes::add_error( $order, 'Failed to apply loyalty credits for this order.' );
 					return;
 				}
 
 				$credits     = $result->getCredits();
 				$result_uuid = $result->getUuid();
 
-				// Save metadata and add order note
+				// Save metadata and add order note.
 				$order->update_meta_data( '_leat_earn_rule_credit_transaction_uuid', $result_uuid );
 				$order->update_meta_data( '_leat_earn_rule_credits_issued', $credits );
-				OrderNotes::addSuccess( $order, sprintf( 'Added %d loyalty credits (Transaction ID: %s)', $credits, $result_uuid ) );
+				OrderNotes::add_success( $order, sprintf( 'Added %d loyalty credits (Transaction ID: %s)', $credits, $result_uuid ) );
 				$order->save();
 
 				if ( $user_id ) {
@@ -518,15 +530,75 @@ class CustomerSession {
 			}
 		} catch ( \Throwable $th ) {
 			$this->logger->error( 'Error syncing attributes on order completed: ' . $th->getMessage() );
-			OrderNotes::addError( $order, 'Error processing loyalty credits: ' . $th->getMessage() );
+			OrderNotes::add_error( $order, 'Error processing loyalty credits: ' . $th->getMessage() );
 		}
 	}
 
-	public function handle_order_refunded( $order_id, $refund_id ) {
+	/**
+	 * Handle credit withdrawal for any configured order status
+	 */
+	public function handle_order_credit_withdrawal( $order_id ) {
 		try {
 			$order = wc_get_order( $order_id );
 
 			if ( ! $order ) {
+				return;
+			}
+
+			// Check if credits were already withdrawn.
+			if ( $order->get_meta( '_leat_credits_withdrawn' ) ) {
+				$this->logger->info( "Credits already withdrawn for order $order_id" );
+				return;
+			}
+
+			$status = $order->get_status();
+
+			$credit_transaction_uuid = $order->get_meta( '_leat_earn_rule_credit_transaction_uuid' );
+			$original_credits        = $order->get_meta( '_leat_earn_rule_credits_issued' );
+
+			if ( ! $credit_transaction_uuid ) {
+				$this->logger->error( "No Leat credit transaction UUID found for order $order_id" );
+				return;
+			}
+
+			// Process full refund.
+			$result = $this->connection->refund_credits_full( $credit_transaction_uuid );
+			$uuid   = $result->getUuid();
+
+			if ( $result ) {
+				$this->logger->info( "Successfully processed credit withdrawal for transaction UUID $credit_transaction_uuid for order $order_id" );
+					OrderNotes::add_success(
+						$order,
+						sprintf(
+						'Withdrew %d loyalty credits due to order status change to %s',
+						$original_credits,
+						$status
+					)
+				);
+
+				// Mark credits as withdrawn to prevent multiple withdrawals.
+				$order->update_meta_data( '_leat_credits_withdrawn', $uuid );
+				$order->save();
+			} else {
+				OrderNotes::add_error( $order, 'Failed to process loyalty credit withdrawal' );
+			}
+		} catch ( \Throwable $th ) {
+			$this->logger->error( 'Error handling order credit withdrawal: ' . $th->getMessage() );
+			OrderNotes::add_error( $order, 'Error processing loyalty credit withdrawal: ' . $th->getMessage() );
+		}
+	}
+
+	public function handle_order_credit_withdrawal_refund( $order_id, $refund_id ) {
+		try {
+			$order = wc_get_order( $order_id );
+
+			if ( ! $order ) {
+				return;
+			}
+
+			// Check if credits were already withdrawn.
+			if ( $order->get_meta( '_leat_credits_withdrawn' ) ) {
+				$this->logger->info( "Credits already withdrawn for order $order_id" );
 				return;
 			}
 
@@ -546,21 +618,25 @@ class CustomerSession {
 
 			if ( $is_full_refund ) {
 				$result = $this->connection->refund_credits_full( $credit_transaction_uuid );
-
 				if ( $result ) {
 					$this->logger->info( "Successfully processed $refund_type refund for credit transaction UUID $credit_transaction_uuid for order $order_id" );
-					OrderNotes::addSuccess( $order, sprintf( 'Refunded %d loyalty credits due to full order refund', $original_credits ) );
+					OrderNotes::add_success( $order, sprintf( 'Refunded %d loyalty credits due to full order refund', $original_credits ) );
+
+					$uuid = $result->getUuid();
+					$order->update_meta_data( '_leat_credits_withdrawn', $uuid );
+
+					$order->save();
 				} else {
-					OrderNotes::addError( $order, 'Failed to process loyalty credit refund' );
+					OrderNotes::add_error( $order, 'Failed to process loyalty credit refund' );
 				}
 			} else {
 				// Partial refunds are not yet supported.
 				$this->logger->error( 'Partial refunds are not supported yet' );
-				OrderNotes::addWarning( $order, 'Partial refunds of loyalty credits are not supported' );
+				OrderNotes::add_warning( $order, 'Partial refunds of loyalty credits are not supported' );
 			}
 		} catch ( \Throwable $th ) {
 			$this->logger->error( 'Error handling order refunded: ' . $th->getMessage() );
-			OrderNotes::addError( $order, 'Error processing loyalty credit refund: ' . $th->getMessage() );
+			OrderNotes::add_error( $order, 'Error processing loyalty credit refund: ' . $th->getMessage() );
 		}
 	}
 
@@ -580,12 +656,12 @@ class CustomerSession {
 
 			$this->logger->info( 'Handling initial checkout processing for order: ' . $order->get_id() );
 
-			// Skip if it's a guest checkout and guest users are not included
+			// Skip if it's a guest checkout and guest users are not included.
 			if ( $guest_checkout ) {
 				$include_guests = $this->settings->get_setting_by_id( 'include_guests' )['value'] ?? 'off';
 				if ( $include_guests !== 'on' ) {
 					$this->logger->info( 'Guest checkout detected but include_guests is disabled. Skipping Leat processing.' );
-					OrderNotes::addWarning( $order, 'Guest loyalty program disabled - no points awarded' );
+					OrderNotes::add_warning( $order, 'Guest loyalty program disabled - no points awarded' );
 					return;
 				}
 			}
@@ -612,7 +688,7 @@ class CustomerSession {
 				}
 				$uuid = $contact['uuid'];
 
-				// Store UUID in order meta for future reference
+				// Store UUID in order meta for future reference.
 				$order->update_meta_data( '_leat_contact_uuid', $uuid );
 				$order->save();
 			} else {
@@ -622,17 +698,17 @@ class CustomerSession {
 
 			if ( ! $uuid ) {
 				$this->logger->error( 'No UUID found/created for order: ' . $order->get_id() );
-				OrderNotes::addError( $order, 'Failed to create/find loyalty account' );
+				OrderNotes::add_error( $order, 'Failed to create/find loyalty account' );
 				return;
 			}
 
-			OrderNotes::addSuccess( $order, sprintf( 'Successfully linked to loyalty account %s', $uuid ) );
+			OrderNotes::add_success( $order, sprintf( 'Successfully linked to loyalty account %s', $uuid ) );
 
-			// Only sync non-order related attributes during checkout
+			// Only sync non-order related attributes during checkout.
 			$this->connection->sync_basic_attributes_from_order( $order, $uuid, $guest_checkout );
 		} catch ( \Throwable $th ) {
 			$this->logger->error( 'Error processing checkout order: ' . $th->getMessage() );
-			OrderNotes::addError( $order, 'Error processing loyalty account: ' . $th->getMessage() );
+			OrderNotes::add_error( $order, 'Error processing loyalty account: ' . $th->getMessage() );
 		}
 	}
 
