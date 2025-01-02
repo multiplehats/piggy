@@ -160,7 +160,7 @@ class Api {
 	 *
 	 * @param string $folder The folder to look for the manifest in.
 	 */
-	public function get_manifest_path( $folder = 'frontend') {
+	public function get_manifest_path( $folder = 'frontend' ) {
 		$manifest = $this->package->get_path( "dist/$folder" );
 
 		if ( ! file_exists( $manifest ) ) {

@@ -65,14 +65,8 @@ export const zBasePluginOptions = z.object({
 	credits_name: adminFields.zTranslatableText,
 	credits_spend_rule_progress: adminFields.zTranslatableText,
 	include_guests: adminFields.zSwitch,
-	reward_order_statuses: adminFields.zCheckboxes.refine(
-		({ value }) => Object.entries(value).some(([_, value]) => value === "on"),
-		__("At least one must be selected.", "mycred")
-	),
-	withdraw_order_statuses: adminFields.zCheckboxes.refine(
-		({ value }) => Object.entries(value).some(([_, value]) => value === "on"),
-		__("At least one must be selected.", "mycred")
-	),
+	reward_order_statuses: adminFields.zSelect,
+	withdraw_order_statuses: adminFields.zCheckboxes,
 	reward_order_parts: adminFields.zCheckboxes,
 	marketing_consent_subscription: adminFields.zSwitch,
 	earn_rules: adminFields.zEarnRules,
@@ -90,6 +84,8 @@ export const zBasePluginOptions = z.object({
 	dashboard_nav_activity: adminFields.zTranslatableText,
 	dashboard_earn_cta: adminFields.zTranslatableText,
 	dashboard_spend_cta: adminFields.zTranslatableText,
+	giftcard_order_status: adminFields.zSelect,
+	giftcard_withdraw_order_statuses: adminFields.zCheckboxes,
 });
 
 /**

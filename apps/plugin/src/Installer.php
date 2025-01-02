@@ -34,7 +34,7 @@ class Installer {
 		$show_errors = $wpdb->hide_errors();
 
 		$tables = [
-			'leat_reward_logs'
+			'leat_reward_logs',
 		];
 
 		foreach ( $tables as $table_name ) {
@@ -63,7 +63,7 @@ class Installer {
 	protected function maybe_create_table( $table_name ) {
 		global $wpdb;
 
-		$cache_key = 'leat_table_exists_' . $table_name;
+		$cache_key    = 'leat_table_exists_' . $table_name;
 		$table_exists = wp_cache_get( $cache_key );
 
 		if ( false === $table_exists ) {
@@ -133,7 +133,7 @@ class Installer {
 	}
 
 	public function maybe_redirect_to_onboarding() {
-		$api_key = get_option('leat_api_key', null);
+		$api_key = get_option( 'leat_api_key', null );
 
 		if ( get_option( 'leat_first_activation', false ) === false && $api_key !== null && $api_key !== '' ) {
 			update_option( 'leat_first_activation', true );

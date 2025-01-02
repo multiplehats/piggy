@@ -43,55 +43,55 @@ class EarnRulesSchema extends AbstractSchema {
 	 */
 	public function get_properties() {
 		return [
-			'id' => [
+			'id'                    => [
 				'description' => __( 'Unique identifier for the rule', 'leat-crm' ),
 				'type'        => 'integer',
 			],
-			'status' => [
+			'status'                => [
 				'description' => __( 'Status of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'title' => [
+			'title'                 => [
 				'description' => __( 'Title of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'createdAt' => [
+			'createdAt'             => [
 				'description' => __( 'Date rule was created.', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'updatedAt' => [
+			'updatedAt'             => [
 				'description' => __( 'Date rule was last updated.', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'description' => [
+			'description'           => [
 				'description' => __( 'Description of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'type' => [
+			'type'                  => [
 				'description' => __( 'Type of the rule', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'leatTierUuids' => [
+			'leatTierUuids'         => [
 				'description' => __( 'Leat tier UUIDs that rule is applicable to.', 'leat-crm' ),
 				'type'        => 'array',
 			],
-			'startsAt' => [
+			'startsAt'              => [
 				'description' => __( 'Date rule starts.', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'expiresAt' => [
+			'expiresAt'             => [
 				'description' => __( 'Date rule expires.', 'leat-crm' ),
 				'type'        => 'string',
 			],
-			'completed' => [
+			'completed'             => [
 				'description' => __( 'Whether rule has been completed.', 'leat-crm' ),
 				'type'        => 'boolean',
 			],
-			'credits' => [
+			'credits'               => [
 				'description' => __( 'Credits awarded for completing the rule', 'leat-crm' ),
 				'type'        => 'integer',
 			],
-			'socialHandle' => [
+			'socialHandle'          => [
 				'description' => __( 'URL of the social network.', 'leat-crm' ),
 				'type'        => 'string',
 			],
@@ -99,11 +99,11 @@ class EarnRulesSchema extends AbstractSchema {
 				'description' => __( 'Collection IDs that are excluded from the rule', 'leat-crm' ),
 				'type'        => 'array',
 			],
-			'excludedProductIds' => [
+			'excludedProductIds'    => [
 				'description' => __( 'Product IDs that are excluded from the rule', 'leat-crm' ),
 				'type'        => 'array',
 			],
-			'minimumOrderAmount' => [
+			'minimumOrderAmount'    => [
 				'description' => __( 'Minimum order subtotal in cents.', 'leat-crm' ),
 				'type'        => 'integer',
 			],
@@ -116,7 +116,7 @@ class EarnRulesSchema extends AbstractSchema {
 	 * @param \WP_Post $post Earn Rule post object.
 	 * @return array
 	 */
-	public function get_item_response($post) {
-		return $this->earn_rules_service->get_formatted_post($post);
+	public function get_item_response( $post ) {
+		return $this->earn_rules_service->get_formatted_post( $post );
 	}
 }

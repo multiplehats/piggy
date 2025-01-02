@@ -57,7 +57,7 @@ class EarnRules extends AbstractRoute {
 				'callback'            => [ $this, 'get_response' ],
 				'permission_callback' => '__return_true',
 				'args'                => [
-					'id' => [
+					'id'     => [
 						'description' => __( 'Earn rule ID', 'leat-crm' ),
 						'type'        => 'string',
 					],
@@ -81,44 +81,44 @@ class EarnRules extends AbstractRoute {
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$data = array(
-			'id' => $request->get_param( 'id' ),
-			'status' => $request->get_param( 'status' ),
-			'label' => $request->get_param( 'label' ),
-			'title' => $request->get_param( 'title' ),
-			'type' => $request->get_param( 'type' ),
-			'leatTierUuids' => $request->get_param( 'leatTierUuids' ),
-			'startsAt' => $request->get_param( 'startsAt' ),
-			'expiresAt' => $request->get_param( 'expiresAt' ),
-			'completed' => $request->get_param( 'completed' ),
-			'credits' => $request->get_param( 'credits' ),
-			'socialHandle' => $request->get_param( 'socialHandle' ),
+			'id'                    => $request->get_param( 'id' ),
+			'status'                => $request->get_param( 'status' ),
+			'label'                 => $request->get_param( 'label' ),
+			'title'                 => $request->get_param( 'title' ),
+			'type'                  => $request->get_param( 'type' ),
+			'leatTierUuids'         => $request->get_param( 'leatTierUuids' ),
+			'startsAt'              => $request->get_param( 'startsAt' ),
+			'expiresAt'             => $request->get_param( 'expiresAt' ),
+			'completed'             => $request->get_param( 'completed' ),
+			'credits'               => $request->get_param( 'credits' ),
+			'socialHandle'          => $request->get_param( 'socialHandle' ),
 			'excludedCollectionIds' => $request->get_param( 'excludedCollectionIds' ),
-			'excludedProductIds' => $request->get_param( 'excludedProductIds' ),
-			'minimumOrderAmount' => $request->get_param( 'minimumOrderAmount' ),
+			'excludedProductIds'    => $request->get_param( 'excludedProductIds' ),
+			'minimumOrderAmount'    => $request->get_param( 'minimumOrderAmount' ),
 		);
 
 		$post_data = array(
-			'post_type' => 'leat_earn_rule',
-			'post_title' => $data['title'],
+			'post_type'   => 'leat_earn_rule',
+			'post_title'  => $data['title'],
 			'post_status' => $data['status'],
-			'meta_input' => array(
-				'_leat_earn_rule_label' => $data['label'],
-				'_leat_earn_rule_type' => $data['type'],
-				'_leat_earn_rule_leat_tier_uuids' => $data['leatTierUuids'],
-				'_leat_earn_rule_starts_at' => $data['startsAt'],
-				'_leat_earn_rule_expires_at' => $data['expiresAt'],
-				'_leat_earn_rule_completed' => $data['completed'],
-				'_leat_earn_rule_points' => $data['credits'],
-				'_leat_earn_rule_social_handle' => $data['socialHandle'],
-				'_leat_earn_rule_excluded_collection_ids' => $data['excludedCollectionIds'],
-				'_leat_earn_rule_excluded_product_ids' => $data['excludedProductIds'],
+			'meta_input'  => array(
+				'_leat_earn_rule_label'                    => $data['label'],
+				'_leat_earn_rule_type'                     => $data['type'],
+				'_leat_earn_rule_leat_tier_uuids'          => $data['leatTierUuids'],
+				'_leat_earn_rule_starts_at'                => $data['startsAt'],
+				'_leat_earn_rule_expires_at'               => $data['expiresAt'],
+				'_leat_earn_rule_completed'                => $data['completed'],
+				'_leat_earn_rule_points'                   => $data['credits'],
+				'_leat_earn_rule_social_handle'            => $data['socialHandle'],
+				'_leat_earn_rule_excluded_collection_ids'  => $data['excludedCollectionIds'],
+				'_leat_earn_rule_excluded_product_ids'     => $data['excludedProductIds'],
 				'_leat_earn_rule_min_order_subtotal_cents' => $data['minimumOrderAmount'],
-			)
+			),
 		);
 
 		if ( ! empty( $data['id'] ) ) {
 			$post_data['ID'] = $data['id'];
-			$post_id = wp_update_post( $post_data, true );
+			$post_id         = wp_update_post( $post_data, true );
 		} else {
 			$post_id = wp_insert_post( $post_data, true );
 		}
@@ -141,20 +141,19 @@ class EarnRules extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$prepared_args = array(
-			'post_type' => 'leat_earn_rule',
+			'post_type'      => 'leat_earn_rule',
 			'posts_per_page' => -1,
-			'post_status' => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array('publish'),
+			'post_status'    => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array( 'publish' ),
 		);
 
 		$id = $request->get_param( 'id' );
 
-
-		if($id) {
+		if ( $id ) {
 			// Get a specific post id
 			$prepared_args['p'] = $id;
 		}
 
-		$query = new \WP_Query();
+		$query        = new \WP_Query();
 		$query_result = $query->query( $prepared_args );
 
 		$response_objects = array();

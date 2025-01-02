@@ -49,12 +49,12 @@ class SpendRulesClaim extends AbstractRoute {
 				'callback'            => [ $this, 'get_response' ],
 				'permission_callback' => '__return_true',
 				'args'                => [
-					'id' => [
-						'type' => 'integer',
+					'id'      => [
+						'type'     => 'integer',
 						'required' => true,
 					],
 					'user_id' => [
-						'type' => 'integer',
+						'type'     => 'integer',
 						'required' => false,
 					],
 				],
@@ -75,9 +75,9 @@ class SpendRulesClaim extends AbstractRoute {
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$spend_rules_service = new SpendRules();
-		$connection = new Connection();
-		$id = $request->get_param( 'id' );
-		$user_id = $request->get_param( 'userId' );
+		$connection          = new Connection();
+		$id                  = $request->get_param( 'id' );
+		$user_id             = $request->get_param( 'userId' );
 
 		if ( ! $id ) {
 			throw new RouteException( 'spend-rules-claim', 'Spend rule ID is required', 400 );
@@ -99,7 +99,7 @@ class SpendRulesClaim extends AbstractRoute {
 
 		// Get the contact UUID for the user
 		$contact = $connection->get_contact( $user_id );
-		$uuid = $contact['uuid'];
+		$uuid    = $contact['uuid'];
 
 		if ( ! $uuid ) {
 			throw new RouteException( 'spend-rules-claim', 'User not found in Leat', 404 );
@@ -114,10 +114,10 @@ class SpendRulesClaim extends AbstractRoute {
 		// Create a Reward Reception
 		try {
 			$reception = $connection->create_reward_reception( $uuid, $reward_uuid );
-		} catch (\Throwable $th) {
+		} catch ( \Throwable $th ) {
 			// If the message sdtars with "You have insufficient credits" we return a 400
 			if ( strpos( $th->getMessage(), 'You have insufficient credits' ) !== false ) {
-				throw new RouteException( 'spend-rules-claim', 'Insufficient credits', 400);
+				throw new RouteException( 'spend-rules-claim', 'Insufficient credits', 400 );
 			}
 
 			throw new RouteException( 'spend-rules-claim', 'Failed to create Reward Reception', 500 );
@@ -135,7 +135,7 @@ class SpendRulesClaim extends AbstractRoute {
 		}
 
 		return [
-			'coupon' => $coupon,
+			'coupon'           => $coupon,
 			'reward_reception' => $reception,
 		];
 	}

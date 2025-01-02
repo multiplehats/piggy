@@ -38,11 +38,14 @@ if ( ! defined( 'LEAT_VERSION' ) ) {
 /**
  * Declare support for HPOS (High-Performance Order Storage)
  */
-add_action('before_woocommerce_init', function(){
-	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+add_action(
+	'before_woocommerce_init',
+	function() {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
 	}
-});
+	);
 
 /**
  * Whether notices must be displayed in the current page (plugins and WooCommerce pages).

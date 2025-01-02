@@ -17,7 +17,7 @@ export const zFieldTypes = z.enum([
 	"products_select",
 ]);
 
-export const zSelectOptionsItem = z.object({ label: z.string() });
+export const zSelectOptionsItem = z.object({ label: z.string(), tooltip: z.string().optional() });
 export const zSelectOptions = z.record(zSelectOptionsItem);
 
 export const zSettingsBaseField = z.object({

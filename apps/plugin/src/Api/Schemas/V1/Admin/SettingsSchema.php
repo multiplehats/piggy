@@ -35,11 +35,11 @@ class SettingsSchema extends AbstractSchema {
 				'type'        => 'object',
 				'context'     => [ 'view', 'edit' ],
 				'properties'  => [
-					'paid' => [
+					'paid'       => [
 						'type'        => 'string',
 						'description' => __( 'Pending payment.', 'leat-crm' ),
 					],
-					'pending' => [
+					'pending'    => [
 						'type'        => 'string',
 						'description' => __( 'On hold.', 'leat-crm' ),
 					],
@@ -47,7 +47,7 @@ class SettingsSchema extends AbstractSchema {
 						'type'        => 'string',
 						'description' => __( 'Processing.', 'leat-crm' ),
 					],
-					'completed' => [
+					'completed'  => [
 						'type'        => 'string',
 						'description' => __( 'Completed.', 'leat-crm' ),
 					],
@@ -62,7 +62,7 @@ class SettingsSchema extends AbstractSchema {
 	 * @return string
 	 */
 	public function get_item_response( $id ) {
-		return $this->settings->get_item_response($id);
+		return $this->settings->get_item_response( $id );
 
 		return $item;
 	}
