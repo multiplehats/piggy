@@ -59,6 +59,7 @@ class CustomerSession
 		add_action('edit_user_profile', [$this, 'show_claimed_rewards_on_profile']);
 		add_action('wp_login', [$this, 'sync_attributes_on_login'], 10, 2);
 		add_action('wp_logout', [$this, 'sync_attributes_on_logout']);
+
 		add_action('woocommerce_applied_coupon', [$this, 'handle_applied_coupon'], 10, 1);
 		add_action('woocommerce_removed_coupon', [$this, 'handle_removed_coupon'], 10, 1);
 		add_action('woocommerce_before_calculate_totals', [$this, 'adjust_cart_item_prices'], 10, 1);
@@ -71,6 +72,9 @@ class CustomerSession
 
 		// Initial contact creation and attribute syncing when order is first placed
 		add_action('woocommerce_checkout_order_processed', [$this, 'handle_checkout_order_processed'], 10, 1);
+
+		add_action('woocommerce_cart_emptied', [$this, 'remove_leat_coupons_on_cart_empty']);
+		add_action('woocommerce_cart_item_removed', [$this, 'check_cart_and_remove_leat_coupons'], 10, 2);
 	}
 
 	/**
@@ -100,11 +104,18 @@ class CustomerSession
 
 	public function remove_sale_price_for_discounted_products($sale_price, $product)
 	{
+		// Only modify prices in cart context
+		if (!is_cart() && !is_checkout()) {
+			return $sale_price;
+		}
+
 		$cart = WC()->cart;
 		if ($cart) {
 			foreach ($cart->get_cart() as $cart_item) {
-				if (isset($cart_item['leat_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
-					return '';
+				if ($cart_item['product_id'] == $product->get_id()
+					&& isset($cart_item['leat_discounted_product'])
+					&& isset($cart_item['unique_key'])) {
+					return ''; // Remove sale price for discounted items
 				}
 			}
 		}
@@ -113,11 +124,18 @@ class CustomerSession
 
 	public function adjust_price_for_discounted_products($price, $product)
 	{
+		// Only modify prices in cart context
+		if (!is_cart() && !is_checkout()) {
+			return $price;
+		}
+
 		$cart = WC()->cart;
 		if ($cart) {
 			foreach ($cart->get_cart() as $cart_item) {
-				if (isset($cart_item['leat_discounted_product']) && $cart_item['product_id'] == $product->get_id()) {
-					return $cart_item['leat_discounted_price'];
+				if ($cart_item['product_id'] == $product->get_id()
+					&& isset($cart_item['leat_discounted_product'])
+					&& isset($cart_item['unique_key'])) {
+					return $cart_item['leat_discounted_price']; // Return discounted price
 				}
 			}
 		}
@@ -153,24 +171,28 @@ class CustomerSession
 	private function apply_discount_to_cart($spend_rule)
 	{
 		$discount_type = $spend_rule['discount_type']['value'];
-
 		$discount_amount = $spend_rule['discountAmount']['value'] ?? 0;
 
 		foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-			$original_price = $cart_item['data']->get_price();
-			$discounted_price = $original_price;
+			if (!isset($cart_item['leat_discount'])) {
+				$original_price = $cart_item['data']->get_price();
+				$discounted_price = $original_price;
 
-			if ($discount_type === 'fixed') {
-				$discounted_price = max(0, $original_price - $discount_amount);
-			} elseif ($discount_type === 'percentage') {
-				$discounted_price = $original_price * (1 - $discount_amount / 100);
+				if ($discount_type === 'fixed') {
+					$discounted_price = max(0, $original_price - $discount_amount);
+				} elseif ($discount_type === 'percentage') {
+					$discounted_price = $original_price * (1 - $discount_amount / 100);
+				}
+
+				$cart_item['data']->set_price($discounted_price);
+				$cart_item['leat_discount'] = [
+					'original_price' => $original_price,
+					'spend_rule_id' => $spend_rule['id'],
+				];
+
+				WC()->cart->cart_contents[$cart_item_key] = $cart_item;
+				break; // Apply discount to only one item
 			}
-
-			$cart_item['data']->set_price($discounted_price);
-			$cart_item['leat_discount'] = [
-				'original_price' => $original_price,
-				'spend_rule_id' => $spend_rule['id'],
-			];
 		}
 	}
 
@@ -198,16 +220,22 @@ class CustomerSession
             $original_price = $product->get_price();
             $discounted_price = $this->calculate_discounted_price($original_price, $discount_type, $discount_value);
 
-            // Check if the product is already in the cart
-            $cart_item_key = $this->find_product_in_cart($product_id);
+            // Generate a unique key for this discounted product
+            $unique_key = uniqid('leat_discount_');
 
-            if ($cart_item_key) {
-                // Product is already in the cart, update its price and quantity
-                $this->update_existing_cart_item($cart_item_key, $discounted_price, $spend_rule['id'], $original_price);
-            } else {
-                // Product is not in the cart, add it
-                $this->add_new_cart_item($product_id, $discounted_price, $spend_rule['id'], $original_price);
-            }
+            WC()->cart->add_to_cart(
+                $product_id,
+                1,
+                0,
+                array(),
+                array(
+                    'leat_discounted_product' => true,
+                    'leat_spend_rule_id' => $spend_rule['id'],
+                    'leat_original_price' => $original_price,
+                    'leat_discounted_price' => $discounted_price,
+                    'unique_key' => $unique_key // Add a unique identifier
+                )
+            );
         }
     }
 
@@ -233,23 +261,24 @@ class CustomerSession
 
     private function update_existing_cart_item($cart_item_key, $discounted_price, $spend_rule_id, $original_price)
     {
-		$cart = WC()->cart;
-		$cart_item = $cart->get_cart_item($cart_item_key);
+        $cart = WC()->cart;
+        $cart_item = $cart->get_cart_item($cart_item_key);
 
-		// Update the price
-		$cart_item['data']->set_price($discounted_price);
+        // Update the price only for the discounted item
+        if (!isset($cart_item['leat_discounted_product'])) {
+            // This is a regular item, do not apply discount
+            return;
+        }
 
-		// Add Leat-specific data
-		$cart_item['leat_discounted_product'] = true;
-		$cart_item['leat_spend_rule_id'] = $spend_rule_id;
-		$cart_item['leat_original_price'] = $original_price;
-		$cart_item['leat_discounted_price'] = $discounted_price;
+        // Update the existing discounted item
+        $cart_item['data']->set_price($discounted_price);
+        $cart_item['leat_discounted_product'] = true;
+        $cart_item['leat_spend_rule_id'] = $spend_rule_id;
+        $cart_item['leat_original_price'] = $original_price;
+        $cart_item['leat_discounted_price'] = $discounted_price;
 
-		// Set quantity to 1
-		$cart->set_quantity($cart_item_key, 1);
-
-		// Update the cart item
-		$cart->cart_contents[$cart_item_key] = $cart_item;
+        // Update the cart item
+        $cart->cart_contents[$cart_item_key] = $cart_item;
     }
 
     private function add_new_cart_item($product_id, $discounted_price, $spend_rule_id, $original_price)
@@ -267,11 +296,11 @@ class CustomerSession
      */
     private function remove_free_or_discounted_products_from_cart($spend_rule)
     {
-        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-            if (isset($cart_item['leat_discounted_product']) && $cart_item['leat_spend_rule_id'] == $spend_rule['id']) {
-                WC()->cart->remove_cart_item($cart_item_key);
-            }
-        }
+		foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+			if (isset($cart_item['leat_discounted_product']) && $cart_item['leat_spend_rule_id'] == $spend_rule['id']) {
+				WC()->cart->remove_cart_item($cart_item_key);
+			}
+		}
     }
 
     /**
@@ -287,20 +316,13 @@ class CustomerSession
 			return;
 		}
 
-		foreach ($cart->get_cart() as $cart_item) {
-			if (isset($cart_item['leat_discounted_product'])) {
+		foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
+			if (isset($cart_item['leat_discounted_product']) && isset($cart_item['unique_key'])) {
+				// Apply the discounted price only to items with the unique key
 				$cart_item['data']->set_price($cart_item['leat_discounted_price']);
-				// Remove sale price to avoid sale badge
-				$cart_item['data']->set_sale_price('');
-
-				// Ensure quantity is 1 for discounted products
-				if ($cart_item['quantity'] > 1) {
-					WC()->cart->set_quantity($cart_item['key'], 1);
-				}
-			} elseif (isset($cart_item['leat_discount'])) {
-				$cart_item['data']->set_price($cart_item['data']->get_price());
-				// Remove sale price to avoid sale badge
-				$cart_item['data']->set_sale_price('');
+			} else {
+				// Ensure regular items have their original price
+				$cart_item['data']->set_price($cart_item['data']->get_regular_price());
 			}
 		}
 	}
@@ -672,6 +694,31 @@ class CustomerSession
 		} catch (\Throwable $th) {
 			$this->logger->error("Error syncing order attributes: " . $th->getMessage());
 			return false;
+		}
+	}
+
+	/**
+	 * Check if cart is empty after item removal and remove Leat coupons if necessary
+	 */
+	public function check_cart_and_remove_leat_coupons($cart_item_key, $cart)
+	{
+		// Check if cart is empty after removing the item
+		if (WC()->cart->is_empty()) {
+			$this->remove_leat_coupons_on_cart_empty();
+		}
+	}
+
+	/**
+	 * Remove Leat-specific coupons when the cart is emptied
+	 */
+	public function remove_leat_coupons_on_cart_empty()
+	{
+		$applied_coupons = WC()->cart->get_applied_coupons();
+		foreach ($applied_coupons as $coupon_code) {
+			$coupon = new \WC_Coupon($coupon_code);
+			if ($coupon->get_meta('_leat_spend_rule_coupon') === 'true') {
+				WC()->cart->remove_coupon($coupon_code);
+			}
 		}
 	}
 }

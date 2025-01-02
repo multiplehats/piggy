@@ -53,7 +53,11 @@
 		]);
 	}
 
-	function getProgressText(text: string, creditsRecuired: number | string) {
+	function getProgressText(
+		text: string,
+		creditsRecuired: number | string,
+		creditsAccumulated: number
+	) {
 		if (!text) return "";
 
 		return replaceStrings(text, [
@@ -103,7 +107,8 @@
 				<p>
 					{getProgressText(
 						getTranslatedText($pluginSettings.credits_spend_rule_progress),
-						creditsRequired
+						creditsRequired,
+						creditsAccumulated
 					)}
 				</p>
 			{/if}
