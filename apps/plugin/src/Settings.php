@@ -80,7 +80,7 @@ class Settings {
 			'id'          => 'withdraw_order_statuses',
 			'type'        => 'checkboxes',
 			'label'       => __( 'Withdraw credits order statuses', 'leat-crm' ),
-			'description' => __( 'Select which order statuses will trigger a credit refund to the customer. Credits will be refunded only once, when the order first reaches any of the selected statuses. For example, if both "Refunded" and "Cancelled" are selected, credits will be returned to the customer when the order is either refunded or cancelled, whichever happens first.', 'leat-crm' ),
+			'description' => __( 'Select which order statuses will trigger a credit refund to the customer. Credits will be refunded only once, when the order first reaches any of the selected statuses. For example, if both "Refunded" and "Cancelled" are selected, credits will be returned to the customer when the order is either refunded or cancelled, whichever happens first. Note that partial refunds are only supported for refunded orders.', 'leat-crm' ),
 			'default'     => array( 'refunded' => 'on' ),
 			'options'     => $this->woocommerce_order_statuses_options(),
 		);
@@ -246,6 +246,14 @@ class Settings {
 			'label'       => __( 'Gift Card Order Status', 'leat-crm' ),
 			'description' => __( 'When should gift cards be created and sent to customers?', 'leat-crm' ),
 			'default'     => 'completed',
+			'options'     => $this->woocommerce_order_statuses_options(),
+		);
+		$settings[] = array(
+			'id'          => 'giftcard_withdraw_order_statuses',
+			'type'        => 'checkboxes',
+			'label'       => __( 'Gift Card Withdraw Order Statuses', 'leat-crm' ),
+			'description' => __( 'Select which order statuses will trigger a gift card withdrawal to the customer. Gift cards will be withdrawn only once, when the order first reaches any of the selected statuses. For example, if both "Refunded" and "Cancelled" are selected, gift cards will be returned to the customer when the order is either refunded or cancelled, whichever happens first.', 'leat-crm' ),
+			'default'     => array( 'refunded' => 'on' ),
 			'options'     => $this->woocommerce_order_statuses_options(),
 		);
 

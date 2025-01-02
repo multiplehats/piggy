@@ -85,6 +85,7 @@ export const zBasePluginOptions = z.object({
 	dashboard_earn_cta: adminFields.zTranslatableText,
 	dashboard_spend_cta: adminFields.zTranslatableText,
 	giftcard_order_status: adminFields.zSelect,
+	giftcard_withdraw_order_statuses: adminFields.zCheckboxes,
 });
 
 /**

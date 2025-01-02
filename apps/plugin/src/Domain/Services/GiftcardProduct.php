@@ -41,8 +41,19 @@ class GiftcardProduct {
 		add_action( 'woocommerce_checkout_process', [ $this, 'validate_giftcard_recipient_email' ] );
 
 		// Handle refunds for giftcard orders.
-		add_action( 'woocommerce_order_refunded', [ $this, 'handle_giftcard_refund' ], 10, 2 );
 		add_action( 'woocommerce_order_item_add_action_buttons', [ $this, 'add_refund_field_script' ] );
+
+		$withdraw_statuses = $this->settings->get_setting_value_by_id( 'giftcard_withdraw_order_statuses' );
+
+		foreach ( $withdraw_statuses as $status => $enabled ) {
+			if ( 'on' === $enabled ) {
+				if ( 'refunded' === $status ) {
+					add_action( 'woocommerce_order_refunded', [ $this, 'handle_giftcard_withdrawal_refund' ], 10, 2 );
+				} else {
+					add_action( 'woocommerce_order_status_' . $status, [ $this, 'handle_giftcard_withdrawal' ], 10, 1 );
+				}
+			}
+		}
 	}
 
 	public function add_giftcard_product_tab( $tabs ) {
@@ -368,13 +379,17 @@ class GiftcardProduct {
 	 * @param int $order_id The order ID.
 	 * @param int $refund_id The refund ID.
 	 */
-	public function handle_giftcard_refund( $order_id, $refund_id ) {
-		error_log( 'Handling giftcard refund' );
-
+	public function handle_giftcard_withdrawal_refund( $order_id, $refund_id ) {
 		$order  = wc_get_order( $order_id );
 		$refund = wc_get_order( $refund_id );
 
 		if ( ! $order || ! $refund ) {
+			return;
+		}
+
+		// Check if this refund has already been processed
+		if ( get_post_meta( $refund_id, '_leat_giftcards_reversed', true ) ) {
+			OrderNotes::add_warning( $order, 'Gift cards for this refund have already been processed.' );
 			return;
 		}
 
@@ -390,8 +405,6 @@ class GiftcardProduct {
 				continue;
 			}
 
-			error_log( 'Found matching order item' );
-
 			$product = $original_item->get_product();
 
 			$product_id = $product->get_parent_id() ?: $product->get_id();
@@ -403,15 +416,23 @@ class GiftcardProduct {
 			// Calculate refund percentage for this item.
 			$refund_percentage = abs( $refund_item->get_total() ) / $original_item->get_total();
 
-			error_log( 'Refund percentage: ' . $refund_percentage );
-
 			// Process refund for each giftcard in the item.
 			for ( $i = 1; $i <= $refunded_qty; $i++ ) {
 				$tx_uuid       = $original_item->get_meta( '_leat_giftcard_tx_uuid_' . $i );
 				$giftcard_uuid = $original_item->get_meta( '_leat_giftcard_uuid_' . $i );
 				$giftcard_id   = $original_item->get_meta( '_leat_giftcard_id_' . $i );
 
-				error_log( 'Giftcard UUID: ' . $giftcard_uuid );
+				// Check if this specific gift card has already been reversed
+				if ( $original_item->get_meta( '_leat_giftcard_reversed_' . $i ) ) {
+					OrderNotes::add_warning(
+						$order,
+						sprintf(
+							__( 'Gift card #%s has already been reversed.', 'leat-crm' ),
+							$giftcard_id ?: $i
+						)
+					);
+					continue;
+				}
 
 				if ( ! $tx_uuid || ! $giftcard_uuid ) {
 					OrderNotes::add_error(
@@ -429,14 +450,12 @@ class GiftcardProduct {
 						// Full refund for this giftcard.
 						$result = $this->connection->reverse_giftcard_transaction( $tx_uuid );
 
-						error_log( 'Full refund result: ' . json_encode( $result ) );
 					} else {
 						// Partial refund.
 						$original_amount = $original_item->get_total() * 100; // Convert to cents.
 						$refund_amount   = round( $original_amount * $refund_percentage );
 						$result          = $this->connection->create_giftcard_refund_transaction( $giftcard_uuid, $refund_amount );
 
-						error_log( 'Partial refund result: ' . json_encode( $result ) );
 					}
 
 					if ( $result ) {
@@ -450,9 +469,9 @@ class GiftcardProduct {
 						OrderNotes::add_success(
 							$order,
 							sprintf(
-								__( 'Gift card #%s refunded successfully (%s%%).', 'leat-crm' ),
-								$giftcard_id,
-								round( $refund_percentage * 100 )
+								__( 'Deducted %s%% from gift card #%s.', 'leat-crm' ),
+								round( $refund_percentage * 100 ),
+								$giftcard_id
 							)
 						);
 
@@ -467,6 +486,10 @@ class GiftcardProduct {
 								'refund_tx_uuid'    => $result['uuid'],
 							]
 						);
+
+						// Mark this specific gift card as reversed
+						$original_item->add_meta_data( '_leat_giftcard_reversed_' . $i, true );
+						$original_item->save();
 					} else {
 						OrderNotes::add_error(
 							$order,
@@ -497,6 +520,127 @@ class GiftcardProduct {
 				}
 			}
 		}
+
+		// Mark this refund as processed
+		update_post_meta( $refund_id, '_leat_giftcards_reversed', true );
+	}
+
+	public function handle_giftcard_withdrawal( $order_id ) {
+		$order = wc_get_order( $order_id );
+
+		// Check if withdrawals have already been processed for this order
+		if ( get_post_meta( $order_id, '_leat_giftcards_reversed', true ) ) {
+			OrderNotes::add_warning( $order, 'Gift cards for this order have already been reversed.' );
+			return;
+		}
+
+		foreach ( $order->get_items() as $item ) {
+			/**
+			 * Process each order item.
+			 *
+			 * @var \WC_Order_Item_Product $item
+			 */
+			$product      = $item->get_product();
+			$product_id   = $product->get_parent_id() ?: $product->get_id();
+			$program_uuid = get_post_meta( $product_id, '_leat_giftcard_program_uuid', true );
+
+			if ( ! $program_uuid ) {
+				continue;
+			}
+
+			$quantity = $item->get_quantity();
+
+			for ( $i = 1; $i <= $quantity; $i++ ) {
+				$tx_uuid       = $item->get_meta( '_leat_giftcard_tx_uuid_' . $i );
+				$giftcard_uuid = $item->get_meta( '_leat_giftcard_uuid_' . $i );
+				$giftcard_id   = $item->get_meta( '_leat_giftcard_id_' . $i );
+
+				// Check if this specific gift card has already been reversed
+				if ( $item->get_meta( '_leat_giftcard_reversed_' . $i ) ) {
+					OrderNotes::add_warning(
+						$order,
+						sprintf(
+							__( 'Gift card #%s has already been reversed.', 'leat-crm' ),
+							$giftcard_id ?: $i
+						)
+					);
+					continue;
+				}
+
+				if ( ! $tx_uuid || ! $giftcard_uuid ) {
+					OrderNotes::add_error(
+						$order,
+						sprintf(
+							__( 'Could not process withdrawal for gift card #%s - missing transaction data.', 'leat-crm' ),
+							$giftcard_id ?: $i
+						)
+					);
+					continue;
+				}
+
+				try {
+					$result = $this->connection->reverse_giftcard_transaction( $tx_uuid );
+
+					if ( $result ) {
+						$item->add_meta_data(
+							'_leat_giftcard_withdrawal_tx_uuid_' . $i,
+							$result['uuid']
+						);
+						$item->save();
+
+						OrderNotes::add_success(
+							$order,
+							sprintf(
+								__( 'Gift card #%s withdrawn successfully.', 'leat-crm' ),
+								$giftcard_id
+							)
+						);
+
+						$this->logger->info(
+							'Processed giftcard withdrawal',
+							[
+								'order_id'      => $order_id,
+								'giftcard_id'   => $giftcard_id,
+								'giftcard_uuid' => $giftcard_uuid,
+								'tx_uuid'       => $result['uuid'],
+							]
+						);
+
+						// Mark this specific gift card as reversed
+						$item->add_meta_data( '_leat_giftcard_reversed_' . $i, true );
+						$item->save();
+					} else {
+						OrderNotes::add_error(
+							$order,
+							sprintf(
+								__( 'Failed to process withdrawal for gift card #%s.', 'leat-crm' ),
+								$giftcard_id
+							)
+						);
+					}
+				} catch ( \Exception $e ) {
+					OrderNotes::add_error(
+						$order,
+						sprintf(
+							__( 'Error processing withdrawal for gift card #%s: %s', 'leat-crm' ),
+							$giftcard_id,
+							$e->getMessage()
+						)
+					);
+					$this->logger->error(
+						'Error processing giftcard withdrawal',
+						[
+							'order_id'    => $order_id,
+							'giftcard_id' => $giftcard_id,
+							'error'       => $e->getMessage(),
+						]
+					);
+				}
+			}
+		}
+
+		// Mark the entire order as processed for withdrawals
+		update_post_meta( $order_id, '_leat_giftcards_reversed', true );
 	}
 
 	/**
@@ -520,8 +664,6 @@ class GiftcardProduct {
 	 * Otherwise the shop admin can accidentally refund the entire order or partially refund an order, and we can't handle that.
 	 */
 	public function add_refund_field_script( $order_id ) {
-		$this->logger->info( 'Adding refund field script', [ 'order_id' => $order_id ] );
-
 		$order        = wc_get_order( $order_id );
 		$has_giftcard = false;
 

@@ -83,6 +83,12 @@
 				/>
 			</div>
 
+			<SettingsCheckboxes
+				class="py-4"
+				{...$settingsState.giftcard_withdraw_order_statuses}
+				bind:value={$settingsState.giftcard_withdraw_order_statuses.value}
+			/>
+
 			<SettingsSelect
 				class="py-4"
 				{...$settingsState.reward_order_statuses}

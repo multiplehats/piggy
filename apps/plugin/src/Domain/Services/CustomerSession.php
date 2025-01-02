@@ -632,7 +632,7 @@ class CustomerSession {
 			} else {
 				// Partial refunds are not yet supported.
 				$this->logger->error( 'Partial refunds are not supported yet' );
-				OrderNotes::add_warning( $order, 'Partial refunds of loyalty credits are not supported' );
+				OrderNotes::add_warning( $order, 'Partial refunds of loyalty credits are not supported. You have to manually refund the credits in the Leat dashboard.' );
 			}
 		} catch ( \Throwable $th ) {
 			$this->logger->error( 'Error handling order refunded: ' . $th->getMessage() );
