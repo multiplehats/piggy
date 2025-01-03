@@ -173,6 +173,31 @@ class GiftcardProduct {
 		}
 	}
 
+	/**
+	 * Calculate the giftcard amount based on the product price or WPCleverWoonp integration.
+	 *
+	 * @param WC_Product            $product The product object.
+	 * @param WC_Order_Item_Product $item The order item object.
+	 * @param int                   $quantity The quantity of the product.
+	 * @param int                   $order_id The order ID.
+	 * @return int The amount in cents.
+	 */
+	private function calculate_giftcard_amount( $product, $item, $quantity, $order_id ) {
+		/**
+		 * WPC Name Your Price for WooCommerce integration.
+		 *
+		 * @see https://wordpress.org/plugins/wpc-name-your-price/
+		 */
+		if ( class_exists( 'WPCleverWoonp' ) && $product->is_type( 'simple' ) ) {
+			$amount_in_cents = ( $item->get_total() / $quantity ) * 100;
+
+			return $amount_in_cents;
+		}
+
+		// Default WooCommerce pricing (simple, and variable products).
+		return $product->get_price() * 100;
+	}
+
 	public function process_giftcard_order( $order_id ) {
 		$order = wc_get_order( $order_id );
 
@@ -197,13 +222,14 @@ class GiftcardProduct {
 
 			if ( $program_uuid ) {
 				$quantity        = $item->get_quantity();
-				$amount_in_cents = $product->get_price() * 100;
+				$amount_in_cents = $this->calculate_giftcard_amount( $product, $item, $quantity, $order_id );
 
 				OrderNotes::add(
 					$order,
 					sprintf(
-						__( 'Starting to create %d gift card(s) for %s.', 'leat-crm' ),
+						__( 'Starting to create %d gift card(s) with amount %s for %s.', 'leat-crm' ),
 						$quantity,
+						$amount_in_cents / 100,
 						$product->get_name()
 					)
 				);
@@ -249,8 +275,9 @@ class GiftcardProduct {
 							OrderNotes::add_success(
 								$order,
 								sprintf(
-									__( 'Gift card #%s created successfully.', 'leat-crm' ),
-									$giftcard_id
+									__( 'Gift card #%s created with amount %s successfully.', 'leat-crm' ),
+									$giftcard_id,
+									$amount_in_cents / 100
 								)
 							);
 
