@@ -42,30 +42,30 @@ class RoutesController {
 	 *
 	 * @param SchemaController $schema_controller Schema controller class passed to each route.
 	 */
-	public function __construct( SchemaController $schema_controller, Connection $connection, Settings $settings) {
+	public function __construct( SchemaController $schema_controller, Connection $connection, Settings $settings ) {
 		$this->schema_controller = $schema_controller;
-		$this->connection = $connection;
-		$this->settings = $settings;
+		$this->connection        = $connection;
+		$this->settings          = $settings;
 
 		$this->routes = [
 			'v1'      => [
-				Routes\V1\EarnReward::IDENTIFIER => Routes\V1\EarnReward::class,
-				Routes\V1\EarnRules::IDENTIFIER => Routes\V1\EarnRules::class,
-				Routes\V1\SpendRules::IDENTIFIER => Routes\V1\SpendRules::class,
-				Routes\V1\PromotionRules::IDENTIFIER => Routes\V1\PromotionRules::class,
+				Routes\V1\EarnReward::IDENTIFIER      => Routes\V1\EarnReward::class,
+				Routes\V1\EarnRules::IDENTIFIER       => Routes\V1\EarnRules::class,
+				Routes\V1\SpendRules::IDENTIFIER      => Routes\V1\SpendRules::class,
+				Routes\V1\PromotionRules::IDENTIFIER  => Routes\V1\PromotionRules::class,
 				Routes\V1\SpendRulesClaim::IDENTIFIER => Routes\V1\SpendRulesClaim::class,
-				Routes\V1\Coupons::IDENTIFIER => Routes\V1\Coupons::class,
-				Routes\V1\JoinProgram::IDENTIFIER => Routes\V1\JoinProgram::class,
-				Routes\V1\Contact::IDENTIFIER => Routes\V1\Contact::class,
-				Routes\V1\Webhooks::IDENTIFIER => Routes\V1\Webhooks::class,
+				Routes\V1\Coupons::IDENTIFIER         => Routes\V1\Coupons::class,
+				Routes\V1\JoinProgram::IDENTIFIER     => Routes\V1\JoinProgram::class,
+				Routes\V1\Contact::IDENTIFIER         => Routes\V1\Contact::class,
+				Routes\V1\Webhooks::IDENTIFIER        => Routes\V1\Webhooks::class,
 			],
 			'private' => [
-				Routes\V1\SpendRulesSync::IDENTIFIER => Routes\V1\SpendRulesSync::class,
+				Routes\V1\SpendRulesSync::IDENTIFIER     => Routes\V1\SpendRulesSync::class,
 				Routes\V1\PromotionRulesSync::IDENTIFIER => Routes\V1\PromotionRulesSync::class,
-				Routes\V1\Admin\Settings::IDENTIFIER => Routes\V1\Admin\Settings::class,
-				Routes\V1\Admin\Shops::IDENTIFIER => Routes\V1\Admin\Shops::class,
-				Routes\V1\Admin\Rewards::IDENTIFIER => Routes\V1\Admin\Rewards::class,
-				Routes\V1\WCProductsSearch::IDENTIFIER => Routes\V1\WCProductsSearch::class,
+				Routes\V1\Admin\Settings::IDENTIFIER     => Routes\V1\Admin\Settings::class,
+				Routes\V1\Admin\Shops::IDENTIFIER        => Routes\V1\Admin\Shops::class,
+				Routes\V1\Admin\Rewards::IDENTIFIER      => Routes\V1\Admin\Rewards::class,
+				Routes\V1\WCProductsSearch::IDENTIFIER   => Routes\V1\WCProductsSearch::class,
 			],
 		];
 	}

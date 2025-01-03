@@ -78,11 +78,11 @@ class Settings extends AbstractRoute {
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$settings = $request->get_param( 'settings' );
 
-		if( ! $settings ) {
+		if ( ! $settings ) {
 			return rest_ensure_response( null );
 		}
 
-		$result = $this->settings->update_settings($settings);
+		$result = $this->settings->update_settings( $settings );
 
 		return rest_ensure_response( $result );
 	}
@@ -97,10 +97,10 @@ class Settings extends AbstractRoute {
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 
-		if( $id ) {
-			$setting = $this->settings->get_setting_by_id($id);
+		if ( $id ) {
+			$setting = $this->settings->get_setting_by_id( $id );
 
-			if( ! $setting ) {
+			if ( ! $setting ) {
 				return rest_ensure_response( null );
 			}
 
@@ -108,14 +108,14 @@ class Settings extends AbstractRoute {
 		}
 
 		$include_api_key = current_user_can( 'manage_options' );
-		$all_settings = $this->settings->get_all_settings_with_values($include_api_key);
+		$all_settings    = $this->settings->get_all_settings_with_values( $include_api_key );
 
 		// Returns settings as an object rather than an array.
 		// This makes it easier to work with in the front-end.
 		$return = [];
 		foreach ( $all_settings as $item ) {
-			$data = $this->prepare_item_for_response( $item['id'], $request );
-			$return[$item['id']] = $this->prepare_response_for_collection( $data );
+			$data                  = $this->prepare_item_for_response( $item['id'], $request );
+			$return[ $item['id'] ] = $this->prepare_response_for_collection( $data );
 		}
 
 		return rest_ensure_response( $return );

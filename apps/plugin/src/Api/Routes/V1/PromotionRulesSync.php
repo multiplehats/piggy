@@ -63,12 +63,12 @@ class PromotionRulesSync extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$connection = new Connection();
-		$result = $connection->sync_promotions_with_promotion_rules();
+		$result     = $connection->sync_promotions_with_promotion_rules();
 
-		if ($result) {
-			return new \WP_REST_Response(['message' => 'Promotion rules synced successfully with Leat promotions'], 200);
+		if ( $result ) {
+			return new \WP_REST_Response( [ 'message' => 'Promotion rules synced successfully with Leat promotions' ], 200 );
 		} else {
-			return new \WP_Error('sync_failed', 'Failed to sync promotion rules with Leat promotions', ['status' => 500]);
+			return new \WP_Error( 'sync_failed', 'Failed to sync promotion rules with Leat promotions', [ 'status' => 500 ] );
 		}
 	}
 }

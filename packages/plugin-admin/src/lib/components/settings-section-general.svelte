@@ -4,6 +4,8 @@
 	import SettingsApiKey from "./settings-api-key/settings-api-key.svelte";
 	import SettingsSwitch from "./settings-switch.svelte";
 	import { Alert } from "./ui/alert";
+	import SettingsSelect from "./settings-select.svelte";
+	import SettingsCheckboxes from "./settings-checkboxes.svelte";
 	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
 	import { SettingsSection } from "$lib/components/ui/settings-section";
 	import { SettingsAdminService } from "$lib/modules/settings";
@@ -66,29 +68,46 @@
 				{/if}
 			</div>
 
-			<!-- <SettingsCheckboxes
+			<div class="py-4">
+				<SettingsSelect
+					{...$settingsState.giftcard_order_status}
+					bind:value={$settingsState.giftcard_order_status.value}
+					items={Object.entries($settingsState.giftcard_order_status.options).map(
+						([value, { label: name }]) => {
+							return {
+								value,
+								name,
+							};
+						}
+					)}
+				/>
+			</div>
+
+			<SettingsCheckboxes
+				class="py-4"
+				{...$settingsState.giftcard_withdraw_order_statuses}
+				bind:value={$settingsState.giftcard_withdraw_order_statuses.value}
+			/>
+
+			<SettingsSelect
 				class="py-4"
 				{...$settingsState.reward_order_statuses}
 				bind:value={$settingsState.reward_order_statuses.value}
-			/> -->
+				items={Object.entries($settingsState.reward_order_statuses.options).map(
+					([value, { label: name }]) => {
+						return {
+							value,
+							name,
+						};
+					}
+				)}
+			/>
 
-			<!-- <div class="py-4">
-				<SettingsCheckboxes
-					{...$settingsState.withdraw_order_statuses}
-					bind:value={$settingsState.withdraw_order_statuses.value}
-				/>
-
-				{#if noCheckboxSelected($settingsState.withdraw_order_statuses)}
-					<Alert
-						description={__(
-							'If no order status is selected, credits will not be deducted from customers when an order is refunded, partially refunded, or when the payment is voided.',
-							'leat-crm'
-						)}
-						type="info"
-						class="mt-4"
-					></Alert>
-				{/if}
-			</div> -->
+			<SettingsCheckboxes
+				class="py-4"
+				{...$settingsState.withdraw_order_statuses}
+				bind:value={$settingsState.withdraw_order_statuses.value}
+			/>
 
 			<!-- <SettingsCheckboxes
 				class="py-4"

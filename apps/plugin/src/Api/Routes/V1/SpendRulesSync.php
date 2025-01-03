@@ -63,12 +63,12 @@ class SpendRulesSync extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$connection = new Connection();
-		$result = $connection->sync_rewards_with_spend_rules();
+		$result     = $connection->sync_rewards_with_spend_rules();
 
-		if ($result) {
-			return new \WP_REST_Response(['message' => 'Spend rules synced successfully with Leat rewards'], 200);
+		if ( $result ) {
+			return new \WP_REST_Response( [ 'message' => 'Spend rules synced successfully with Leat rewards' ], 200 );
 		} else {
-			return new \WP_Error('sync_failed', 'Failed to sync spend rules with Leat rewards', ['status' => 500]);
+			return new \WP_Error( 'sync_failed', 'Failed to sync spend rules with Leat rewards', [ 'status' => 500 ] );
 		}
 	}
 }

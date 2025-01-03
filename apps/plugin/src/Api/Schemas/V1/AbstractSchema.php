@@ -55,7 +55,7 @@ abstract class AbstractSchema {
 	public function __construct( ExtendSchema $extend, SchemaController $controller, Settings $settings ) {
 		$this->extend     = $extend;
 		$this->controller = $controller;
-		$this->settings = $settings;
+		$this->settings   = $settings;
 	}
 
 	/**

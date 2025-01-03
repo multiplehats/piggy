@@ -57,7 +57,7 @@ class SpendRules extends AbstractRoute {
 				'callback'            => [ $this, 'get_response' ],
 				'permission_callback' => '__return_true',
 				'args'                => [
-					'id' => [
+					'id'     => [
 						'description' => __( 'Spend rule ID', 'leat-crm' ),
 						'type'        => 'string',
 					],
@@ -81,46 +81,46 @@ class SpendRules extends AbstractRoute {
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$data = array(
-			'id' => $request->get_param( 'id' ),
-			'status' => $request->get_param( 'status' ),
-			'label' => $request->get_param( 'label' ),
-			'title' => $request->get_param( 'title' ),
-			'type' => $request->get_param( 'type' ),
-			'startsAt' => $request->get_param( 'startsAt' ),
-			'expiresAt' => $request->get_param( 'expiresAt' ),
-			'completed' => $request->get_param( 'completed' ),
-			'instructions' => $request->get_param( 'instructions' ),
-			'description' => $request->get_param( 'description' ),
-			'fulfillment' => $request->get_param( 'fulfillment' ),
-			'discountValue' => $request->get_param( 'discountValue' ),
-			'discountType' => $request->get_param( 'discountType' ),
+			'id'                    => $request->get_param( 'id' ),
+			'status'                => $request->get_param( 'status' ),
+			'label'                 => $request->get_param( 'label' ),
+			'title'                 => $request->get_param( 'title' ),
+			'type'                  => $request->get_param( 'type' ),
+			'startsAt'              => $request->get_param( 'startsAt' ),
+			'expiresAt'             => $request->get_param( 'expiresAt' ),
+			'completed'             => $request->get_param( 'completed' ),
+			'instructions'          => $request->get_param( 'instructions' ),
+			'description'           => $request->get_param( 'description' ),
+			'fulfillment'           => $request->get_param( 'fulfillment' ),
+			'discountValue'         => $request->get_param( 'discountValue' ),
+			'discountType'          => $request->get_param( 'discountType' ),
 			'minimumPurchaseAmount' => $request->get_param( 'minimumPurchaseAmount' ),
-			'selectedProducts' => $request->get_param( 'selectedProducts' ),
+			'selectedProducts'      => $request->get_param( 'selectedProducts' ),
 		);
 
 		$post_data = array(
-			'post_type' => 'leat_spend_rule',
-			'post_title' => $data['title'],
+			'post_type'   => 'leat_spend_rule',
+			'post_title'  => $data['title'],
 			'post_status' => $data['status'],
-			'meta_input' => array(
-				'_leat_spend_rule_type' => $data['type'],
-				'_leat_spend_rule_label' => $data['label'],
-				'_leat_spend_rule_starts_at' => $data['startsAt'],
-				'_leat_spend_rule_expires_at' => $data['expiresAt'],
-				'_leat_spend_rule_completed' => $data['completed'],
-				'_leat_spend_rule_instructions' => $data['instructions'],
-				'_leat_spend_rule_description' => $data['description'],
-				'_leat_spend_rule_fulfillment' => $data['fulfillment'],
-				'_leat_spend_rule_discount_value' => $data['discountValue'],
-				'_leat_spend_rule_discount_type' => $data['discountType'],
+			'meta_input'  => array(
+				'_leat_spend_rule_type'                    => $data['type'],
+				'_leat_spend_rule_label'                   => $data['label'],
+				'_leat_spend_rule_starts_at'               => $data['startsAt'],
+				'_leat_spend_rule_expires_at'              => $data['expiresAt'],
+				'_leat_spend_rule_completed'               => $data['completed'],
+				'_leat_spend_rule_instructions'            => $data['instructions'],
+				'_leat_spend_rule_description'             => $data['description'],
+				'_leat_spend_rule_fulfillment'             => $data['fulfillment'],
+				'_leat_spend_rule_discount_value'          => $data['discountValue'],
+				'_leat_spend_rule_discount_type'           => $data['discountType'],
 				'_leat_spend_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
-				'_leat_spend_rule_selected_products' => $data['selectedProducts'],
-			)
+				'_leat_spend_rule_selected_products'       => $data['selectedProducts'],
+			),
 		);
 
 		if ( ! empty( $data['id'] ) ) {
 			$post_data['ID'] = $data['id'];
-			$post_id = wp_update_post( $post_data, true );
+			$post_id         = wp_update_post( $post_data, true );
 		} else {
 			$post_id = wp_insert_post( $post_data, true );
 		}
@@ -143,19 +143,19 @@ class SpendRules extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		$prepared_args = array(
-			'post_type' => 'leat_spend_rule',
+			'post_type'      => 'leat_spend_rule',
 			'posts_per_page' => -1,
-			'post_status' => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array('publish'),
+			'post_status'    => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array( 'publish' ),
 		);
 
 		$id = $request->get_param( 'id' );
 
-		if($id) {
+		if ( $id ) {
 			// Get a specific post id
 			$prepared_args['p'] = $id;
 		}
 
-		$query = new \WP_Query();
+		$query        = new \WP_Query();
 		$query_result = $query->query( $prepared_args );
 
 		$response_objects = array();

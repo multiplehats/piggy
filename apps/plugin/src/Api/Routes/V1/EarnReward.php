@@ -53,7 +53,7 @@ class EarnReward extends AbstractRoute {
 						'type'        => 'integer',
 						'required'    => true,
 					],
-					'userId' => [
+					'userId'     => [
 						'description' => __( 'The Customer ID', 'leat-crm' ),
 						'type'        => 'integer',
 						'required'    => false,
@@ -75,32 +75,32 @@ class EarnReward extends AbstractRoute {
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$data = array(
 			'earn_rule_id' => $request->get_param( 'earnRuleId' ),
-			'user_id' => $request->get_param( 'userId' ) ?? get_current_user_id(),
+			'user_id'      => $request->get_param( 'userId' ) ?? get_current_user_id(),
 		);
 
 		$earn_rules_service = new EarnRulesService();
-		$post = $earn_rules_service->get_by_id( $data['earn_rule_id'] );
+		$post               = $earn_rules_service->get_by_id( $data['earn_rule_id'] );
 
-		if( ! $post ) {
+		if ( ! $post ) {
 			throw new RouteException( 'earn-rule-not-found', 'Earn rule not found', 404 );
 		}
 
 		// Check if the rule is claimable only once and if the user has already claimed it
-		if ($earn_rules_service->is_rule_claimable_once($data['earn_rule_id'])) {
-			if ($earn_rules_service->has_user_claimed_rule($data['user_id'], $data['earn_rule_id'])) {
+		if ( $earn_rules_service->is_rule_claimable_once( $data['earn_rule_id'] ) ) {
+			if ( $earn_rules_service->has_user_claimed_rule( $data['user_id'], $data['earn_rule_id'] ) ) {
 				throw new RouteException( 'earn-rule-already-claimed', 'You have already claimed this.', 400 );
 			}
 		}
 
 		// Get the Leat UUID for the user, if not found, create a new contact
 		$contact = $this->connection->get_contact( $data['user_id'] );
-		$uuid = $contact['uuid'];
+		$uuid    = $contact['uuid'];
 
 		$credits = $post['credits']['value'] ?? 0;
 
 		$this->connection->apply_credits( $uuid, $credits );
 
-		$this->connection->add_reward_log($data['user_id'], $data['earn_rule_id'], $credits);
+		$this->connection->add_reward_log( $data['user_id'], $data['earn_rule_id'], $credits );
 
 		$data     = $this->prepare_item_for_response( $data, $request );
 		$response = $this->prepare_response_for_collection( $data );
