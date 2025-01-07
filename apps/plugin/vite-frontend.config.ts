@@ -1,9 +1,8 @@
 import { join, resolve } from "node:path";
 import process from "node:process";
 import { v4wp } from "@kucrut/vite-for-wp";
-import { wp_globals } from "@kucrut/vite-for-wp/utils";
+import { wp_scripts } from "@kucrut/vite-for-wp/plugins";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import external_globals from "rollup-plugin-external-globals";
 import { visualizer } from "rollup-plugin-visualizer";
 import { type PluginOption, type UserConfig, splitVendorChunkPlugin } from "vite";
 import license from "rollup-plugin-license";
@@ -32,7 +31,7 @@ const config = {
 				},
 			},
 		}) as PluginOption,
-		external_globals(wp_globals()) as PluginOption,
+		wp_scripts(),
 		svelte({
 			configFile: resolve(__dirname, "./svelte.config.js"),
 		}),
