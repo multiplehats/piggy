@@ -15,7 +15,7 @@ class PromotionRules {
 	private $logger;
 
 	public function __construct() {
-		 $this->logger = new Logger();
+		$this->logger = new Logger();
 	}
 
 	private function get_post_meta_data( $post_id, $key, $fallback_value = null ) {
@@ -171,9 +171,14 @@ class PromotionRules {
 	public function delete_promotion_rule_by_leat_uuid( $uuid ) {
 		$args = array(
 			'post_type'      => 'leat_promotion_rule',
-			'meta_key'       => '_leat_promotion_uuid',
-			'meta_value'     => $uuid,
 			'posts_per_page' => 1,
+			'meta_query'     => array(
+				array(
+					'key'     => '_leat_promotion_uuid',
+					'value'   => $uuid,
+					'compare' => '=',
+				),
+			),
 		);
 
 		$posts = get_posts( $args );
@@ -185,7 +190,12 @@ class PromotionRules {
 
 	private function get_label_description() {
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
-		return sprintf( __( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat-crm' ), $placeholders );
+
+		return sprintf(
+			/* translators: %s: List of available placeholders that can be used in the promotion label text */
+			__( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat-crm' ),
+			$placeholders
+		);
 	}
 
 	private function get_default_label() {
@@ -224,9 +234,14 @@ class PromotionRules {
 	public function get_promotion_rule_by_leat_uuid( $uuid ) {
 		$args = array(
 			'post_type'      => 'leat_promotion_rule',
-			'meta_key'       => '_leat_promotion_uuid',
-			'meta_value'     => $uuid,
 			'posts_per_page' => 1,
+			'meta_query'     => array(
+				array(
+					'key'     => '_leat_promotion_uuid',
+					'value'   => $uuid,
+					'compare' => '=',
+				),
+			),
 		);
 
 		$posts = get_posts( $args );
@@ -245,18 +260,25 @@ class PromotionRules {
 	}
 
 	public function handle_duplicated_promotion_rules( $uuids ) {
-		global $wpdb;
-		$table_name = $wpdb->postmeta;
-
 		$this->logger->info( 'Handling duplicated promotion rules for UUIDs: ' . implode( ', ', $uuids ) );
 
 		foreach ( $uuids as $uuid ) {
-			$query = $wpdb->prepare(
-				"SELECT post_id FROM $table_name WHERE meta_key = '_leat_promotion_uuid' AND meta_value = %s ORDER BY post_id DESC",
-				$uuid
+			$args = array(
+				'post_type'      => 'leat_promotion_rule',
+				'fields'         => 'ids',
+				'orderby'        => 'ID',
+				'order'          => 'DESC',
+				'posts_per_page' => -1,
+				'meta_query'     => array(
+					array(
+						'key'     => '_leat_promotion_uuid',
+						'value'   => $uuid,
+						'compare' => '=',
+					),
+				),
 			);
 
-			$post_ids = $wpdb->get_col( $query );
+			$post_ids = get_posts( $args );
 
 			if ( count( $post_ids ) > 1 ) {
 				$keep_id = array_shift( $post_ids );

@@ -267,6 +267,7 @@ class GiftcardProduct {
 							// Add customer-facing note with the giftcard hash.
 							$order->add_order_note(
 								sprintf(
+									// translators: 1: giftcard hash.
 									__( 'Gift Card Code: %s', 'leat-crm' ),
 									$giftcard_hash
 								),
@@ -276,7 +277,7 @@ class GiftcardProduct {
 							OrderNotes::add_success(
 								$order,
 								sprintf(
-									// translators: 1: giftcard id, 2: amount in cents
+									// translators: 1: giftcard id, 2: amount in cents.
 									__( 'Gift card #%1$s created with amount %2$s successfully.', 'leat-crm' ),
 									$giftcard_id,
 									$amount_in_cents / 100
@@ -460,7 +461,8 @@ class GiftcardProduct {
 					OrderNotes::add_warning(
 						$order,
 						sprintf(
-							__( 'Gift card #%s has already been reversed.', 'leat-crm' ),
+							// translators: 1: giftcard id.
+							__( 'Gift card #%1$s has already been reversed.', 'leat-crm' ),
 							$giftcard_id ?: $i
 						)
 					);
