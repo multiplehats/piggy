@@ -31,7 +31,7 @@ class WebhooksSchema extends AbstractSchema {
 	public function get_properties() {
 		return [
 			'event_type' => [
-				'description' => __( 'Type of webhook event', 'leat' ),
+				'description' => __( 'Type of webhook event', 'leat-crm' ),
 				'type'        => 'string',
 				'enum'        => [
 					'voucher_created',
@@ -41,39 +41,39 @@ class WebhooksSchema extends AbstractSchema {
 				],
 			],
 			'data'       => [
-				'description' => __( 'Webhook payload data', 'leat' ),
+				'description' => __( 'Webhook payload data', 'leat-crm' ),
 				'type'        => 'object',
 				'properties'  => [
 					'uuid'           => [
-						'description' => __( 'UUID of the affected resource', 'leat' ),
+						'description' => __( 'UUID of the affected resource', 'leat-crm' ),
 						'type'        => 'string',
 					],
 					'contact_uuid'   => [
-						'description' => __( 'UUID of the related contact', 'leat' ),
+						'description' => __( 'UUID of the related contact', 'leat-crm' ),
 						'type'        => 'string',
 					],
 					'promotion_uuid' => [
-						'description' => __( 'UUID of the related promotion', 'leat' ),
+						'description' => __( 'UUID of the related promotion', 'leat-crm' ),
 						'type'        => 'string',
 					],
 					'status'         => [
-						'description' => __( 'Status of the resource', 'leat' ),
+						'description' => __( 'Status of the resource', 'leat-crm' ),
 						'type'        => 'string',
 					],
 					'created_at'     => [
-						'description' => __( 'Creation timestamp', 'leat' ),
+						'description' => __( 'Creation timestamp', 'leat-crm' ),
 						'type'        => 'string',
 						'format'      => 'date-time',
 					],
 					'updated_at'     => [
-						'description' => __( 'Last update timestamp', 'leat' ),
+						'description' => __( 'Last update timestamp', 'leat-crm' ),
 						'type'        => 'string',
 						'format'      => 'date-time',
 					],
 				],
 			],
 			'signature'  => [
-				'description' => __( 'Webhook signature for verification', 'leat' ),
+				'description' => __( 'Webhook signature for verification', 'leat-crm' ),
 				'type'        => 'string',
 			],
 		];

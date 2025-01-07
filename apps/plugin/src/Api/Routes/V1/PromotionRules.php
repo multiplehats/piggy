@@ -47,7 +47,7 @@ class PromotionRules extends AbstractRoute {
 				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Promotion rules', 'leat' ),
+						'description' => __( 'Promotion rules', 'leat-crm' ),
 						'type'        => 'object',
 					],
 				],
@@ -58,11 +58,11 @@ class PromotionRules extends AbstractRoute {
 				'permission_callback' => [ Middleware::class, 'is_public' ],
 				'args'                => [
 					'id'     => [
-						'description' => __( 'Promotion rule ID', 'leat' ),
+						'description' => __( 'Promotion rule ID', 'leat-crm' ),
 						'type'        => 'string',
 					],
 					'status' => [
-						'description' => __( 'Promotion rule status', 'leat' ),
+						'description' => __( 'Promotion rule status', 'leat-crm' ),
 						'type'        => 'string',
 					],
 				],
@@ -114,7 +114,7 @@ class PromotionRules extends AbstractRoute {
 		}
 
 		if ( is_wp_error( $post_id ) ) {
-			return new \WP_Error( 'post_save_failed', __( 'Failed to save promotion rule', 'leat' ), array( 'status' => 500 ) );
+			return new \WP_Error( 'post_save_failed', __( 'Failed to save promotion rule', 'leat-crm' ), array( 'status' => 500 ) );
 		}
 
 		$response = $this->prepare_item_for_response( get_post( $post_id ), $request );
