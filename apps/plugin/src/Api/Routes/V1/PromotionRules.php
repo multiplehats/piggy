@@ -3,7 +3,7 @@
 namespace Leat\Api\Routes\V1;
 
 use Leat\Api\Routes\V1\AbstractRoute;
-use Leat\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\Middleware;
 
 /**
  * Shops class.
@@ -55,7 +55,7 @@ class PromotionRules extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ Middleware::class, 'is_public' ],
 				'args'                => [
 					'id'     => [
 						'description' => __( 'Promotion rule ID', 'leat' ),
@@ -106,8 +106,6 @@ class PromotionRules extends AbstractRoute {
 			),
 		);
 
-		error_log( json_encode( $post_data ) );
-
 		if ( ! empty( $data['id'] ) ) {
 			$post_data['ID'] = $data['id'];
 			$post_id         = wp_update_post( $post_data, true );
@@ -141,7 +139,7 @@ class PromotionRules extends AbstractRoute {
 		$id = $request->get_param( 'id' );
 
 		if ( $id ) {
-			// Get a specific post id
+			// Get a specific post id.
 			$prepared_args['p'] = $id;
 		}
 

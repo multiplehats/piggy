@@ -4,7 +4,7 @@ namespace Leat\Api\Routes\V1;
 
 use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Routes\V1\AbstractRoute;
-use Leat\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\Middleware;
 use Leat\Domain\Services\EarnRules as EarnRulesService;
 
 /**
@@ -46,7 +46,10 @@ class EarnReward extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => function( $request ) {
+					$user_id = $request->get_param( 'userId' );
+					return Middleware::is_valid_user( intval( $user_id ) );
+				},
 				'args'                => [
 					'earnRuleId' => [
 						'description' => __( 'The Earn Rule ID', 'leat-crm' ),
@@ -85,7 +88,7 @@ class EarnReward extends AbstractRoute {
 			throw new RouteException( 'earn-rule-not-found', 'Earn rule not found', 404 );
 		}
 
-		// Check if the rule is claimable only once and if the user has already claimed it
+		// Check if the rule is claimable only once and if the user has already claimed it.
 		if ( $earn_rules_service->is_rule_claimable_once( $data['earn_rule_id'] ) ) {
 			if ( $earn_rules_service->has_user_claimed_rule( $data['user_id'], $data['earn_rule_id'] ) ) {
 				throw new RouteException( 'earn-rule-already-claimed', 'You have already claimed this.', 400 );

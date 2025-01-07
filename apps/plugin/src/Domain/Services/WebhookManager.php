@@ -72,7 +72,7 @@ class WebhookManager {
 				}
 			}
 
-			// Then process required webhooks
+			// Then process required webhooks.
 			foreach ( self::REQUIRED_WEBHOOKS as $key => $webhook_config ) {
 				try {
 					$exists = false;
@@ -80,7 +80,7 @@ class WebhookManager {
 						if ( $existing_webhook->getEventType() === $webhook_config['event_type']
 							&& strpos( $existing_webhook->getName(), self::WEBHOOK_PREFIX ) === 0 ) {
 							$exists = true;
-							// Update webhook if URL is wrong
+							// Update webhook if the URL is wrong.
 							if ( $existing_webhook->getUrl() !== $webhook_url ) {
 								WebhookSubscription::update(
 									$existing_webhook->getUuid(),
@@ -137,7 +137,7 @@ class WebhookManager {
 			return;
 		}
 
-		// Fetch updated voucher data and update user meta
+		// Fetch updated voucher data and update user meta.
 		try {
 			$vouchers = \Piggy\Api\Models\Vouchers\Voucher::list(
 				[
@@ -146,7 +146,7 @@ class WebhookManager {
 					'limit'          => 100,
 					'page'           => 1,
 				]
-				);
+			);
 
 			if ( ! empty( $vouchers ) ) {
 				$voucher_sync->update_user_vouchers( $user->ID, $vouchers );

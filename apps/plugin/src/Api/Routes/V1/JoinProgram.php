@@ -4,7 +4,7 @@ namespace Leat\Api\Routes\V1;
 
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Exceptions\RouteException;
-use Leat\Domain\Services\CustomerSession;
+use Leat\Api\Routes\V1\Middleware;
 
 class JoinProgram extends AbstractRoute {
 	const IDENTIFIER  = 'join-program';
@@ -19,7 +19,10 @@ class JoinProgram extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => function( $request ) {
+					$user_id = $request->get_param( 'userId' );
+					return Middleware::is_valid_user( intval( $user_id ) );
+				},
 				'args'                => [
 					'userId' => [
 						'required' => true,
@@ -59,10 +62,10 @@ class JoinProgram extends AbstractRoute {
 		$this->connection->sync_user_attributes( $user_id, $uuid );
 
 		return rest_ensure_response(
-			 [
-				 'success' => true,
-				 'message' => 'Successfully joined the program',
-			 ]
-			);
+			[
+				'success' => true,
+				'message' => 'Successfully joined the program',
+			]
+		);
 	}
 }

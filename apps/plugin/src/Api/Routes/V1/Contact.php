@@ -4,6 +4,7 @@ namespace Leat\Api\Routes\V1;
 
 use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Routes\V1\AbstractRoute;
+use Leat\Api\Routes\V1\Middleware;
 
 /**
  * Contact class.
@@ -44,7 +45,10 @@ class Contact extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => function( $request ) {
+					$user_id = $request->get_param( 'userId' );
+					return Middleware::is_valid_user( intval( $user_id ) );
+				},
 			],
 			'schema' => [ $this->schema, 'get_public_item_schema' ],
 		];

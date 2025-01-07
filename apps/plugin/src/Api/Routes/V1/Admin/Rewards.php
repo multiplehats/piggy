@@ -3,7 +3,7 @@
 namespace Leat\Api\Routes\V1\Admin;
 
 use Leat\Api\Routes\V1\AbstractRoute;
-use Leat\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\Middleware;
 
 /**
  * Rewards class.

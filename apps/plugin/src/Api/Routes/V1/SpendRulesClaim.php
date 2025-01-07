@@ -3,7 +3,7 @@
 namespace Leat\Api\Routes\V1;
 
 use Leat\Api\Routes\V1\AbstractRoute;
-use Leat\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\Middleware;
 use Leat\Api\Connection;
 use Leat\Api\Exceptions\RouteException;
 use Leat\Domain\Services\SpendRules;
@@ -47,7 +47,10 @@ class SpendRulesClaim extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => function( $request ) {
+					$user_id = $request->get_param( 'userId' );
+					return Middleware::is_valid_user( intval( $user_id ) );
+				},
 				'args'                => [
 					'id'      => [
 						'type'     => 'integer',
