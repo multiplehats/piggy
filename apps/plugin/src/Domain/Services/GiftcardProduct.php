@@ -713,7 +713,7 @@ class GiftcardProduct {
 
 		foreach ( $order->get_items() as $item ) {
 			/**
-			 * Process each order item.
+			 * Process each order item to check if it has a gift card.
 			 *
 			 * @var \WC_Order_Item_Product $item
 			 */
@@ -726,16 +726,23 @@ class GiftcardProduct {
 			}
 		}
 
+		$description = __( 'This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards.', 'leat-crm' );
+
 		if ( $has_giftcard ) {
-			?>
-			<script type="text/javascript">
+			// Register and enqueue jQuery if not already done
+			wp_enqueue_script( 'jquery' );
+
+			// Add inline script
+			wp_add_inline_script(
+				'jquery',
+				'
 				jQuery(document).ready(function($) {
-					const refundAmount = $('#refund_amount');
-					refundAmount.prop('readonly', true);
-					refundAmount.after('<p class="description">This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards.</p>');
+					const refundAmount = $("#refund_amount");
+					refundAmount.prop("readonly", true);
+					refundAmount.after("<p class=\"description\">' . esc_js( $description ) . '</p>");
 				});
-			</script>
-			<?php
+				'
+			);
 		}
 	}
 }
