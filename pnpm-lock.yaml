@@ -92,8 +92,8 @@ importers:
         specifier: ^6.21.3
         version: 6.21.3
       '@kucrut/vite-for-wp':
-        specifier: ^0.7.1
-        version: 0.7.1(rollup-plugin-external-globals@0.8.0(rollup@4.24.0))(vite@4.5.0(@types/node@18.18.6))
+        specifier: ^0.10.0
+        version: 0.10.0(rollup-plugin-external-globals@0.13.0(rollup@4.24.0))(vite-plugin-external@4.3.1)(vite@4.5.0(@types/node@18.18.6))
       '@leat/lib':
         specifier: workspace:^
         version: link:../../packages/lib
@@ -191,8 +191,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5
       rollup-plugin-external-globals:
-        specifier: ^0.8.0
-        version: 0.8.0(rollup@4.24.0)
+        specifier: ^0.13.0
+        version: 0.13.0(rollup@4.24.0)
       rollup-plugin-license:
         specifier: ^3.5.3
         version: 3.5.3(picomatch@4.0.2)(rollup@4.24.0)
@@ -253,6 +253,9 @@ importers:
       vite-plugin-banner:
         specifier: ^0.7.1
         version: 0.7.1
+      vite-plugin-external:
+        specifier: ^4.3.1
+        version: 4.3.1
 
   packages/lib:
     dependencies:
@@ -345,9 +348,6 @@ importers:
       '@codemirror/view':
         specifier: ^6.21.3
         version: 6.21.3
-      '@kucrut/vite-for-wp':
-        specifier: ^0.7.1
-        version: 0.7.1(rollup-plugin-external-globals@0.8.0(rollup@4.24.0))(vite@4.5.0(@types/node@18.18.6))
       '@leat/lib':
         specifier: workspace:^
         version: link:../lib
@@ -565,9 +565,6 @@ importers:
       '@codemirror/view':
         specifier: ^6.21.3
         version: 6.21.3
-      '@kucrut/vite-for-wp':
-        specifier: ^0.7.1
-        version: 0.7.1(rollup-plugin-external-globals@0.8.0(rollup@4.24.0))(vite@4.5.0(@types/node@18.18.6))
       '@leat/lib':
         specifier: workspace:^
         version: link:../lib
@@ -1748,11 +1745,11 @@ packages:
     resolution: {integrity: sha512-f5DRIOZf7wxogefH03RjMPMdBF7ADTWUMoOs9kaJo06EfwF+aFhMZMDZxHg/Xe12hptN9xoZjGso2fdjapBRIA==}
     engines: {node: '>=10'}
 
-  '@kucrut/vite-for-wp@0.7.1':
-    resolution: {integrity: sha512-3DmSR5gjQLoxwo15iXIbFfpzEa3E8t5UvCKYXr6TsiRJxFKcx+Bc0PsO6IAAJeUcB6QJ3INQSUdT1JP/rvrwDA==}
+  '@kucrut/vite-for-wp@0.10.0':
+    resolution: {integrity: sha512-1fNm9PrUFGvJ1iCcCa3FhXCcwO2jccoTc0wUrg4HTyWy/bENhOYXWBS1/bnLerFK2jEoIOReH7BOCuTVlXt6xg==}
     peerDependencies:
-      rollup-plugin-external-globals: ^0.8.0
-      vite: ^4.4.11
+      rollup-plugin-external-globals: ^0.13.0
+      vite: ^6.0.3
       vite-plugin-external: ^4.0.1
     peerDependenciesMeta:
       rollup-plugin-external-globals:
@@ -1943,6 +1940,15 @@ packages:
 
   '@rollup/pluginutils@5.0.5':
     resolution: {integrity: sha512-6aEYR910NyP73oHiJglti74iRyOwgFU4x3meH/H8OJx6Ry0j6cOVZ5X/wTvub7G7Ao6qaHBEaNsV3GLJkSsF+Q==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/pluginutils@5.1.4':
+    resolution: {integrity: sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
@@ -2237,6 +2243,9 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
+  '@types/fs-extra@11.0.4':
+    resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
+
   '@types/gradient-parser@0.1.3':
     resolution: {integrity: sha512-XDbrTSBlQV9nxE1GiDL3FaOPy4G/KaJkhDutBX48Kg8CYZMBARyyDFGCWfWJn4pobmInmwud1xxH7VJMAr0CKQ==}
 
@@ -2254,6 +2263,9 @@ packages:
 
   '@types/json-schema@7.0.14':
     resolution: {integrity: sha512-U3PUjAudAdJBeC2pgN8uTIKgxrb4nlDF3SF0++EldXQvQBGkpFZMSnwQiIoDU77tv45VgNkl/L4ouD+rEomujw==}
+
+  '@types/jsonfile@6.1.4':
+    resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
@@ -2275,6 +2287,9 @@ packages:
 
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
+
+  '@types/node@14.18.63':
+    resolution: {integrity: sha512-fAtCfv4jJg+ExtXhvCkCqUKZ+4ok/JQk01qDKhL5BDDoS3AxKXhV5/MAVUZyQnSEd2GT92fkgZl0pz0Q0AzcIQ==}
 
   '@types/node@18.18.6':
     resolution: {integrity: sha512-wf3Vz+jCmOQ2HV1YUJuCWdL64adYxumkrxtc+H1VUQlnQI04+5HtH+qZCOE21lBE7gIrt+CwX2Wv8Acrw5Ak6w==}
@@ -5525,6 +5540,11 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  rollup-plugin-external-globals@0.13.0:
+    resolution: {integrity: sha512-wBS3hmoF0OtEnA0lWsmTC6Nhnkk2zjZbfhaX2gLo8VnfNGFdGhiYKwMpIPQPrYbAw+mAYUYmoHYktAl1eZHgVw==}
+    peerDependencies:
+      rollup: ^2.25.0 || ^3.3.0 || ^4.1.4
+
   rollup-plugin-external-globals@0.8.0:
     resolution: {integrity: sha512-c65c7hPMCE//cLzC4dLVE25XkuHsBqSkZp+/5pvtZ1MFwqgQLRRkIfuCvI3PnI7Yj8HoXqYtdsRN9gYF5a4tVQ==}
     peerDependencies:
@@ -6469,6 +6489,10 @@ packages:
 
   vite-plugin-banner@0.7.1:
     resolution: {integrity: sha512-Bww2Xd5tOGsZ1yZ9rQiGneryvsL1u86znPrqeQjCsXPsG72pnSdV5lcQA+cy8UNDguMqyTJiCevlNUbLnT85UA==}
+
+  vite-plugin-external@4.3.1:
+    resolution: {integrity: sha512-aoukfac66QevFAbRF2ZD81WPSqeqhgEfbfhPYQP9RPWO1en+Lw4HyhWRdvSjYn56gcKUJCtHdFG2jEpYgleLng==}
+    engines: {node: '>=14.18.0', vite: '>=3.1.0'}
 
   vite@4.5.0:
     resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==}
@@ -7789,11 +7813,12 @@ snapshots:
       string-argv: 0.3.2
       type-detect: 4.1.0
 
-  '@kucrut/vite-for-wp@0.7.1(rollup-plugin-external-globals@0.8.0(rollup@4.24.0))(vite@4.5.0(@types/node@18.18.6))':
+  '@kucrut/vite-for-wp@0.10.0(rollup-plugin-external-globals@0.13.0(rollup@4.24.0))(vite-plugin-external@4.3.1)(vite@4.5.0(@types/node@18.18.6))':
     dependencies:
       vite: 4.5.0(@types/node@18.18.6)
     optionalDependencies:
-      rollup-plugin-external-globals: 0.8.0(rollup@4.24.0)
+      rollup-plugin-external-globals: 0.13.0(rollup@4.24.0)
+      vite-plugin-external: 4.3.1
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
@@ -8048,6 +8073,14 @@ snapshots:
       '@types/estree': 1.0.3
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
+      rollup: 4.24.0
+
+  '@rollup/pluginutils@5.1.4(rollup@4.24.0)':
+    dependencies:
+      '@types/estree': 1.0.6
+      estree-walker: 2.0.2
+      picomatch: 4.0.2
     optionalDependencies:
       rollup: 4.24.0
 
@@ -8353,7 +8386,7 @@ snapshots:
 
   '@types/eslint@9.6.1':
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       '@types/json-schema': 7.0.14
 
   '@types/estree@1.0.3': {}
@@ -8361,6 +8394,11 @@ snapshots:
   '@types/estree@1.0.5': {}
 
   '@types/estree@1.0.6': {}
+
+  '@types/fs-extra@11.0.4':
+    dependencies:
+      '@types/jsonfile': 6.1.4
+      '@types/node': 18.18.6
 
   '@types/gradient-parser@0.1.3': {}
 
@@ -8377,6 +8415,10 @@ snapshots:
       '@types/sizzle': 2.3.4
 
   '@types/json-schema@7.0.14': {}
+
+  '@types/jsonfile@6.1.4':
+    dependencies:
+      '@types/node': 18.18.6
 
   '@types/keyv@3.1.4':
     dependencies:
@@ -8397,6 +8439,8 @@ snapshots:
   '@types/mousetrap@1.6.15': {}
 
   '@types/node@12.20.55': {}
+
+  '@types/node@14.18.63': {}
 
   '@types/node@18.18.6': {}
 
@@ -12233,6 +12277,14 @@ snapshots:
     dependencies:
       glob: 10.3.10
 
+  rollup-plugin-external-globals@0.13.0(rollup@4.24.0):
+    dependencies:
+      '@rollup/pluginutils': 5.1.4(rollup@4.24.0)
+      estree-walker: 3.0.3
+      is-reference: 3.0.2
+      magic-string: 0.30.11
+      rollup: 4.24.0
+
   rollup-plugin-external-globals@0.8.0(rollup@4.24.0):
     dependencies:
       '@rollup/pluginutils': 5.0.5(rollup@4.24.0)
@@ -13357,6 +13409,12 @@ snapshots:
       - terser
 
   vite-plugin-banner@0.7.1: {}
+
+  vite-plugin-external@4.3.1:
+    dependencies:
+      '@types/fs-extra': 11.0.4
+      '@types/node': 14.18.63
+      fs-extra: 11.1.1
 
   vite@4.5.0(@types/node@18.18.6):
     dependencies:

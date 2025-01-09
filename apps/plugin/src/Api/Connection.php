@@ -195,7 +195,7 @@ class Connection {
 
 			return $this->format_contact( $contact );
 		} catch ( \Throwable $th ) {
-			$this->logException( $th, 'Contact Create Error' );
+			$this->log_exception( $th, 'Contact Create Error' );
 
 			throw $th;
 		}
@@ -234,7 +234,7 @@ class Connection {
 
 			return $this->format_contact( $contact );
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Contact Update Error' );
+			$this->log_exception( $e, 'Contact Update Error' );
 
 			throw $e;
 		}
@@ -772,12 +772,12 @@ class Connection {
 						// Create single attribute at a time
 						$response = ApiClient::post( CustomAttribute::resourceUri, $attr );
 					} catch ( \Exception $e ) {
-						$this->logException( $e, 'Attribute "' . $attr['name'] . '" Create Error' );
+						$this->log_exception( $e, 'Attribute "' . $attr['name'] . '" Create Error' );
 					}
 				}
 			}
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Ensure Custom Attributes Error' );
+			$this->log_exception( $e, 'Ensure Custom Attributes Error' );
 		}
 	}
 
@@ -797,7 +797,7 @@ class Connection {
 
 			return $update_result;
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Sync Attributes with Category Update Error' );
+			$this->log_exception( $e, 'Sync Attributes with Category Update Error' );
 
 			return false;
 		}
@@ -817,7 +817,7 @@ class Connection {
 			$attributes = $this->get_user_attributes( $user_id );
 			return $this->sync_attributes_with_category_update( $uuid, $attributes );
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Sync User Attributes Error' );
+			$this->log_exception( $e, 'Sync User Attributes Error' );
 
 			return false;
 		}
@@ -848,7 +848,7 @@ class Connection {
 
 			return $this->sync_attributes_with_category_update( $uuid, $attributes );
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Sync Basic Attributes from Order Error' );
+			$this->log_exception( $e, 'Sync Basic Attributes from Order Error' );
 			return false;
 		}
 	}
@@ -866,7 +866,7 @@ class Connection {
 			$attributes = $this->get_woocommerce_guest_data( $email, $order );
 			return $this->sync_attributes_with_category_update( $uuid, $attributes );
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Sync Guest Attributes Error' );
+			$this->log_exception( $e, 'Sync Guest Attributes Error' );
 			return false;
 		}
 	}
@@ -1167,7 +1167,7 @@ class Connection {
 
 			return $refund_result;
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Error Processing Full Refund' );
+			$this->log_exception( $e, 'Error Processing Full Refund' );
 			return false;
 		}
 	}
@@ -1194,7 +1194,7 @@ class Connection {
 
 			return $refund_result;
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Error Processing Partial Refund' );
+			$this->log_exception( $e, 'Error Processing Partial Refund' );
 			return false;
 		}
 	}
@@ -1272,7 +1272,7 @@ class Connection {
 
 			return $programs;
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'List Giftcard Programs Error' );
+			$this->log_exception( $e, 'List Giftcard Programs Error' );
 
 			throw $e;
 		}
@@ -1292,10 +1292,10 @@ class Connection {
 	/**
 	 * Log API errors.
 	 *
-	 * @param \Exception $e The exception to log
-	 * @param string     $context Additional context for the error
+	 * @param \Exception $e The exception to log.
+	 * @param string     $context Additional context for the error.
 	 */
-	private function logException( \Exception $e, string $context = '' ) {
+	private function log_exception( \Exception $e, string $context = '' ) {
 		if ( $e instanceof PiggyRequestException ) {
 			$error_bag = $e->getErrorBag();
 			$this->logger->error(
@@ -1304,8 +1304,8 @@ class Connection {
 					[
 						'message'     => $e->getMessage(),
 						'code'        => $e->getCode(),
-						'error_bag'   => $error_bag ? json_encode( $error_bag->all() ) : null,
-						'first_error' => $error_bag ? json_encode( $error_bag->first() ) : null,
+						'error_bag'   => $error_bag ? wp_json_encode( $error_bag->all() ) : null,
+						'first_error' => $error_bag ? wp_json_encode( $error_bag->first() ) : null,
 						'context'     => $context,
 					],
 					JSON_PRETTY_PRINT,
@@ -1340,7 +1340,7 @@ class Connection {
 
 			return $this->format_giftcard( $response );
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Create Giftcard Error' );
+			$this->log_exception( $e, 'Create Giftcard Error' );
 			throw $e;
 		}
 	}
@@ -1425,7 +1425,7 @@ class Connection {
 
 			return $response;
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Send Giftcard Email Error' );
+			$this->log_exception( $e, 'Send Giftcard Email Error' );
 			return false;
 		}
 	}
@@ -1447,7 +1447,7 @@ class Connection {
 
 			return $this->format_giftcard_transaction( $response );
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Reverse Giftcard Transaction Error' );
+			$this->log_exception( $e, 'Reverse Giftcard Transaction Error' );
 			return false;
 		}
 	}
@@ -1468,7 +1468,7 @@ class Connection {
 		try {
 			return $this->create_giftcard_transaction( $giftcard_uuid, $amount_in_cents );
 		} catch ( \Exception $e ) {
-			$this->logException( $e, 'Create Giftcard Refund Transaction Error' );
+			$this->log_exception( $e, 'Create Giftcard Refund Transaction Error' );
 			return false;
 		}
 	}

@@ -227,7 +227,8 @@ class GiftcardProduct {
 				OrderNotes::add(
 					$order,
 					sprintf(
-						__( 'Starting to create %d gift card(s) with amount %s for %s.', 'leat-crm' ),
+						// translators: 1: quantity of gift cards, 2: amount in cents, 3: product name
+						__( 'Starting to create %1$d gift card(s) with amount %2$s for %3$s.', 'leat-crm' ),
 						$quantity,
 						$amount_in_cents / 100,
 						$product->get_name()
@@ -266,6 +267,7 @@ class GiftcardProduct {
 							// Add customer-facing note with the giftcard hash.
 							$order->add_order_note(
 								sprintf(
+									// translators: 1: giftcard hash.
 									__( 'Gift Card Code: %s', 'leat-crm' ),
 									$giftcard_hash
 								),
@@ -275,7 +277,8 @@ class GiftcardProduct {
 							OrderNotes::add_success(
 								$order,
 								sprintf(
-									__( 'Gift card #%s created with amount %s successfully.', 'leat-crm' ),
+									// translators: 1: giftcard id, 2: amount in cents.
+									__( 'Gift card #%1$s created with amount %2$s successfully.', 'leat-crm' ),
 									$giftcard_id,
 									$amount_in_cents / 100
 								)
@@ -289,7 +292,8 @@ class GiftcardProduct {
 									OrderNotes::add_success(
 										$order,
 										sprintf(
-											__( 'Gift card #%s email sent to %s.', 'leat-crm' ),
+											// translators: 1: giftcard id, 2: recipient email
+											__( 'Gift card #%1$s email sent to %2$s.', 'leat-crm' ),
 											$giftcard_id,
 											$recipient_email
 										)
@@ -298,7 +302,8 @@ class GiftcardProduct {
 									OrderNotes::add_error(
 										$order,
 										sprintf(
-											__( 'Failed to send gift card #%s email to %s.', 'leat-crm' ),
+											// translators: 1: giftcard id, 2: recipient email
+											__( 'Failed to send gift card #%1$s email to %2$s.', 'leat-crm' ),
 											$giftcard_id,
 											$recipient_email
 										)
@@ -323,7 +328,8 @@ class GiftcardProduct {
 						OrderNotes::add_error(
 							$order,
 							sprintf(
-								__( 'Error creating gift card: %s', 'leat-crm' ),
+								// translators: 1: error message
+								__( 'Error creating gift card: %1$s', 'leat-crm' ),
 								$e->getMessage()
 							)
 						);
@@ -378,7 +384,8 @@ class GiftcardProduct {
 
 		$giftcard_id = $meta->value;
 		return sprintf(
-			'<a href="%s" target="_blank">View Giftcard #%s</a>',
+			// translators: 1: giftcard id, 2: giftcard id.
+			__( '<a href="%1$s" target="_blank">View Giftcard #%2$s</a>', 'leat-crm' ),
 			esc_url( 'https://business.leat.com/store/giftcards/program/cards?card_id=' . $giftcard_id ),
 			esc_html( $giftcard_id )
 		);
@@ -414,7 +421,7 @@ class GiftcardProduct {
 			return;
 		}
 
-		// Check if this refund has already been processed
+		// Check if this refund has already been processed.
 		if ( get_post_meta( $refund_id, '_leat_giftcards_reversed', true ) ) {
 			OrderNotes::add_warning( $order, 'Gift cards for this refund have already been processed.' );
 			return;
@@ -449,12 +456,13 @@ class GiftcardProduct {
 				$giftcard_uuid = $original_item->get_meta( '_leat_giftcard_uuid_' . $i );
 				$giftcard_id   = $original_item->get_meta( '_leat_giftcard_id_' . $i );
 
-				// Check if this specific gift card has already been reversed
+				// Check if this specific gift card has already been reversed.
 				if ( $original_item->get_meta( '_leat_giftcard_reversed_' . $i ) ) {
 					OrderNotes::add_warning(
 						$order,
 						sprintf(
-							__( 'Gift card #%s has already been reversed.', 'leat-crm' ),
+							// translators: 1: giftcard id.
+							__( 'Gift card #%1$s has already been reversed.', 'leat-crm' ),
 							$giftcard_id ?: $i
 						)
 					);
@@ -465,7 +473,8 @@ class GiftcardProduct {
 					OrderNotes::add_error(
 						$order,
 						sprintf(
-							__( 'Could not process refund for gift card #%s - missing transaction data.', 'leat-crm' ),
+							// translators: 1: giftcard id.
+							__( 'Could not process refund for gift card #%1$s - missing transaction data.', 'leat-crm' ),
 							$giftcard_id ?: $i
 						)
 					);
@@ -496,7 +505,8 @@ class GiftcardProduct {
 						OrderNotes::add_success(
 							$order,
 							sprintf(
-								__( 'Deducted %s%% from gift card #%s.', 'leat-crm' ),
+								// translators: 1: refund percentage, 2: giftcard id.
+								__( 'Deducted %1$s%% from gift card #%2$s.', 'leat-crm' ),
 								round( $refund_percentage * 100 ),
 								$giftcard_id
 							)
@@ -514,14 +524,15 @@ class GiftcardProduct {
 							]
 						);
 
-						// Mark this specific gift card as reversed
+						// Mark this specific gift card as reversed.
 						$original_item->add_meta_data( '_leat_giftcard_reversed_' . $i, true );
 						$original_item->save();
 					} else {
 						OrderNotes::add_error(
 							$order,
 							sprintf(
-								__( 'Failed to process refund for gift card #%s.', 'leat-crm' ),
+								// translators: 1: giftcard id.
+								__( 'Failed to process refund for gift card #%1$s.', 'leat-crm' ),
 								$giftcard_id
 							)
 						);
@@ -530,7 +541,8 @@ class GiftcardProduct {
 					OrderNotes::add_error(
 						$order,
 						sprintf(
-							__( 'Error processing refund for gift card #%s: %s', 'leat-crm' ),
+							// translators: 1: giftcard id, 2: error message.
+							__( 'Error processing refund for gift card #%1$s: %2$s', 'leat-crm' ),
 							$giftcard_id,
 							$e->getMessage()
 						)
@@ -548,14 +560,14 @@ class GiftcardProduct {
 			}
 		}
 
-		// Mark this refund as processed
+		// Mark this refund as processed.
 		update_post_meta( $refund_id, '_leat_giftcards_reversed', true );
 	}
 
 	public function handle_giftcard_withdrawal( $order_id ) {
 		$order = wc_get_order( $order_id );
 
-		// Check if withdrawals have already been processed for this order
+		// Check if withdrawals have already been processed for this order.
 		if ( get_post_meta( $order_id, '_leat_giftcards_reversed', true ) ) {
 			OrderNotes::add_warning( $order, 'Gift cards for this order have already been reversed.' );
 			return;
@@ -582,12 +594,13 @@ class GiftcardProduct {
 				$giftcard_uuid = $item->get_meta( '_leat_giftcard_uuid_' . $i );
 				$giftcard_id   = $item->get_meta( '_leat_giftcard_id_' . $i );
 
-				// Check if this specific gift card has already been reversed
+				// Check if this specific gift card has already been reversed.
 				if ( $item->get_meta( '_leat_giftcard_reversed_' . $i ) ) {
 					OrderNotes::add_warning(
 						$order,
 						sprintf(
-							__( 'Gift card #%s has already been reversed.', 'leat-crm' ),
+							// translators: 1: giftcard id.
+							__( 'Gift card #%1$s has already been reversed.', 'leat-crm' ),
 							$giftcard_id ?: $i
 						)
 					);
@@ -598,7 +611,8 @@ class GiftcardProduct {
 					OrderNotes::add_error(
 						$order,
 						sprintf(
-							__( 'Could not process withdrawal for gift card #%s - missing transaction data.', 'leat-crm' ),
+							// translators: 1: giftcard id.
+							__( 'Could not process withdrawal for gift card #%1$s - missing transaction data.', 'leat-crm' ),
 							$giftcard_id ?: $i
 						)
 					);
@@ -618,7 +632,8 @@ class GiftcardProduct {
 						OrderNotes::add_success(
 							$order,
 							sprintf(
-								__( 'Gift card #%s withdrawn successfully.', 'leat-crm' ),
+								// translators: 1: giftcard id.
+								__( 'Gift card #%1$s withdrawn successfully.', 'leat-crm' ),
 								$giftcard_id
 							)
 						);
@@ -640,7 +655,8 @@ class GiftcardProduct {
 						OrderNotes::add_error(
 							$order,
 							sprintf(
-								__( 'Failed to process withdrawal for gift card #%s.', 'leat-crm' ),
+								// translators: 1: giftcard id.
+								__( 'Failed to process withdrawal for gift card #%1$s.', 'leat-crm' ),
 								$giftcard_id
 							)
 						);
@@ -649,7 +665,8 @@ class GiftcardProduct {
 					OrderNotes::add_error(
 						$order,
 						sprintf(
-							__( 'Error processing withdrawal for gift card #%s: %s', 'leat-crm' ),
+							// translators: 1: giftcard id, 2: error message.
+							__( 'Error processing withdrawal for gift card #%1$s: %2$s', 'leat-crm' ),
 							$giftcard_id,
 							$e->getMessage()
 						)
@@ -666,7 +683,7 @@ class GiftcardProduct {
 			}
 		}
 
-		// Mark the entire order as processed for withdrawals
+		// Mark the entire order as processed for withdrawals.
 		update_post_meta( $order_id, '_leat_giftcards_reversed', true );
 	}
 
@@ -696,7 +713,7 @@ class GiftcardProduct {
 
 		foreach ( $order->get_items() as $item ) {
 			/**
-			 * Process each order item.
+			 * Process each order item to check if it has a gift card.
 			 *
 			 * @var \WC_Order_Item_Product $item
 			 */
@@ -709,17 +726,23 @@ class GiftcardProduct {
 			}
 		}
 
+		$description = __( 'This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards.', 'leat-crm' );
+
 		if ( $has_giftcard ) {
-			?>
-			<script type="text/javascript">
+			// Register and enqueue jQuery if not already done
+			wp_enqueue_script( 'jquery' );
+
+			// Add inline script
+			wp_add_inline_script(
+				'jquery',
+				'
 				jQuery(document).ready(function($) {
-					console.log('Giftcard order detected');
-					const refundAmount = $('#refund_amount');
-					refundAmount.prop('readonly', true);
-					refundAmount.after('<p class="description">This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards.</p>');
+					const refundAmount = $("#refund_amount");
+					refundAmount.prop("readonly", true);
+					refundAmount.after("<p class=\"description\">' . esc_js( $description ) . '</p>");
 				});
-			</script>
-			<?php
+				'
+			);
 		}
 	}
 }

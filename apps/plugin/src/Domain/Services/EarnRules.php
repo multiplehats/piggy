@@ -316,6 +316,13 @@ class EarnRules {
 	 * @return bool
 	 */
 	public function has_user_claimed_rule( $user_id, $earn_rule_id ) {
+		$cache_key = "leat_user_claimed_rule_{$user_id}_{$earn_rule_id}";
+
+		$cached_result = wp_cache_get( $cache_key, 'leat' );
+		if ( false !== $cached_result ) {
+			return (bool) $cached_result;
+		}
+
 		global $wpdb;
 
 		$query = $wpdb->prepare(
@@ -324,9 +331,12 @@ class EarnRules {
 			$earn_rule_id
 		);
 
-		$result = $wpdb->get_var( $query );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$result = (bool) $wpdb->get_var( $query );
 
-		return $result > 0;
+		wp_cache_set( $cache_key, $result, 'leat' );
+
+		return $result;
 	}
 
 	/**
@@ -342,6 +352,6 @@ class EarnRules {
 		}
 
 		$once_only_types = [ 'LIKE_ON_FACEBOOK', 'FOLLOW_ON_TIKTOK', 'FOLLOW_ON_INSTAGRAM', 'CREATE_ACCOUNT' ];
-		return in_array( $rule['type']['value'], $once_only_types );
+		return in_array( $rule['type']['value'], $once_only_types, true );
 	}
 }

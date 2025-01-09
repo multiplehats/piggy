@@ -3,7 +3,7 @@
 namespace Leat\Api\Routes\V1;
 
 use Leat\Api\Routes\V1\AbstractRoute;
-use Leat\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\Middleware;
 
 /**
  * Shops class.
@@ -44,7 +44,7 @@ class SpendRules extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'permission_callback' => [ MIddleware::class, 'is_authorized' ],
 				'args'                => [
 					'settings' => [
 						'description' => __( 'Spend rules', 'leat-crm' ),
@@ -55,7 +55,7 @@ class SpendRules extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ Middleware::class, 'is_public' ],
 				'args'                => [
 					'id'     => [
 						'description' => __( 'Spend rule ID', 'leat-crm' ),
@@ -151,7 +151,7 @@ class SpendRules extends AbstractRoute {
 		$id = $request->get_param( 'id' );
 
 		if ( $id ) {
-			// Get a specific post id
+			// Get a specific post id.
 			$prepared_args['p'] = $id;
 		}
 

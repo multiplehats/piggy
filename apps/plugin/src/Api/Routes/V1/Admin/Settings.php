@@ -3,7 +3,7 @@
 namespace Leat\Api\Routes\V1\Admin;
 
 use Leat\Api\Routes\V1\AbstractRoute;
-use Leat\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\Middleware;
 
 /**
  * Shops class.
@@ -55,7 +55,7 @@ class Settings extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [
 					'id' => [
 						'description' => __( 'Setting ID', 'leat-crm' ),

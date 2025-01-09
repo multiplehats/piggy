@@ -4,6 +4,7 @@ namespace Leat\Api\Routes\V1;
 
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Connection;
+use Leat\Api\Routes\V1\Middleware;
 
 /**
  * PromotionRuleSync class.
@@ -44,7 +45,7 @@ class PromotionRulesSync extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ Middleware::class, 'is_authorized' ],
 				'args'                => [],
 			],
 			'schema'      => [ $this->schema, 'get_public_item_schema' ],

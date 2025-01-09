@@ -3,7 +3,7 @@
 namespace Leat\Api\Routes\V1;
 
 use Leat\Api\Routes\V1\AbstractRoute;
-use Leat\Api\Routes\V1\Admin\Middleware;
+use Leat\Api\Routes\V1\Middleware;
 
 /**
  * Shops class.
@@ -55,7 +55,7 @@ class EarnRules extends AbstractRoute {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ Middleware::class, 'is_public' ],
 				'args'                => [
 					'id'     => [
 						'description' => __( 'Earn rule ID', 'leat-crm' ),
@@ -149,7 +149,7 @@ class EarnRules extends AbstractRoute {
 		$id = $request->get_param( 'id' );
 
 		if ( $id ) {
-			// Get a specific post id
+			// Get a specific post id.
 			$prepared_args['p'] = $id;
 		}
 
