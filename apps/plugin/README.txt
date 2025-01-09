@@ -27,13 +27,16 @@ integrations, eliminating any gaps in your customer experience.
 
 ### External services
 
-This plugin requires an API connection to [Leat](https://www.leat.com) for core functionality including reward management, customer tracking, and loyalty point calculations.
+This plugin requires an API connection to [Leat](https://www.leat.com) and it's business portal ([business.leat.eu](https://business.leat.eu)) for core functionality including reward management, customer tracking, and loyalty point calculations.
 
-**Data transmitted includes, but is not limited to**:
+**Data transmitted includes**:
 - Customer information (email, name, order history, purchase categories)
 - WooCommerce order data (order totals, products purchased, dates)
 - Store configuration data
 - Reward and voucher definitions
+- Store performance metrics and analytics
+
+All data is transmitted securely via HTTPS to Leat's servers in compliance with GDPR and other applicable privacy regulations. Data processing occurs on both leat.com and business.leat.eu domains.
 
 Users of this plugin should ensure they comply with the terms and privacy policies of Leat before using this plugin:
 
