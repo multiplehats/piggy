@@ -5,7 +5,7 @@ Tags: loyalty program, rewards, customer loyalty, vouchers, marketing automation
 Requires at least: 6.0
 Tested up to: 6.7.1
 Requires PHP: 8.0
-Stable tag: 0.5.3
+Stable tag: 0.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
