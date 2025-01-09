@@ -363,7 +363,11 @@ final class AssetsController {
 	 * @return string
 	 */
 	protected function get_dynamic_css() {
-		return '';
+		$css = '';
+		// Example future CSS content:
+		// $css = ".some-class { color: " . $some_variable . "; }";
+
+		return wp_strip_all_tags( $css );
 	}
 
 	/**
