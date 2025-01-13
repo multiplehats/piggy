@@ -96,6 +96,8 @@ class SpendRules extends AbstractRoute {
 			'discountType'          => $request->get_param( 'discountType' ),
 			'minimumPurchaseAmount' => $request->get_param( 'minimumPurchaseAmount' ),
 			'selectedProducts'      => $request->get_param( 'selectedProducts' ),
+			'selectedCategories'    => $request->get_param( 'selectedCategories' ),
+			'limitUsageToXItems'    => $request->get_param( 'limitUsageToXItems' ),
 		);
 
 		$post_data = array(
@@ -115,6 +117,8 @@ class SpendRules extends AbstractRoute {
 				'_leat_spend_rule_discount_type'           => $data['discountType'],
 				'_leat_spend_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
 				'_leat_spend_rule_selected_products'       => $data['selectedProducts'],
+				'_leat_spend_rule_selected_categories'     => $data['selectedCategories'],
+				'_leat_spend_rule_limit_usage_to_x_items'  => $data['limitUsageToXItems'],
 			),
 		);
 

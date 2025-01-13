@@ -82,10 +82,10 @@ class SpendRules {
 		$type = $this->get_post_meta_data( $post->ID, '_leat_spend_rule_type', null );
 
 		$spend_rule = [
-			'id'             => (int) $post->ID,
-			'createdAt'      => $post->post_date,
-			'updatedAt'      => $post->post_modified,
-			'status'         => [
+			'id'                 => (int) $post->ID,
+			'createdAt'          => $post->post_date,
+			'updatedAt'          => $post->post_modified,
+			'status'             => [
 				'id'          => 'status',
 				'label'       => __( 'Status', 'leat-crm' ),
 				'default'     => 'publish',
@@ -97,7 +97,7 @@ class SpendRules {
 				'type'        => 'select',
 				'description' => __( 'Set the status of the rule. Inactive spend rules will not be displayed to users.', 'leat-crm' ),
 			],
-			'title'          => [
+			'title'              => [
 				'id'          => 'title',
 				'label'       => __( 'Title', 'leat-crm' ),
 				'default'     => null,
@@ -105,7 +105,7 @@ class SpendRules {
 				'type'        => 'text',
 				'description' => __( 'This is not displayed to the user and is only used for internal reference. You can manage this in the Leat dashboard.', 'leat-crm' ),
 			],
-			'type'           => [
+			'type'               => [
 				'id'          => 'type',
 				'label'       => __( 'Type', 'leat-crm' ),
 				'default'     => 'FREE_PRODUCT',
@@ -115,10 +115,11 @@ class SpendRules {
 					'FREE_PRODUCT'   => [ 'label' => __( 'Free / Discounted Product', 'leat-crm' ) ],
 					'ORDER_DISCOUNT' => [ 'label' => __( 'Order Discount', 'leat-crm' ) ],
 					'FREE_SHIPPING'  => [ 'label' => __( 'Free Shipping', 'leat-crm' ) ],
+					'CATEGORY'       => [ 'label' => __( 'Category Discount', 'leat-crm' ) ],
 				],
 				'description' => __( 'The type of spend rule.', 'leat-crm' ),
 			],
-			'startsAt'       => [
+			'startsAt'           => [
 				'id'          => 'starts_at',
 				'label'       => __( 'Starts at', 'leat-crm' ),
 				'default'     => null,
@@ -126,7 +127,7 @@ class SpendRules {
 				'type'        => 'date',
 				'description' => __( 'Optional date for when the rule should start.', 'leat-crm' ),
 			],
-			'expiresAt'      => [
+			'expiresAt'          => [
 				'id'          => 'expires_at',
 				'label'       => __( 'Expires at', 'leat-crm' ),
 				'default'     => null,
@@ -134,8 +135,8 @@ class SpendRules {
 				'type'        => 'date',
 				'description' => __( 'Optional date for when the rule should expire.', 'leat-crm' ),
 			],
-			'completed'      => $this->get_post_meta_data( $post->ID, '_leat_spend_rule_completed', null ),
-			'creditCost'     => [
+			'completed'          => $this->get_post_meta_data( $post->ID, '_leat_spend_rule_completed', null ),
+			'creditCost'         => [
 				'id'          => 'credit_cost',
 				'label'       => __( 'Credit cost', 'leat-crm' ),
 				'default'     => null,
@@ -143,7 +144,7 @@ class SpendRules {
 				'type'        => 'number',
 				'description' => __( 'The amount of credits it will cost to redeem the reward. This is managed in the Leat dashboard.', 'leat-crm' ),
 			],
-			'selectedReward' => [
+			'selectedReward'     => [
 				'id'          => 'selected_reward',
 				'label'       => __( 'Selected reward', 'leat-crm' ),
 				'default'     => null,
@@ -151,7 +152,7 @@ class SpendRules {
 				'type'        => 'text',
 				'description' => __( 'The reward that is selected for the spend rule.', 'leat-crm' ),
 			],
-			'image'          => [
+			'image'              => [
 				'id'          => 'image',
 				'label'       => __( 'Image', 'leat-crm' ),
 				'default'     => null,
@@ -159,7 +160,7 @@ class SpendRules {
 				'type'        => 'text',
 				'description' => __( 'The image that is displayed for the spend rule.', 'leat-crm' ),
 			],
-			'description'    => [
+			'description'        => [
 				'id'          => 'description',
 				'label'       => __( 'Description', 'leat-crm' ),
 				'default'     => null,
@@ -167,7 +168,7 @@ class SpendRules {
 				'type'        => 'translatable_text',
 				'description' => $this->get_description_placeholder( $type ),
 			],
-			'instructions'   => [
+			'instructions'       => [
 				'id'          => 'instructions',
 				'label'       => __( 'Instructions', 'leat-crm' ),
 				'default'     => null,
@@ -175,7 +176,7 @@ class SpendRules {
 				'type'        => 'translatable_text',
 				'description' => $this->get_instructions_placeholder( $type ),
 			],
-			'fulfillment'    => [
+			'fulfillment'        => [
 				'id'          => 'fulfillment',
 				'label'       => __( 'Fulfillment description', 'leat-crm' ),
 				'default'     => null,
@@ -183,13 +184,29 @@ class SpendRules {
 				'type'        => 'translatable_text',
 				'description' => $this->get_fulfillment_placeholder( $type ),
 			],
-			'leatRewardUuid' => [
+			'leatRewardUuid'     => [
 				'id'          => 'leat_reward_uuid',
 				'label'       => __( 'Leat Reward UUID', 'leat-crm' ),
 				'default'     => null,
 				'value'       => $this->get_post_meta_data( $post->ID, '_leat_reward_uuid', null ),
 				'type'        => 'text',
 				'description' => __( 'The UUID of the corresponding Leat reward.', 'leat-crm' ),
+			],
+			'selectedCategories' => [
+				'id'          => 'selected_categories',
+				'label'       => __( 'Selected category', 'leat-crm' ),
+				'default'     => [],
+				'value'       => $this->get_post_meta_data( $post->ID, '_leat_spend_rule_selected_categories', [] ),
+				'type'        => 'categories_select',
+				'description' => __( 'The category that the user can spent their credits in.', 'leat-crm' ),
+			],
+			'limitUsageToXItems' => [
+				'id'          => 'limit_usage_to_x_items',
+				'label'       => __( 'Limit usage to X items', 'leat-crm' ),
+				'default'     => 1,
+				'value'       => $this->get_post_meta_data( $post->ID, '_leat_spend_rule_limit_usage_to_x_items', 0 ),
+				'type'        => 'number',
+				'description' => __( 'Limit the discount to a specific number of items. Set to 0 for unlimited. If you set it to 0 be aware that this will allow the customer to use the discount on all items in the cart.', 'leat-crm' ),
 			],
 		];
 
@@ -463,6 +480,16 @@ class SpendRules {
 		return $this->get_formatted_post( $post );
 	}
 
+	private function get_discount_type( $value ) {
+		if ( 'percentage' === $value ) {
+			return 'percent';
+		} elseif ( 'fixed' === $value ) {
+			return 'fixed_product';
+		}
+
+		return null;
+	}
+
 	public function create_coupon_for_spend_rule( $formatted_spend_rule, $user_id ) {
 		$coupon_code = wp_generate_uuid4();
 
@@ -481,6 +508,11 @@ class SpendRules {
 		$coupon->add_meta_data( '_leat_spend_rule_coupon', 'true', true );
 		$coupon->add_meta_data( '_leat_spend_rule_id', $formatted_spend_rule['id'], true );
 
+		$discount_type = $this->get_discount_type( $formatted_spend_rule['discountType']['value'] );
+		if ( $discount_type ) {
+			$coupon->set_discount_type( $discount_type );
+		}
+
 		if ( $user_id ) {
 			$user       = get_user_by( 'id', $user_id );
 			$user_email = $user->user_email;
@@ -493,15 +525,36 @@ class SpendRules {
 			case 'FREE_PRODUCT':
 			case 'ORDER_DISCOUNT':
 				$coupon->set_amount( 0 );
-
 				break;
 
 			case 'FREE_SHIPPING':
 				$coupon->set_free_shipping( true );
 				break;
+
+			case 'CATEGORY':
+				$coupon->set_amount( $formatted_spend_rule['discountValue']['value'] );
+
+				// Set product categories.
+				if ( ! empty( $formatted_spend_rule['selectedCategories']['value'] ) ) {
+					$coupon->set_product_categories( $formatted_spend_rule['selectedCategories']['value'] );
+				}
+
+				// Add limit usage to X items if set
+				if ( isset( $formatted_spend_rule['limitUsageToXItems']['value'] ) ) {
+					$limit = $formatted_spend_rule['limitUsageToXItems']['value'];
+
+					if ( $limit ) {
+						$coupon->set_limit_usage_to_x_items( intval( $limit ) );
+					} else {
+						// By default, always limit usage to 1 item.
+						$coupon->set_limit_usage_to_x_items( 1 );
+					}
+				}
+
+				break;
 		}
 
-		// Check for minimum purchase amount
+		// Check for minimum purchase amount.
 		if ( isset( $formatted_spend_rule['minimumPurchaseAmount'] ) &&
 			is_numeric( $formatted_spend_rule['minimumPurchaseAmount']['value'] ) ) {
 			$min_amount = floatval( $formatted_spend_rule['minimumPurchaseAmount']['value'] );

@@ -49,15 +49,16 @@ class RoutesController {
 
 		$this->routes = [
 			'v1'      => [
-				Routes\V1\EarnReward::IDENTIFIER      => Routes\V1\EarnReward::class,
-				Routes\V1\EarnRules::IDENTIFIER       => Routes\V1\EarnRules::class,
-				Routes\V1\SpendRules::IDENTIFIER      => Routes\V1\SpendRules::class,
-				Routes\V1\PromotionRules::IDENTIFIER  => Routes\V1\PromotionRules::class,
-				Routes\V1\SpendRulesClaim::IDENTIFIER => Routes\V1\SpendRulesClaim::class,
-				Routes\V1\Coupons::IDENTIFIER         => Routes\V1\Coupons::class,
-				Routes\V1\JoinProgram::IDENTIFIER     => Routes\V1\JoinProgram::class,
-				Routes\V1\Contact::IDENTIFIER         => Routes\V1\Contact::class,
-				Routes\V1\Webhooks::IDENTIFIER        => Routes\V1\Webhooks::class,
+				Routes\V1\EarnReward::IDENTIFIER         => Routes\V1\EarnReward::class,
+				Routes\V1\EarnRules::IDENTIFIER          => Routes\V1\EarnRules::class,
+				Routes\V1\SpendRules::IDENTIFIER         => Routes\V1\SpendRules::class,
+				Routes\V1\PromotionRules::IDENTIFIER     => Routes\V1\PromotionRules::class,
+				Routes\V1\SpendRulesClaim::IDENTIFIER    => Routes\V1\SpendRulesClaim::class,
+				Routes\V1\Coupons::IDENTIFIER            => Routes\V1\Coupons::class,
+				Routes\V1\JoinProgram::IDENTIFIER        => Routes\V1\JoinProgram::class,
+				Routes\V1\Contact::IDENTIFIER            => Routes\V1\Contact::class,
+				Routes\V1\Webhooks::IDENTIFIER           => Routes\V1\Webhooks::class,
+				Routes\V1\WCCategoriesSearch::IDENTIFIER => Routes\V1\WCCategoriesSearch::class,
 			],
 			'private' => [
 				Routes\V1\SpendRulesSync::IDENTIFIER     => Routes\V1\SpendRulesSync::class,
@@ -66,6 +67,7 @@ class RoutesController {
 				Routes\V1\Admin\Shops::IDENTIFIER        => Routes\V1\Admin\Shops::class,
 				Routes\V1\Admin\Rewards::IDENTIFIER      => Routes\V1\Admin\Rewards::class,
 				Routes\V1\WCProductsSearch::IDENTIFIER   => Routes\V1\WCProductsSearch::class,
+				Routes\V1\WCCategoriesSearch::IDENTIFIER => Routes\V1\WCCategoriesSearch::class,
 			],
 		];
 	}
@@ -120,8 +122,15 @@ class RoutesController {
 
 			$args = $route_instance->get_args();
 
-			if ( ! isset( $args['permission_callback'] ) ) {
-				throw new \Exception( sprintf( 'Route %s must implement a permission_callback', $route ) );
+			foreach ( $args as $key => $arg ) {
+				// Skip permission callback check for 'schema' and 'allow_batch' arguments.
+				if ( in_array( $key, [ 'schema', 'allow_batch' ], true ) ) {
+					continue;
+				}
+
+				if ( ! isset( $arg['permission_callback'] ) ) {
+					throw new \Exception( sprintf( 'Route %s must implement a permission_callback', $route ) );
+				}
 			}
 
 			register_rest_route(

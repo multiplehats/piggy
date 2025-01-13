@@ -80,6 +80,32 @@ export const zProductsSelect = zSettingsBaseField.extend({
 });
 export type ProductsSelect = z.infer<typeof zProductsSelect>;
 
+export const zCategoriesSelect = zSettingsBaseField.extend({
+	type: z.literal("categories_select"),
+	value: z.array(z.string()).or(z.tuple([])),
+	options: z.array(
+		z.object({
+			id: z.string(),
+			title: z.string(),
+		})
+	),
+	default: z.array(z.string()).or(z.tuple([])),
+});
+export type CategoriesSelect = z.infer<typeof zCategoriesSelect>;
+
+export const zTagsSelect = zSettingsBaseField.extend({
+	type: z.literal("tags_select"),
+	value: z.array(z.string()).or(z.tuple([])),
+	options: z.array(
+		z.object({
+			id: z.string(),
+			title: z.string(),
+		})
+	),
+	default: z.array(z.string()).or(z.tuple([])),
+});
+export type TagsSelect = z.infer<typeof zTagsSelect>;
+
 export const zCheckboxesOptionsItem = z.object({
 	label: z.string(),
 	tooltip: z.string().optional(),
@@ -193,6 +219,7 @@ export type EarnRuleValueItem = z.infer<typeof zEarnRuleValueItem>;
 // Spent rules
 export const zSpendRuleType = z
 	.literal("FREE_PRODUCT")
+	.or(z.literal("CATEGORY"))
 	.or(z.literal("ORDER_DISCOUNT"))
 	.or(z.literal("FREE_SHIPPING"));
 
@@ -216,6 +243,8 @@ export const zSpendRuleValueItem = z.object({
 	completed: z.boolean().nullable().optional(),
 	selectedReward: zText,
 	selectedProducts: zProductsSelect,
+	selectedCategories: zCategoriesSelect,
+	selectedTags: zTagsSelect,
 	instructions: zTranslatableText,
 	creditCost: zNumber,
 	description: zTranslatableText,
@@ -229,6 +258,7 @@ export const zSpendRuleValueItem = z.object({
 		value: z.literal("percentage").or(z.literal("fixed")),
 	}),
 	minimumPurchaseAmount: zNumber,
+	limitUsageToXItems: zNumber,
 });
 export type SpendRuleValueItem = z.infer<typeof zSpendRuleValueItem>;
 
