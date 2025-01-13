@@ -120,8 +120,15 @@ class RoutesController {
 
 			$args = $route_instance->get_args();
 
-			if ( ! isset( $args['permission_callback'] ) ) {
-				throw new \Exception( sprintf( 'Route %s must implement a permission_callback', $route ) );
+			foreach ( $args as $key => $arg ) {
+				// Skip permission callback check for 'schema' and 'allow_batch' arguments.
+				if ( in_array( $key, [ 'schema', 'allow_batch' ], true ) ) {
+					continue;
+				}
+
+				if ( ! isset( $arg['permission_callback'] ) ) {
+					throw new \Exception( sprintf( 'Route %s must implement a permission_callback', $route ) );
+				}
 			}
 
 			register_rest_route(
