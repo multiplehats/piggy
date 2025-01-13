@@ -4785,7 +4785,7 @@ packages:
   mlly@1.7.1:
     resolution: {integrity: sha512-rrVRZRELyQzrIUAVMHxP97kv+G786pHmOKzuFII8zDYahFBS7qnHh2AlYSl1GAHhaMPCz6/oHjVMcfFYgFYHgA==}
 
-  moment-timezone@0.5.45:
+  moment-timezone@0.5.55:
     resolution: {integrity: sha512-HIWmqA86KcmCAhnMAN0wuDOARV/525R2+lOLotuGFzn4HO+FH+/645z2wx0Dt3iDv6/p61SIvKnDstISainhLQ==}
 
   moment@2.30.1:
@@ -9152,7 +9152,7 @@ snapshots:
       '@babel/runtime': 7.23.2
       '@wordpress/deprecated': 3.57.0
       moment: 2.30.1
-      moment-timezone: 0.5.45
+      moment-timezone: 0.5.55
 
   '@wordpress/deprecated@3.57.0':
     dependencies:
@@ -11598,7 +11598,7 @@ snapshots:
       pkg-types: 1.2.0
       ufo: 1.5.4
 
-  moment-timezone@0.5.45:
+  moment-timezone@0.5.55:
     dependencies:
       moment: 2.30.1
 

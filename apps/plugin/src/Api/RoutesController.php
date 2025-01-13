@@ -118,10 +118,16 @@ class RoutesController {
 			$route_instance = $this->get( $route, $version );
 			$route_instance->set_namespace( $namespace );
 
+			$args = $route_instance->get_args();
+
+			if ( ! isset( $args['permission_callback'] ) ) {
+				throw new \Exception( sprintf( 'Route %s must implement a permission_callback', $route ) );
+			}
+
 			register_rest_route(
 				$route_instance->get_namespace(),
 				$route_instance->get_path(),
-				$route_instance->get_args()
+				$args
 			);
 		}
 	}
