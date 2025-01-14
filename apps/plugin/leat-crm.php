@@ -4,7 +4,7 @@
  * Plugin Name: Leat CRM
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
- * Version: 0.5.6
+ * Version: 0.5.7
  * Author: rensleat, chrisjayden
  * Author URI: https://leat.com
  * Text Domain: leat-crm
