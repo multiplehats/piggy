@@ -5,6 +5,7 @@
 	import { tweened } from "svelte/motion";
 	import { replaceStrings } from "@leat/lib";
 	import type { SpendRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
+	import { __ } from "@wordpress/i18n";
 	import Button from "./button/button.svelte";
 	import { getSpendRuleLabel, getTranslatedText } from "$lib/utils/translated-text";
 	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
@@ -74,7 +75,11 @@
 	{/if}
 
 	<div class="leat-dashboard-reward-card__icon">
-		<Gift size={48} />
+		{#if rule?.image?.value}
+			<img src={rule.image.value} alt={__("Reward image", "leat-crm")} />
+		{:else}
+			<Gift size={48} />
+		{/if}
 	</div>
 
 	<h4 class="leat-dashboard-reward-card__header">
@@ -164,7 +169,19 @@
 
 	.leat-dashboard-reward-card__icon {
 		width: 100%;
-		height: auto;
+		height: 80px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 0.25rem;
+	}
+
+	.leat-dashboard-reward-card__icon img {
+		max-width: 100%;
+		max-height: 100%;
+		object-fit: contain;
+		border-radius: 0.375rem;
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 	}
 
 	h4.leat-dashboard-reward-card__header {

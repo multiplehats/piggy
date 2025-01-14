@@ -20,6 +20,7 @@
 	import type { GetSpendRuleByIdResponse } from "$lib/modules/settings/types";
 	import { QueryKeys } from "$lib/utils/query-keys";
 	import { getStatusText } from "$lib/utils/status-text";
+	import SpendRuleCategoryFields from "$lib/components/spend-rules/spend-rule-category-fields.svelte";
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
@@ -68,11 +69,13 @@
 			expiresAt: $rule?.expiresAt?.value,
 			instructions: $rule?.instructions?.value,
 			selectedProducts: $rule?.selectedProducts?.value,
+			selectedCategories: $rule?.selectedCategories?.value,
 			description: $rule?.description?.value,
 			fulfillment: $rule?.fulfillment?.value,
 			discountValue: $rule?.discountValue?.value,
 			discountType: $rule?.discountType?.value,
 			minimumPurchaseAmount: $rule?.minimumPurchaseAmount?.value,
+			limitUsageToXItems: $rule?.limitUsageToXItems?.value,
 		});
 	}
 
@@ -180,7 +183,7 @@
 								bind:value={$rule.creditCost.value}
 							/>
 
-							{#if ($rule?.type?.value === "ORDER_DISCOUNT" || $rule?.type?.value === "FREE_PRODUCT") && $rule?.discountType && $rule?.discountValue}
+							{#if ($rule?.type?.value === "ORDER_DISCOUNT" || $rule?.type?.value === "FREE_PRODUCT" || $rule?.type?.value === "CATEGORY") && $rule?.discountType && $rule?.discountValue}
 								<SpendRuleProductOrderDiscountFields
 									bind:discountType={$rule.discountType}
 									bind:discountValue={$rule.discountValue}
@@ -199,6 +202,19 @@
 							{#if $rule?.type?.value === "FREE_PRODUCT" && $rule?.selectedProducts?.value}
 								<SpendRuleFreeProductFields
 									selectedProducts={$rule.selectedProducts}
+								/>
+							{/if}
+
+							{#if $rule?.type?.value === "CATEGORY" && $rule?.selectedCategories?.value}
+								<SpendRuleCategoryFields
+									selectedCategories={$rule.selectedCategories}
+								/>
+
+								<SettingsInput
+									{...$rule.limitUsageToXItems}
+									type="number"
+									attributes={{ min: 0 }}
+									bind:value={$rule.limitUsageToXItems.value}
 								/>
 							{/if}
 						</div>

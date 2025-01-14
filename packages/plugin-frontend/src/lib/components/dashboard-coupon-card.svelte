@@ -165,6 +165,7 @@
 		max-height: 100%;
 		object-fit: contain;
 		border-radius: 0.375rem;
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 	}
 
 	h4.leat-dashboard-coupon-card__header {

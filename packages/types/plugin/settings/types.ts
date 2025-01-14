@@ -127,6 +127,8 @@ export const zPluginSpendRuleItemValues = transformSchema(
 		type: true,
 		title: true,
 		selectedProducts: true,
+		selectedCategories: true,
+		selectedTags: true,
 		startsAt: true,
 		expiresAt: true,
 		instructions: true,
@@ -136,6 +138,7 @@ export const zPluginSpendRuleItemValues = transformSchema(
 		discountType: true,
 		discountValue: true,
 		minimumPurchaseAmount: true,
+		limitUsageToXItems: true,
 	})
 );
 export type PluginSpendRuleItemValues = z.infer<typeof zPluginSpendRuleItemValues>;
