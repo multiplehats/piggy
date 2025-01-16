@@ -128,7 +128,12 @@ class RoutesController {
 				}
 
 				if ( ! isset( $arg['permission_callback'] ) ) {
-					throw new \Exception( sprintf( 'Route %s must implement a permission_callback', $route ) );
+					throw new \Exception(
+						sprintf(
+							'Route %s must implement a permission_callback. Use "__return_true" for intentionally public endpoints.',
+							$route
+						)
+					);
 				}
 			}
 

@@ -129,7 +129,7 @@ final class AssetsController {
 
 				$this->assets_api->add_inline_script(
 					self::APP_HANDLE,
-					"window.leatConfig = JSON.parse(decodeURIComponent('" . esc_js( $settings ) . "'));",
+					"window.leatConfig = JSON.parse(decodeURIComponent('" . $settings . "'));",
 					'before'
 				);
 
@@ -138,7 +138,7 @@ final class AssetsController {
 				$wc_settings = rawurlencode( wp_json_encode( $this->wc_settings_data ) );
 				$this->assets_api->add_inline_script(
 					self::APP_HANDLE,
-					"window.leatWcSettings = JSON.parse(decodeURIComponent('" . esc_js( $wc_settings ) . "'));",
+					"window.leatWcSettings = JSON.parse(decodeURIComponent('" . $wc_settings . "'));",
 					'before'
 				);
 
@@ -146,11 +146,6 @@ final class AssetsController {
 					self::APP_HANDLE,
 					$this->get_middleware_config(),
 					'before'
-				);
-
-				wp_add_inline_style(
-					self::APP_HANDLE . '-dynamic',
-					$this->get_dynamic_css()
 				);
 			}
 		}
@@ -356,19 +351,6 @@ final class AssetsController {
 		return [
 			'cartRedirectAfterAdd' => get_option( 'woocommerce_cart_redirect_after_add' ) === 'yes',
 		];
-	}
-
-	/**
-	 * Get dynamic CSS output.
-	 *
-	 * @return string
-	 */
-	protected function get_dynamic_css() {
-		$css = '';
-		// Example future CSS content:
-		// $css = ".some-class { color: " . $some_variable . "; }";.
-
-		return wp_strip_all_tags( $css );
 	}
 
 	/**

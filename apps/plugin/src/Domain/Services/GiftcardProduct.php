@@ -339,6 +339,11 @@ class GiftcardProduct {
 										)
 									);
 								}
+							} else {
+								OrderNotes::add_warning(
+									$order,
+									__( 'No recipient email found for gift card.', 'leat-crm' )
+								);
 							}
 
 							$item->save();
