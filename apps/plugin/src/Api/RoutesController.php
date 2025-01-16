@@ -123,7 +123,6 @@ class RoutesController {
 			$args = $route_instance->get_args();
 
 			foreach ( $args as $key => $arg ) {
-				// Skip permission callback check for 'schema' and 'allow_batch' arguments.
 				if ( in_array( $key, [ 'schema', 'allow_batch' ], true ) ) {
 					continue;
 				}

@@ -10,9 +10,8 @@
 	"prefer-stable": true,
 	"minimum-stability": "dev",
 	"require": {
-		"composer/installers": "^1.7.0",
 		"kucrut/vite-for-wp": "^0.10.0",
-		"piggy/piggy-php-sdk": "^3.5"
+		"piggy/piggy-php-sdk": "^3.11"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "*",
@@ -46,7 +45,6 @@
 			"php": "8.0"
 		},
 		"allow-plugins": {
-			"composer/installers": true,
 			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
 	},
