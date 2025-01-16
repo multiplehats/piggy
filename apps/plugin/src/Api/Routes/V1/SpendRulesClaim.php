@@ -96,11 +96,11 @@ class SpendRulesClaim extends AbstractRoute {
 			throw new RouteException( 'spend-rules-claim', 'Spend rule not found', 404 );
 		}
 
-		if ( $rule['status']['value'] === 'draft' ) {
+		if ( 'draft' === $rule['status']['value'] ) {
 			throw new RouteException( 'spend-rules-claim', 'Spend rule is a draft', 400 );
 		}
 
-		// Get the contact UUID for the user
+		// Get the contact UUID for the user.
 		$contact = $connection->get_contact( $user_id );
 		$uuid    = $contact['uuid'];
 
@@ -114,32 +114,34 @@ class SpendRulesClaim extends AbstractRoute {
 			throw new RouteException( 'spend-rules-claim', 'Reward UUID not found for this spend rule', 404 );
 		}
 
-		// Create a Reward Reception
+		// Create a Reward Reception.
 		try {
 			$reception = $connection->create_reward_reception( $uuid, $reward_uuid );
+
+			if ( ! $reception ) {
+				throw new RouteException( 'spend-rules-claim', 'Failed to create Reward Reception', 500 );
+			}
+
+			$coupon = $spend_rules_service->create_coupon_for_spend_rule( $rule, $user_id );
+
+			if ( ! $coupon ) {
+				throw new RouteException( 'spend-rules-claim', 'Failed to create coupon', 500 );
+			}
+
+			return [
+				'coupon'           => $coupon,
+				'reward_reception' => $reception,
+			];
 		} catch ( \Throwable $th ) {
-			// If the message sdtars with "You have insufficient credits" we return a 400
+			$message = $th->getMessage();
+
+			// If the message sdtars with "You have insufficient credits" we return a 400.
 			if ( strpos( $th->getMessage(), 'You have insufficient credits' ) !== false ) {
 				throw new RouteException( 'spend-rules-claim', 'Insufficient credits', 400 );
 			}
 
-			throw new RouteException( 'spend-rules-claim', 'Failed to create Reward Reception', 500 );
+			throw new RouteException( 'spend-rules-claim', $message, 500 );
 		}
 
-		if ( ! $reception ) {
-			throw new RouteException( 'spend-rules-claim', 'Failed to create Reward Reception', 500 );
-		}
-
-		// If all is good, we create a coupon
-		$coupon = $spend_rules_service->create_coupon_for_spend_rule( $rule, $user_id ); // Pass user ID
-
-		if ( ! $coupon ) {
-			throw new RouteException( 'spend-rules-claim', 'Failed to create coupon', 500 );
-		}
-
-		return [
-			'coupon'           => $coupon,
-			'reward_reception' => $reception,
-		];
 	}
 }
