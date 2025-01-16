@@ -335,7 +335,7 @@ class Settings {
 			$all_settings = array_filter(
 				$all_settings,
 				function( $setting ) {
-					return $setting['id'] !== 'api_key';
+					return 'api_key' !== $setting['id'];
 				}
 				);
 		}

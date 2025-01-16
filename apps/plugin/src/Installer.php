@@ -15,7 +15,7 @@ class Installer {
 	 */
 	public function init() {
 		add_action( 'admin_init', array( $this, 'maybe_create_tables' ) );
-		// add_action( 'admin_init', array( $this, 'maybe_redirect_to_onboarding' ) );
+		// add_action( 'admin_init', array( $this, 'maybe_redirect_to_onboarding' ) );.
 	}
 
 	/**
@@ -80,10 +80,10 @@ class Installer {
 			return true;
 		}
 
-		// Execute the create table query using prepare
+		// Execute the create table query using prepare.
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				// Note: %1$s is for the table name, %2$s for collate
+				// Note: %1$s is for the table name, %2$s for collate.
 				'CREATE TABLE IF NOT EXISTS `%1$s` (
 					`id` mediumint(9) NOT NULL AUTO_INCREMENT,
 					`wp_user_id` bigint(20) NOT NULL,
@@ -97,7 +97,7 @@ class Installer {
 			)
 		);
 
-		// Clear and refresh cache after table creation
+		// Clear and refresh cache after table creation.
 		wp_cache_delete( $cache_key );
 		$table_exists = $wpdb->get_var(
 			$wpdb->prepare(
@@ -135,9 +135,9 @@ class Installer {
 	public function maybe_redirect_to_onboarding() {
 		$api_key = get_option( 'leat_api_key', null );
 
-		if ( get_option( 'leat_first_activation', false ) === false && $api_key !== null && $api_key !== '' ) {
+		if ( false === get_option( 'leat_first_activation', false ) && null !== $api_key && '' !== $api_key ) {
 			update_option( 'leat_first_activation', true );
-			wp_redirect( admin_url( 'admin.php?page=leat#/onboarding' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=leat#/onboarding' ) );
 			exit;
 		}
 	}

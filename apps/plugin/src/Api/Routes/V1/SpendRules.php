@@ -6,7 +6,7 @@ use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Routes\V1\Middleware;
 
 /**
- * Shops class.
+ * Spend Rules class.
  *
  * @internal
  */

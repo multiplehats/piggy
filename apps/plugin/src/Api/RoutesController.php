@@ -109,6 +109,7 @@ class RoutesController {
 	 *
 	 * @param string $version API Version being registered..
 	 * @param string $namespace Overrides the default route namespace.
+	 * @throws \Exception If the route does not exist.
 	 */
 	protected function register_routes( $version = 'v1', $namespace = 'leat/v1' ) {
 		if ( ! isset( $this->routes[ $version ] ) ) {

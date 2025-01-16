@@ -63,7 +63,5 @@ class SettingsSchema extends AbstractSchema {
 	 */
 	public function get_item_response( $id ) {
 		return $this->settings->get_item_response( $id );
-
-		return $item;
 	}
 }

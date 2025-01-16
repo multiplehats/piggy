@@ -69,6 +69,7 @@ class Coupons extends AbstractRoute {
 	 * @param  \WP_REST_Request $request Request object.
 	 *
 	 * @return \WP_REST_Response
+	 * @throws \RouteException If the user is not found.
 	 */
 	public function get_route_response( \WP_REST_Request $request ) {
 		$user_id = $request->get_param( 'userId' );

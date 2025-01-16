@@ -124,7 +124,8 @@ class Api {
 	 * @throws Exception If the registered script has a dependency on itself.
 	 *
 	 * @param string $handle        Unique name of the script.
-	 * @param string $relative_entry  Relative url for the entry (e.g. ts/frontend/index.ts)
+	 * @param string $relative_entry  Relative url for the entry (e.g. ts/frontend/index.ts).
+	 * @param string $folder  Folder for asset path.
 	 * @param array  $dependencies  Optional. An array of registered script handles this script depends on. Default empty array.
 	 * @param bool   $has_i18n      Optional. Whether to add a script translation call to this file. Default: true.
 	 */
@@ -156,9 +157,10 @@ class Api {
 	/**
 	 * Gets the path to the manifest.
 	 *
-	 * @throws Exception If the manifest file is not found.
-	 *
 	 * @param string $folder The folder to look for the manifest in.
+	 * @throws \Exception If the manifest file is not found.
+	 *
+	 * @return string The path to the manifest.
 	 */
 	public function get_manifest_path( $folder = 'frontend' ) {
 		$manifest = $this->package->get_path( "dist/$folder" );

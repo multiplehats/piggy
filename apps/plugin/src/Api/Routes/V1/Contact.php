@@ -55,11 +55,13 @@ class Contact extends AbstractRoute {
 	}
 
 	/**
-	 * Get user coupons
+	 * Get user coupons.
 	 *
-	 * @param  \WP_REST_Request $request Request object.
+	 * @param \WP_REST_Request $request Request object.
 	 *
 	 * @return \WP_REST_Response
+	 *
+	 * @throws RouteException If the user ID is not provided.
 	 */
 	public function get_route_response( \WP_REST_Request $request ) {
 		$user_id = $request->get_param( 'userId' );

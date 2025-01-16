@@ -10,6 +10,8 @@ use Leat\Utils\Logger;
 class PromotionRules {
 
 	/**
+	 * Logger instance.
+	 *
 	 * @var Logger
 	 */
 	private $logger;

@@ -12,7 +12,7 @@ class CustomerDashboardShortcode extends AbstractShortcode {
 	 */
 	protected $shortcode_name = 'dashboard';
 
-	function get_assets() {
+	public function get_assets() {
 		return array();
 	}
 

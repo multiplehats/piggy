@@ -10,8 +10,8 @@ use Leat\Domain\Services\SpendRules as SpendRulesService;
  * @internal
  */
 class SpendRulesSchema extends AbstractSchema {
-	/**a
-	 * The Earn Rules service.
+	/**
+	 * The Spend Rules service.
 	 *
 	 * @var SpendRulesService
 	 */

@@ -75,6 +75,7 @@ class SpendRulesClaim extends AbstractRoute {
 	 * @param  \WP_REST_Request $request Request object.
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
+	 * @throws \RouteException If the spend rule is not found.
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$spend_rules_service = new SpendRules();

@@ -74,6 +74,7 @@ class EarnReward extends AbstractRoute {
 	 * @param  \WP_REST_Request $request Request object.
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
+	 * @throws \RouteException If the earn rule is not found.
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$data = array(
@@ -95,7 +96,7 @@ class EarnReward extends AbstractRoute {
 			}
 		}
 
-		// Get the Leat UUID for the user, if not found, create a new contact
+		// Get the Leat UUID for the user, if not found, create a new contact.
 		$contact = $this->connection->get_contact( $data['user_id'] );
 		$uuid    = $contact['uuid'];
 

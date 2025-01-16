@@ -40,6 +40,7 @@ class JoinProgram extends AbstractRoute {
 	 * @param  \WP_REST_Request $request Request object.
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
+	 * @throws \RouteException If the user is not found.
 	 */
 	protected function get_route_post_response( \WP_REST_Request $request ) {
 		$user_id = $request->get_param( 'userId' );

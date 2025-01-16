@@ -15,26 +15,36 @@ use Leat\Utils\OrderNotes;
 class CustomerSession {
 
 	/**
+	 * Connection instance.
+	 *
 	 * @var Connection
 	 */
 	private $connection;
 
 	/**
+	 * Earn Rules instance.
+	 *
 	 * @var EarnRules
 	 */
 	private $earn_rules;
 
 	/**
+	 * Spend Rules instance.
+	 *
 	 * @var SpendRules
 	 */
 	private $spend_rules;
 
 	/**
+	 * Logger instance.
+	 *
 	 * @var Logger
 	 */
 	private $logger;
 
 	/**
+	 * Settings instance.
+	 *
 	 * @var Settings
 	 */
 	private $settings;
@@ -74,7 +84,7 @@ class CustomerSession {
 		$withdraw_statuses = $this->settings->get_setting_value_by_id( 'withdraw_order_statuses' ) ?? [ 'refunded' => 'on' ];
 
 		foreach ( $withdraw_statuses as $status => $enabled ) {
-			if ( $enabled === 'on' ) {
+			if ( 'on' === $enabled ) {
 				if ( 'refunded' === $status ) {
 					add_action( 'woocommerce_order_refunded', [ $this, 'handle_order_credit_withdrawal_refund' ], 10, 2 );
 				} else {
@@ -112,7 +122,7 @@ class CustomerSession {
 		$cart = WC()->cart;
 		if ( $cart ) {
 			foreach ( $cart->get_cart() as $cart_item ) {
-				if ( isset( $cart_item['leat_discounted_product'] ) && $cart_item['product_id'] == $product->get_id() ) {
+				if ( isset( $cart_item['leat_discounted_product'] ) && $cart_item['product_id'] === $product->get_id() ) {
 					return '';
 				}
 			}
@@ -124,7 +134,7 @@ class CustomerSession {
 		$cart = WC()->cart;
 		if ( $cart ) {
 			foreach ( $cart->get_cart() as $cart_item ) {
-				if ( isset( $cart_item['leat_discounted_product'] ) && $cart_item['product_id'] == $product->get_id() ) {
+				if ( isset( $cart_item['leat_discounted_product'] ) && $cart_item['product_id'] === $product->get_id() ) {
 					return $cart_item['leat_discounted_price'];
 				}
 			}
@@ -166,9 +176,9 @@ class CustomerSession {
 			$original_price   = $cart_item['data']->get_price();
 			$discounted_price = $original_price;
 
-			if ( $discount_type === 'fixed' ) {
+			if ( 'fixed' === $discount_type ) {
 				$discounted_price = max( 0, $original_price - $discount_amount );
-			} elseif ( $discount_type === 'percentage' ) {
+			} elseif ( 'percentage' === $discount_type ) {
 				$discounted_price = $original_price * ( 1 - $discount_amount / 100 );
 			}
 
@@ -182,7 +192,7 @@ class CustomerSession {
 
 	private function remove_discount_from_cart( $spend_rule ) {
 		foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-			if ( isset( $cart_item['leat_discount'] ) && $cart_item['leat_discount']['spend_rule_id'] == $spend_rule['id'] ) {
+			if ( isset( $cart_item['leat_discount'] ) && $cart_item['leat_discount']['spend_rule_id'] === $spend_rule['id'] ) {
 				$cart_item['data']->set_price( $cart_item['leat_discount']['original_price'] );
 				unset( $cart_item['leat_discount'] );
 			}
@@ -202,23 +212,23 @@ class CustomerSession {
 			$original_price   = $product->get_price();
 			$discounted_price = $this->calculate_discounted_price( $original_price, $discount_type, $discount_value );
 
-			// Check if the product is already in the cart
+			// Check if the product is already in the cart.
 			$cart_item_key = $this->find_product_in_cart( $product_id );
 
 			if ( $cart_item_key ) {
-				// Product is already in the cart, update its price and quantity
+				// Product is already in the cart, update its price and quantity.
 				$this->update_existing_cart_item( $cart_item_key, $discounted_price, $spend_rule['id'], $original_price );
 			} else {
-				// Product is not in the cart, add it
+				// Product is not in the cart, add it.
 				$this->add_new_cart_item( $product_id, $discounted_price, $spend_rule['id'], $original_price );
 			}
 		}
 	}
 
 	private function calculate_discounted_price( $original_price, $discount_type, $discount_value ) {
-		if ( $discount_type === 'percentage' ) {
+		if ( 'percentage' === $discount_type ) {
 			return $original_price * ( 1 - $discount_value / 100 );
-		} elseif ( $discount_type === 'fixed' ) {
+		} elseif ( 'fixed' === $discount_type ) {
 			return max( 0, $original_price - $discount_value );
 		}
 		return $original_price;
@@ -226,7 +236,7 @@ class CustomerSession {
 
 	private function find_product_in_cart( $product_id ) {
 		foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-			if ( $cart_item['product_id'] == $product_id ) {
+			if ( $cart_item['product_id'] === $product_id ) {
 				return $cart_item_key;
 			}
 		}
@@ -459,7 +469,9 @@ class CustomerSession {
 	}
 
 	/**
-	 * Only when the order is completed, we sync the attributes and apply credits
+	 * Only when the order is completed, we sync the attributes and apply credits.
+	 *
+	 * @throws \Exception If the order is not found.
 	 */
 	public function sync_attributes_on_order_completed( $order_id ) {
 		try {
@@ -491,7 +503,7 @@ class CustomerSession {
 				return;
 			}
 
-			// Sync all attributes including order-related data
+			// Sync all attributes including order-related data.
 			if ( $guest_checkout ) {
 				$this->connection->sync_guest_attributes( $order, $uuid );
 			} else {
@@ -659,7 +671,7 @@ class CustomerSession {
 			// Skip if it's a guest checkout and guest users are not included.
 			if ( $guest_checkout ) {
 				$include_guests = $this->settings->get_setting_by_id( 'include_guests' )['value'] ?? 'off';
-				if ( $include_guests !== 'on' ) {
+				if ( 'on' !== $include_guests ) {
 					$this->logger->info( 'Guest checkout detected but include_guests is disabled. Skipping Leat processing.' );
 					OrderNotes::add_warning( $order, 'Guest loyalty program disabled - no points awarded' );
 					return;
@@ -672,7 +684,6 @@ class CustomerSession {
 				return;
 			}
 
-			// Get or create contact UUID
 			$uuid = null;
 			if ( $guest_checkout ) {
 				$email = $order->get_billing_email();

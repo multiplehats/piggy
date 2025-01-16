@@ -81,9 +81,10 @@ final class AssetsController {
 	 * Initialize class features.
 	 */
 	protected function init() {
-		 add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend' ], 80 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend' ], 80 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin' ], 100 );
 
+		// phpcs:ignore -- this is a base64 encoded SVG icon for the WP admin menu.
 		$icon_svg = 'data:image/svg+xml;base64,' . base64_encode( file_get_contents( plugin_dir_path( __FILE__ ) . 'leat-wp-icon.svg' ) );
 
 		$this->plugin_screen_hook_suffix = add_menu_page(
@@ -120,7 +121,7 @@ final class AssetsController {
 				[ 'wp-api-fetch', 'wp-i18n', 'wp-a11y', 'wp-keycodes', 'wp-html-entities' ]
 			);
 
-			wp_register_style( self::APP_HANDLE . '-dynamic', false );
+			wp_register_style( self::APP_HANDLE . '-dynamic', false, [], '1.0.0' );
 			wp_enqueue_style( self::APP_HANDLE . '-dynamic' );
 
 			if ( wp_script_is( self::APP_HANDLE, 'enqueued' ) ) {
@@ -232,7 +233,7 @@ final class AssetsController {
 	 * @return array|null
 	 */
 	protected function get_plugin_settings() {
-		$settings = $this->settings->get_all_settings_with_values( false ); // false to exclude API key
+		$settings = $this->settings->get_all_settings_with_values( false );
 
 		if ( ! $settings ) {
 			return null;
@@ -252,7 +253,7 @@ final class AssetsController {
 	 * Initialize core data.
 	 */
 	protected function initialize_core_data() {
-		 $this->wc_settings_data = $this->get_wc_settings();
+		$this->wc_settings_data = $this->get_wc_settings();
 	}
 
 	/**
@@ -365,7 +366,7 @@ final class AssetsController {
 	protected function get_dynamic_css() {
 		$css = '';
 		// Example future CSS content:
-		// $css = ".some-class { color: " . $some_variable . "; }";
+		// $css = ".some-class { color: " . $some_variable . "; }";.
 
 		return wp_strip_all_tags( $css );
 	}

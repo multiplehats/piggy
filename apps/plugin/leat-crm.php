@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: Leat CRM
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block

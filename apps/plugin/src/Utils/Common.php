@@ -35,7 +35,7 @@ class Common {
 		$languages = array();
 
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
-			// WPML
+			// WPML.
 			$wpml_languages = apply_filters( 'wpml_active_languages', null, 'orderby=id&order=desc' );
 			if ( ! empty( $wpml_languages ) ) {
 				foreach ( $wpml_languages as $language ) {
@@ -43,13 +43,13 @@ class Common {
 				}
 			}
 		} elseif ( function_exists( 'pll_languages_list' ) ) {
-			// Polylang
+			// Polylang.
 			$pll_languages = pll_languages_list( array( 'fields' => 'locale' ) );
 			if ( ! empty( $pll_languages ) ) {
 				$languages = $pll_languages;
 			}
 		} else {
-			// Default to single language
+			// Default to single language.
 			$languages[] = get_locale();
 		}
 
@@ -65,7 +65,7 @@ class Common {
 		$current_language = '';
 
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
-			// WPML
+			// WPML.
 			$current_language = apply_filters( 'wpml_current_language', null );
 			if ( $current_language ) {
 				$wpml_languages = apply_filters( 'wpml_active_languages', null, 'orderby=id&order=desc' );
@@ -74,16 +74,15 @@ class Common {
 				}
 			}
 		} elseif ( function_exists( 'pll_current_language' ) ) {
-			// Polylang
+			// Polylang.
 			$current_language = pll_current_language( 'locale' );
 		}
 
 		if ( ! $current_language ) {
-			// Default to single language
+			// Default to single language.
 			$current_language = get_locale();
 		}
 
 		return $current_language;
 	}
-
 }

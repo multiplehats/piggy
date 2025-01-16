@@ -6,16 +6,20 @@ use Leat\Utils\Logger;
 
 /**
  * Class SpendRules
+ *
+ * @internal
  */
 class SpendRules {
 
 	/**
+	 * Logger instance.
+	 *
 	 * @var Logger
 	 */
 	private $logger;
 
 	public function __construct() {
-		 $this->logger = new Logger();
+		$this->logger = new Logger();
 	}
 
 	private function get_post_meta_data( $post_id, $key, $fallback_value = null ) {
@@ -23,6 +27,13 @@ class SpendRules {
 		return empty( $value ) ? $fallback_value : $value;
 	}
 
+	/**
+	 * Get spend rules by type.
+	 *
+	 * @param string|null $type The type of spend rule.
+	 * @param array       $post_status The status of the spend rule.
+	 * @return array|null The spend rules, or null if none found.
+	 */
 	public function get_spend_rules_by_type( $type, $post_status = [ 'publish' ] ) {
 		$args = [
 			'post_type'        => 'leat_spend_rule',
@@ -39,7 +50,7 @@ class SpendRules {
 			];
 		}
 
-		$cache_key = 'leat_spend_rules_' . md5( serialize( $args ) );
+		$cache_key = 'leat_spend_rules_' . md5( wp_json_encode( $args ) );
 		$posts     = wp_cache_get( $cache_key );
 
 		if ( false === $posts ) {
@@ -265,7 +276,7 @@ class SpendRules {
 	private function get_label_description( $type ) {
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
 
-		/* translators: %s: List of available placeholders that can be used in the label text */
+		/* translators: %s: List of available placeholders that can be used in the label text. */
 		return sprintf( __( "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat-crm' ), $placeholders );
 	}
 
@@ -278,21 +289,21 @@ class SpendRules {
 	private function get_description_placeholder( $type ) {
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
 
-		/* translators: %s: List of available placeholders that can be used in the description text */
+		/* translators: %s: List of available placeholders that can be used in the description text. */
 		return sprintf( __( 'Add a description of the reward. Available placeholders: %s', 'leat-crm' ), $placeholders );
 	}
 
 	private function get_instructions_placeholder( $type ) {
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
 
-		/* translators: %s: List of available placeholders that can be used in the instructions text */
+		/* translators: %s: List of available placeholders that can be used in the instructions text. */
 		return sprintf( __( 'Add instructions on how to redeem the reward. Available placeholders: %s', 'leat-crm' ), $placeholders );
 	}
 
 	private function get_fulfillment_placeholder( $type ) {
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
 
-		/* translators: %s: List of available placeholders that can be used in the fulfillment text */
+		/* translators: %s: List of available placeholders that can be used in the fulfillment text. */
 		return sprintf( __( 'Add instructions on how fulfillment will be handled. Available placeholders: %s', 'leat-crm' ), $placeholders );
 	}
 
@@ -322,7 +333,7 @@ class SpendRules {
 	 * @return array|null The applicable spend rule, or null if none found.
 	 */
 	public function get_applicable_spend_rule( $credit_amount ) {
-		$spend_rules = $this->get_spend_rules_by_type( null ); // Get all spend rules
+		$spend_rules = $this->get_spend_rules_by_type( null );
 
 		if ( ! $spend_rules ) {
 			return null;
@@ -467,7 +478,7 @@ class SpendRules {
 			wp_delete_post( $post->ID, true );
 		}
 
-		return count( $posts ); // Return the number of deleted posts
+		return count( $posts );
 	}
 
 	public function get_spend_rule_by_id( $id ) {
@@ -539,7 +550,7 @@ class SpendRules {
 					$coupon->set_product_categories( $formatted_spend_rule['selectedCategories']['value'] );
 				}
 
-				// Add limit usage to X items if set
+				// Add limit usage to X items if set.
 				if ( isset( $formatted_spend_rule['limitUsageToXItems']['value'] ) ) {
 					$limit = $formatted_spend_rule['limitUsageToXItems']['value'];
 
@@ -592,7 +603,6 @@ class SpendRules {
 		$coupon_codes = [];
 
 		foreach ( $coupons as $coupon ) {
-			// Tie back to the spend rule
 			$spend_rule_id = get_post_meta( $coupon->ID, '_leat_spend_rule_id', true );
 			$spend_rule    = $this->get_spend_rule_by_id( $spend_rule_id );
 

@@ -83,9 +83,9 @@ class Connection {
 	}
 
 	public function has_api_key() {
-		 $api_key = $this->get_api_key();
+		$api_key = $this->get_api_key();
 
-		return $api_key !== null && $api_key !== '';
+		return null !== $api_key && '' !== $api_key;
 	}
 
 	/**
@@ -98,12 +98,13 @@ class Connection {
 
 		if ( $api_key ) {
 			ApiClient::configure( $api_key, 'https://api.piggy.eu' );
-
 			ApiClient::setPartnerId( 'P01-267-loyal_minds' );
 
-			return $this->client = true;
+			$this->client = true;
+			return $this->client;
 		} else {
-			return $this->client = null;
+			$this->client = null;
+			return $this->client;
 		}
 	}
 
@@ -178,6 +179,8 @@ class Connection {
 	 * @param string $email The contact email.
 	 *
 	 * @return array|null
+	 * @throws \Exception If the contact creation fails.
+	 * @throws \Throwable If an unexpected error occurs.
 	 */
 	public function create_contact( string $email ) {
 		$client = $this->init_client();
@@ -208,6 +211,7 @@ class Connection {
 	 * @param array  $attributes The contact attributes.
 	 *
 	 * @return array|null
+	 * @throws \Exception If the contact update fails.
 	 */
 	public function update_contact( string $id, array $attributes ) {
 		$client = $this->init_client();
@@ -401,19 +405,19 @@ class Connection {
 			'contact_uuid' => $contact_uuid,
 		];
 
-		if ( $credits !== null ) {
+		if ( null !== $credits ) {
 			$params['credits'] = $credits;
 		}
 
-		if ( $unit_value !== null ) {
+		if ( null !== $unit_value ) {
 			$params['unit_value'] = $unit_value;
 		}
 
-		if ( $unit_name !== null ) {
+		if ( null !== $unit_name ) {
 			$params['unit_name'] = $unit_name;
 		}
 
-		// Ensure that either credits or unit_value is set
+		// Ensure that either credits or unit_value is set.
 		if ( ! isset( $params['credits'] ) && ! isset( $params['unit_value'] ) ) {
 			return false;
 		}
@@ -538,7 +542,7 @@ class Connection {
 	private function get_purchased_categories( $user_id, $current_order = null ) {
 		$categories = [];
 
-		// Handle current order if provided (for guests)
+		// Handle current order if provided (for guests).
 		if ( $current_order ) {
 			foreach ( $current_order->get_items() as $item ) {
 				/**
@@ -553,7 +557,7 @@ class Connection {
 				}
 			}
 
-			// Get previous orders excluding current order
+			// Get previous orders excluding current order.
 			$customer_orders = wc_get_orders(
 				[
 					'customer' => $current_order->get_billing_email(),
@@ -563,11 +567,11 @@ class Connection {
 				]
 				);
 		} else {
-			// Get all orders for registered user
+			// Get all orders for registered user.
 			$customer_orders = wc_get_orders( [ 'customer' => $user_id ] );
 		}
 
-		// Process historical orders
+		// Process historical orders.
 		foreach ( $customer_orders as $order ) {
 			foreach ( $order->get_items() as $item ) {
 				/**
@@ -582,7 +586,7 @@ class Connection {
 			}
 		}
 
-		// Convert to strings and ensure unique values
+		// Convert to strings and ensure unique values.
 		return array_map( 'strval', array_unique( $categories ) );
 	}
 
@@ -637,10 +641,10 @@ class Connection {
 
 	private function get_product_categories_options() {
 		$categories = get_terms(
-		 [
-			 'taxonomy'   => 'product_cat',
-			 'hide_empty' => false,
-		 ]
+		[
+			'taxonomy'   => 'product_cat',
+			'hide_empty' => false,
+		]
 		);
 		$options    = [];
 
@@ -658,7 +662,7 @@ class Connection {
 	 * Ensure custom attributes exist in Leat.
 	 */
 	private function ensure_custom_attributes_exist() {
-		 $client = $this->init_client();
+		$client = $this->init_client();
 
 		if ( ! $client ) {
 			$this->logger->error( 'Failed to initialize client' );
@@ -669,7 +673,7 @@ class Connection {
 			$attributes_list = CustomAttribute::list( [ 'entity' => 'contact' ] );
 			$currency        = strtolower( get_woocommerce_currency() );
 
-			// Define required attributes with proper format
+			// Define required attributes with proper format.
 			$required_attributes = [
 				[
 					'entity' => 'contact',
@@ -769,7 +773,7 @@ class Connection {
 			foreach ( $required_attributes as $attr ) {
 				if ( ! $this->attribute_exists( $attributes_list, $attr['name'] ) ) {
 					try {
-						// Create single attribute at a time
+						// Create single attribute at a time.
 						$response = ApiClient::post( CustomAttribute::resourceUri, $attr );
 					} catch ( \Exception $e ) {
 						$this->log_exception( $e, 'Attribute "' . $attr['name'] . '" Create Error' );
@@ -790,7 +794,7 @@ class Connection {
 
 			$update_result = $this->update_contact( $uuid, $attributes );
 
-			if ( $update_result === null ) {
+			if ( null === $update_result ) {
 				$this->logger->error( 'Update contact returned null' );
 				return false;
 			}
@@ -804,7 +808,12 @@ class Connection {
 	}
 
 	/**
-	 * Update sync_user_attributes to use the new method
+	 * Update sync_user_attributes to use the new method.
+	 *
+	 * @param int    $user_id
+	 * @param string $uuid
+	 * @return bool
+	 * @throws \Exception If the user is not found.
 	 */
 	public function sync_user_attributes( $user_id, $uuid ) {
 		try {
@@ -854,7 +863,12 @@ class Connection {
 	}
 
 	/**
-	 * Update sync_guest_attributes to use the new method
+	 * Update sync_guest_attributes to use the new method.
+	 *
+	 * @param \WC_Order $order
+	 * @param string    $uuid
+	 * @return bool
+	 * @throws \Exception If the order is not found.
 	 */
 	public function sync_guest_attributes( $order, $uuid ) {
 		try {
@@ -937,19 +951,19 @@ class Connection {
 		];
 
 		$format = [
-			'%d', // wp_user_id
-			'%d', // earn_rule_id
-			'%d', // credits
-			'%s', // timestamp
+			'%d',
+			'%d',
+			'%d',
+			'%s',
 		];
 
 		$inserted = $wpdb->insert( $table_name, $data, $format );
 		// phpcs:enable
 
-		// Clear cache after inserting new log
+		// Clear cache after inserting new log.
 		wp_cache_delete( 'leat_reward_logs_' . $wp_user_id );
 
-		return $inserted !== false;
+		return false !== $inserted;
 	}
 
 	/**
@@ -981,10 +995,10 @@ class Connection {
 		$current_spend_rules = get_posts( $prepared_args );
 		$this->logger->info( 'Current spend rules in WordPress: ' . count( $current_spend_rules ) );
 
-		// Collect existing Leat UUIDs from CPT
+		// Collect existing Leat UUIDs from CPT.
 		$existing_uuids = array_column( $current_spend_rules, '_leat_reward_uuid', 'ID' );
 
-		// Sync Leat rewards with CPT (add/update)
+		// Sync Leat rewards with CPT (add/update).
 		$processed_uuids = [];
 		$updated_count   = 0;
 		$created_count   = 0;
@@ -1003,17 +1017,17 @@ class Connection {
 				$mapped_reward['image'] = $reward['media']['value'];
 			}
 
-			// Check if the reward already exists in CPT
-			$existing_post_id = array_search( $reward['uuid'], $existing_uuids );
+			// Check if the reward already exists in CPT.
+			$existing_post_id = array_search( $reward['uuid'], $existing_uuids, true );
 
-			if ( $existing_post_id !== false ) {
-				// Update existing spend rule
+			if ( false !== $existing_post_id ) {
+				// Update existing spend rule.
 				$this->logger->info( 'Updating existing spend rule: ' . $existing_post_id . ' (UUID: ' . $reward['uuid'] . ')' );
 
 				$this->spend_rules_service->create_or_update_spend_rule_from_reward( $mapped_reward, $existing_post_id );
 				$updated_count++;
 			} else {
-				// Create new spend rule
+				// Create new spend rule.
 				$this->logger->info( 'Creating new spend rule for UUID: ' . $reward['uuid'] );
 
 				$this->spend_rules_service->create_or_update_spend_rule_from_reward( $mapped_reward );
@@ -1023,13 +1037,13 @@ class Connection {
 			$processed_uuids[] = $reward['uuid'];
 		}
 
-		// Delete spend rules that no longer exist in Leat
+		// Delete spend rules that no longer exist in Leat.
 		$uuids_to_delete = array_diff( $existing_uuids, $processed_uuids );
 		$delete_count    = count( $uuids_to_delete );
 		$this->logger->info( 'Deleting ' . $delete_count . ' spend rules that no longer exist in Leat' );
 		$this->spend_rules_service->delete_spend_rules_by_uuids( $uuids_to_delete );
 
-		// Handle duplicated UUIDs
+		// Handle duplicated UUIDs.
 		$this->logger->info( 'Handling any duplicated spend rules' );
 		$this->spend_rules_service->handle_duplicated_spend_rules( $processed_uuids );
 
@@ -1068,10 +1082,10 @@ class Connection {
 
 		$this->logger->info( 'Current promotion rules in WordPress: ' . count( $current_promotion_rules ) );
 
-		// Collect existing Leat UUIDs from CPT
+		// Collect existing Leat UUIDs from CPT.
 		$existing_uuids = array_column( $current_promotion_rules, '_leat_promotion_uuid', 'ID' );
 
-		// Sync Leat rewards with CPT (add/update)
+		// Sync Leat rewards with CPT (add/update).
 		$processed_uuids = [];
 		$updated_count   = 0;
 		$created_count   = 0;
@@ -1089,17 +1103,17 @@ class Connection {
 				$mapped_promotion['image'] = $promotion['media']['value'];
 			}
 
-			// Check if the promotion already exists in CPT
-			$existing_post_id = array_search( $promotion['uuid'], $existing_uuids );
+			// Check if the promotion already exists in CPT.
+			$existing_post_id = array_search( $promotion['uuid'], $existing_uuids, true );
 
-			if ( $existing_post_id !== false ) {
-				// Update existing promotion rule
+			if ( false !== $existing_post_id ) {
+				// Update existing promotion rule.
 				$this->logger->info( 'Updating existing promotion rule: ' . $existing_post_id . ' (UUID: ' . $promotion['uuid'] . ')' );
 
 				$this->promotion_rules_service->create_or_update_promotion_rule_from_promotion( $mapped_promotion, $existing_post_id );
 				$updated_count++;
 			} else {
-				// Create new spend rule
+				// Create new spend rule.
 				$this->logger->info( 'Creating new promotion rule for UUID: ' . $promotion['uuid'] );
 
 				$this->promotion_rules_service->create_or_update_promotion_rule_from_promotion( $mapped_promotion );
@@ -1109,13 +1123,13 @@ class Connection {
 			$processed_uuids[] = $promotion['uuid'];
 		}
 
-		// Delete promotion rules that no longer exist in Leat
+		// Delete promotion rules that no longer exist in Leat.
 		$uuids_to_delete = array_diff( $existing_uuids, $processed_uuids );
 		$delete_count    = count( $uuids_to_delete );
 		$this->logger->info( 'Deleting ' . $delete_count . ' promotion rules that no longer exist in Leat' );
 		$this->promotion_rules_service->delete_promotion_rules_by_uuids( $uuids_to_delete );
 
-		// Handle duplicated UUIDs
+		// Handle duplicated UUIDs.
 		$this->logger->info( 'Handling any duplicated promotion rules' );
 		$this->promotion_rules_service->handle_duplicated_promotion_rules( $processed_uuids );
 
@@ -1202,31 +1216,30 @@ class Connection {
 	/**
 	 * Get WooCommerce guest data from order history
 	 *
-	 * @param string   $email Customer email
-	 * @param WC_Order $current_order Current order being processed
+	 * @param string   $email Customer email.
+	 * @param WC_Order $current_order Current order being processed.
 	 * @return array
 	 */
 	private function get_woocommerce_guest_data( $email, $current_order ) {
 		$currency = strtolower( get_woocommerce_currency() );
 
-		// Get guest's order history - exclude current order
+		// Get guest's order history - exclude current order.
 		$customer_orders = wc_get_orders(
 			[
 				'customer' => $email,
 				'status'   => [ 'completed', 'processing', 'on-hold' ],
 				'limit'    => -1,
-				'exclude'  => [ $current_order->get_id() ], // Explicitly exclude current order
+				'exclude'  => [ $current_order->get_id() ], // Explicitly exclude current order.
 			]
 			);
 
 		$this->logger->info( 'Found ' . count( $customer_orders ) . ' previous orders for guest email: ' . $email );
 
-		// Initialize statistics
-		$total_spent    = $current_order->get_total(); // Start with current order
+		$total_spent    = $current_order->get_total(); // Start with current order.
 		$total_products = 0;
-		$orders_count   = 1; // Start with 1 for current order
+		$orders_count   = 1; // Start with 1 for current order.
 
-		// Set initial dates from current order
+		// Set initial dates from current order.
 		$current_order_date = $current_order->get_date_created()->format( 'Y-m-d H:i:s' );
 		$first_order_date   = $current_order_date;
 		$last_order_date    = $current_order_date;
@@ -1251,9 +1264,10 @@ class Connection {
 	}
 
 	/**
-	 * List all gift card programs
+	 * List all gift card programs.
 	 *
 	 * @return array|null
+	 * @throws \Exception If the client is not initialized.
 	 */
 	public function list_giftcard_programs() {
 		$client = $this->init_client();

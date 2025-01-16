@@ -10,7 +10,7 @@ use Leat\Domain\Services\PromotionRules as PromotionRulesService;
  * @internal
  */
 class PromotionRulesSchema extends AbstractSchema {
-	/**a
+	/**
 	 * The Earn Rules service.
 	 *
 	 * @var PromotionRulesService

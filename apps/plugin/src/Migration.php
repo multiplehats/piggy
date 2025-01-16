@@ -53,5 +53,5 @@ class Migration {
 	// global $wpdb;
 
 	// Do work.
-	// }
+	// }.
 }

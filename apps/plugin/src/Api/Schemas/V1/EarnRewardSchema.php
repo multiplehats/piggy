@@ -62,6 +62,7 @@ class EarnRewardSchema extends AbstractSchema {
 	 *
 	 * @param array $data The customer id and earn rule id.
 	 * @return array
+	 * @throws RouteException If the earn rule is not found.
 	 */
 	public function get_item_response( $data ) {
 		$post = $this->earn_rules_service->get_by_id( $data['earn_rule_id'] );

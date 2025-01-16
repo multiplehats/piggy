@@ -155,13 +155,11 @@ class GiftcardProduct {
 	}
 
 	public function save_giftcard_recipient_email( $order_id ) {
-		// Verify nonce
 		if ( ! isset( $_POST['leat_giftcard_recipient_nonce'] ) ||
-			 ! wp_verify_nonce( $_POST['leat_giftcard_recipient_nonce'], 'leat_giftcard_recipient' ) ) {
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['leat_giftcard_recipient_nonce'] ) ), 'leat_giftcard_recipient' ) ) {
 			return;
 		}
 
-		// Verify user permissions
 		if ( ! current_user_can( 'edit_shop_orders' ) ) {
 			return;
 		}
@@ -259,7 +257,7 @@ class GiftcardProduct {
 				OrderNotes::add(
 					$order,
 					sprintf(
-						// translators: 1: quantity of gift cards, 2: amount in cents, 3: product name
+						// translators: 1: quantity of gift cards, 2: amount in cents, 3: product name.
 						__( 'Starting to create %1$d gift card(s) with amount %2$s for %3$s.', 'leat-crm' ),
 						$quantity,
 						$amount_in_cents / 100,
@@ -324,7 +322,7 @@ class GiftcardProduct {
 									OrderNotes::add_success(
 										$order,
 										sprintf(
-											// translators: 1: giftcard id, 2: recipient email
+											// translators: 1: giftcard id, 2: recipient email.
 											__( 'Gift card #%1$s email sent to %2$s.', 'leat-crm' ),
 											$giftcard_id,
 											$recipient_email
@@ -334,7 +332,7 @@ class GiftcardProduct {
 									OrderNotes::add_error(
 										$order,
 										sprintf(
-											// translators: 1: giftcard id, 2: recipient email
+											// translators: 1: giftcard id, 2: recipient email.
 											__( 'Failed to send gift card #%1$s email to %2$s.', 'leat-crm' ),
 											$giftcard_id,
 											$recipient_email
@@ -360,7 +358,7 @@ class GiftcardProduct {
 						OrderNotes::add_error(
 							$order,
 							sprintf(
-								// translators: 1: error message
+								// translators: 1: error message.
 								__( 'Error creating gift card: %1$s', 'leat-crm' ),
 								$e->getMessage()
 							)
@@ -434,8 +432,15 @@ class GiftcardProduct {
 		}
 
 		// Validate recipient email if cart has giftcard.
-		if ( $has_giftcard && empty( $_POST['giftcard_recipient_email'] ) ) {
-			wc_add_notice( __( 'Gift Card Recipient Email is required.', 'leat-crm' ), 'error' );
+		if ( $has_giftcard ) {
+			if ( ! isset( $_POST['leat_giftcard_recipient_nonce'] ) ||
+				! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['leat_giftcard_recipient_nonce'] ) ), 'leat_giftcard_recipient' ) ) {
+				return;
+			}
+
+			if ( empty( $_POST['giftcard_recipient_email'] ) ) {
+				wc_add_notice( __( 'Gift Card Recipient Email is required.', 'leat-crm' ), 'error' );
+			}
 		}
 	}
 
@@ -471,6 +476,11 @@ class GiftcardProduct {
 				continue;
 			}
 
+			/**
+			 * WooCommerce product object.
+			 *
+			 * @var \WC_Product $product
+			 */
 			$product = $original_item->get_product();
 
 			$product_id = $product->get_parent_id() ?: $product->get_id();
@@ -680,7 +690,7 @@ class GiftcardProduct {
 							]
 						);
 
-						// Mark this specific gift card as reversed
+						// Mark this specific gift card as reversed.
 						$item->add_meta_data( '_leat_giftcard_reversed_' . $i, true );
 						$item->save();
 					} else {

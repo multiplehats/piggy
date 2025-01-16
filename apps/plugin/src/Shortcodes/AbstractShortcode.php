@@ -38,8 +38,7 @@ abstract class AbstractShortcode {
 	/**
 	 * Constructor.
 	 *
-	 * @param AssetApi          $asset_api Instance of the asset API.
-	 * @param AssetDataRegistry $asset_data_registry Instance of the asset data registry.
+	 * @param AssetApi $asset_api Instance of the asset API.
 	 */
 	public function __construct( AssetApi $asset_api ) {
 		$this->asset_api = $asset_api;
@@ -50,6 +49,8 @@ abstract class AbstractShortcode {
 	 *
 	 * - Hook into WP lifecycle.
 	 * - Register the shortcode with WordPress.
+	 *
+	 * @throws \Exception If the shortcode name is not set.
 	 */
 	public function init() {
 		if ( empty( $this->shortcode_name ) ) {
@@ -93,20 +94,20 @@ abstract class AbstractShortcode {
 	 * @return string The rendered shortcode content.
 	 */
 	public function render_callback( $attributes, string $content = '' ) {
-		// If admin, return empty string
+		// If admin, return empty string.
 		if ( is_admin() ) {
 			return '';
 		}
 
 		$attributes = (array) $attributes;
 
-		// Ensure assets are enqueued when shortcode is used
+		// Ensure assets are enqueued when shortcode is used.
 		$this->enqueue_assets();
 
-		// Merge user-defined attributes with defaults
+		// Merge user-defined attributes with defaults.
 		$attributes = shortcode_atts( $this->get_shortcode_type_attributes(), $attributes );
 
-		// Generate the output
+		// Generate the output.
 		$output = $this->shortcode_output( $attributes, $content );
 
 		return $output;
