@@ -68,34 +68,49 @@ class GiftcardProduct {
 	public function add_giftcard_program_settings() {
 		global $post;
 
-		echo '<div id="leat_giftcard_product_data" class="panel woocommerce_options_panel">';
+		// Verify user permissions.
+		if ( ! current_user_can( 'edit_products' ) ) {
+			return;
+		}
 
-		// Get all giftcard programs
+		wp_nonce_field( 'leat_giftcard_program_settings', 'leat_giftcard_program_nonce' );
+
+		echo '<div id="' . esc_attr( 'leat_giftcard_product_data' ) . '" class="panel woocommerce_options_panel">';
+
 		$programs = $this->connection->list_giftcard_programs();
-		$options  = [ '' => __( 'Select a program', 'leat-crm' ) ];
+		$options  = [ '' => esc_html__( 'Select a program', 'leat-crm' ) ];
 		if ( $programs ) {
 			foreach ( $programs as $program ) {
-				$options[ $program['uuid'] ] = $program['name'];
+				$options[ esc_attr( $program['uuid'] ) ] = esc_html( $program['name'] );
 			}
 		}
 
 		woocommerce_wp_select(
 			[
 				'id'          => '_leat_giftcard_program_uuid',
-				'label'       => __( 'Giftcard Program', 'leat-crm' ),
-				'description' => __( 'Select the giftcard program this product is connected to', 'leat-crm' ),
+				'label'       => esc_html__( 'Giftcard Program', 'leat-crm' ),
+				'description' => esc_html__( 'Select the giftcard program this product is connected to', 'leat-crm' ),
 				'desc_tip'    => true,
 				'options'     => $options,
-				'value'       => get_post_meta( $post->ID, '_leat_giftcard_program_uuid', true ),
+				'value'       => esc_attr( get_post_meta( $post->ID, '_leat_giftcard_program_uuid', true ) ),
 			]
-			);
+		);
 
 		echo '</div>';
 	}
 
 	public function save_giftcard_program_settings( $post_id ) {
+		if ( ! isset( $_POST['leat_giftcard_program_nonce'] ) ||
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['leat_giftcard_program_nonce'] ) ), 'leat_giftcard_program_settings' ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'edit_products' ) ) {
+			return;
+		}
+
 		$program_uuid = isset( $_POST['_leat_giftcard_program_uuid'] )
-			? sanitize_text_field( $_POST['_leat_giftcard_program_uuid'] )
+			? sanitize_text_field( wp_unslash( $_POST['_leat_giftcard_program_uuid'] ) )
 			: '';
 		update_post_meta( $post_id, '_leat_giftcard_program_uuid', $program_uuid );
 	}
@@ -112,6 +127,8 @@ class GiftcardProduct {
 		}
 
 		if ( $has_giftcard ) {
+			wp_nonce_field( 'leat_giftcard_recipient', 'leat_giftcard_recipient_nonce' );
+
 			woocommerce_form_field(
 				'giftcard_recipient_email',
 				[
@@ -121,25 +138,40 @@ class GiftcardProduct {
 					'placeholder' => __( 'Enter recipient email address', 'leat-crm' ),
 					'required'    => true,
 				],
-				$checkout->get_value( 'giftcard_recipient_email' )
-				);
+				esc_attr( $checkout->get_value( 'giftcard_recipient_email' ) )
+			);
 
-			// Add notice if multiple gift cards.
 			if ( $giftcard_count > 1 ) {
-				echo '<p class="giftcard-notice"><em>' .
+				printf(
+					'<p class="giftcard-notice"><em>%s</em></p>',
 					sprintf(
 						/* translators: %d: number of gift cards */
 						esc_html__( 'Important: You are purchasing %d gift cards. All gift cards will be sent to the same recipient email address entered above. If you want to send gift cards to different recipients, please place separate orders.', 'leat-crm' ),
 						esc_html( $giftcard_count )
-					) .
-					'</em></p>';
+					)
+				);
 			}
 		}
 	}
 
 	public function save_giftcard_recipient_email( $order_id ) {
+		// Verify nonce
+		if ( ! isset( $_POST['leat_giftcard_recipient_nonce'] ) ||
+			 ! wp_verify_nonce( $_POST['leat_giftcard_recipient_nonce'], 'leat_giftcard_recipient' ) ) {
+			return;
+		}
+
+		// Verify user permissions
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+			return;
+		}
+
 		if ( ! empty( $_POST['giftcard_recipient_email'] ) ) {
-			update_post_meta( $order_id, '_giftcard_recipient_email', sanitize_email( $_POST['giftcard_recipient_email'] ) );
+			update_post_meta(
+				$order_id,
+				'_giftcard_recipient_email',
+				sanitize_email( wp_unslash( $_POST['giftcard_recipient_email'] ) )
+			);
 		}
 	}
 
@@ -726,23 +758,19 @@ class GiftcardProduct {
 			}
 		}
 
-		$description = __( 'This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards.', 'leat-crm' );
-
 		if ( $has_giftcard ) {
-			// Register and enqueue jQuery if not already done
 			wp_enqueue_script( 'jquery' );
 
-			// Add inline script
-			wp_add_inline_script(
-				'jquery',
-				'
-				jQuery(document).ready(function($) {
+			$script = sprintf(
+				'jQuery(document).ready(function($) {
 					const refundAmount = $("#refund_amount");
 					refundAmount.prop("readonly", true);
-					refundAmount.after("<p class=\"description\">' . esc_js( $description ) . '</p>");
-				});
-				'
+					refundAmount.after("<p class=\"description\">%s</p>");
+				});',
+				esc_js( __( 'This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards.', 'leat-crm' ) )
 			);
+
+			wp_add_inline_script( 'jquery', $script );
 		}
 	}
 }

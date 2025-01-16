@@ -13,7 +13,6 @@ use Leat\Domain\Services\CustomerSession;
 use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\GiftcardProduct;
 use Leat\Domain\Services\SpendRules;
-use Leat\Domain\Services\VoucherSync;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
@@ -115,7 +114,6 @@ class Bootstrap {
 		}
 		$this->container->get( CustomerDashboardShortcode::class )->init();
 		$this->container->get( CustomerSession::class );
-		$this->container->get( VoucherSync::class );
 		$this->container->get( GiftcardProduct::class )->init();
 
 		/**
@@ -273,12 +271,6 @@ class Bootstrap {
 			SpendRules::class,
 			function( Container $container ) {
 				return new SpendRules();
-			}
-		);
-		$this->container->register(
-			VoucherSync::class,
-			function ( Container $container ) {
-				return new VoucherSync( $container->get( Connection::class ) );
 			}
 		);
 		$this->container->register(
