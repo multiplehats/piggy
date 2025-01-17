@@ -11,8 +11,11 @@ use Leat\Migration;
 use Leat\Api\Api;
 use Leat\Domain\Services\CustomerSession;
 use Leat\Domain\Services\EarnRules;
+use Leat\Domain\Services\PromotionRules;
 use Leat\Domain\Services\GiftcardProduct;
 use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Services\SyncVouchers;
+use Leat\Domain\Services\SyncPromotions;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
@@ -114,6 +117,8 @@ class Bootstrap {
 		}
 		$this->container->get( CustomerDashboardShortcode::class )->init();
 		$this->container->get( CustomerSession::class );
+		$this->container->get( SyncVouchers::class )->init();
+		$this->container->get( SyncPromotions::class )->init();
 		$this->container->get( GiftcardProduct::class )->init();
 
 		/**
@@ -268,9 +273,27 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
+			PromotionRules::class,
+			function( Container $container ) {
+				return new PromotionRules( $container->get( Connection::class ) );
+			}
+		);
+		$this->container->register(
 			SpendRules::class,
 			function( Container $container ) {
 				return new SpendRules();
+			}
+		);
+		$this->container->register(
+			SyncVouchers::class,
+			function( Container $container ) {
+				return new SyncVouchers( $container->get( Connection::class ), $container->get( PromotionRules::class ) );
+			}
+		);
+		$this->container->register(
+			SyncPromotions::class,
+			function( Container $container ) {
+				return new SyncPromotions( $container->get( Connection::class ), $container->get( PromotionRules::class ) );
 			}
 		);
 		$this->container->register(

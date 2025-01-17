@@ -6,6 +6,9 @@ use Leat\Api\Formatters;
 use Leat\Api\RoutesController;
 use Leat\Api\SchemaController;
 use Leat\Api\Schemas\ExtendSchema;
+use Leat\Domain\Services\SyncPromotions;
+use Leat\Domain\Services\SyncVouchers;
+use Leat\Domain\Services\PromotionRules;
 use Leat\Settings;
 
 /**
@@ -58,12 +61,43 @@ final class Api {
 		);
 
 		$container->register(
+			PromotionRules::class,
+			function ( $container ) {
+				return new PromotionRules(
+					$container->get( Connection::class )
+				);
+			}
+		);
+
+		$container->register(
+			SyncVouchers::class,
+			function ( $container ) {
+				return new SyncVouchers(
+					$container->get( Connection::class ),
+					$container->get( PromotionRules::class )
+				);
+			}
+		);
+
+		$container->register(
+			SyncPromotions::class,
+			function ( $container ) {
+				return new SyncPromotions(
+					$container->get( Connection::class ),
+					$container->get( PromotionRules::class )
+				);
+			}
+		);
+
+		$container->register(
 			RoutesController::class,
 			function ( $container ) {
 				return new RoutesController(
 					$container->get( SchemaController::class ),
 					$container->get( Connection::class ),
-					$container->get( Settings::class )
+					$container->get( Settings::class ),
+					$container->get( SyncVouchers::class ),
+					$container->get( SyncPromotions::class ),
 				);
 			}
 		);
@@ -73,7 +107,8 @@ final class Api {
 			function ( $container ) {
 				return new SchemaController(
 					$container->get( ExtendSchema::class ),
-					$container->get( Settings::class )
+					$container->get( Settings::class ),
+					$container->get( PromotionRules::class )
 				);
 			}
 		);

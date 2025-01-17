@@ -85,4 +85,18 @@ class Common {
 
 		return $current_language;
 	}
+
+	/**
+	 * Glob wp options.
+	 *
+	 * @param string $pattern The pattern to glob.
+	 *
+	 * @return array
+	 */
+	public static function glob_wp_options( $pattern ) {
+		if ( is_multisite() ) {
+			return array_map( 'maybe_unserialize', get_site_option( $pattern, array() ) );
+		}
+		return array_map( 'maybe_unserialize', get_option( $pattern, array() ) );
+	}
 }

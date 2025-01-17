@@ -19,6 +19,7 @@ use Piggy\Api\Models\Giftcards\Giftcard;
 use Piggy\Api\Models\Giftcards\GiftcardProgram;
 use Piggy\Api\Models\Giftcards\GiftcardTransaction;
 use Piggy\Api\Models\Vouchers\Promotion;
+use Piggy\Api\Models\Vouchers\Voucher;
 
 class Connection {
 
@@ -35,13 +36,6 @@ class Connection {
 	 * @var SpendRules
 	 */
 	protected $spend_rules_service;
-
-	/**
-	 * PromotionRules service instance.
-	 *
-	 * @var PromotionRules
-	 */
-	protected $promotion_rules_service;
 
 	/**
 	 * Logger instance.
@@ -62,9 +56,9 @@ class Connection {
 			$this->client = null;
 		}
 
-		$this->spend_rules_service     = new SpendRules();
-		$this->promotion_rules_service = new PromotionRules();
-		$this->logger                  = new Logger();
+		$this->spend_rules_service = new SpendRules();
+
+		$this->logger = new Logger();
 	}
 
 	/**
@@ -333,6 +327,13 @@ class Connection {
 		];
 	}
 
+	/**
+	 * Format the promotion.
+	 *
+	 * @param Promotion $promotion The promotion object.
+	 *
+	 * @return array
+	 */
 	public function format_promotion( Promotion $promotion ) {
 		return [
 			'uuid'               => $promotion->getUuid(),
@@ -341,6 +342,46 @@ class Connection {
 			'limitPerContact'    => $promotion->getLimitPerContact(),
 			'expirationDuration' => $promotion->getExpirationDuration(),
 			'attributes'         => $promotion->getAttributes(),
+		];
+	}
+
+	/**
+	 * Format the voucher.
+	 *
+	 * @param Voucher $voucher The voucher object.
+	 *
+	 * @return array{
+	 *   uuid: string,
+	 *   code: string,
+	 *   status: string,
+	 *   contact_uuid: string,
+	 *   name: string,
+	 *   description: string,
+	 *   expiration_date: string,
+	 *   activation_date: string,
+	 *   redeemed_at: null|\DateTime,
+	 *   is_redeemed: boolean,
+	 *   promotion: array{uuid: string, name: string},
+	 *   custom_attributes: array
+	 * }
+	 */
+	public function format_voucher( Voucher $voucher ): array {
+		return [
+			'uuid'              => $voucher->getUuid(),
+			'code'              => $voucher->getCode(),
+			'status'            => $voucher->getStatus(),
+			'contact_uuid'      => $voucher->getContact()?->getUuid(),
+			'name'              => $voucher->getName(),
+			'description'       => $voucher->getDescription(),
+			'expiration_date'   => $voucher->getExpirationDate(),
+			'activation_date'   => $voucher->getActivationDate(),
+			'redeemed_at'       => $voucher->getRedeemedAt(),
+			'is_redeemed'       => $voucher->isRedeemed(),
+			'promotion'         => [
+				'uuid' => $voucher->getPromotion()?->getUuid(),
+				'name' => $voucher->getPromotion()?->getName(),
+			],
+			'custom_attributes' => $voucher->getAttributes(),
 		];
 	}
 
@@ -448,6 +489,12 @@ class Connection {
 		return $uuid;
 	}
 
+	/**
+	 * Get the user from the Leat UUID.
+	 *
+	 * @param string $uuid The Leat UUID.
+	 * @return \WP_User|false
+	 */
 	public function get_user_from_leat_uuid( $uuid ) {
 		return get_user_by( 'meta_key', 'leat_uuid', $uuid );
 	}
@@ -1048,94 +1095,6 @@ class Connection {
 		$this->spend_rules_service->handle_duplicated_spend_rules( $processed_uuids );
 
 		$this->logger->info( "Reward sync completed. Updated: $updated_count, Created: $created_count, Deleted: $delete_count" );
-
-		return true;
-	}
-
-	/**
-	 * Syncs promotions/vouchers in Leat with the promotion rules CPT.
-	 *
-	 * @return bool
-	 */
-	public function sync_promotions_with_promotion_rules() {
-		$client = $this->init_client();
-		if ( ! $client ) {
-			$this->logger->error( 'Failed to initialize client for reward sync' );
-			return false;
-		}
-
-		$promotions = $this->get_promotions();
-
-		if ( ! $promotions ) {
-			return true;
-		}
-
-		$this->logger->info( 'Starting promotion sync. Total promotions retrieved: ' . count( $promotions ) );
-
-		$prepared_args = array(
-			'post_type'      => 'leat_promotion_rule',
-			'posts_per_page' => -1,
-			'post_status'    => array( 'publish', 'draft', 'pending' ),
-		);
-
-		$current_promotion_rules = get_posts( $prepared_args );
-
-		$this->logger->info( 'Current promotion rules in WordPress: ' . count( $current_promotion_rules ) );
-
-		// Collect existing Leat UUIDs from CPT.
-		$existing_uuids = array_column( $current_promotion_rules, '_leat_promotion_uuid', 'ID' );
-
-		// Sync Leat rewards with CPT (add/update).
-		$processed_uuids = [];
-		$updated_count   = 0;
-		$created_count   = 0;
-
-		foreach ( $promotions as $promotion ) {
-			$mapped_promotion = [
-				'title'              => $promotion['title'],
-				'uuid'               => $promotion['uuid'],
-				'voucherLimit'       => $promotion['voucherLimit'],
-				'limitPerContact'    => $promotion['limitPerContact'],
-				'expirationDuration' => $promotion['expirationDuration'],
-			];
-
-			if ( isset( $promotion['media'] ) ) {
-				$mapped_promotion['image'] = $promotion['media']['value'];
-			}
-
-			// Check if the promotion already exists in CPT.
-			$existing_post_id = array_search( $promotion['uuid'], $existing_uuids, true );
-
-			if ( false !== $existing_post_id ) {
-				// Update existing promotion rule.
-				$this->logger->info( 'Updating existing promotion rule: ' . $existing_post_id . ' (UUID: ' . $promotion['uuid'] . ')' );
-
-				$this->promotion_rules_service->create_or_update_promotion_rule_from_promotion( $mapped_promotion, $existing_post_id );
-				$updated_count++;
-			} else {
-				// Create new spend rule.
-				$this->logger->info( 'Creating new promotion rule for UUID: ' . $promotion['uuid'] );
-
-				$this->promotion_rules_service->create_or_update_promotion_rule_from_promotion( $mapped_promotion );
-				$created_count++;
-			}
-
-			$processed_uuids[] = $promotion['uuid'];
-		}
-
-		// Delete promotion rules that no longer exist in Leat.
-		$uuids_to_delete = array_diff( $existing_uuids, $processed_uuids );
-		$delete_count    = count( $uuids_to_delete );
-		$this->logger->info( 'Deleting ' . $delete_count . ' promotion rules that no longer exist in Leat' );
-		$this->promotion_rules_service->delete_promotion_rules_by_uuids( $uuids_to_delete );
-
-		// Handle duplicated UUIDs.
-		$this->logger->info( 'Handling any duplicated promotion rules' );
-		$this->promotion_rules_service->handle_duplicated_promotion_rules( $processed_uuids );
-
-		$this->logger->info( "Promotion sync completed. Updated: $updated_count, Created: $created_count, Deleted: $delete_count" );
-
-		do_action( 'leat_sync_promotions_complete', $processed_uuids );
 
 		return true;
 	}

@@ -9,7 +9,7 @@ use Leat\Api\Schemas\V1\AbstractSchema;
  *
  * @internal
  */
-class PromotionRulesSyncSchema extends AbstractSchema {
+class SyncVouchersSchema extends AbstractSchema {
 
 
 	/**
@@ -17,14 +17,14 @@ class PromotionRulesSyncSchema extends AbstractSchema {
 	 *
 	 * @var string
 	 */
-	protected $title = 'promotion-rules-sync';
+	protected $title = 'sync-vouchers';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'promotion-rules-sync';
+	const IDENTIFIER = 'sync-vouchers';
 
 	/**
 	 * API key schema properties.

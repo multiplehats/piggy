@@ -3,6 +3,8 @@ namespace Leat\Api;
 
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Connection;
+use Leat\Domain\Services\SyncVouchers;
+use Leat\Domain\Services\SyncPromotions;
 use Leat\Settings;
 
 /**
@@ -31,6 +33,20 @@ class RoutesController {
 	protected $settings;
 
 	/**
+	 * Sync vouchers.
+	 *
+	 * @var SyncVouchers
+	 */
+	protected $sync_vouchers;
+
+	/**
+	 * Sync promotions.
+	 *
+	 * @var SyncPromotions
+	 */
+	protected $sync_promotions;
+
+	/**
 	 * Leat routes.
 	 *
 	 * @var array
@@ -42,10 +58,12 @@ class RoutesController {
 	 *
 	 * @param SchemaController $schema_controller Schema controller class passed to each route.
 	 */
-	public function __construct( SchemaController $schema_controller, Connection $connection, Settings $settings ) {
+	public function __construct( SchemaController $schema_controller, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions ) {
 		$this->schema_controller = $schema_controller;
 		$this->connection        = $connection;
 		$this->settings          = $settings;
+		$this->sync_vouchers     = $sync_vouchers;
+		$this->sync_promotions   = $sync_promotions;
 
 		$this->routes = [
 			'v1'      => [
@@ -62,6 +80,7 @@ class RoutesController {
 			'private' => [
 				Routes\V1\SpendRulesSync::IDENTIFIER     => Routes\V1\SpendRulesSync::class,
 				Routes\V1\PromotionRulesSync::IDENTIFIER => Routes\V1\PromotionRulesSync::class,
+				Routes\V1\SyncVouchers::IDENTIFIER       => Routes\V1\SyncVouchers::class,
 				Routes\V1\Admin\Settings::IDENTIFIER     => Routes\V1\Admin\Settings::class,
 				Routes\V1\Admin\Shops::IDENTIFIER        => Routes\V1\Admin\Shops::class,
 				Routes\V1\Admin\Rewards::IDENTIFIER      => Routes\V1\Admin\Rewards::class,
@@ -100,7 +119,9 @@ class RoutesController {
 			$this->schema_controller,
 			$this->schema_controller->get( $route::SCHEMA_TYPE, $route::SCHEMA_VERSION ),
 			$this->connection,
-			$this->settings
+			$this->settings,
+			$this->sync_vouchers,
+			$this->sync_promotions
 		);
 	}
 

@@ -6,6 +6,8 @@ use Leat\Api\Routes\RouteInterface;
 use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Schemas\v1\AbstractSchema;
 use Leat\Api\Connection;
+use Leat\Domain\Services\SyncPromotions;
+use Leat\Domain\Services\SyncVouchers;
 use Leat\Settings;
 use WP_Error;
 
@@ -49,6 +51,20 @@ abstract class AbstractRoute implements RouteInterface {
 	protected $settings;
 
 	/**
+	 * Sync vouchers.
+	 *
+	 * @var SyncVouchers
+	 */
+	protected $sync_vouchers;
+
+	/**
+	 * Sync promotions.
+	 *
+	 * @var SyncPromotions
+	 */
+	protected $sync_promotions;
+
+	/**
 	 * The routes schema.
 	 *
 	 * @var string
@@ -68,11 +84,13 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param SchemaController $schema_controller Schema Controller instance.
 	 * @param AbstractSchema   $schema Schema class for this route.
 	 */
-	public function __construct( SchemaController $schema_controller, AbstractSchema $schema, Connection $connection, Settings $settings ) {
+	public function __construct( SchemaController $schema_controller, AbstractSchema $schema, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions ) {
 		$this->schema_controller = $schema_controller;
 		$this->schema            = $schema;
 		$this->connection        = $connection;
 		$this->settings          = $settings;
+		$this->sync_vouchers     = $sync_vouchers;
+		$this->sync_promotions   = $sync_promotions;
 	}
 
 	/**

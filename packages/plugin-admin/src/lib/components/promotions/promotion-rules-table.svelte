@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createMutation, createQuery } from "@tanstack/svelte-query";
+	import { createMutation, useQueryClient } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
 	import { BadgePercent } from "lucide-svelte";
 	import { useNavigate } from "svelte-navigator";
@@ -9,23 +9,21 @@
 	import * as Card from "$lib/components/ui/card/index.js";
 	import * as Table from "$lib/components/ui/table/index.js";
 	import { SettingsAdminService } from "$lib/modules/settings";
-	import { QueryKeys } from "$lib/utils/query-keys";
 	import { getStatusText } from "$lib/utils/status-text";
+	import type { GetPromotionRulesResponse } from "$lib/modules/settings/types";
+	import { QueryKeys } from "$lib/utils/query-keys";
 
+	export let promotions: GetPromotionRulesResponse = [];
+
+	const client = useQueryClient();
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
 
-	const query = createQuery({
-		queryKey: [QueryKeys.promotionRules],
-		retry: false,
-		queryFn: async () => await service.getPromotionRules(),
-		refetchOnWindowFocus: true,
-	});
 	const mutateSync = createMutation({
 		mutationFn: () => service.syncPromotions(),
 		mutationKey: ["promotion-rules-sync"],
 		onSuccess: () => {
-			$query.refetch();
+			client.invalidateQueries({ queryKey: [QueryKeys.promotionRules] });
 		},
 	});
 </script>
@@ -71,7 +69,7 @@
 			</div>
 		</Card.Header>
 
-		{#if $query?.data && $query.data.length > 0}
+		{#if promotions && promotions.length > 0}
 			<Card.Content>
 				<Table.Root>
 					<Table.Header>
@@ -83,7 +81,7 @@
 					</Table.Header>
 
 					<Table.Body>
-						{#each $query.data as rule}
+						{#each promotions as rule}
 							<Table.Row
 								class="cursor-pointer"
 								on:click={() => navigate(`promotion-rules/${rule.id}`)}

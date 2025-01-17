@@ -71,3 +71,26 @@ export type UpsertPromotionRuleParams = Partial<PluginPromotionRuleItemValues> &
 };
 
 export type UpsertPromotionRuleResponse = PromotionRuleValueItem;
+
+export type TaskInformation = {
+	is_processing: boolean;
+	is_queued: boolean;
+	is_paused: boolean;
+	is_cancelled: boolean;
+	total_items: number;
+	items_processed: number;
+	remaining_items: number;
+	status: string;
+	last_process: {
+		timestamp: number;
+		memory_used: number;
+		execution_time: number;
+		items_processed: number;
+		status: string;
+	};
+};
+
+export type GetSyncVouchersInformationResponse = TaskInformation;
+export type GetSyncVouchersInformationParams = {
+	id: string;
+};

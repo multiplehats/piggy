@@ -6,11 +6,4 @@ export default {
 	preprocess: sveltePreprocess({
 		postcss: true,
 	}),
-	vitePlugin: {
-		inspector: {
-			toggleKeyCombo: "control-shift",
-			holdMode: true,
-			showToggleButton: "never",
-		},
-	},
 };

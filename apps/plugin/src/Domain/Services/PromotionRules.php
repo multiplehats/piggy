@@ -2,13 +2,14 @@
 
 namespace Leat\Domain\Services;
 
+use Leat\Api\Connection;
 use Leat\Utils\Logger;
+use Piggy\Api\Models\Vouchers\Voucher;
 
 /**
  * Class PromotionRules
  */
 class PromotionRules {
-
 	/**
 	 * Logger instance.
 	 *
@@ -16,8 +17,16 @@ class PromotionRules {
 	 */
 	private $logger;
 
-	public function __construct() {
-		$this->logger = new Logger();
+	/**
+	 * Connection instance.
+	 *
+	 * @var Connection
+	 */
+	private $connection;
+
+	public function __construct( Connection $connection ) {
+		$this->logger     = new Logger();
+		$this->connection = $connection;
 	}
 
 	private function get_post_meta_data( $post_id, $key, $fallback_value = null ) {
@@ -334,23 +343,118 @@ class PromotionRules {
 		return $this->get_formatted_post( $post );
 	}
 
-	public function get_active_promotions() {
+	/**
+	 * Get all active promotion rules.
+	 *
+	 * @return array
+	 */
+	public function get_active_promotion_rules() {
 		$args = array(
 			'post_type'      => 'leat_promotion_rule',
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
 		);
 
+		$formatted_posts = [];
 		$posts           = get_posts( $args );
-		$promotion_uuids = [];
 
 		foreach ( $posts as $post ) {
 			$uuid = get_post_meta( $post->ID, '_leat_promotion_uuid', true );
+
 			if ( $uuid ) {
-				$promotion_uuids[] = $uuid;
+				$formatted_posts[] = $this->get_formatted_post( $post );
 			}
 		}
 
-		return $promotion_uuids;
+		return $formatted_posts;
 	}
+
+	private function get_discount_type( $value ) {
+		if ( 'percentage' === $value ) {
+			return 'percent';
+		} elseif ( 'fixed' === $value ) {
+			return 'fixed_product';
+		}
+
+		return null;
+	}
+
+	public function upsert_coupon_for_promotion_rule( $formatted_rule, Voucher $voucher, ) {
+		$voucher_data = $this->connection->format_voucher( $voucher );
+
+		try {
+			// Try to load existing coupon.
+			$coupon = new \WC_Coupon( $voucher_data['code'] );
+		} catch ( \Exception $e ) {
+			// Coupon doesn't exist, create new one.
+			$coupon = new \WC_Coupon();
+
+			$coupon->set_code( strtoupper( $voucher_data['code'] ) );
+		}
+
+		// WE set a descripotion for internal use.
+		$descripotion = sprintf(
+			/* translators: %s: The promotion rule name */
+			__( 'Leat Promotion Voucher: %s', 'leat-crm' ),
+			$voucher_data['name']
+		);
+		$coupon->set_description( $descripotion );
+
+		$contact_uuid = $voucher_data['contact_uuid'];
+		$wp_user      = $this->connection->get_user_from_leat_uuid( $contact_uuid );
+		$is_redeemed  = $voucher_data['is_redeemed'];
+
+		// If we have a wp user and the voucher is redeemed, set the coupon status to trash.
+		if ( $wp_user && $is_redeemed ) {
+			$coupon->set_used_by( [ $wp_user->user_email ] );
+		}
+
+		// Each voucher can only be used once.
+		$coupon->set_individual_use( true );
+		$coupon->set_usage_limit( 1 );
+
+		$discount_type = $this->get_discount_type( $formatted_rule['discountType']['value'] );
+		if ( $discount_type ) {
+			$coupon->set_discount_type( $discount_type );
+		}
+
+		$discount_value = $formatted_rule['discountValue']['value'];
+		if ( $discount_value ) {
+			$coupon->set_amount( $discount_value );
+		}
+
+		if ( $voucher_data['expiration_date'] ) {
+			$coupon->set_date_expires( strtotime( $voucher_data['expiration_date'] ) );
+		}
+
+		$coupon->update_meta_data( '_leat_voucher_uuid', $voucher_data['uuid'] );
+		$coupon->update_meta_data( '_leat_promotion_uuid', $voucher_data['promotion']['uuid'] );
+
+		// Check for minimum purchase amount.
+		if ( isset( $formatted_rule['minimumPurchaseAmount'] ) &&
+			is_numeric( $formatted_rule['minimumPurchaseAmount']['value'] ) ) {
+			$min_amount = floatval( $formatted_rule['minimumPurchaseAmount']['value'] );
+			if ( $min_amount > 0 ) {
+				$coupon->set_minimum_amount( $min_amount );
+			}
+		}
+
+		if ( isset( $voucher_data['custom_attributes'] ) ) {
+			foreach ( $voucher_data['custom_attributes'] as $key => $value ) {
+				$coupon->update_meta_data( "_leat_custom_attribute_{$key}", $value );
+			}
+		}
+
+		// Handle contact-specific restrictions.
+		if ( isset( $voucher_data['contact_uuid'] ) ) {
+			$coupon->update_meta_data( '_leat_contact_uuid', $contact_uuid );
+
+			if ( $wp_user ) {
+				$coupon->set_email_restrictions( [ $wp_user->user_email ] );
+			}
+		}
+
+		$coupon->save();
+	}
+
 }

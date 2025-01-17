@@ -39,7 +39,7 @@
 	],
 	// PHP formatting
 	"[php]": {
-		"editor.defaultFormatter": "persoderlind.vscode-phpcbf",
+		"editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
 		"editor.formatOnSave": true,
 		"editor.codeActionsOnSave": {
 			"source.fixAll.php": "explicit"

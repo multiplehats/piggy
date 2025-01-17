@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { createMutation, createQuery, useQueryClient } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
-	// import SettingsCalendar from '$lib/components/settings-calendar.svelte';
 	import ChevronLeft from "lucide-svelte/icons/chevron-left";
 	import { useNavigate, useParams } from "svelte-navigator";
 	import { derived, writable } from "svelte/store";
-	// import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
-	// import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
 	import { Badge } from "$lib/components/ui/badge/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
+	import { Progress } from "$lib/components/ui/progress/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { SettingsAdminService } from "$lib/modules/settings";
 	import { upsertPromotionRuleMutationConfig } from "$lib/modules/settings/mutations";
@@ -50,7 +48,42 @@
 			}
 		)
 	);
+	const mutateSync = createMutation({
+		mutationFn: () => service.syncVouchers($params.id.toString()),
+		mutationKey: ["sync-vouchers"],
+		onSuccess: () => {
+			$query.refetch();
+		},
+	});
+
+	const querySyncInformation = createQuery(
+		derived(mutateSync, ($mutateSync) => ({
+			queryKey: ["sync-vouchers-information"],
+			queryFn: () => service.getSyncVouchersInformation({ id: $params.id.toString() }),
+			refetchInterval: (query) => {
+				if (
+					query.state.data?.is_queued ||
+					query.state.data?.is_processing ||
+					$mutateSync.isPending
+				) {
+					return 2000;
+				}
+
+				return false;
+			},
+		}))
+	);
 	const rule = writable<GetPromotionRuleByIdResponse[0] | null>(null);
+
+	let isStillSyncing = false;
+
+	$: {
+		isStillSyncing =
+			($mutateSync.isPending ||
+				$querySyncInformation.data?.is_processing ||
+				$querySyncInformation.data?.is_queued) ??
+			false;
+	}
 
 	function handleSave() {
 		if (!$rule) {
@@ -76,9 +109,7 @@
 	}
 </script>
 
-{#if $query.isLoading}
-	<p>Loading...</p>
-{:else if $query.isError}
+{#if $query.isError}
 	<p>Error: {$query.error.message}</p>
 {:else if $query.isSuccess && $rule}
 	<div class="grid max-w-[59rem] flex-1 auto-rows-max gap-4">
@@ -160,7 +191,7 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__("Details", "leat")}</Card.Title>
+						<Card.Title>{__("Details xqwreqwr", "leat")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -177,6 +208,71 @@
 									}
 								)}
 							/>
+						</div>
+					</Card.Content>
+				</Card.Root>
+
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>{__("Sync vouchers", "leat")}</Card.Title>
+					</Card.Header>
+
+					<Card.Content>
+						<div class="grid gap-4">
+							<Button
+								loading={$mutateSync.isPending}
+								on:click={() => $mutateSync.mutate()}
+								disabled={isStillSyncing}
+								class="w-full"
+							>
+								{__("Sync vouchers", "leat")}
+							</Button>
+
+							{#if $querySyncInformation.isSuccess && $querySyncInformation.data}
+								<div class="grid gap-3">
+									{#if isStillSyncing}
+										<div class="flex flex-col items-start gap-1.5 text-sm">
+											<Badge class="font-xs">
+												{$querySyncInformation.data.status}
+											</Badge>
+
+											<span class="text-muted-foreground text-xs">
+												{$querySyncInformation.data.items_processed} / {$querySyncInformation
+													.data.total_items}
+												{__("items processed", "leat")}
+											</span>
+										</div>
+
+										<Progress
+											max={$querySyncInformation.data.total_items}
+											value={$querySyncInformation.data.items_processed}
+										/>
+									{:else if $querySyncInformation.data.last_process}
+										<div class="text-sm">
+											<div class="flex items-center justify-between">
+												<span class="text-muted-foreground">
+													{__("Last sync completed", "leat")}
+												</span>
+												<span class="font-medium">
+													{new Date(
+														$querySyncInformation.data.last_process.timestamp
+													).toLocaleDateString()}
+												</span>
+											</div>
+											<div class="mt-2 flex items-center justify-between">
+												<span class="text-muted-foreground">
+													{__("Items processed", "leat")}
+												</span>
+												<span class="font-medium">
+													{$querySyncInformation.data.last_process
+														.items_processed} / {$querySyncInformation
+														.data.last_process.items_processed}
+												</span>
+											</div>
+										</div>
+									{/if}
+								</div>
+							{/if}
 						</div>
 					</Card.Content>
 				</Card.Root>
@@ -211,6 +307,4 @@
 			</Button>
 		</div>
 	</div>
-{:else}
-	<p>Rule not found</p>
 {/if}

@@ -3,6 +3,7 @@ namespace Leat\Api\Schemas\V1;
 
 use Leat\Api\SchemaController;
 use Leat\Api\Schemas\ExtendSchema;
+use Leat\Domain\Services\PromotionRules;
 use Leat\Settings;
 
 /**
@@ -40,6 +41,13 @@ abstract class AbstractSchema {
 	protected $settings;
 
 	/**
+	 * Promotion rules service instance.
+	 *
+	 * @var PromotionRules
+	 */
+	protected $promotion_rules_service;
+
+	/**
 	 * Extending key that gets added to endpoint.
 	 *
 	 * @var string
@@ -52,10 +60,11 @@ abstract class AbstractSchema {
 	 * @param ExtendSchema     $extend Rest Extending instance.
 	 * @param SchemaController $controller Schema Controller instance.
 	 */
-	public function __construct( ExtendSchema $extend, SchemaController $controller, Settings $settings ) {
-		$this->extend     = $extend;
-		$this->controller = $controller;
-		$this->settings   = $settings;
+	public function __construct( ExtendSchema $extend, SchemaController $controller, Settings $settings, PromotionRules $promotion_rules_service ) {
+		$this->extend                  = $extend;
+		$this->controller              = $controller;
+		$this->settings                = $settings;
+		$this->promotion_rules_service = $promotion_rules_service;
 	}
 
 	/**
