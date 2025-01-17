@@ -6,7 +6,7 @@ use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Connection;
 use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Routes\V1\Middleware;
-use WP_REST_Request;
+
 
 /**
  * PromotionRuleSync class.
@@ -83,11 +83,11 @@ class SyncVouchers extends AbstractRoute
 	 *
 	 * @return \WP_REST_Response
 	 */
-	protected function get_route_response(WP_REST_Request $request)
+	protected function get_route_response(\WP_REST_Request $request)
 	{
-		$information = $this->sync_vouchers->get_process_status();
+		$process_status = $this->sync_promotions->get_process_status();
 
-		return new \WP_REST_Response($information, 200);
+		return rest_ensure_response($process_status);
 	}
 
 	/**
@@ -99,17 +99,16 @@ class SyncVouchers extends AbstractRoute
 	 */
 	protected function get_route_post_response(\WP_REST_Request $request)
 	{
-		$has_started = $this->sync_vouchers->start_sync();
+		$has_started = $this->sync_promotions->start_sync();
 
 		if (!$has_started) {
 			throw new RouteException('sync-vouchers', 'Sync process is already running. Skipping new sync request.', 400);
 		}
 
-		return new \WP_REST_Response(
+		return rest_ensure_response(
 			[
 				'success' => true,
-			],
-			200
+			]
 		);
 	}
 }

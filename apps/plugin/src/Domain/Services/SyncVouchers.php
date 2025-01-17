@@ -66,7 +66,7 @@ class SyncVouchers extends BackgroundProcess
 
 	public function init()
 	{
-		add_action('leat_run_voucher_sync', [$this, 'start_sync']);
+		add_action('leat_run_vouchers_sync', [$this, 'start_sync']);
 	}
 
 	/**
@@ -134,7 +134,6 @@ class SyncVouchers extends BackgroundProcess
 
 				$voucher_count += count($vouchers);
 
-				// Update total items count
 				$this->update_stats([
 					'total_items' => $this->stats['total_items'] + count($vouchers),
 					'remaining_items' => $this->stats['total_items'] + count($vouchers) - $this->stats['items_processed']
