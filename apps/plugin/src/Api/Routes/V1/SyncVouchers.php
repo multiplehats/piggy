@@ -85,7 +85,7 @@ class SyncVouchers extends AbstractRoute
 	 */
 	protected function get_route_response(\WP_REST_Request $request)
 	{
-		$process_status = $this->sync_promotions->get_process_status();
+		$process_status = $this->sync_vouchers->get_process_status();
 
 		return rest_ensure_response($process_status);
 	}
@@ -99,7 +99,7 @@ class SyncVouchers extends AbstractRoute
 	 */
 	protected function get_route_post_response(\WP_REST_Request $request)
 	{
-		$has_started = $this->sync_promotions->start_sync();
+		$has_started = $this->sync_vouchers->start_sync();
 
 		if (!$has_started) {
 			throw new RouteException('sync-vouchers', 'Sync process is already running. Skipping new sync request.', 400);

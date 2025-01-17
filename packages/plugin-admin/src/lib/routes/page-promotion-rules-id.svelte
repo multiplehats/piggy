@@ -6,7 +6,6 @@
 	import { derived, writable } from "svelte/store";
 	import { Badge } from "$lib/components/ui/badge/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
-	import { Progress } from "$lib/components/ui/progress/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { SettingsAdminService } from "$lib/modules/settings";
 	import { upsertPromotionRuleMutationConfig } from "$lib/modules/settings/mutations";
@@ -17,6 +16,7 @@
 	import SettingsInput from "$lib/components/settings-input.svelte";
 	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
 	import PromotionRuleProductSelect from "$lib/components/promotions/promotion-rule-product-select.svelte";
+	import SettingsSyncStatus from "$lib/components/settings-sync-status.svelte";
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
@@ -212,92 +212,14 @@
 					</Card.Content>
 				</Card.Root>
 
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>{__("Sync vouchers", "leat")}</Card.Title>
-					</Card.Header>
-
-					<Card.Content>
-						<div class="grid gap-4">
-							<Button
-								loading={$mutateSync.isPending}
-								on:click={() => $mutateSync.mutate()}
-								disabled={isStillSyncing}
-								class="w-full"
-							>
-								{__("Sync vouchers", "leat")}
-							</Button>
-
-							{#if $querySyncInformation.isSuccess && $querySyncInformation.data}
-								<div class="grid gap-3">
-									{#if isStillSyncing}
-										<div class="flex flex-col items-start gap-1.5 text-sm">
-											<Badge class="font-xs">
-												{$querySyncInformation.data.status}
-											</Badge>
-
-											<span class="text-muted-foreground text-xs">
-												{$querySyncInformation.data.items_processed} / {$querySyncInformation
-													.data.total_items}
-												{__("items processed", "leat")}
-											</span>
-										</div>
-
-										<Progress
-											max={$querySyncInformation.data.total_items}
-											value={$querySyncInformation.data.items_processed}
-										/>
-									{:else if $querySyncInformation.data.last_process}
-										<div class="text-sm">
-											<div class="flex items-center justify-between">
-												<span class="text-muted-foreground">
-													{__("Last sync completed", "leat")}
-												</span>
-												<span class="font-medium">
-													{new Date(
-														$querySyncInformation.data.last_process.timestamp
-													).toLocaleDateString()}
-												</span>
-											</div>
-											<div class="mt-2 flex items-center justify-between">
-												<span class="text-muted-foreground">
-													{__("Items processed", "leat")}
-												</span>
-												<span class="font-medium">
-													{$querySyncInformation.data.last_process
-														.items_processed} / {$querySyncInformation
-														.data.last_process.items_processed}
-												</span>
-											</div>
-										</div>
-									{/if}
-								</div>
-							{/if}
-						</div>
-					</Card.Content>
-				</Card.Root>
-
-				<!-- Disabled until this feature is implemented -->
-				<!-- <Card.Root>
-					<Card.Header>
-						<Card.Title>{__('Schedule', 'leat')}</Card.Title>
-					</Card.Header>
-
-					<Card.Content>
-						<div class="grid gap-6">
-							<SettingsCalendar
-								{...$rule.startsAt}
-								bind:value={$rule.startsAt.value}
-								placeholder={$rule.startsAt.value}
-							/>
-							<SettingsCalendar
-								{...$rule.expiresAt}
-								bind:value={$rule.expiresAt.value}
-								placeholder={$rule.expiresAt.value}
-							/>
-						</div>
-					</Card.Content>
-				</Card.Root> -->
+				<SettingsSyncStatus
+					key="vouchers"
+					title={__("Sync vouchers", "leat")}
+					mutationFn={() => service.syncVouchers($params.id.toString())}
+					queryFn={() =>
+						service.getSyncVouchersInformation({ id: $params.id.toString() })}
+					onMutationSuccess={() => $query.refetch()}
+				/>
 			</div>
 		</div>
 

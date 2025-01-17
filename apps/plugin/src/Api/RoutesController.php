@@ -1,4 +1,5 @@
 <?php
+
 namespace Leat\Api;
 
 use Leat\Api\Routes\V1\AbstractRoute;
@@ -10,7 +11,8 @@ use Leat\Settings;
 /**
  * RoutesController class.
  */
-class RoutesController {
+class RoutesController
+{
 	/**
 	 * Leat schema_controller.
 	 *
@@ -58,7 +60,8 @@ class RoutesController {
 	 *
 	 * @param SchemaController $schema_controller Schema controller class passed to each route.
 	 */
-	public function __construct( SchemaController $schema_controller, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions ) {
+	public function __construct(SchemaController $schema_controller, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions)
+	{
 		$this->schema_controller = $schema_controller;
 		$this->connection        = $connection;
 		$this->settings          = $settings;
@@ -79,7 +82,7 @@ class RoutesController {
 			],
 			'private' => [
 				Routes\V1\SpendRulesSync::IDENTIFIER     => Routes\V1\SpendRulesSync::class,
-				Routes\V1\PromotionRulesSync::IDENTIFIER => Routes\V1\PromotionRulesSync::class,
+				Routes\V1\SyncPromotions::IDENTIFIER => Routes\V1\SyncPromotions::class,
 				Routes\V1\SyncVouchers::IDENTIFIER       => Routes\V1\SyncVouchers::class,
 				Routes\V1\Admin\Settings::IDENTIFIER     => Routes\V1\Admin\Settings::class,
 				Routes\V1\Admin\Shops::IDENTIFIER        => Routes\V1\Admin\Shops::class,
@@ -93,9 +96,10 @@ class RoutesController {
 	/**
 	 * Register all Leat API routes. This includes routes under specific version namespaces.
 	 */
-	public function register_all_routes() {
-		$this->register_routes( 'v1', 'leat/v1' );
-		$this->register_routes( 'private', 'leat/private' );
+	public function register_all_routes()
+	{
+		$this->register_routes('v1', 'leat/v1');
+		$this->register_routes('private', 'leat/private');
 	}
 
 	/**
@@ -108,16 +112,17 @@ class RoutesController {
 	 * @param string $version API Version being requested.
 	 * @return AbstractRoute
 	 */
-	public function get( $name, $version = 'v1' ) {
-		$route = $this->routes[ $version ][ $name ] ?? false;
+	public function get($name, $version = 'v1')
+	{
+		$route = $this->routes[$version][$name] ?? false;
 
-		if ( ! $route ) {
-			throw new \Exception( esc_html( sprintf( '%s %s route does not exist', $name, $version ) ) );
+		if (! $route) {
+			throw new \Exception(esc_html(sprintf('%s %s route does not exist', $name, $version)));
 		}
 
 		return new $route(
 			$this->schema_controller,
-			$this->schema_controller->get( $route::SCHEMA_TYPE, $route::SCHEMA_VERSION ),
+			$this->schema_controller->get($route::SCHEMA_TYPE, $route::SCHEMA_VERSION),
 			$this->connection,
 			$this->settings,
 			$this->sync_vouchers,
@@ -132,23 +137,24 @@ class RoutesController {
 	 * @param string $namespace Overrides the default route namespace.
 	 * @throws \Exception If the route does not exist.
 	 */
-	protected function register_routes( $version = 'v1', $namespace = 'leat/v1' ) {
-		if ( ! isset( $this->routes[ $version ] ) ) {
+	protected function register_routes($version = 'v1', $namespace = 'leat/v1')
+	{
+		if (! isset($this->routes[$version])) {
 			return;
 		}
-		$route_identifiers = array_keys( $this->routes[ $version ] );
-		foreach ( $route_identifiers as $route ) {
-			$route_instance = $this->get( $route, $version );
-			$route_instance->set_namespace( $namespace );
+		$route_identifiers = array_keys($this->routes[$version]);
+		foreach ($route_identifiers as $route) {
+			$route_instance = $this->get($route, $version);
+			$route_instance->set_namespace($namespace);
 
 			$args = $route_instance->get_args();
 
-			foreach ( $args as $key => $arg ) {
-				if ( in_array( $key, [ 'schema', 'allow_batch' ], true ) ) {
+			foreach ($args as $key => $arg) {
+				if (in_array($key, ['schema', 'allow_batch'], true)) {
 					continue;
 				}
 
-				if ( ! isset( $arg['permission_callback'] ) ) {
+				if (! isset($arg['permission_callback'])) {
 					throw new \Exception(
 						sprintf(
 							'Route %s must implement a permission_callback. Use "__return_true" for intentionally public endpoints.',

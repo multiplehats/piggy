@@ -12,21 +12,21 @@ use Leat\Api\Routes\V1\Middleware;
  *
  * @internal
  */
-class PromotionRulesSync extends AbstractRoute
+class SyncPromotions extends AbstractRoute
 {
 	/**
 	 * The route identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'promotion-rules-sync';
+	const IDENTIFIER = 'sync-promotions';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const SCHEMA_TYPE = 'promotion-rules-sync';
+	const SCHEMA_TYPE = 'sync-promotions';
 
 	/**
 	 * Get the path of this REST route.
@@ -35,7 +35,7 @@ class PromotionRulesSync extends AbstractRoute
 	 */
 	public function get_path()
 	{
-		return '/promotion-rules-sync';
+		return '/sync-promotions';
 	}
 
 	/**
@@ -50,26 +50,12 @@ class PromotionRulesSync extends AbstractRoute
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [$this, 'get_response'],
 				'permission_callback' => [Middleware::class, 'is_authorized'],
-				'args'                => [
-					'id' => [
-						'description' => __('Sync voucher ID', 'leat-crm'),
-						'type'        => 'string',
-					],
-				],
 			],
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [$this, 'get_response'],
 				'permission_callback' => [Middleware::class, 'is_authorized'],
-				'args'                => [
-					'id' => [
-						'description' => __('Sync voucher ID', 'leat-crm'),
-						'type'        => 'string',
-					],
-				],
 			],
-			'schema'      => [$this->schema, 'get_public_item_schema'],
-			'allow_batch' => ['v1' => true],
 			'schema'      => [$this->schema, 'get_public_item_schema'],
 			'allow_batch' => ['v1' => true],
 		];
@@ -101,7 +87,7 @@ class PromotionRulesSync extends AbstractRoute
 		$has_started = $this->sync_promotions->start_sync();
 
 		if (!$has_started) {
-			throw new RouteException('sync-vouchers', 'Sync process is already running. Skipping new sync request.', 400);
+			throw new RouteException('sync-promotions', 'Sync process is already running. Skipping new sync request.', 400);
 		}
 
 		return rest_ensure_response(

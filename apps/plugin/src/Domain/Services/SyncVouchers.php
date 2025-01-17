@@ -30,7 +30,7 @@ class SyncVouchers extends BackgroundProcess
 	 *
 	 * @var int
 	 */
-	private const BATCH_SIZE = 2;
+	private const BATCH_SIZE = 25;
 
 	/**
 	 * @var PromotionRuleService

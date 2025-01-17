@@ -57,6 +57,7 @@ class SyncPromotions extends BackgroundProcess
 	 */
 	public function __construct(Connection $connection, PromotionRuleService $promotion_rules)
 	{
+		parent::__construct();
 		$this->connection      = $connection;
 		$this->promotion_rules = $promotion_rules;
 		$this->logger          = new Logger();
@@ -100,14 +101,13 @@ class SyncPromotions extends BackgroundProcess
 
 			$this->logger->info('Retrieved ' . count($promotions) . ' promotions');
 
-			// Update total items count
 			$this->update_stats([
-				'total_items' => count($promotions),
+				'total_items' => 0,
 				'remaining_items' => count($promotions)
 			]);
 
-			// Queue promotions in batches
 			$batches = array_chunk($promotions, self::BATCH_SIZE);
+
 			foreach ($batches as $batch) {
 				$this->push_to_queue($batch);
 			}

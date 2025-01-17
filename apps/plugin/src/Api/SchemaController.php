@@ -1,4 +1,5 @@
 <?php
+
 namespace Leat\Api;
 
 use Leat\Api\Schemas\ExtendSchema;
@@ -8,7 +9,8 @@ use Leat\Settings;
 /**
  * SchemaController class.
  */
-class SchemaController {
+class SchemaController
+{
 
 	/**
 	 * Leat schema class instances.
@@ -43,7 +45,8 @@ class SchemaController {
 	 *
 	 * @param ExtendSchema $extend Rest Extending instance.
 	 */
-	public function __construct( ExtendSchema $extend, Settings $settings, PromotionRules $promotion_rules_service ) {
+	public function __construct(ExtendSchema $extend, Settings $settings, PromotionRules $promotion_rules_service)
+	{
 		$this->extend                  = $extend;
 		$this->settings                = $settings;
 		$this->promotion_rules_service = $promotion_rules_service;
@@ -56,7 +59,7 @@ class SchemaController {
 				Schemas\V1\PromotionRulesSchema::IDENTIFIER => Schemas\V1\PromotionRulesSchema::class,
 				Schemas\V1\WCProductsSearchSchema::IDENTIFIER => Schemas\V1\WCProductsSearchSchema::class,
 				Schemas\V1\SpendRulesSyncSchema::IDENTIFIER => Schemas\V1\SpendRulesSyncSchema::class,
-				Schemas\V1\PromotionRulesSyncSchema::IDENTIFIER => Schemas\V1\PromotionRulesSyncSchema::class,
+				Schemas\V1\SyncPromotionsSchema::IDENTIFIER => Schemas\V1\SyncPromotionsSchema::class,
 				Schemas\V1\SyncVouchersSchema::IDENTIFIER  => Schemas\V1\SyncVouchersSchema::class,
 				Schemas\V1\Admin\SettingsSchema::IDENTIFIER => Schemas\V1\Admin\SettingsSchema::class,
 				Schemas\V1\Admin\ShopsSchema::IDENTIFIER   => Schemas\V1\Admin\ShopsSchema::class,
@@ -79,13 +82,14 @@ class SchemaController {
 	 * @param int    $version API Version being requested.
 	 * @return Schemas\V1\AbstractSchema A new instance of the requested schema.
 	 */
-	public function get( $name, $version = 1 ) {
-		$schema = $this->schemas[ "v{$version}" ][ $name ] ?? false;
+	public function get($name, $version = 1)
+	{
+		$schema = $this->schemas["v{$version}"][$name] ?? false;
 
-		if ( ! $schema ) {
-			throw new \Exception( esc_html( sprintf( '%s v%d schema does not exist', $name, $version ) ) );
+		if (! $schema) {
+			throw new \Exception(esc_html(sprintf('%s v%d schema does not exist', $name, $version)));
 		}
 
-		return new $schema( $this->extend, $this, $this->settings, $this->promotion_rules_service );
+		return new $schema($this->extend, $this, $this->settings, $this->promotion_rules_service);
 	}
 }
