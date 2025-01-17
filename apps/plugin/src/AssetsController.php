@@ -125,26 +125,32 @@ final class AssetsController {
 			wp_enqueue_style( self::APP_HANDLE . '-dynamic' );
 
 			if ( wp_script_is( self::APP_HANDLE, 'enqueued' ) ) {
-				$settings = rawurlencode( wp_json_encode( $this->get_plugin_settings() ) );
-
-				$this->assets_api->add_inline_script(
+				wp_add_inline_script(
 					self::APP_HANDLE,
-					"window.leatConfig = JSON.parse(decodeURIComponent('" . $settings . "'));",
+					sprintf(
+						'window.leatSettings = %s;',
+						wp_json_encode( $this->get_plugin_settings() )
+					),
 					'before'
 				);
 
 				$this->initialize_core_data();
 
-				$wc_settings = rawurlencode( wp_json_encode( $this->wc_settings_data ) );
-				$this->assets_api->add_inline_script(
+				wp_add_inline_script(
 					self::APP_HANDLE,
-					"window.leatWcSettings = JSON.parse(decodeURIComponent('" . $wc_settings . "'));",
+					sprintf(
+						'window.leatWcSettings = %s;',
+						wp_json_encode( $this->wc_settings_data )
+					),
 					'before'
 				);
 
-				$this->assets_api->add_inline_script(
+				wp_add_inline_script(
 					self::APP_HANDLE,
-					$this->get_middleware_config(),
+					sprintf(
+						'window.leatMiddlewareConfig = %s;',
+						wp_json_encode( $this->get_middleware_config() )
+					),
 					'before'
 				);
 			}
@@ -171,17 +177,21 @@ final class AssetsController {
 		if ( wp_script_is( self::ADMIN_APP_HANDLE, 'enqueued' ) ) {
 			$this->initialize_core_data();
 
-			$wc_settings = rawurlencode( wp_json_encode( $this->wc_settings_data ) );
-
-			$this->assets_api->add_inline_script(
+			wp_add_inline_script(
 				self::ADMIN_APP_HANDLE,
-				"window.leatWcSettings = JSON.parse(decodeURIComponent('" . esc_js( $wc_settings ) . "'));",
+				sprintf(
+					'window.leatWcSettings = %s;',
+					wp_json_encode( $this->wc_settings_data )
+				),
 				'before'
 			);
 
-			$this->assets_api->add_inline_script(
+			wp_add_inline_script(
 				self::ADMIN_APP_HANDLE,
-				$this->get_middleware_config(),
+				sprintf(
+					'window.leatMiddlewareConfig = %s;',
+					wp_json_encode( $this->get_middleware_config() )
+				),
 				'before'
 			);
 		}
@@ -207,19 +217,19 @@ final class AssetsController {
 		$contact          = $user_id ? $this->connection->get_contact( $user_id ) : null;
 		$uuid             = $contact ? $contact['uuid'] : null;
 
-		return '
-            window.leatMiddlewareConfig = {
-				apiKeySet: ' . wp_json_encode( $api_key_set ) . ',
-				loggedIn: ' . wp_json_encode( is_user_logged_in() ) . ',
-				userId: ' . wp_json_encode( $user_id ) . ',
-				hasLeatUuid: ' . wp_json_encode( $uuid ) . ",
-                siteLanguage: '" . esc_js( get_bloginfo( 'language' ) ) . "',
-                currentLanguage: '" . esc_js( $current_language ) . "',
-                languages: " . wp_json_encode( $all_languages ) . ",
-                storeApiNonce: '" . esc_js( wp_create_nonce( 'wc_store_api' ) ) . "',
-                wcStoreApiNonceTimestamp: '" . esc_js( time() ) . "'
-            };
-        ";
+		$config = [
+			'apiKeySet'                => $api_key_set,
+			'loggedIn'                 => is_user_logged_in(),
+			'userId'                   => $user_id,
+			'hasLeatUuid'              => $uuid,
+			'siteLanguage'             => get_bloginfo( 'language' ),
+			'currentLanguage'          => $current_language,
+			'languages'                => $all_languages,
+			'storeApiNonce'            => wp_create_nonce( 'wc_store_api' ),
+			'wcStoreApiNonceTimestamp' => time(),
+		];
+
+		return $config;
 	}
 
 	/**

@@ -215,25 +215,4 @@ class Api {
 	public function get_dist_path( $folder = 'frontend' ) {
 		return "dist/$folder/";
 	}
-
-	/**
-	 * Adds an inline script, once.
-	 *
-	 * @param string $handle Script handle.
-	 * @param string $script Script contents.
-	 * @param string $position Position of the script ('before' or 'after').
-	 */
-	public function add_inline_script( $handle, $script, $position = 'before' ) {
-		if ( ! empty( $this->inline_scripts[ $handle ] ) && in_array( $script, $this->inline_scripts[ $handle ], true ) ) {
-			return;
-		}
-
-		wp_add_inline_script( $handle, esc_js( $script ), $position );
-
-		if ( isset( $this->inline_scripts[ $handle ] ) ) {
-			$this->inline_scripts[ $handle ][] = $script;
-		} else {
-			$this->inline_scripts[ $handle ] = array( $script );
-		}
-	}
 }
