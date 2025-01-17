@@ -67,7 +67,7 @@
 	<Card.Content>
 		{#if showButton}
 			<Button
-				variant="secondary"
+				variant="primary"
 				size="sm"
 				loading={$mutateSync.isPending}
 				on:click={() => $mutateSync.mutate()}
