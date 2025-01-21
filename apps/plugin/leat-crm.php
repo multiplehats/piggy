@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Plugin Name: Leat CRM
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: Customer loyalty & Email marketing that works in-store and online.
- * Version: 0.5.9
+ * Version: 0.5.10
  * Author: rensleat, chrisjayden
  * Author URI: https://leat.com
  * Text Domain: leat-crm
@@ -22,16 +23,16 @@
  * @package Leat
  */
 
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 $minimum_wp_version = '6.0';
 
-if ( ! defined( 'LEAT_URL' ) ) {
-	define( 'LEAT_URL', plugins_url( '/', __FILE__ ) );
+if (! defined('LEAT_URL')) {
+	define('LEAT_URL', plugins_url('/', __FILE__));
 }
 
-if ( ! defined( 'LEAT_VERSION' ) ) {
-	define( 'LEAT_VERSION', '0.5.9' );
+if (! defined('LEAT_VERSION')) {
+	define('LEAT_VERSION', '0.5.10');
 }
 
 /**
@@ -39,51 +40,53 @@ if ( ! defined( 'LEAT_VERSION' ) ) {
  */
 add_action(
 	'before_woocommerce_init',
-	function() {
-		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	function () {
+		if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
 		}
 	}
-	);
+);
 
 /**
  * Whether notices must be displayed in the current page (plugins and WooCommerce pages).
  *
  * @since 2.5.0
  */
-function leat_should_display_compatibility_notices() {
+function leat_should_display_compatibility_notices()
+{
 	$current_screen = get_current_screen();
 
-	if ( ! isset( $current_screen ) ) {
+	if (! isset($current_screen)) {
 		return false;
 	}
 
 	$is_plugins_page     =
-		property_exists( $current_screen, 'id' ) &&
+		property_exists($current_screen, 'id') &&
 		'plugins' === $current_screen->id;
 	$is_woocommerce_page =
-		property_exists( $current_screen, 'parent_base' ) &&
+		property_exists($current_screen, 'parent_base') &&
 		'woocommerce' === $current_screen->parent_base;
 
 	return $is_plugins_page || $is_woocommerce_page;
 }
 
-if ( version_compare( $GLOBALS['wp_version'], $minimum_wp_version, '<' ) ) {
+if (version_compare($GLOBALS['wp_version'], $minimum_wp_version, '<')) {
 	/**
 	 * Outputs for an admin notice about running Leat on outdated WordPress.
 	 *
 	 * @since 2.5.0
 	 */
-	function leat_admin_unsupported_wp_notice() {
-		if ( leat_should_display_compatibility_notices() ) {
-			?>
+	function leat_admin_unsupported_wp_notice()
+	{
+		if (leat_should_display_compatibility_notices()) {
+?>
 			<div class="notice notice-error">
-				<p><?php esc_html_e( 'The Leat plugin requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Leat.', 'leat-crm' ); ?></p>
+				<p><?php esc_html_e('The Leat plugin requires a more recent version of WordPress and has been paused. Please update WordPress to continue enjoying Leat.', 'leat-crm'); ?></p>
 			</div>
-			<?php
+		<?php
 		}
 	}
-	add_action( 'admin_notices', 'leat_admin_unsupported_wp_notice' );
+	add_action('admin_notices', 'leat_admin_unsupported_wp_notice');
 	return;
 }
 
@@ -95,16 +98,16 @@ if ( version_compare( $GLOBALS['wp_version'], $minimum_wp_version, '<' ) ) {
  */
 $autoloader = __DIR__ . '/vendor/autoload.php';
 
-if ( is_readable( $autoloader ) ) {
+if (is_readable($autoloader)) {
 	require $autoloader;
 } else {
-	if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	if (defined('WP_DEBUG') && WP_DEBUG) {
 		error_log(  // phpcs:ignore
 			sprintf(
 				/* translators: 1: composer command. 2: plugin directory */
-				esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat-crm' ),
+				esc_html__('Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat-crm'),
 				'`composer install`',
-				'`' . esc_html( plugin_dir_path( __FILE__ ) ) . '`'
+				'`' . esc_html(plugin_dir_path(__FILE__)) . '`'
 			)
 		);
 	}
@@ -115,23 +118,23 @@ if ( is_readable( $autoloader ) ) {
 	add_action(
 		'admin_notices',
 		function () {
-			?>
+		?>
 		<div class="notice notice-error">
 			<p>
 				<?php
 				printf(
 					/* translators: 1: composer command. 2: plugin directory */
-					esc_html__( 'Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat-crm' ),
+					esc_html__('Your installation of the Leat plugin is incomplete. Please run %1$s within the %2$s directory.', 'leat-crm'),
 					'<code>composer install</code>',
-					'<code>' . esc_html( plugin_dir_path( __FILE__ ) ) . '</code>'
+					'<code>' . esc_html(plugin_dir_path(__FILE__)) . '</code>'
 				);
 				?>
 			</p>
 		</div>
-			<?php
+<?php
 		}
 	);
 	return;
 }
 
-add_action( 'plugins_loaded', array( '\Leat\Package', 'init' ) );
+add_action('plugins_loaded', array('\Leat\Package', 'init'));

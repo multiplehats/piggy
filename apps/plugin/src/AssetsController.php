@@ -128,7 +128,7 @@ final class AssetsController {
 				wp_add_inline_script(
 					self::APP_HANDLE,
 					sprintf(
-						'window.leatSettings = %s;',
+						'window.leatConfig = %s;',
 						wp_json_encode( $this->get_plugin_settings() )
 					),
 					'before'
