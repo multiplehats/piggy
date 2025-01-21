@@ -129,6 +129,7 @@ class SyncVouchers extends BackgroundProcess
 					]
 				);
 
+
 				if (empty($vouchers)) {
 					break;
 				}
@@ -211,6 +212,8 @@ class SyncVouchers extends BackgroundProcess
 					$th->getMessage()
 				)
 			);
+
+			return false;
 		}
 
 		return false;
@@ -225,9 +228,6 @@ class SyncVouchers extends BackgroundProcess
 	private function sync_vouchers_to_woocommerce($formatted_promotion_rule, array $vouchers)
 	{
 		foreach ($vouchers as $voucher) {
-			error_log('voucher: ' . $voucher->getUuid());
-			error_log('expiration_date: ' . $voucher->getExpirationDate() instanceof \DateTime ? $voucher->getExpirationDate()->format('Y-m-d H:i:s') : 'null');
-			error_log('activation_date: ' . $voucher->getActivationDate() instanceof \DateTime ? $voucher->getActivationDate()->format('Y-m-d H:i:s') : 'null');
 			$this->upsert_coupon_for_promotion_rule($formatted_promotion_rule, $voucher);
 		}
 	}
@@ -235,10 +235,6 @@ class SyncVouchers extends BackgroundProcess
 	public function upsert_coupon_for_promotion_rule($formatted_rule, Voucher $voucher,)
 	{
 		$voucher_data = $this->connection->format_voucher($voucher);
-
-		if (isset($voucher_data['expiration_date']) && $voucher_data['expiration_date'] instanceof \DateTime) {
-			error_log('expiration_date: ' . $voucher_data['expiration_date']->format('Y-m-d H:i:s'));
-		}
 
 		try {
 			// Try to load existing coupon.
@@ -261,6 +257,13 @@ class SyncVouchers extends BackgroundProcess
 		$contact_uuid = $voucher_data['contact_uuid'];
 		$wp_user      = $this->connection->get_user_from_leat_uuid($contact_uuid);
 		$is_redeemed  = $voucher_data['is_redeemed'];
+
+
+		if ($voucher_data['status'] === 'INACTIVE') {
+			$coupon->set_status('draft');
+		} else {
+			$coupon->set_status('publish');
+		}
 
 		// If we have a wp user and the voucher is redeemed, set the coupon status to trash.
 		if ($wp_user && $is_redeemed) {
@@ -295,10 +298,6 @@ class SyncVouchers extends BackgroundProcess
 		$discount_value = $formatted_rule['discountValue']['value'];
 		if ($discount_value) {
 			$coupon->set_amount($discount_value);
-		}
-
-		if ($voucher_data['expiration_date']) {
-			$coupon->set_date_expires(strtotime($voucher_data['expiration_date']));
 		}
 
 		$coupon->update_meta_data('_leat_voucher_uuid', $voucher_data['uuid']);
