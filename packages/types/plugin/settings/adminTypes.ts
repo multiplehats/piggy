@@ -311,6 +311,7 @@ export const zPromotionRuleValueItem = z.object({
 	}),
 	selectedProducts: zProductsSelect,
 	discountValue: zNumber,
+	individualUse: zSwitch,
 	discountType: zSelect.extend({
 		default: z.literal("percentage").or(z.literal("fixed")),
 		value: z.literal("percentage").or(z.literal("fixed")),

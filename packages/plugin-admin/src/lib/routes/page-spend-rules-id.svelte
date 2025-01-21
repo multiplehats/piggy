@@ -122,7 +122,12 @@
 			{/if}
 
 			<div class="hidden items-center gap-2 md:ml-auto md:flex">
-				<Button size="sm" on:click={handleSave}>
+				<Button
+					size="sm"
+					on:click={handleSave}
+					loading={$mutate.isPending}
+					disabled={$mutate.isPending}
+				>
 					{__("Save rule", "leat-crm")}
 				</Button>
 			</div>
@@ -285,7 +290,12 @@
 		</div>
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
-			<Button size="sm" on:click={handleSave}>
+			<Button
+				size="sm"
+				on:click={handleSave}
+				loading={$mutate.isPending}
+				disabled={$mutate.isPending}
+			>
 				{__("Save rule", "leat-crm")}
 			</Button>
 		</div>

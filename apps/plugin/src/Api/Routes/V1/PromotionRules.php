@@ -10,7 +10,8 @@ use Leat\Api\Routes\V1\Middleware;
  *
  * @internal
  */
-class PromotionRules extends AbstractRoute {
+class PromotionRules extends AbstractRoute
+{
 	/**
 	 * The route identifier.
 	 *
@@ -30,7 +31,8 @@ class PromotionRules extends AbstractRoute {
 	 *
 	 * @return string
 	 */
-	public function get_path() {
+	public function get_path()
+	{
 		return '/promotion-rules';
 	}
 
@@ -39,36 +41,37 @@ class PromotionRules extends AbstractRoute {
 	 *
 	 * @return array An array of endpoints.
 	 */
-	public function get_args() {
+	public function get_args()
+	{
 		return [
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => [Middleware::class, 'is_authorized'],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Promotion rules', 'leat-crm' ),
+						'description' => __('Promotion rules', 'leat-crm'),
 						'type'        => 'object',
 					],
 				],
 			],
 			[
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_public' ],
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => [Middleware::class, 'is_public'],
 				'args'                => [
 					'id'     => [
-						'description' => __( 'Promotion rule ID', 'leat-crm' ),
+						'description' => __('Promotion rule ID', 'leat-crm'),
 						'type'        => 'string',
 					],
 					'status' => [
-						'description' => __( 'Promotion rule status', 'leat-crm' ),
+						'description' => __('Promotion rule status', 'leat-crm'),
 						'type'        => 'string',
 					],
 				],
 			],
-			'schema'      => [ $this->schema, 'get_public_item_schema' ],
-			'allow_batch' => [ 'v1' => true ],
+			'schema'      => [$this->schema, 'get_public_item_schema'],
+			'allow_batch' => ['v1' => true],
 		];
 	}
 
@@ -79,17 +82,18 @@ class PromotionRules extends AbstractRoute {
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
-	protected function get_route_post_response( \WP_REST_Request $request ) {
+	protected function get_route_post_response(\WP_REST_Request $request)
+	{
 		$data = array(
-			'id'                    => $request->get_param( 'id' ),
-			'status'                => $request->get_param( 'status' ),
-			'label'                 => $request->get_param( 'label' ),
-			'title'                 => $request->get_param( 'title' ),
-			'fulfillment'           => $request->get_param( 'fulfillment' ),
-			'discountValue'         => $request->get_param( 'discountValue' ),
-			'discountType'          => $request->get_param( 'discountType' ),
-			'minimumPurchaseAmount' => $request->get_param( 'minimumPurchaseAmount' ),
-			'selectedProducts'      => $request->get_param( 'selectedProducts' ),
+			'id'                    => $request->get_param('id'),
+			'status'                => $request->get_param('status'),
+			'label'                 => $request->get_param('label'),
+			'title'                 => $request->get_param('title'),
+			'fulfillment'           => $request->get_param('fulfillment'),
+			'discountValue'         => $request->get_param('discountValue'),
+			'discountType'          => $request->get_param('discountType'),
+			'minimumPurchaseAmount' => $request->get_param('minimumPurchaseAmount'),
+			'selectedProducts'      => $request->get_param('selectedProducts'),
 		);
 
 		$post_data = array(
@@ -106,20 +110,20 @@ class PromotionRules extends AbstractRoute {
 			),
 		);
 
-		if ( ! empty( $data['id'] ) ) {
+		if (! empty($data['id'])) {
 			$post_data['ID'] = $data['id'];
-			$post_id         = wp_update_post( $post_data, true );
+			$post_id         = wp_update_post($post_data, true);
 		} else {
-			$post_id = wp_insert_post( $post_data, true );
+			$post_id = wp_insert_post($post_data, true);
 		}
 
-		if ( is_wp_error( $post_id ) ) {
-			return new \WP_Error( 'post_save_failed', __( 'Failed to save promotion rule', 'leat-crm' ), array( 'status' => 500 ) );
+		if (is_wp_error($post_id)) {
+			return new \WP_Error('post_save_failed', __('Failed to save promotion rule', 'leat-crm'), array('status' => 500));
 		}
 
-		$response = $this->prepare_item_for_response( get_post( $post_id ), $request );
+		$response = $this->prepare_item_for_response(get_post($post_id), $request);
 
-		return rest_ensure_response( $response );
+		return rest_ensure_response($response);
 	}
 
 	/**
@@ -129,31 +133,32 @@ class PromotionRules extends AbstractRoute {
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
-	protected function get_route_response( \WP_REST_Request $request ) {
+	protected function get_route_response(\WP_REST_Request $request)
+	{
 		$prepared_args = array(
 			'post_type'      => 'leat_promotion_rule',
 			'posts_per_page' => -1,
-			'post_status'    => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array( 'publish' ),
+			'post_status'    => $request->get_param('status') ? explode(',', $request->get_param('status')) : array('publish'),
 		);
 
-		$id = $request->get_param( 'id' );
+		$id = $request->get_param('id');
 
-		if ( $id ) {
+		if ($id) {
 			// Get a specific post id.
 			$prepared_args['p'] = $id;
 		}
 
 		$query        = new \WP_Query();
-		$query_result = $query->query( $prepared_args );
+		$query_result = $query->query($prepared_args);
 
 		$response_objects = array();
 
-		foreach ( $query_result as $post ) {
-			$data               = $this->prepare_item_for_response( $post, $request );
-			$response_objects[] = $this->prepare_response_for_collection( $data );
+		foreach ($query_result as $post) {
+			$data               = $this->prepare_item_for_response($post, $request);
+			$response_objects[] = $this->prepare_response_for_collection($data);
 		}
 
-		$response = rest_ensure_response( $response_objects );
+		$response = rest_ensure_response($response_objects);
 
 		return $response;
 	}

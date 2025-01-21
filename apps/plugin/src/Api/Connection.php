@@ -21,7 +21,8 @@ use Piggy\Api\Models\Giftcards\GiftcardTransaction;
 use Piggy\Api\Models\Vouchers\Promotion;
 use Piggy\Api\Models\Vouchers\Voucher;
 
-class Connection {
+class Connection
+{
 
 	/**
 	 * Register Client instance.
@@ -47,11 +48,12 @@ class Connection {
 	/**
 	 * Constructor.
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 		$api_key = $this->get_api_key();
 
-		if ( $api_key ) {
-			$this->client = new RegisterClient( $api_key );
+		if ($api_key) {
+			$this->client = new RegisterClient($api_key);
 		} else {
 			$this->client = null;
 		}
@@ -66,17 +68,19 @@ class Connection {
 	 *
 	 * @return string|null The Leat API key.
 	 */
-	public function get_api_key() {
-		$api_key = get_option( 'leat_api_key', null );
+	public function get_api_key()
+	{
+		$api_key = get_option('leat_api_key', null);
 
-		if ( ! $api_key ) {
-			$api_key = get_option( 'piggy_api_key', null );
+		if (! $api_key) {
+			$api_key = get_option('piggy_api_key', null);
 		}
 
 		return $api_key;
 	}
 
-	public function has_api_key() {
+	public function has_api_key()
+	{
 		$api_key = $this->get_api_key();
 
 		return null !== $api_key && '' !== $api_key;
@@ -87,12 +91,13 @@ class Connection {
 	 *
 	 * @return null|true
 	 */
-	public function init_client() {
+	public function init_client()
+	{
 		$api_key = $this->get_api_key();
 
-		if ( $api_key ) {
-			ApiClient::configure( $api_key, 'https://api.piggy.eu' );
-			ApiClient::setPartnerId( 'P01-267-loyal_minds' );
+		if ($api_key) {
+			ApiClient::configure($api_key, 'https://api.piggy.eu');
+			ApiClient::setPartnerId('P01-267-loyal_minds');
 
 			$this->client = true;
 			return $this->client;
@@ -109,12 +114,13 @@ class Connection {
 	 *
 	 * @return array
 	 */
-	private function format_contact( Contact $contact ) {
+	private function format_contact(Contact $contact)
+	{
 		$subscriptions     = $contact->getSubscriptions();
 		$subscription_list = [];
 
-		if ( $subscriptions ) {
-			foreach ( $subscriptions as $subscription ) {
+		if ($subscriptions) {
+			foreach ($subscriptions as $subscription) {
 				$type = $subscription->getSubscriptionType();
 
 				$subscription_list[] = [
@@ -134,7 +140,7 @@ class Connection {
 		return [
 			'uuid'          => $contact->getUuid(),
 			'email'         => $contact->getEmail(),
-			'subscriptions' => isset( $subscription_list ) ? $subscription_list : [],
+			'subscriptions' => isset($subscription_list) ? $subscription_list : [],
 			'attributes'    => $contact->getCurrentValues(),
 			'balance'       => [
 				'prepaid' => $contact->getPrepaidBalance()->getBalanceInCents(),
@@ -149,22 +155,23 @@ class Connection {
 	 * @param string $wp_user_id The WordPress user ID.
 	 * @return array
 	 */
-	public function get_contact( string $wp_user_id ) {
+	public function get_contact(string $wp_user_id)
+	{
 		$client = $this->init_client();
 
-		if ( ! $client ) {
+		if (! $client) {
 			return null;
 		}
 
-		$wp_user = get_user_by( 'id', $wp_user_id );
+		$wp_user = get_user_by('id', $wp_user_id);
 
-		$contact = Contact::findOrCreate( [ 'email' => $wp_user->user_email ] );
+		$contact = Contact::findOrCreate(['email' => $wp_user->user_email]);
 
-		if ( ! $contact ) {
+		if (! $contact) {
 			return null;
 		}
 
-		return $this->format_contact( $contact );
+		return $this->format_contact($contact);
 	}
 
 	/**
@@ -176,23 +183,24 @@ class Connection {
 	 * @throws \Exception If the contact creation fails.
 	 * @throws \Throwable If an unexpected error occurs.
 	 */
-	public function create_contact( string $email ) {
+	public function create_contact(string $email)
+	{
 		$client = $this->init_client();
 
-		if ( ! $client ) {
+		if (! $client) {
 			return null;
 		}
 
 		try {
-			$contact = Contact::findOrCreate( [ 'email' => $email ] );
+			$contact = Contact::findOrCreate(['email' => $email]);
 
-			if ( ! $contact ) {
-				throw new \Exception( 'Contact not found - returned null' );
+			if (! $contact) {
+				throw new \Exception('Contact not found - returned null');
 			}
 
-			return $this->format_contact( $contact );
-		} catch ( \Throwable $th ) {
-			$this->log_exception( $th, 'Contact Create Error' );
+			return $this->format_contact($contact);
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Contact Create Error');
 
 			throw $th;
 		}
@@ -207,32 +215,33 @@ class Connection {
 	 * @return array|null
 	 * @throws \Exception If the contact update fails.
 	 */
-	public function update_contact( string $id, array $attributes ) {
+	public function update_contact(string $id, array $attributes)
+	{
 		$client = $this->init_client();
 
-		if ( ! $client ) {
-			$this->logger->error( 'Failed to initialize client in update_contact' );
+		if (! $client) {
+			$this->logger->error('Failed to initialize client in update_contact');
 			return null;
 		}
 
 		try {
-			$this->logger->info( 'Getting contact with ID: ' . $id );
-			$contact = Contact::get( $id );
+			$this->logger->info('Getting contact with ID: ' . $id);
+			$contact = Contact::get($id);
 
-			if ( ! $contact ) {
-				$this->logger->error( 'Contact not found with ID: ' . $id );
+			if (! $contact) {
+				$this->logger->error('Contact not found with ID: ' . $id);
 				return null;
 			}
 
-			$contact = Contact::update( $id, [ 'attributes' => $attributes ] );
+			$contact = Contact::update($id, ['attributes' => $attributes]);
 
-			if ( ! $contact ) {
-				throw new \Exception( 'Contact update failed - returned null' );
+			if (! $contact) {
+				throw new \Exception('Contact update failed - returned null');
 			}
 
-			return $this->format_contact( $contact );
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Contact Update Error' );
+			return $this->format_contact($contact);
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Contact Update Error');
 
 			throw $e;
 		}
@@ -245,7 +254,8 @@ class Connection {
 	 *
 	 * @return array
 	 */
-	private function format_shop( Shop $shop ) {
+	private function format_shop(Shop $shop)
+	{
 		return [
 			'uuid' => $shop->getUuid(),
 			'name' => $shop->getName(),
@@ -257,23 +267,24 @@ class Connection {
 	 *
 	 * @return array|null
 	 */
-	public function get_shops() {
+	public function get_shops()
+	{
 		$client = $this->init_client();
 
-		if ( ! $client ) {
+		if (! $client) {
 			return null;
 		}
 
 		$results = Shop::list();
 
-		if ( ! $results ) {
+		if (! $results) {
 			return null;
 		}
 
 		$shops = [];
 
-		foreach ( $results as $shop ) {
-			$shops[] = $this->format_shop( $shop );
+		foreach ($results as $shop) {
+			$shops[] = $this->format_shop($shop);
 		}
 
 		return $shops;
@@ -286,20 +297,21 @@ class Connection {
 	 *
 	 * @return array|null
 	 */
-	public function get_shop( string $id ) {
+	public function get_shop(string $id)
+	{
 		$client = $this->init_client();
 
-		if ( ! $client ) {
+		if (! $client) {
 			return null;
 		}
 
-		$shop = Shop::get( $id );
+		$shop = Shop::get($id);
 
-		if ( ! $shop ) {
+		if (! $shop) {
 			return null;
 		}
 
-		return $this->format_shop( $shop );
+		return $this->format_shop($shop);
 	}
 
 	/**
@@ -309,7 +321,8 @@ class Connection {
 	 *
 	 * @return array
 	 */
-	public function format_reward( Reward $reward ) {
+	public function format_reward(Reward $reward)
+	{
 		$media_obj = $reward->getMedia();
 		$media     = $media_obj ? [
 			'type'  => $media_obj->getType(),
@@ -334,13 +347,16 @@ class Connection {
 	 *
 	 * @return array
 	 */
-	public function format_promotion( Promotion $promotion ) {
+	public function format_promotion(Promotion $promotion)
+	{
 		return [
 			'uuid'               => $promotion->getUuid(),
 			'title'              => $promotion->getName(),
-			'voucherLimit'       => $promotion->getVoucherLimit(),
-			'limitPerContact'    => $promotion->getLimitPerContact(),
-			'expirationDuration' => $promotion->getExpirationDuration(),
+			'type'               => $promotion->getType(),
+			'redemptions_per_voucher' => $promotion->getRedemptionsPerVoucher(),
+			'voucher_limit'       => $promotion->getVoucherLimit(),
+			'limit_per_contact'    => $promotion->getLimitPerContact(),
+			'expiration_duration' => $promotion->getExpirationDuration(),
 			'attributes'         => $promotion->getAttributes(),
 		];
 	}
@@ -365,7 +381,8 @@ class Connection {
 	 *   custom_attributes: array
 	 * }
 	 */
-	public function format_voucher( Voucher $voucher ): array {
+	public function format_voucher(Voucher $voucher): array
+	{
 		return [
 			'uuid'              => $voucher->getUuid(),
 			'code'              => $voucher->getCode(),
@@ -390,32 +407,34 @@ class Connection {
 	 *
 	 * @return array|null
 	 */
-	public function get_rewards() {
+	public function get_rewards()
+	{
 		$client = $this->init_client();
 
-		if ( ! $client ) {
+		if (! $client) {
 			return null;
 		}
 
 		$results = Reward::list();
 
-		if ( ! $results ) {
+		if (! $results) {
 			return null;
 		}
 
 		$rewards = [];
 
-		foreach ( $results as $reward ) {
-			$rewards[] = $this->format_reward( $reward );
+		foreach ($results as $reward) {
+			$rewards[] = $this->format_reward($reward);
 		}
 
 		return $rewards;
 	}
 
-	public function get_promotions() {
+	public function get_promotions()
+	{
 		$client = $this->init_client();
 
-		if ( ! $client ) {
+		if (! $client) {
 			return null;
 		}
 
@@ -423,21 +442,23 @@ class Connection {
 
 		$promotions = array();
 
-		foreach ( $results as $promotion ) {
-			$promotions[] = $this->format_promotion( $promotion );
+		foreach ($results as $promotion) {
+
+			$promotions[] = $this->format_promotion($promotion);
 		}
 
 		return $promotions;
 	}
 
-	public function apply_credits( string $contact_uuid, ?int $credits = null, ?float $unit_value = null, ?string $unit_name = null ) {
+	public function apply_credits(string $contact_uuid, ?int $credits = null, ?float $unit_value = null, ?string $unit_name = null)
+	{
 		$client = $this->init_client();
-		if ( ! $client ) {
+		if (! $client) {
 			return false;
 		}
 
-		$shop_uuid = get_option( 'leat_shop_uuid', null );
-		if ( ! $shop_uuid ) {
+		$shop_uuid = get_option('leat_shop_uuid', null);
+		if (! $shop_uuid) {
 			return false;
 		}
 
@@ -446,24 +467,24 @@ class Connection {
 			'contact_uuid' => $contact_uuid,
 		];
 
-		if ( null !== $credits ) {
+		if (null !== $credits) {
 			$params['credits'] = $credits;
 		}
 
-		if ( null !== $unit_value ) {
+		if (null !== $unit_value) {
 			$params['unit_value'] = $unit_value;
 		}
 
-		if ( null !== $unit_name ) {
+		if (null !== $unit_name) {
 			$params['unit_name'] = $unit_name;
 		}
 
 		// Ensure that either credits or unit_value is set.
-		if ( ! isset( $params['credits'] ) && ! isset( $params['unit_value'] ) ) {
+		if (! isset($params['credits']) && ! isset($params['unit_value'])) {
 			return false;
 		}
 
-		$reception = CreditReception::create( $params );
+		$reception = CreditReception::create($params);
 
 		return $reception ?: false;
 	}
@@ -474,14 +495,15 @@ class Connection {
 	 * @param int $wp_id
 	 * @return string|null
 	 */
-	public function get_contact_uuid_by_wp_id( $wp_id, $create = false ) {
-		$uuid = get_user_meta( $wp_id, 'leat_uuid', true );
+	public function get_contact_uuid_by_wp_id($wp_id, $create = false)
+	{
+		$uuid = get_user_meta($wp_id, 'leat_uuid', true);
 
-		if ( ! $uuid && $create ) {
-			$contact = $this->create_contact( get_the_author_meta( 'email', $wp_id ) );
+		if (! $uuid && $create) {
+			$contact = $this->create_contact(get_the_author_meta('email', $wp_id));
 			$uuid    = $contact['uuid'];
 
-			$this->sync_user_attributes( $wp_id, $uuid );
+			$this->sync_user_attributes($wp_id, $uuid);
 
 			return $uuid;
 		}
@@ -495,8 +517,9 @@ class Connection {
 	 * @param string $uuid The Leat UUID.
 	 * @return \WP_User|false
 	 */
-	public function get_user_from_leat_uuid( $uuid ) {
-		return get_user_by( 'meta_key', 'leat_uuid', $uuid );
+	public function get_user_from_leat_uuid($uuid)
+	{
+		return get_user_by('meta_key', 'leat_uuid', $uuid);
 	}
 
 	/**
@@ -505,18 +528,19 @@ class Connection {
 	 * @param int $user_id
 	 * @return array
 	 */
-	private function get_woocommerce_user_data( $user_id ) {
-		if ( ! function_exists( 'wc_get_customer_total_spent' ) || ! function_exists( 'wc_get_customer_order_count' ) ) {
+	private function get_woocommerce_user_data($user_id)
+	{
+		if (! function_exists('wc_get_customer_total_spent') || ! function_exists('wc_get_customer_order_count')) {
 			return $this->get_default_wc_attributes();
 		}
 
-		$user = get_user_by( 'id', $user_id );
-		if ( ! $user ) {
+		$user = get_user_by('id', $user_id);
+		if (! $user) {
 			return $this->get_default_wc_attributes();
 		}
 
-		$total_spent  = wc_get_customer_total_spent( $user_id );
-		$orders_count = wc_get_customer_order_count( $user_id );
+		$total_spent  = wc_get_customer_total_spent($user_id);
+		$orders_count = wc_get_customer_order_count($user_id);
 		$create_date  = $user->user_registered;
 
 		$customer_orders = wc_get_orders(
@@ -526,19 +550,19 @@ class Connection {
 				'orderby'  => 'date',
 				'order'    => 'DESC',
 			]
-			);
+		);
 
 		$last_order_amount = 0;
 		$last_order_date   = '';
 
-		if ( ! empty( $customer_orders ) ) {
+		if (! empty($customer_orders)) {
 			$last_order        = $customer_orders[0];
 			$last_order_amount = $last_order->get_total();
-			$last_order_date   = $last_order->get_date_created()->format( 'Y-m-d H:i:s' );
+			$last_order_date   = $last_order->get_date_created()->format('Y-m-d H:i:s');
 		}
 
-		$currency         = strtolower( get_woocommerce_currency() );
-		$first_order_date = $this->get_first_order_date( $user_id );
+		$currency         = strtolower(get_woocommerce_currency());
+		$first_order_date = $this->get_first_order_date($user_id);
 
 		return [
 			'wp_wc_total_spent_' . $currency         => (float) $total_spent,
@@ -546,15 +570,16 @@ class Connection {
 			'wp_create_date'                         => $create_date,
 			'wp_wc_last_order_amount_' . $currency   => (float) $last_order_amount,
 			'wp_wc_last_order_date'                  => $last_order_date,
-			'wp_wc_average_order_value_' . $currency => $orders_count > 0 ? round( $total_spent / $orders_count, 2 ) : 0,
+			'wp_wc_average_order_value_' . $currency => $orders_count > 0 ? round($total_spent / $orders_count, 2) : 0,
 			'wp_wc_first_order_date'                 => $first_order_date,
-			'wp_wc_product_categories_purchased'     => $this->get_purchased_categories( $user_id ),
-			'wp_wc_total_products_purchased'         => $this->get_total_products_purchased( $user_id ),
+			'wp_wc_product_categories_purchased'     => $this->get_purchased_categories($user_id),
+			'wp_wc_total_products_purchased'         => $this->get_total_products_purchased($user_id),
 		];
 	}
 
-	private function get_default_wc_attributes() {
-		$currency = strtolower( get_woocommerce_currency() );
+	private function get_default_wc_attributes()
+	{
+		$currency = strtolower(get_woocommerce_currency());
 		return [
 			'wp_wc_total_spent_' . $currency         => 0,
 			'wp_wc_orders_count'                     => 0,
@@ -568,7 +593,8 @@ class Connection {
 		];
 	}
 
-	private function get_first_order_date( $user_id ) {
+	private function get_first_order_date($user_id)
+	{
 		$customer_orders = wc_get_orders(
 			[
 				'customer' => $user_id,
@@ -576,22 +602,23 @@ class Connection {
 				'orderby'  => 'date',
 				'order'    => 'ASC',
 			]
-			);
+		);
 
-		if ( ! empty( $customer_orders ) ) {
+		if (! empty($customer_orders)) {
 			$first_order = $customer_orders[0];
-			return $first_order->get_date_created()->format( 'Y-m-d H:i:s' );
+			return $first_order->get_date_created()->format('Y-m-d H:i:s');
 		}
 
 		return '';
 	}
 
-	private function get_purchased_categories( $user_id, $current_order = null ) {
+	private function get_purchased_categories($user_id, $current_order = null)
+	{
 		$categories = [];
 
 		// Handle current order if provided (for guests).
-		if ( $current_order ) {
-			foreach ( $current_order->get_items() as $item ) {
+		if ($current_order) {
+			foreach ($current_order->get_items() as $item) {
 				/**
 				 * Process each product
 				 *
@@ -599,8 +626,8 @@ class Connection {
 				 */
 				$product = $item->get_product();
 
-				if ( $product ) {
-					$categories = array_merge( $categories, $product->get_category_ids() );
+				if ($product) {
+					$categories = array_merge($categories, $product->get_category_ids());
 				}
 			}
 
@@ -608,41 +635,42 @@ class Connection {
 			$customer_orders = wc_get_orders(
 				[
 					'customer' => $current_order->get_billing_email(),
-					'status'   => [ 'completed', 'processing', 'on-hold' ],
+					'status'   => ['completed', 'processing', 'on-hold'],
 					'limit'    => -1,
-					'exclude'  => [ $current_order->get_id() ],
+					'exclude'  => [$current_order->get_id()],
 				]
-				);
+			);
 		} else {
 			// Get all orders for registered user.
-			$customer_orders = wc_get_orders( [ 'customer' => $user_id ] );
+			$customer_orders = wc_get_orders(['customer' => $user_id]);
 		}
 
 		// Process historical orders.
-		foreach ( $customer_orders as $order ) {
-			foreach ( $order->get_items() as $item ) {
+		foreach ($customer_orders as $order) {
+			foreach ($order->get_items() as $item) {
 				/**
 				 * Process each product
 				 *
 				 * @var \WC_Order_Item_Product $item
 				 */
 				$product = $item->get_product();
-				if ( $product ) {
-					$categories = array_merge( $categories, $product->get_category_ids() );
+				if ($product) {
+					$categories = array_merge($categories, $product->get_category_ids());
 				}
 			}
 		}
 
 		// Convert to strings and ensure unique values.
-		return array_map( 'strval', array_unique( $categories ) );
+		return array_map('strval', array_unique($categories));
 	}
 
-	private function get_total_products_purchased( $user_id ) {
+	private function get_total_products_purchased($user_id)
+	{
 		$total_products  = 0;
-		$customer_orders = wc_get_orders( [ 'customer' => $user_id ] );
+		$customer_orders = wc_get_orders(['customer' => $user_id]);
 
-		foreach ( $customer_orders as $order ) {
-			foreach ( $order->get_items() as $item ) {
+		foreach ($customer_orders as $order) {
+			foreach ($order->get_items() as $item) {
 				$total_products += $item->get_quantity();
 			}
 		}
@@ -656,46 +684,49 @@ class Connection {
 	 * @param int $user_id
 	 * @return array
 	 */
-	protected function get_user_attributes( $user_id ) {
-		$user       = get_userdata( $user_id );
+	protected function get_user_attributes($user_id)
+	{
+		$user       = get_userdata($user_id);
 		$attributes = [
 			'wp_user_id'          => $user_id,
 			'firstname'           => $user->first_name,
 			'lastname'            => $user->last_name,
-			'wp_user_role'        => implode( ', ', $user->roles ),
-			'wp_account_age_days' => floor( ( time() - strtotime( $user->user_registered ) ) / ( 60 * 60 * 24 ) ),
-			'wp_last_login'       => get_user_meta( $user_id, 'leat_last_login', true ) ?: '',
-			'wp_post_count'       => count_user_posts( $user_id ),
+			'wp_user_role'        => implode(', ', $user->roles),
+			'wp_account_age_days' => floor((time() - strtotime($user->user_registered)) / (60 * 60 * 24)),
+			'wp_last_login'       => get_user_meta($user_id, 'leat_last_login', true) ?: '',
+			'wp_post_count'       => count_user_posts($user_id),
 		];
 
-		$wc_attributes = $this->get_woocommerce_user_data( $user_id );
+		$wc_attributes = $this->get_woocommerce_user_data($user_id);
 
-		$attributes = array_merge( $attributes, $wc_attributes );
+		$attributes = array_merge($attributes, $wc_attributes);
 
 		$this->ensure_custom_attributes_exist();
 
 		return $attributes;
 	}
 
-	private function attribute_exists( $attributes_list, $name ) {
-		foreach ( $attributes_list as $attribute ) {
-			if ( $attribute->getName() === $name ) {
+	private function attribute_exists($attributes_list, $name)
+	{
+		foreach ($attributes_list as $attribute) {
+			if ($attribute->getName() === $name) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private function get_product_categories_options() {
+	private function get_product_categories_options()
+	{
 		$categories = get_terms(
-		[
-			'taxonomy'   => 'product_cat',
-			'hide_empty' => false,
-		]
+			[
+				'taxonomy'   => 'product_cat',
+				'hide_empty' => false,
+			]
 		);
 		$options    = [];
 
-		foreach ( $categories as $category ) {
+		foreach ($categories as $category) {
 			$options[] = [
 				'label' => $category->name,
 				'value' => $category->term_id,
@@ -708,17 +739,18 @@ class Connection {
 	/**
 	 * Ensure custom attributes exist in Leat.
 	 */
-	private function ensure_custom_attributes_exist() {
+	private function ensure_custom_attributes_exist()
+	{
 		$client = $this->init_client();
 
-		if ( ! $client ) {
-			$this->logger->error( 'Failed to initialize client' );
+		if (! $client) {
+			$this->logger->error('Failed to initialize client');
 			return;
 		}
 
 		try {
-			$attributes_list = CustomAttribute::list( [ 'entity' => 'contact' ] );
-			$currency        = strtolower( get_woocommerce_currency() );
+			$attributes_list = CustomAttribute::list(['entity' => 'contact']);
+			$currency        = strtolower(get_woocommerce_currency());
 
 			// Define required attributes with proper format.
 			$required_attributes = [
@@ -755,7 +787,7 @@ class Connection {
 				[
 					'entity' => 'contact',
 					'name'   => 'wp_wc_total_spent_' . $currency,
-					'label'  => 'WooCommerce Total Spent (' . strtoupper( $currency ) . ')',
+					'label'  => 'WooCommerce Total Spent (' . strtoupper($currency) . ')',
 					'type'   => 'float',
 				],
 				[
@@ -773,7 +805,7 @@ class Connection {
 				[
 					'entity' => 'contact',
 					'name'   => 'wp_wc_last_order_amount_' . $currency,
-					'label'  => 'WooCommerce Last Order Amount (' . strtoupper( $currency ) . ')',
+					'label'  => 'WooCommerce Last Order Amount (' . strtoupper($currency) . ')',
 					'type'   => 'float',
 				],
 				[
@@ -785,7 +817,7 @@ class Connection {
 				[
 					'entity' => 'contact',
 					'name'   => 'wp_wc_average_order_value_' . $currency,
-					'label'  => 'WooCommerce Average Order Value (' . strtoupper( $currency ) . ')',
+					'label'  => 'WooCommerce Average Order Value (' . strtoupper($currency) . ')',
 					'type'   => 'float',
 				],
 				[
@@ -800,14 +832,14 @@ class Connection {
 					'label'   => 'WooCommerce Product Categories Purchased',
 					'type'    => 'multi_select',
 					'options' => array_map(
-						function ( $option ) {
+						function ($option) {
 							return [
 								'value' => (string) $option['value'],
 								'label' => $option['label'],
 							];
 						},
 						$this->get_product_categories_options()
-						),
+					),
 				],
 				[
 					'entity' => 'contact',
@@ -817,38 +849,39 @@ class Connection {
 				],
 			];
 
-			foreach ( $required_attributes as $attr ) {
-				if ( ! $this->attribute_exists( $attributes_list, $attr['name'] ) ) {
+			foreach ($required_attributes as $attr) {
+				if (! $this->attribute_exists($attributes_list, $attr['name'])) {
 					try {
 						// Create single attribute at a time.
-						$response = ApiClient::post( CustomAttribute::resourceUri, $attr );
-					} catch ( \Exception $e ) {
-						$this->log_exception( $e, 'Attribute "' . $attr['name'] . '" Create Error' );
+						$response = ApiClient::post(CustomAttribute::resourceUri, $attr);
+					} catch (\Exception $e) {
+						$this->log_exception($e, 'Attribute "' . $attr['name'] . '" Create Error');
 					}
 				}
 			}
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Ensure Custom Attributes Error' );
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Ensure Custom Attributes Error');
 		}
 	}
 
 	/**
 	 * Sync user/guest attributes with Leat, ensuring categories are up to date
 	 */
-	private function sync_attributes_with_category_update( $uuid, $attributes ) {
+	private function sync_attributes_with_category_update($uuid, $attributes)
+	{
 		try {
 			$this->ensure_custom_attributes_exist();
 
-			$update_result = $this->update_contact( $uuid, $attributes );
+			$update_result = $this->update_contact($uuid, $attributes);
 
-			if ( null === $update_result ) {
-				$this->logger->error( 'Update contact returned null' );
+			if (null === $update_result) {
+				$this->logger->error('Update contact returned null');
 				return false;
 			}
 
 			return $update_result;
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Sync Attributes with Category Update Error' );
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Sync Attributes with Category Update Error');
 
 			return false;
 		}
@@ -862,26 +895,28 @@ class Connection {
 	 * @return bool
 	 * @throws \Exception If the user is not found.
 	 */
-	public function sync_user_attributes( $user_id, $uuid ) {
+	public function sync_user_attributes($user_id, $uuid)
+	{
 		try {
-			$user = get_userdata( $user_id );
+			$user = get_userdata($user_id);
 
-			if ( ! $user ) {
-				throw new \Exception( 'User not found' );
+			if (! $user) {
+				throw new \Exception('User not found');
 			}
 
-			$attributes = $this->get_user_attributes( $user_id );
-			return $this->sync_attributes_with_category_update( $uuid, $attributes );
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Sync User Attributes Error' );
+			$attributes = $this->get_user_attributes($user_id);
+			return $this->sync_attributes_with_category_update($uuid, $attributes);
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Sync User Attributes Error');
 
 			return false;
 		}
 	}
 
-	public function sync_basic_attributes_from_order( $order, $uuid, $is_guest ) {
+	public function sync_basic_attributes_from_order($order, $uuid, $is_guest)
+	{
 		try {
-			if ( $is_guest ) {
+			if ($is_guest) {
 				$attributes = [
 					'firstname'    => $order->get_billing_first_name(),
 					'lastname'     => $order->get_billing_last_name(),
@@ -889,22 +924,22 @@ class Connection {
 				];
 			} else {
 				$user_id = $order->get_user_id();
-				$user    = get_userdata( $user_id );
+				$user    = get_userdata($user_id);
 
 				$attributes = [
 					'wp_user_id'          => $user_id,
 					'firstname'           => $user->first_name,
 					'lastname'            => $user->last_name,
-					'wp_user_role'        => implode( ', ', $user->roles ),
-					'wp_account_age_days' => floor( ( time() - strtotime( $user->user_registered ) ) / ( 60 * 60 * 24 ) ),
-					'wp_last_login'       => get_user_meta( $user_id, 'leat_last_login', true ) ?: '',
-					'wp_post_count'       => count_user_posts( $user_id ),
+					'wp_user_role'        => implode(', ', $user->roles),
+					'wp_account_age_days' => floor((time() - strtotime($user->user_registered)) / (60 * 60 * 24)),
+					'wp_last_login'       => get_user_meta($user_id, 'leat_last_login', true) ?: '',
+					'wp_post_count'       => count_user_posts($user_id),
 				];
 			}
 
-			return $this->sync_attributes_with_category_update( $uuid, $attributes );
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Sync Basic Attributes from Order Error' );
+			return $this->sync_attributes_with_category_update($uuid, $attributes);
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Sync Basic Attributes from Order Error');
 			return false;
 		}
 	}
@@ -917,17 +952,18 @@ class Connection {
 	 * @return bool
 	 * @throws \Exception If the order is not found.
 	 */
-	public function sync_guest_attributes( $order, $uuid ) {
+	public function sync_guest_attributes($order, $uuid)
+	{
 		try {
 			$email = $order->get_billing_email();
-			if ( ! $email ) {
-				throw new \Exception( 'No email provided for guest order' );
+			if (! $email) {
+				throw new \Exception('No email provided for guest order');
 			}
 
-			$attributes = $this->get_woocommerce_guest_data( $email, $order );
-			return $this->sync_attributes_with_category_update( $uuid, $attributes );
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Sync Guest Attributes Error' );
+			$attributes = $this->get_woocommerce_guest_data($email, $order);
+			return $this->sync_attributes_with_category_update($uuid, $attributes);
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Sync Guest Attributes Error');
 			return false;
 		}
 	}
@@ -938,13 +974,14 @@ class Connection {
 	 * @param int $wp_user_id
 	 * @return array
 	 */
-	public function get_user_leat_metadata( $wp_user_id ) {
-		$meta_data = get_user_meta( $wp_user_id );
+	public function get_user_leat_metadata($wp_user_id)
+	{
+		$meta_data = get_user_meta($wp_user_id);
 
 		$leat_meta_data = array_filter(
 			$meta_data,
-			function ( $key ) {
-				return strpos( $key, 'leat_' ) === 0;
+			function ($key) {
+				return strpos($key, 'leat_') === 0;
 			},
 			ARRAY_FILTER_USE_KEY,
 		);
@@ -958,19 +995,20 @@ class Connection {
 	 * @param int $wp_user_id
 	 * @return array
 	 */
-	public function get_user_reward_logs( $wp_user_id ) {
+	public function get_user_reward_logs($wp_user_id)
+	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'leat_reward_logs';
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
-		$query = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}leat_reward_logs WHERE wp_user_id = %d", $wp_user_id );
+		$query = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}leat_reward_logs WHERE wp_user_id = %d", $wp_user_id);
 
 		$cache_key   = 'leat_reward_logs_' . $wp_user_id;
-		$reward_logs = wp_cache_get( $cache_key );
+		$reward_logs = wp_cache_get($cache_key);
 
-		if ( false === $reward_logs ) {
-			$reward_logs = $wpdb->get_results( $query, ARRAY_A );
-			wp_cache_set( $cache_key, $reward_logs, '', 3600 );
+		if (false === $reward_logs) {
+			$reward_logs = $wpdb->get_results($query, ARRAY_A);
+			wp_cache_set($cache_key, $reward_logs, '', 3600);
 		}
 		// phpcs:enable
 
@@ -985,7 +1023,8 @@ class Connection {
 	 * @param int $credits
 	 * @return bool
 	 */
-	public function add_reward_log( $wp_user_id, $earn_rule_id, $credits ) {
+	public function add_reward_log($wp_user_id, $earn_rule_id, $credits)
+	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'leat_reward_logs';
 
@@ -994,7 +1033,7 @@ class Connection {
 			'wp_user_id'   => $wp_user_id,
 			'earn_rule_id' => $earn_rule_id,
 			'credits'      => $credits,
-			'timestamp'    => current_time( 'mysql', 1 ),
+			'timestamp'    => current_time('mysql', 1),
 		];
 
 		$format = [
@@ -1004,11 +1043,11 @@ class Connection {
 			'%s',
 		];
 
-		$inserted = $wpdb->insert( $table_name, $data, $format );
+		$inserted = $wpdb->insert($table_name, $data, $format);
 		// phpcs:enable
 
 		// Clear cache after inserting new log.
-		wp_cache_delete( 'leat_reward_logs_' . $wp_user_id );
+		wp_cache_delete('leat_reward_logs_' . $wp_user_id);
 
 		return false !== $inserted;
 	}
@@ -1018,39 +1057,40 @@ class Connection {
 	 *
 	 * @return bool
 	 */
-	public function sync_rewards_with_spend_rules() {
+	public function sync_rewards_with_spend_rules()
+	{
 		$client = $this->init_client();
-		if ( ! $client ) {
-			$this->logger->error( 'Failed to initialize client for reward sync' );
+		if (! $client) {
+			$this->logger->error('Failed to initialize client for reward sync');
 			return false;
 		}
 
 		$rewards = $this->get_rewards();
-		if ( ! $rewards ) {
-			$this->logger->error( 'Failed to retrieve rewards from Leat' );
+		if (! $rewards) {
+			$this->logger->error('Failed to retrieve rewards from Leat');
 			return false;
 		}
 
-		$this->logger->info( 'Starting reward sync. Total rewards retrieved: ' . count( $rewards ) );
+		$this->logger->info('Starting reward sync. Total rewards retrieved: ' . count($rewards));
 
 		$prepared_args = [
 			'post_type'      => 'leat_spend_rule',
 			'posts_per_page' => -1,
-			'post_status'    => [ 'publish', 'draft', 'pending' ],
+			'post_status'    => ['publish', 'draft', 'pending'],
 		];
 
-		$current_spend_rules = get_posts( $prepared_args );
-		$this->logger->info( 'Current spend rules in WordPress: ' . count( $current_spend_rules ) );
+		$current_spend_rules = get_posts($prepared_args);
+		$this->logger->info('Current spend rules in WordPress: ' . count($current_spend_rules));
 
 		// Collect existing Leat UUIDs from CPT.
-		$existing_uuids = array_column( $current_spend_rules, '_leat_reward_uuid', 'ID' );
+		$existing_uuids = array_column($current_spend_rules, '_leat_reward_uuid', 'ID');
 
 		// Sync Leat rewards with CPT (add/update).
 		$processed_uuids = [];
 		$updated_count   = 0;
 		$created_count   = 0;
 
-		foreach ( $rewards as $reward ) {
+		foreach ($rewards as $reward) {
 			$mapped_reward = [
 				'title'           => $reward['title'],
 				'requiredCredits' => $reward['requiredCredits'],
@@ -1060,24 +1100,24 @@ class Connection {
 				'selectedReward'  => $reward['uuid'],
 			];
 
-			if ( isset( $reward['media'] ) ) {
+			if (isset($reward['media'])) {
 				$mapped_reward['image'] = $reward['media']['value'];
 			}
 
 			// Check if the reward already exists in CPT.
-			$existing_post_id = array_search( $reward['uuid'], $existing_uuids, true );
+			$existing_post_id = array_search($reward['uuid'], $existing_uuids, true);
 
-			if ( false !== $existing_post_id ) {
+			if (false !== $existing_post_id) {
 				// Update existing spend rule.
-				$this->logger->info( 'Updating existing spend rule: ' . $existing_post_id . ' (UUID: ' . $reward['uuid'] . ')' );
+				$this->logger->info('Updating existing spend rule: ' . $existing_post_id . ' (UUID: ' . $reward['uuid'] . ')');
 
-				$this->spend_rules_service->create_or_update_spend_rule_from_reward( $mapped_reward, $existing_post_id );
+				$this->spend_rules_service->create_or_update_spend_rule_from_reward($mapped_reward, $existing_post_id);
 				$updated_count++;
 			} else {
 				// Create new spend rule.
-				$this->logger->info( 'Creating new spend rule for UUID: ' . $reward['uuid'] );
+				$this->logger->info('Creating new spend rule for UUID: ' . $reward['uuid']);
 
-				$this->spend_rules_service->create_or_update_spend_rule_from_reward( $mapped_reward );
+				$this->spend_rules_service->create_or_update_spend_rule_from_reward($mapped_reward);
 				$created_count++;
 			}
 
@@ -1085,30 +1125,31 @@ class Connection {
 		}
 
 		// Delete spend rules that no longer exist in Leat.
-		$uuids_to_delete = array_diff( $existing_uuids, $processed_uuids );
-		$delete_count    = count( $uuids_to_delete );
-		$this->logger->info( 'Deleting ' . $delete_count . ' spend rules that no longer exist in Leat' );
-		$this->spend_rules_service->delete_spend_rules_by_uuids( $uuids_to_delete );
+		$uuids_to_delete = array_diff($existing_uuids, $processed_uuids);
+		$delete_count    = count($uuids_to_delete);
+		$this->logger->info('Deleting ' . $delete_count . ' spend rules that no longer exist in Leat');
+		$this->spend_rules_service->delete_spend_rules_by_uuids($uuids_to_delete);
 
 		// Handle duplicated UUIDs.
-		$this->logger->info( 'Handling any duplicated spend rules' );
-		$this->spend_rules_service->handle_duplicated_spend_rules( $processed_uuids );
+		$this->logger->info('Handling any duplicated spend rules');
+		$this->spend_rules_service->handle_duplicated_spend_rules($processed_uuids);
 
-		$this->logger->info( "Reward sync completed. Updated: $updated_count, Created: $created_count, Deleted: $delete_count" );
+		$this->logger->info("Reward sync completed. Updated: $updated_count, Created: $created_count, Deleted: $delete_count");
 
 		return true;
 	}
 
-	public function create_reward_reception( $contact_uuid, $reward_uuid ) {
+	public function create_reward_reception($contact_uuid, $reward_uuid)
+	{
 		$client = $this->init_client();
-		if ( ! $client ) {
+		if (! $client) {
 			return false;
 		}
 
-		$shop_uuid = get_option( 'leat_shop_uuid', null );
+		$shop_uuid = get_option('leat_shop_uuid', null);
 
-		if ( ! $shop_uuid ) {
-			$this->logger->error( 'Shop UUID not set. Unable to create Reward Reception.' );
+		if (! $shop_uuid) {
+			$this->logger->error('Shop UUID not set. Unable to create Reward Reception.');
 
 			return;
 		}
@@ -1119,55 +1160,57 @@ class Connection {
 				'reward_uuid'  => $reward_uuid,
 				'shop_uuid'    => $shop_uuid,
 			]
-			);
+		);
 
 		return $reception ?: false;
 	}
 
-	public function refund_credits_full( $credit_reception_uuid ) {
+	public function refund_credits_full($credit_reception_uuid)
+	{
 		$client = $this->init_client();
-		if ( ! $client ) {
+		if (! $client) {
 			return false;
 		}
 
 		try {
-			$refund_result = CreditReception::reverse( $credit_reception_uuid );
+			$refund_result = CreditReception::reverse($credit_reception_uuid);
 
-			if ( ! $refund_result ) {
-				$this->logger->error( "Failed to process full refund for credit reception: $credit_reception_uuid" );
+			if (! $refund_result) {
+				$this->logger->error("Failed to process full refund for credit reception: $credit_reception_uuid");
 				return false;
 			}
 
 			return $refund_result;
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Error Processing Full Refund' );
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Error Processing Full Refund');
 			return false;
 		}
 	}
 
-	public function refund_credits_partial( $credit_reception_uuid, $refund_percentage, $original_credits ) {
+	public function refund_credits_partial($credit_reception_uuid, $refund_percentage, $original_credits)
+	{
 		$client = $this->init_client();
-		if ( ! $client ) {
+		if (! $client) {
 			return false;
 		}
 
 		try {
-			$credits_to_refund = round( $original_credits * $refund_percentage );
+			$credits_to_refund = round($original_credits * $refund_percentage);
 
 			$refund_result = CreditReception::create(
 				[
 					'credits' => -$credits_to_refund,
 				]
-				);
+			);
 
-			if ( ! $refund_result ) {
-				$this->logger->error( "Failed to process partial refund for credit reception: $credit_reception_uuid" );
+			if (! $refund_result) {
+				$this->logger->error("Failed to process partial refund for credit reception: $credit_reception_uuid");
 				return false;
 			}
 
 			return $refund_result;
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Error Processing Partial Refund' );
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Error Processing Partial Refund');
 			return false;
 		}
 	}
@@ -1179,27 +1222,28 @@ class Connection {
 	 * @param WC_Order $current_order Current order being processed.
 	 * @return array
 	 */
-	private function get_woocommerce_guest_data( $email, $current_order ) {
-		$currency = strtolower( get_woocommerce_currency() );
+	private function get_woocommerce_guest_data($email, $current_order)
+	{
+		$currency = strtolower(get_woocommerce_currency());
 
 		// Get guest's order history - exclude current order.
 		$customer_orders = wc_get_orders(
 			[
 				'customer' => $email,
-				'status'   => [ 'completed', 'processing', 'on-hold' ],
+				'status'   => ['completed', 'processing', 'on-hold'],
 				'limit'    => -1,
-				'exclude'  => [ $current_order->get_id() ], // Explicitly exclude current order.
+				'exclude'  => [$current_order->get_id()], // Explicitly exclude current order.
 			]
-			);
+		);
 
-		$this->logger->info( 'Found ' . count( $customer_orders ) . ' previous orders for guest email: ' . $email );
+		$this->logger->info('Found ' . count($customer_orders) . ' previous orders for guest email: ' . $email);
 
 		$total_spent    = $current_order->get_total(); // Start with current order.
 		$total_products = 0;
 		$orders_count   = 1; // Start with 1 for current order.
 
 		// Set initial dates from current order.
-		$current_order_date = $current_order->get_date_created()->format( 'Y-m-d H:i:s' );
+		$current_order_date = $current_order->get_date_created()->format('Y-m-d H:i:s');
 		$first_order_date   = $current_order_date;
 		$last_order_date    = $current_order_date;
 		$last_order_amount  = $current_order->get_total();
@@ -1213,7 +1257,7 @@ class Connection {
 			'wp_wc_last_order_date'                  => $last_order_date,
 			'wp_wc_average_order_value_' . $currency => (float) $average_order_value,
 			'wp_wc_first_order_date'                 => $first_order_date,
-			'wp_wc_product_categories_purchased'     => $this->get_purchased_categories( null, $current_order ),
+			'wp_wc_product_categories_purchased'     => $this->get_purchased_categories(null, $current_order),
 			'wp_wc_total_products_purchased'         => (int) $total_products,
 			'wp_user_id'                             => $current_order->get_user_id(),
 			'firstname'                              => $current_order->get_billing_first_name(),
@@ -1228,9 +1272,10 @@ class Connection {
 	 * @return array|null
 	 * @throws \Exception If the client is not initialized.
 	 */
-	public function list_giftcard_programs() {
+	public function list_giftcard_programs()
+	{
 		$client = $this->init_client();
-		if ( ! $client ) {
+		if (! $client) {
 			return null;
 		}
 
@@ -1239,19 +1284,20 @@ class Connection {
 
 			$programs = [];
 
-			foreach ( $response as $program ) {
-				$programs[] = $this->format_giftcard_program( $program );
+			foreach ($response as $program) {
+				$programs[] = $this->format_giftcard_program($program);
 			}
 
 			return $programs;
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'List Giftcard Programs Error' );
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'List Giftcard Programs Error');
 
 			throw $e;
 		}
 	}
 
-	private function format_giftcard_program( GiftcardProgram $program ): array {
+	private function format_giftcard_program(GiftcardProgram $program): array
+	{
 		return [
 			'uuid'                => $program->getUuid(),
 			'name'                => $program->getName(),
@@ -1268,38 +1314,40 @@ class Connection {
 	 * @param \Exception $e The exception to log.
 	 * @param string     $context Additional context for the error.
 	 */
-	private function log_exception( \Exception $e, string $context = '' ) {
-		if ( $e instanceof PiggyRequestException ) {
+	private function log_exception(\Exception $e, string $context = '')
+	{
+		if ($e instanceof PiggyRequestException) {
 			$error_bag = $e->getErrorBag();
 			$this->logger->error(
 				'API Error Details: ' .
-				wp_json_encode(
-					[
-						'message'     => $e->getMessage(),
-						'code'        => $e->getCode(),
-						'error_bag'   => $error_bag ? wp_json_encode( $error_bag->all() ) : null,
-						'first_error' => $error_bag ? wp_json_encode( $error_bag->first() ) : null,
-						'context'     => $context,
-					],
-					JSON_PRETTY_PRINT,
-				),
+					wp_json_encode(
+						[
+							'message'     => $e->getMessage(),
+							'code'        => $e->getCode(),
+							'error_bag'   => $error_bag ? wp_json_encode($error_bag->all()) : null,
+							'first_error' => $error_bag ? wp_json_encode($error_bag->first()) : null,
+							'context'     => $context,
+						],
+						JSON_PRETTY_PRINT,
+					),
 			);
 		} else {
 			$this->logger->error(
 				$context . ': ' .
-				wp_json_encode(
-					[
-						'error' => $e->getMessage(),
-						'trace' => $e->getTraceAsString(),
-					]
+					wp_json_encode(
+						[
+							'error' => $e->getMessage(),
+							'trace' => $e->getTraceAsString(),
+						]
 					),
 			);
 		}
 	}
 
-	public function create_giftcard( $giftcard_program_uuid ) {
+	public function create_giftcard($giftcard_program_uuid)
+	{
 		$client = $this->init_client();
-		if ( ! $client ) {
+		if (! $client) {
 			return null;
 		}
 
@@ -1309,23 +1357,24 @@ class Connection {
 					'type'                  => 1,
 					'giftcard_program_uuid' => $giftcard_program_uuid,
 				]
-				);
+			);
 
-			return $this->format_giftcard( $response );
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Create Giftcard Error' );
+			return $this->format_giftcard($response);
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Create Giftcard Error');
 			throw $e;
 		}
 	}
 
-	public function create_giftcard_transaction( $giftcard_uuid, $amount_in_cents ) {
+	public function create_giftcard_transaction($giftcard_uuid, $amount_in_cents)
+	{
 		$client = $this->init_client();
-		if ( ! $client ) {
+		if (! $client) {
 			return null;
 		}
 
-		$shop_uuid = get_option( 'leat_shop_uuid', null );
-		if ( ! $shop_uuid ) {
+		$shop_uuid = get_option('leat_shop_uuid', null);
+		if (! $shop_uuid) {
 			return false;
 		}
 
@@ -1336,12 +1385,13 @@ class Connection {
 				'amount_in_cents' => $amount_in_cents,
 				'type'            => 1,
 			]
-			);
+		);
 
-		return $this->format_giftcard_transaction( $response );
+		return $this->format_giftcard_transaction($response);
 	}
 
-	private function format_giftcard( Giftcard $giftcard ) {
+	private function format_giftcard(Giftcard $giftcard)
+	{
 		return [
 			'id'   => $giftcard->getId(),
 			'uuid' => $giftcard->getUuid(),
@@ -1349,7 +1399,8 @@ class Connection {
 		];
 	}
 
-	private function format_giftcard_transaction( GiftcardTransaction $giftcard_transaction ) {
+	private function format_giftcard_transaction(GiftcardTransaction $giftcard_transaction)
+	{
 		return [
 			'id'              => $giftcard_transaction->getId(),
 			'uuid'            => $giftcard_transaction->getUuid(),
@@ -1357,10 +1408,11 @@ class Connection {
 		];
 	}
 
-	public function send_giftcard_email( $giftcard_uuid, $contact_uuid, $email_uuid = null, $merge_tags = [] ) {
+	public function send_giftcard_email($giftcard_uuid, $contact_uuid, $email_uuid = null, $merge_tags = [])
+	{
 		$client = $this->init_client();
 
-		if ( ! $client ) {
+		if (! $client) {
 			return false;
 		}
 
@@ -1369,23 +1421,23 @@ class Connection {
 				'contact_uuid' => $contact_uuid,
 			];
 
-			if ( $email_uuid ) {
+			if ($email_uuid) {
 				$payload['email_uuid'] = $email_uuid;
 			}
 
-			if ( ! empty( $merge_tags ) ) {
+			if (! empty($merge_tags)) {
 				// Ensure merge tags are prefixed with 'custom.'.
 				$formatted_tags = [];
 
-				foreach ( $merge_tags as $key => $value ) {
-					$key                    = strpos( $key, 'custom.' ) === 0 ? $key : 'custom.' . $key;
-					$formatted_tags[ $key ] = $value;
+				foreach ($merge_tags as $key => $value) {
+					$key                    = strpos($key, 'custom.') === 0 ? $key : 'custom.' . $key;
+					$formatted_tags[$key] = $value;
 				}
 				$payload['merge_tags'] = $formatted_tags;
 			}
 
 			// TODO: this endpoint is not in the SDK yet.
-			$response = ApiClient::post( "/api/v3/oauth/clients/giftcards/{$giftcard_uuid}/send-by-email", $payload );
+			$response = ApiClient::post("/api/v3/oauth/clients/giftcards/{$giftcard_uuid}/send-by-email", $payload);
 
 			$this->logger->info(
 				'Giftcard email sent successfully',
@@ -1394,11 +1446,11 @@ class Connection {
 					'contact_uuid'  => $contact_uuid,
 					'response'      => $response,
 				]
-				);
+			);
 
 			return $response;
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Send Giftcard Email Error' );
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Send Giftcard Email Error');
 			return false;
 		}
 	}
@@ -1409,18 +1461,19 @@ class Connection {
 	 * @param string $transaction_uuid UUID of the transaction to reverse.
 	 * @return array|false The reversed transaction data or false on failure.
 	 */
-	public function reverse_giftcard_transaction( $transaction_uuid ) {
+	public function reverse_giftcard_transaction($transaction_uuid)
+	{
 		$client = $this->init_client();
-		if ( ! $client ) {
+		if (! $client) {
 			return false;
 		}
 
 		try {
-			$response = GiftcardTransaction::reverse( $transaction_uuid );
+			$response = GiftcardTransaction::reverse($transaction_uuid);
 
-			return $this->format_giftcard_transaction( $response );
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Reverse Giftcard Transaction Error' );
+			return $this->format_giftcard_transaction($response);
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Reverse Giftcard Transaction Error');
 			return false;
 		}
 	}
@@ -1432,17 +1485,35 @@ class Connection {
 	 * @param int    $amount_in_cents Amount to refund in cents (should be negative).
 	 * @return array|false The transaction data or false on failure
 	 */
-	public function create_giftcard_refund_transaction( $giftcard_uuid, $amount_in_cents ) {
-		if ( $amount_in_cents >= 0 ) {
+	public function create_giftcard_refund_transaction($giftcard_uuid, $amount_in_cents)
+	{
+		if ($amount_in_cents >= 0) {
 			// Ensure amount is negative for refunds.
 			$amount_in_cents = -$amount_in_cents;
 		}
 
 		try {
-			return $this->create_giftcard_transaction( $giftcard_uuid, $amount_in_cents );
-		} catch ( \Exception $e ) {
-			$this->log_exception( $e, 'Create Giftcard Refund Transaction Error' );
+			return $this->create_giftcard_transaction($giftcard_uuid, $amount_in_cents);
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Create Giftcard Refund Transaction Error');
 			return false;
+		}
+	}
+
+	/**
+	 * Get items for sync
+	 *
+	 * @param string $action_name The action name.
+	 * @return array|false The items or false on failure.
+	 * @throws \Exception If the action name is invalid.
+	 */
+	public function get_items_for_sync($action_name)
+	{
+		switch ($action_name) {
+			case 'sync_promotions':
+				return $this->get_promotions();
+			default:
+				throw new \Exception("Invalid action name: {$action_name}");
 		}
 	}
 }

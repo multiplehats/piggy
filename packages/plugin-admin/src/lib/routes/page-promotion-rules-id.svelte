@@ -17,6 +17,8 @@
 	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
 	import PromotionRuleProductSelect from "$lib/components/promotions/promotion-rule-product-select.svelte";
 	import SettingsSyncStatus from "$lib/components/settings-sync-status.svelte";
+	import PromotionRuleProductDiscountFields from "$lib/components/promotions/promotion-rule-product-discount-fields.svelte";
+	import SettingsSwitch from "$lib/components/settings-switch.svelte";
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
@@ -137,8 +139,13 @@
 			</Badge>
 
 			<div class="hidden items-center gap-2 md:ml-auto md:flex">
-				<Button size="sm" on:click={handleSave}>
-					{__("Save rule", "leat")}
+				<Button
+					size="sm"
+					on:click={handleSave}
+					loading={$mutate.isPending}
+					disabled={$mutate.isPending}
+				>
+					{__("Save rule", "leat-crm")}
 				</Button>
 			</div>
 		</div>
@@ -182,6 +189,17 @@
 								bind:value={$rule.minimumPurchaseAmount.value}
 							></SettingsInput>
 
+							<SettingsSwitch
+								{...$rule.individualUse}
+								bind:value={$rule.individualUse.value}
+								showErrors={false}
+							/>
+
+							<PromotionRuleProductDiscountFields
+								bind:discountType={$rule.discountType}
+								bind:discountValue={$rule.discountValue}
+							/>
+
 							<PromotionRuleProductSelect selectedProducts={$rule.selectedProducts} />
 						</div>
 					</Card.Content>
@@ -212,20 +230,34 @@
 					</Card.Content>
 				</Card.Root>
 
-				<SettingsSyncStatus
-					key="vouchers"
-					title={__("Sync vouchers", "leat")}
-					mutationFn={() => service.syncVouchers($params.id.toString())}
-					queryFn={() =>
-						service.getSyncVouchersInformation({ id: $params.id.toString() })}
-					onMutationSuccess={() => $query.refetch()}
-				/>
+				<div>
+					<SettingsSyncStatus
+						key="vouchers"
+						title={__("Sync vouchers", "leat")}
+						mutationFn={() => service.syncVouchers($params.id.toString())}
+						queryFn={() =>
+							service.getSyncVouchersInformation({ id: $params.id.toString() })}
+						onMutationSuccess={() => $query.refetch()}
+						disabled={$rule.status.value !== "publish"}
+					/>
+
+					{#if $rule.status.value !== "publish"}
+						<p class="text-muted-foreground/75 mt-2 px-4 text-center text-sm">
+							{__("You can only sync vouchers when the rule is published.", "leat")}
+						</p>
+					{/if}
+				</div>
 			</div>
 		</div>
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
-			<Button size="sm" on:click={handleSave}>
-				{__("Save rule", "leat")}
+			<Button
+				size="sm"
+				on:click={handleSave}
+				loading={$mutate.isPending}
+				disabled={$mutate.isPending}
+			>
+				{__("Save rule", "leat-crm")}
 			</Button>
 		</div>
 	</div>

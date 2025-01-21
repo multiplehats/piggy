@@ -70,7 +70,7 @@ class SyncPromotions extends AbstractRoute
 	 */
 	protected function get_route_response(\WP_REST_Request $request)
 	{
-		$process_status = $this->sync_promotions->get_process_status();
+		$process_status = $this->sync_promotions->get_sync_status();
 
 		return rest_ensure_response($process_status);
 	}

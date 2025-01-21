@@ -1156,6 +1156,7 @@ abstract class BackgroundProcess extends AsyncRequest
 		}
 
 		return [
+			'type' => 'background_task',
 			'is_processing'   => $this->is_processing(),
 			'is_queued'       => $this->is_queued(),
 			'is_paused'       => $this->is_paused(),

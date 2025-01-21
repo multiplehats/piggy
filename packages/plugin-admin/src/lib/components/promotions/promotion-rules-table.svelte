@@ -51,7 +51,6 @@
 			key="promotions"
 			title={__("Sync promotions", "leat")}
 			mutationFn={() => service.syncPromotions()}
-			queryFn={() => service.getSyncPromotionsInformation()}
 			onMutationSuccess={() =>
 				client.invalidateQueries({ queryKey: [QueryKeys.promotionRules] })}
 		/>

@@ -150,6 +150,7 @@ export const zPluginPromotionRuleItemValues = transformSchema(
 		discountValue: true,
 		discountType: true,
 		minimumPurchaseAmount: true,
+		individualUse: true,
 	})
 );
 export type PluginPromotionRuleItemValues = z.infer<typeof zPluginPromotionRuleItemValues>;

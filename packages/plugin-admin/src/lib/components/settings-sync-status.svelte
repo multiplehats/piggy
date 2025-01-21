@@ -6,15 +6,16 @@
 	import { Badge } from "$lib/components/ui/badge/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { Progress } from "$lib/components/ui/progress/index.js";
-	import type { TaskInformation } from "$lib/modules/settings/types";
+	import type { SyncStatus, TaskInformation } from "$lib/modules/settings/types";
 	import * as Card from "$lib/components/ui/card/index.js";
 
 	export let key: string;
 	export let title: string;
 	export let mutationFn: () => Promise<any>;
 	export let showButton = true;
-	export let queryFn: () => Promise<TaskInformation>;
+	export let queryFn: () => Promise<TaskInformation | SyncStatus> | undefined = undefined;
 	export let onMutationSuccess: (() => void) | undefined = undefined;
+	export let disabled = false;
 
 	let isStillSyncing = false;
 	let showDetails = false;
@@ -36,6 +37,7 @@
 		derived(mutateSync, ($mutateSync) => ({
 			queryKey: [`sync-${key}`],
 			queryFn: () => queryFn(),
+			// @ts-expect-error -- Because of derived, this is not a valid type
 			refetchInterval: (query) => {
 				if (
 					query.state.data?.is_queued ||
@@ -47,14 +49,15 @@
 
 				return false;
 			},
+			enabled: !!queryFn,
 		}))
 	);
 
 	$: {
 		isStillSyncing =
 			($mutateSync.isPending ||
-				$querySyncInformation.data?.is_processing ||
-				$querySyncInformation.data?.is_queued) ??
+				($querySyncInformation.data?.type === "background_task" &&
+					$querySyncInformation.data?.is_processing)) ??
 			false;
 	}
 </script>
@@ -66,16 +69,30 @@
 
 	<Card.Content>
 		{#if showButton}
-			<Button
-				variant="primary"
-				size="sm"
-				loading={$mutateSync.isPending}
-				on:click={() => $mutateSync.mutate()}
-				disabled={isStillSyncing}
-				class="w-full"
-			>
-				{__("Sync now", "leat")}
-			</Button>
+			<div class="flex gap-2">
+				<Button
+					size="sm"
+					loading={$mutateSync.isPending}
+					on:click={() => $mutateSync.mutate()}
+					disabled={$mutateSync.isPending}
+					class="w-full"
+				>
+					{__("Sync now", "leat")}
+				</Button>
+
+				<!-- {#if disabled || isStillSyncing}
+					<Button
+						size="sm"
+						variant="outline"
+						loading={$mutateSync.isPending}
+						on:click={() => $mutateSync.mutate()}
+						disabled={$mutateSync.isPending}
+						class="shrink-0"
+					>
+						{__("Force sync", "leat")}
+					</Button>
+				{/if} -->
+			</div>
 		{/if}
 
 		{#if $querySyncInformation.isSuccess && $querySyncInformation.data}
@@ -83,7 +100,11 @@
 				{#if isStillSyncing}
 					<div class="flex flex-col items-start gap-1.5 text-sm">
 						<Badge class="font-xs">
-							{$querySyncInformation.data.status}
+							{#if $querySyncInformation.data.type === "background_task"}
+								{$querySyncInformation.data.status}
+							{:else}
+								{__("Syncing...", "leat")}
+							{/if}
 						</Badge>
 
 						<span class="text-muted-foreground text-xs">
@@ -112,7 +133,7 @@
 						/>
 					</Button>
 
-					{#if showDetails && $querySyncInformation.data.last_process}
+					{#if showDetails}
 						<div class="space-y-2 font-mono text-xs">
 							<div class="flex flex-col items-start justify-between gap-0.5">
 								<span class="text-muted-foreground font-bold">
@@ -120,9 +141,17 @@
 								</span>
 
 								<span>
-									{new Date(
-										$querySyncInformation.data.last_process.timestamp * 1000
-									).toLocaleString()}
+									{#if $querySyncInformation.data.type === "background_task" && $querySyncInformation.data.last_process?.timestamp}
+										{new Date(
+											$querySyncInformation.data.last_process.timestamp * 1000
+										).toLocaleString()}
+									{:else if $querySyncInformation.data.type === "sync" && $querySyncInformation.data.last_sync?.timestamp}
+										{new Date(
+											$querySyncInformation.data.last_sync.timestamp * 1000
+										).toLocaleString()}
+									{:else}
+										{__("Never", "leat")}
+									{/if}
 								</span>
 							</div>
 
@@ -132,10 +161,39 @@
 								</span>
 
 								<span>
-									{$querySyncInformation.data.last_process.items_processed} / {$querySyncInformation
-										.data.last_process.items_processed}
+									{#if $querySyncInformation.data.type === "background_task"}
+										{$querySyncInformation.data.last_process?.items_processed ??
+											0} / {$querySyncInformation.data.last_process
+											?.items_processed ?? 0}
+									{:else}
+										{$querySyncInformation.data.items_processed ?? 0} / {$querySyncInformation
+											.data.total_items ?? 0}
+										{#if ($querySyncInformation.data.items_updated ?? 0) > 0}
+											<br />({$querySyncInformation.data.items_updated}
+											{__("updated", "leat")})
+										{/if}
+										{#if ($querySyncInformation.data.items_created ?? 0) > 0}
+											<br />({$querySyncInformation.data.items_created}
+											{__("created", "leat")})
+										{/if}
+										{#if ($querySyncInformation.data.items_deleted ?? 0) > 0}
+											<br />({$querySyncInformation.data.items_deleted}
+											{__("deleted", "leat")})
+										{/if}
+									{/if}
 								</span>
 							</div>
+
+							{#if $querySyncInformation.data.type === "sync" && $querySyncInformation.data.last_sync?.error}
+								<div class="flex flex-col items-start justify-between gap-0.5">
+									<span class="text-muted-foreground font-bold">
+										{__("Error", "leat")}
+									</span>
+									<span class="text-destructive">
+										{$querySyncInformation.data.last_sync.error}
+									</span>
+								</div>
+							{/if}
 						</div>
 					{/if}
 				{/if}
