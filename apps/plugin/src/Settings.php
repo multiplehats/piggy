@@ -445,6 +445,8 @@ class Settings
 			update_option('leat_' . $setting['id'], $value);
 		}
 
+		do_action('leat_settings_updated');
+
 		return true;
 	}
 }

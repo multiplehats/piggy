@@ -15,6 +15,7 @@ use Piggy\Api\Exceptions\PiggyRequestException;
 use Leat\Domain\Services\SpendRules;
 use Leat\Domain\Services\PromotionRules;
 use Leat\Utils\Logger;
+use Leat\Utils\Users;
 use Piggy\Api\Models\Giftcards\Giftcard;
 use Piggy\Api\Models\Giftcards\GiftcardProgram;
 use Piggy\Api\Models\Giftcards\GiftcardTransaction;
@@ -137,9 +138,20 @@ class Connection
 			}
 		}
 
+		$attributes = $contact->getAttributes();
+		$attribute_list = [];
+
+		if ($attributes) {
+			foreach ($attributes as $attribute) {
+				$attribute_list[$attribute->getAttribute()->getName()] = $attribute->getValue();
+			}
+		}
+
 		return [
 			'uuid'          => $contact->getUuid(),
 			'email'         => $contact->getEmail(),
+			'first_name'    => isset($attribute_list['firstname']) ? $attribute_list['firstname'] : null,
+			'last_name'     => isset($attribute_list['lastname']) ? $attribute_list['lastname'] : null,
 			'subscriptions' => isset($subscription_list) ? $subscription_list : [],
 			'attributes'    => $contact->getCurrentValues(),
 			'balance'       => [
@@ -155,7 +167,7 @@ class Connection
 	 * @param string $wp_user_id The WordPress user ID.
 	 * @return array
 	 */
-	public function get_contact(string $wp_user_id)
+	public function get_contact_by_wp_id(string $wp_user_id)
 	{
 		$client = $this->init_client();
 
@@ -172,6 +184,94 @@ class Connection
 		}
 
 		return $this->format_contact($contact);
+	}
+
+	/**
+	 * Get a contact by UUID.
+	 *
+	 * @param string $uuid The contact UUID.
+	 * @return array|null
+	 */
+	public function get_contact_by_uuid(string $uuid)
+	{
+		$client = $this->init_client();
+
+		if (! $client) {
+			return null;
+		}
+
+		$contact = Contact::get($uuid);
+
+		if (! $contact) {
+			return null;
+		}
+
+		return $this->format_contact($contact);
+	}
+
+	/**
+	 * Find or create WP user by UUID.
+	 *
+	 * @param string $uuid The contact UUID.
+	 * @return \WP_User|null
+	 */
+	public function find_or_create_wp_user_by_uuid(string $uuid, bool $send_notification = false)
+	{
+		try {
+			$contact = $this->get_contact_by_uuid($uuid);
+			$contact_email = $contact['email'] ?? null;
+
+			if (!$contact) {
+				throw new \Exception('No contact found for uuid ' . $uuid);
+			}
+
+			$this->logger->info('Checking for existing user for email ' . $contact['email']);
+			/**
+			 * Silently create a new user, without sending notification emails.
+			 *
+			 * @var \WP_User|WP_Error
+			 */
+			$existing_wp_user = get_user_by('email', $contact['email']);
+
+			if ($existing_wp_user) {
+				$this->logger->info('Existing user found for email ' . $contact['email'], [
+					'existing_wp_user' => $existing_wp_user,
+				]);
+
+				return $existing_wp_user;
+			} else {
+				if ($contact_email) {
+					/**
+					 * Silently create a new user, without sending notification emails.
+					 *
+					 * @var \WP_User|WP_Error
+					 */
+					$new_wp_user = Users::create_woocommerce_user_from_email($contact_email, $send_notification, [
+						'first_name' => $contact['first_name'],
+						'last_name' => $contact['last_name'],
+						'username' => isset($contact['first_name']) && isset($contact['last_name']) ? $contact['first_name'] . $contact['last_name'] : Users::create_username_from_email($contact_email),
+					]);
+
+					$this->logger->info('Created new user for email ' . $contact_email, [
+						'new_wp_user' => $new_wp_user,
+					]);
+
+					if (is_wp_error($new_wp_user)) {
+						$err = $new_wp_user->get_error_message();
+
+						throw new \Exception('Failed to create user for voucher: ' . $err);
+					}
+
+					return $new_wp_user;
+				} else {
+					throw new \Exception('No contact email found for voucher');
+				}
+			}
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Contact Create Error');
+
+			throw $th;
+		}
 	}
 
 	/**
@@ -509,17 +609,6 @@ class Connection
 		}
 
 		return $uuid;
-	}
-
-	/**
-	 * Get the user from the Leat UUID.
-	 *
-	 * @param string $uuid The Leat UUID.
-	 * @return \WP_User|false
-	 */
-	public function get_user_from_leat_uuid($uuid)
-	{
-		return get_user_by('meta_key', 'leat_uuid', $uuid);
 	}
 
 	/**

@@ -12,7 +12,8 @@ use Leat\Domain\Services\EarnRules as EarnRulesService;
  *
  * @internal
  */
-class EarnReward extends AbstractRoute {
+class EarnReward extends AbstractRoute
+{
 	/**
 	 * The route identifier.
 	 *
@@ -32,7 +33,8 @@ class EarnReward extends AbstractRoute {
 	 *
 	 * @return string
 	 */
-	public function get_path() {
+	public function get_path()
+	{
 		return '/earn-reward';
 	}
 
@@ -41,30 +43,31 @@ class EarnReward extends AbstractRoute {
 	 *
 	 * @return array An array of endpoints.
 	 */
-	public function get_args() {
+	public function get_args()
+	{
 		return [
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => function( $request ) {
-					$user_id = $request->get_param( 'userId' );
-					return Middleware::is_valid_user( intval( $user_id ) );
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => function ($request) {
+					$user_id = $request->get_param('userId');
+					return Middleware::is_valid_user(intval($user_id));
 				},
 				'args'                => [
 					'earnRuleId' => [
-						'description' => __( 'The Earn Rule ID', 'leat-crm' ),
+						'description' => __('The Earn Rule ID', 'leat-crm'),
 						'type'        => 'integer',
 						'required'    => true,
 					],
 					'userId'     => [
-						'description' => __( 'The Customer ID', 'leat-crm' ),
+						'description' => __('The Customer ID', 'leat-crm'),
 						'type'        => 'integer',
 						'required'    => false,
 					],
 				],
 			],
-			'schema'      => [ $this->schema, 'get_public_item_schema' ],
-			'allow_batch' => [ 'v1' => true ],
+			'schema'      => [$this->schema, 'get_public_item_schema'],
+			'allow_batch' => ['v1' => true],
 		];
 	}
 
@@ -76,39 +79,40 @@ class EarnReward extends AbstractRoute {
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 * @throws \RouteException If the earn rule is not found.
 	 */
-	protected function get_route_post_response( \WP_REST_Request $request ) {
+	protected function get_route_post_response(\WP_REST_Request $request)
+	{
 		$data = array(
-			'earn_rule_id' => $request->get_param( 'earnRuleId' ),
-			'user_id'      => $request->get_param( 'userId' ) ?? get_current_user_id(),
+			'earn_rule_id' => $request->get_param('earnRuleId'),
+			'user_id'      => $request->get_param('userId') ?? get_current_user_id(),
 		);
 
 		$earn_rules_service = new EarnRulesService();
-		$post               = $earn_rules_service->get_by_id( $data['earn_rule_id'] );
+		$post               = $earn_rules_service->get_by_id($data['earn_rule_id']);
 
-		if ( ! $post ) {
-			throw new RouteException( 'earn-rule-not-found', 'Earn rule not found', 404 );
+		if (! $post) {
+			throw new RouteException('earn-rule-not-found', 'Earn rule not found', 404);
 		}
 
 		// Check if the rule is claimable only once and if the user has already claimed it.
-		if ( $earn_rules_service->is_rule_claimable_once( $data['earn_rule_id'] ) ) {
-			if ( $earn_rules_service->has_user_claimed_rule( $data['user_id'], $data['earn_rule_id'] ) ) {
-				throw new RouteException( 'earn-rule-already-claimed', 'You have already claimed this.', 400 );
+		if ($earn_rules_service->is_rule_claimable_once($data['earn_rule_id'])) {
+			if ($earn_rules_service->has_user_claimed_rule($data['user_id'], $data['earn_rule_id'])) {
+				throw new RouteException('earn-rule-already-claimed', 'You have already claimed this.', 400);
 			}
 		}
 
 		// Get the Leat UUID for the user, if not found, create a new contact.
-		$contact = $this->connection->get_contact( $data['user_id'] );
+		$contact = $this->connection->get_contact_by_wp_id($data['user_id']);
 		$uuid    = $contact['uuid'];
 
 		$credits = $post['credits']['value'] ?? 0;
 
-		$this->connection->apply_credits( $uuid, $credits );
+		$this->connection->apply_credits($uuid, $credits);
 
-		$this->connection->add_reward_log( $data['user_id'], $data['earn_rule_id'], $credits );
+		$this->connection->add_reward_log($data['user_id'], $data['earn_rule_id'], $credits);
 
-		$data     = $this->prepare_item_for_response( $data, $request );
-		$response = $this->prepare_response_for_collection( $data );
+		$data     = $this->prepare_item_for_response($data, $request);
+		$response = $this->prepare_response_for_collection($data);
 
-		return rest_ensure_response( $response );
+		return rest_ensure_response($response);
 	}
 }

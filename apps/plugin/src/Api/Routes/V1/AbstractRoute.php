@@ -1,4 +1,5 @@
 <?php
+
 namespace Leat\Api\Routes\V1;
 
 use Leat\Api\SchemaController;
@@ -8,13 +9,15 @@ use Leat\Api\Schemas\v1\AbstractSchema;
 use Leat\Api\Connection;
 use Leat\Domain\Services\SyncPromotions;
 use Leat\Domain\Services\SyncVouchers;
+use Leat\Domain\Services\WebhookManager;
 use Leat\Settings;
 use WP_Error;
 
 /**
  * AbstractRoute class.
  */
-abstract class AbstractRoute implements RouteInterface {
+abstract class AbstractRoute implements RouteInterface
+{
 	/**
 	 * Schema class instance.
 	 *
@@ -65,6 +68,13 @@ abstract class AbstractRoute implements RouteInterface {
 	protected $sync_promotions;
 
 	/**
+	 * Webhook manager.
+	 *
+	 * @var WebhookManager
+	 */
+	protected $webhook_manager;
+
+	/**
 	 * The routes schema.
 	 *
 	 * @var string
@@ -84,13 +94,15 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param SchemaController $schema_controller Schema Controller instance.
 	 * @param AbstractSchema   $schema Schema class for this route.
 	 */
-	public function __construct( SchemaController $schema_controller, AbstractSchema $schema, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions ) {
+	public function __construct(SchemaController $schema_controller, AbstractSchema $schema, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager)
+	{
 		$this->schema_controller = $schema_controller;
 		$this->schema            = $schema;
 		$this->connection        = $connection;
 		$this->settings          = $settings;
 		$this->sync_vouchers     = $sync_vouchers;
 		$this->sync_promotions   = $sync_promotions;
+		$this->webhook_manager   = $webhook_manager;
 	}
 
 	/**
@@ -99,17 +111,18 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @throws RouteException On error.
 	 * @return true
 	 */
-	public function init_client() {
+	public function init_client()
+	{
 		try {
 			$client = $this->connection->init_client();
 
-			if ( null === $client ) {
-				throw new RouteException( 'leat_rest_invalid_api_key', esc_html__( 'Invalid API Key', 'leat-crm' ), 401 );
+			if (null === $client) {
+				throw new RouteException('leat_rest_invalid_api_key', esc_html__('Invalid API Key', 'leat-crm'), 401);
 			}
 
 			return $client;
-		} catch ( \Throwable $th ) {
-			throw new RouteException( 'leat_rest_invalid_api_key', esc_html__( 'Invalid API Key', 'leat-crm' ), 401 );
+		} catch (\Throwable $th) {
+			throw new RouteException('leat_rest_invalid_api_key', esc_html__('Invalid API Key', 'leat-crm'), 401);
 		}
 	}
 
@@ -118,7 +131,8 @@ abstract class AbstractRoute implements RouteInterface {
 	 *
 	 * @return string
 	 */
-	public function get_namespace() {
+	public function get_namespace()
+	{
 		return $this->namespace;
 	}
 
@@ -127,7 +141,8 @@ abstract class AbstractRoute implements RouteInterface {
 	 *
 	 * @param string $namespace Given namespace.
 	 */
-	public function set_namespace( $namespace ) {
+	public function set_namespace($namespace)
+	{
 		$this->namespace = $namespace;
 	}
 
@@ -136,7 +151,8 @@ abstract class AbstractRoute implements RouteInterface {
 	 *
 	 * @return array
 	 */
-	public function get_item_schema() {
+	public function get_item_schema()
+	{
 		return $this->schema->get_item_schema();
 	}
 
@@ -146,18 +162,19 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response
 	 */
-	public function get_response( \WP_REST_Request $request ) {
+	public function get_response(\WP_REST_Request $request)
+	{
 		$response = null;
 
 		try {
-			$response = $this->get_response_by_request_method( $request );
-		} catch ( RouteException $error ) {
-			$response = $this->get_route_error_response( $error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData() );
-		} catch ( \Exception $error ) {
-			$response = $this->get_route_error_response( 'leat_rest_unknown_server_error', $error->getMessage(), 500 );
+			$response = $this->get_response_by_request_method($request);
+		} catch (RouteException $error) {
+			$response = $this->get_route_error_response($error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData());
+		} catch (\Exception $error) {
+			$response = $this->get_route_error_response('leat_rest_unknown_server_error', $error->getMessage(), 500);
 		}
 
-		return is_wp_error( $response ) ? $this->error_to_response( $response ) : $response;
+		return is_wp_error($response) ? $this->error_to_response($response) : $response;
 	}
 
 	/**
@@ -166,17 +183,18 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response
 	 */
-	protected function get_response_by_request_method( \WP_REST_Request $request ) {
-		switch ( $request->get_method() ) {
+	protected function get_response_by_request_method(\WP_REST_Request $request)
+	{
+		switch ($request->get_method()) {
 			case 'POST':
-				return $this->get_route_post_response( $request );
+				return $this->get_route_post_response($request);
 			case 'PUT':
 			case 'PATCH':
-				return $this->get_route_update_response( $request );
+				return $this->get_route_update_response($request);
 			case 'DELETE':
-				return $this->get_route_delete_response( $request );
+				return $this->get_route_delete_response($request);
 		}
-		return $this->get_route_response( $request );
+		return $this->get_route_response($request);
 	}
 
 	/**
@@ -185,28 +203,29 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_Error $error WP_Error instance.
 	 * @return \WP_REST_Response List of associative arrays with code and message keys.
 	 */
-	protected function error_to_response( $error ) {
+	protected function error_to_response($error)
+	{
 		$error_data = $error->get_error_data();
-		$status     = isset( $error_data, $error_data['status'] ) ? $error_data['status'] : 500;
+		$status     = isset($error_data, $error_data['status']) ? $error_data['status'] : 500;
 		$errors     = [];
 
-		foreach ( (array) $error->errors as $code => $messages ) {
-			foreach ( (array) $messages as $message ) {
+		foreach ((array) $error->errors as $code => $messages) {
+			foreach ((array) $messages as $message) {
 				$errors[] = array(
 					'code'    => $code,
 					'message' => $message,
-					'data'    => $error->get_error_data( $code ),
+					'data'    => $error->get_error_data($code),
 				);
 			}
 		}
 
-		$data = array_shift( $errors );
+		$data = array_shift($errors);
 
-		if ( count( $errors ) ) {
+		if (count($errors)) {
 			$data['additional_errors'] = $errors;
 		}
 
-		return new \WP_REST_Response( $data, $status );
+		return new \WP_REST_Response($data, $status);
 	}
 
 	/**
@@ -218,8 +237,9 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response
 	 */
-	protected function get_route_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat-crm' ), 404 );
+	protected function get_route_response(\WP_REST_Request $request)
+	{
+		return $this->get_route_error_response('leat_rest_invalid_endpoint', __('Method not implemented', 'leat-crm'), 404);
 	}
 
 	/**
@@ -231,8 +251,9 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response
 	 */
-	protected function get_route_post_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat-crm' ), 404 );
+	protected function get_route_post_response(\WP_REST_Request $request)
+	{
+		return $this->get_route_error_response('leat_rest_invalid_endpoint', __('Method not implemented', 'leat-crm'), 404);
 	}
 
 	/**
@@ -244,8 +265,9 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response
 	 */
-	protected function get_route_update_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat-crm' ), 404 );
+	protected function get_route_update_response(\WP_REST_Request $request)
+	{
+		return $this->get_route_error_response('leat_rest_invalid_endpoint', __('Method not implemented', 'leat-crm'), 404);
 	}
 
 	/**
@@ -257,8 +279,9 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response
 	 */
-	protected function get_route_delete_response( \WP_REST_Request $request ) {
-		return $this->get_route_error_response( 'leat_rest_invalid_endpoint', __( 'Method not implemented', 'leat-crm' ), 404 );
+	protected function get_route_delete_response(\WP_REST_Request $request)
+	{
+		return $this->get_route_error_response('leat_rest_invalid_endpoint', __('Method not implemented', 'leat-crm'), 404);
 	}
 
 	/**
@@ -270,8 +293,9 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param array  $additional_data  Extra data (key value pairs) to expose in the error response.
 	 * @return \WP_Error WP Error object.
 	 */
-	protected function get_route_error_response( $error_code, $error_message, $http_status_code = 500, $additional_data = [] ) {
-		return new \WP_Error( $error_code, $error_message, array_merge( $additional_data, [ 'status' => $http_status_code ] ) );
+	protected function get_route_error_response($error_code, $error_message, $http_status_code = 500, $additional_data = [])
+	{
+		return new \WP_Error($error_code, $error_message, array_merge($additional_data, ['status' => $http_status_code]));
 	}
 
 	/**
@@ -284,8 +308,9 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param array    $additional_data  Extra data (key value pairs) to expose in the error response.
 	 * @return WP_Error WP Error object.
 	 */
-	protected function get_route_error_response_from_object( $error_object, $http_status_code = 500, $additional_data = [] ) {
-		$error_object->add_data( array_merge( $additional_data, [ 'status' => $http_status_code ] ) );
+	protected function get_route_error_response_from_object($error_object, $http_status_code = 500, $additional_data = [])
+	{
+		$error_object->add_data(array_merge($additional_data, ['status' => $http_status_code]));
 		return $error_object;
 	}
 
@@ -296,9 +321,10 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response $response Response data.
 	 */
-	public function prepare_item_for_response( $item, \WP_REST_Request $request ) {
-		$response = rest_ensure_response( $this->schema->get_item_response( $item ) );
-		$response->add_links( $this->prepare_links( $item, $request ) );
+	public function prepare_item_for_response($item, \WP_REST_Request $request)
+	{
+		$response = rest_ensure_response($this->schema->get_item_response($item));
+		$response->add_links($this->prepare_links($item, $request));
 
 		return $response;
 	}
@@ -311,9 +337,10 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param array $args Optional. Additional arguments for context parameter. Default empty array.
 	 * @return array Context parameter details.
 	 */
-	protected function get_context_param( $args = array() ) {
+	protected function get_context_param($args = array())
+	{
 		$param_details = array(
-			'description'       => __( 'Scope under which the request is made; determines fields present in response.', 'leat-crm' ),
+			'description'       => __('Scope under which the request is made; determines fields present in response.', 'leat-crm'),
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_key',
 			'validate_callback' => 'rest_validate_request_arg',
@@ -321,24 +348,24 @@ abstract class AbstractRoute implements RouteInterface {
 
 		$schema = $this->get_item_schema();
 
-		if ( empty( $schema['properties'] ) ) {
-			return array_merge( $param_details, $args );
+		if (empty($schema['properties'])) {
+			return array_merge($param_details, $args);
 		}
 
 		$contexts = array();
 
-		foreach ( $schema['properties'] as $attributes ) {
-			if ( ! empty( $attributes['context'] ) ) {
-				$contexts = array_merge( $contexts, $attributes['context'] );
+		foreach ($schema['properties'] as $attributes) {
+			if (! empty($attributes['context'])) {
+				$contexts = array_merge($contexts, $attributes['context']);
 			}
 		}
 
-		if ( ! empty( $contexts ) ) {
-			$param_details['enum'] = array_unique( $contexts );
-			rsort( $param_details['enum'] );
+		if (! empty($contexts)) {
+			$param_details['enum'] = array_unique($contexts);
+			rsort($param_details['enum']);
 		}
 
-		return array_merge( $param_details, $args );
+		return array_merge($param_details, $args);
 	}
 
 	/**
@@ -347,12 +374,13 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_REST_Response $response Response object.
 	 * @return array|mixed Response data, ready for insertion into collection data.
 	 */
-	protected function prepare_response_for_collection( \WP_REST_Response $response ) {
+	protected function prepare_response_for_collection(\WP_REST_Response $response)
+	{
 		$data   = (array) $response->get_data();
 		$server = rest_get_server();
-		$links  = $server::get_compact_response_links( $response );
+		$links  = $server::get_compact_response_links($response);
 
-		if ( ! empty( $links ) ) {
+		if (! empty($links)) {
 			$data['_links'] = $links;
 		}
 
@@ -366,7 +394,8 @@ abstract class AbstractRoute implements RouteInterface {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return array
 	 */
-	protected function prepare_links( $item, $request ) {
+	protected function prepare_links($item, $request)
+	{
 		return [];
 	}
 
@@ -375,7 +404,8 @@ abstract class AbstractRoute implements RouteInterface {
 	 *
 	 * @return array Query parameters for the collection.
 	 */
-	public function get_collection_params() {
+	public function get_collection_params()
+	{
 		return array(
 			'context' => $this->get_context_param(),
 		);

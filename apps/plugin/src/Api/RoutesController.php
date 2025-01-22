@@ -6,6 +6,7 @@ use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Connection;
 use Leat\Domain\Services\SyncVouchers;
 use Leat\Domain\Services\SyncPromotions;
+use Leat\Domain\Services\WebhookManager;
 use Leat\Settings;
 
 /**
@@ -49,6 +50,13 @@ class RoutesController
 	protected $sync_promotions;
 
 	/**
+	 * Webhook manager.
+	 *
+	 * @var WebhookManager
+	 */
+	protected $webhook_manager;
+
+	/**
 	 * Leat routes.
 	 *
 	 * @var array
@@ -60,13 +68,14 @@ class RoutesController
 	 *
 	 * @param SchemaController $schema_controller Schema controller class passed to each route.
 	 */
-	public function __construct(SchemaController $schema_controller, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions)
+	public function __construct(SchemaController $schema_controller, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager)
 	{
 		$this->schema_controller = $schema_controller;
 		$this->connection        = $connection;
 		$this->settings          = $settings;
 		$this->sync_vouchers     = $sync_vouchers;
 		$this->sync_promotions   = $sync_promotions;
+		$this->webhook_manager   = $webhook_manager;
 
 		$this->routes = [
 			'v1'      => [
@@ -81,6 +90,7 @@ class RoutesController
 				Routes\V1\WCCategoriesSearch::IDENTIFIER => Routes\V1\WCCategoriesSearch::class,
 			],
 			'private' => [
+				Routes\V1\Webhooks::IDENTIFIER => Routes\V1\Webhooks::class,
 				Routes\V1\SpendRulesSync::IDENTIFIER     => Routes\V1\SpendRulesSync::class,
 				Routes\V1\SyncPromotions::IDENTIFIER => Routes\V1\SyncPromotions::class,
 				Routes\V1\SyncVouchers::IDENTIFIER       => Routes\V1\SyncVouchers::class,
@@ -126,7 +136,8 @@ class RoutesController
 			$this->connection,
 			$this->settings,
 			$this->sync_vouchers,
-			$this->sync_promotions
+			$this->sync_promotions,
+			$this->webhook_manager
 		);
 	}
 

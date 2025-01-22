@@ -53,6 +53,7 @@ class SchemaController
 
 		$this->schemas = [
 			'v1' => [
+				Schemas\V1\WebhooksSchema::IDENTIFIER => Schemas\V1\WebhooksSchema::class,
 				Schemas\V1\EarnRewardSchema::IDENTIFIER    => Schemas\V1\EarnRewardSchema::class,
 				Schemas\V1\EarnRulesSchema::IDENTIFIER     => Schemas\V1\EarnRulesSchema::class,
 				Schemas\V1\SpendRulesSchema::IDENTIFIER    => Schemas\V1\SpendRulesSchema::class,

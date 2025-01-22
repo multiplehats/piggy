@@ -1,4 +1,5 @@
 <?php
+
 namespace Leat\Domain;
 
 use Leat\Api\Connection;
@@ -16,6 +17,7 @@ use Leat\Domain\Services\GiftcardProduct;
 use Leat\Domain\Services\SpendRules;
 use Leat\Domain\Services\SyncVouchers;
 use Leat\Domain\Services\SyncPromotions;
+use Leat\Domain\Services\WebhookManager;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
@@ -26,7 +28,8 @@ use Leat\RedirectController;
  *
  * @since 2.5.0
  */
-class Bootstrap {
+class Bootstrap
+{
 
 	/**
 	 * Holds the Dependency Injection Container
@@ -54,18 +57,19 @@ class Bootstrap {
 	 *
 	 * @param Container $container  The Dependency Injection Container.
 	 */
-	public function __construct( Container $container ) {
+	public function __construct(Container $container)
+	{
 		$this->container = $container;
-		$this->package   = $container->get( Package::class );
-		$this->migration = $container->get( Migration::class );
+		$this->package   = $container->get(Package::class);
+		$this->migration = $container->get(Migration::class);
 
-		if ( $this->has_core_dependencies() ) {
+		if ($this->has_core_dependencies()) {
 			/**
 			 * Leat depends on the WooCommerce plugin (also included in WooCommerce core as of 6.4).
 			 */
 			add_action(
 				'woocommerce_blocks_loaded',
-				function() {
+				function () {
 					$this->init();
 					/**
 					 * Fires after the Leat plugin has loaded.
@@ -75,7 +79,7 @@ class Bootstrap {
 					 *
 					 * @since 1.0.0
 					 */
-					do_action( 'leat_loaded' );
+					do_action('leat_loaded');
 				}
 			);
 		}
@@ -84,18 +88,19 @@ class Bootstrap {
 	/**
 	 * Init the package and define constants.
 	 */
-	protected function init() {
+	protected function init()
+	{
 		/**
 		 * Action triggered before Leat initialization begins.
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'leat_before_init' );
+		do_action('leat_before_init');
 
 		$this->register_dependencies();
 
-		if ( is_admin() ) {
-			if ( $this->package->get_version() !== $this->package->get_version_stored_on_db() ) {
+		if (is_admin()) {
+			if ($this->package->get_version() !== $this->package->get_version_stored_on_db()) {
 				$this->migration->run_migrations();
 				$this->package->set_version_stored_on_db();
 			}
@@ -104,29 +109,30 @@ class Bootstrap {
 		$is_rest = wc()->is_rest_api_request();
 
 		// Load and init assets.
-		$this->container->get( Api::class )->init();
+		$this->container->get(Api::class)->init();
 
 		// Load assets in admin and on the frontend.
-		if ( ! $is_rest ) {
+		if (! $is_rest) {
 			$this->add_build_notice();
-			$this->container->get( AssetDataRegistry::class );
-			$this->container->get( Installer::class )->init();
-			$this->container->get( AssetsController::class );
-			$this->container->get( PostTypeController::class );
+			$this->container->get(AssetDataRegistry::class);
+			$this->container->get(Installer::class)->init();
+			$this->container->get(AssetsController::class);
+			$this->container->get(PostTypeController::class);
 			// $this->container->get(RedirectController::class)->init();
 		}
-		$this->container->get( CustomerDashboardShortcode::class )->init();
-		$this->container->get( CustomerSession::class );
-		$this->container->get( SyncVouchers::class )->init();
-		$this->container->get( SyncPromotions::class )->init();
-		$this->container->get( GiftcardProduct::class )->init();
+		$this->container->get(CustomerDashboardShortcode::class)->init();
+		$this->container->get(CustomerSession::class);
+		$this->container->get(SyncVouchers::class)->init();
+		$this->container->get(SyncPromotions::class)->init();
+		$this->container->get(GiftcardProduct::class)->init();
+		$this->container->get(WebhookManager::class)->init();
 
 		/**
-		* Action triggered after Leat initialization finishes.
-		*
-		* @since 1.0.0
-		*/
-		do_action( 'leat_init' );
+		 * Action triggered after Leat initialization finishes.
+		 *
+		 * @since 1.0.0
+		 */
+		do_action('leat_init');
 	}
 
 	/**
@@ -134,33 +140,34 @@ class Bootstrap {
 	 *
 	 * @return boolean
 	 */
-	protected function has_core_dependencies() {
-		$has_needed_dependencies = class_exists( 'WooCommerce', false );
+	protected function has_core_dependencies()
+	{
+		$has_needed_dependencies = class_exists('WooCommerce', false);
 
-		if ( $has_needed_dependencies ) {
+		if ($has_needed_dependencies) {
 			$plugin_data = \get_file_data(
-				$this->package->get_path( 'leat-crm.php' ),
+				$this->package->get_path('leat-crm.php'),
 				[
 					'RequiredWCVersion' => 'WC requires at least',
 				]
 			);
 
-			if ( isset( $plugin_data['RequiredWCVersion'] ) && version_compare( \WC()->version, $plugin_data['RequiredWCVersion'], '<' ) ) {
+			if (isset($plugin_data['RequiredWCVersion']) && version_compare(\WC()->version, $plugin_data['RequiredWCVersion'], '<')) {
 				$has_needed_dependencies = false;
 				add_action(
 					'admin_notices',
-					function() use ( $plugin_data ) {
-						if ( leat_should_display_compatibility_notices() ) {
-							?>
-							<div class="notice notice-error">
-								<p>
+					function () use ($plugin_data) {
+						if (leat_should_display_compatibility_notices()) {
+?>
+						<div class="notice notice-error">
+							<p>
 								<?php
-									/* translators: %s: Required WooCommerce version */
-									printf( esc_html__( 'The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce.', 'leat-crm' ), esc_html( $plugin_data['RequiredWCVersion'] ) );
+								/* translators: %s: Required WooCommerce version */
+								printf(esc_html__('The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce.', 'leat-crm'), esc_html($plugin_data['RequiredWCVersion']));
 								?>
-								</p>
-							</div>
-							<?php
+							</p>
+						</div>
+<?php
 						}
 					}
 				);
@@ -175,7 +182,8 @@ class Bootstrap {
 	 *
 	 * @return bool
 	 */
-	protected function is_built() {
+	protected function is_built()
+	{
 		$dev_files = array(
 			'dist/admin/vite-dev-server.json',
 			'dist/frontend/vite-dev-server.json',
@@ -186,15 +194,15 @@ class Bootstrap {
 			'dist/frontend/manifest.json',
 		);
 
-		foreach ( $dev_files as $dev_file ) {
-			if ( file_exists( $this->package->get_path( $dev_file ) ) ) {
+		foreach ($dev_files as $dev_file) {
+			if (file_exists($this->package->get_path($dev_file))) {
 				return true;
 			}
 		}
 
-		foreach ( $prod_files as $prod_file ) {
-			if ( file_exists( $this->package->get_path( $prod_file ) ) ) {
-				if ( file_exists( $this->package->get_path( 'dist/frontend/assets' ) ) && file_exists( $this->package->get_path( 'dist/admin/assets' ) ) ) {
+		foreach ($prod_files as $prod_file) {
+			if (file_exists($this->package->get_path($prod_file))) {
+				if (file_exists($this->package->get_path('dist/frontend/assets')) && file_exists($this->package->get_path('dist/admin/assets'))) {
 					return true;
 				}
 			}
@@ -206,17 +214,18 @@ class Bootstrap {
 	/**
 	 * Add a notice stating that the build has not been done yet.
 	 */
-	protected function add_build_notice() {
-		if ( $this->is_built() ) {
+	protected function add_build_notice()
+	{
+		if ($this->is_built()) {
 			return;
 		}
 		add_action(
 			'admin_notices',
-			function() {
+			function () {
 				echo '<div class="error"><p>';
 				printf(
 					/* translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command. */
-					esc_html__( 'Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes.', 'leat-crm' ),
+					esc_html__('Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes.', 'leat-crm'),
 					'<code>pnpm install</code>',
 					'<code>pnpm run build</code>',
 					'<code>pnpm start</code>'
@@ -229,16 +238,17 @@ class Bootstrap {
 	/**
 	 * Register core dependencies with the container.
 	 */
-	protected function register_dependencies() {
+	protected function register_dependencies()
+	{
 		$this->container->register(
 			PostTypeController::class,
-			function( Container $container ) {
+			function (Container $container) {
 				return new PostTypeController();
 			}
 		);
 		$this->container->register(
 			Settings::class,
-			function ( Container $container ) {
+			function (Container $container) {
 				return new Settings();
 			}
 		);
@@ -250,68 +260,68 @@ class Bootstrap {
 		);
 		$this->container->register(
 			AssetApi::class,
-			function ( Container $container ) {
-				return new AssetApi( $container->get( Package::class ) );
+			function (Container $container) {
+				return new AssetApi($container->get(Package::class));
 			}
 		);
 		$this->container->register(
 			AssetDataRegistry::class,
-			function( Container $container ) {
-				return new AssetDataRegistry( $container->get( AssetApi::class ) );
+			function (Container $container) {
+				return new AssetDataRegistry($container->get(AssetApi::class));
 			}
 		);
 		$this->container->register(
 			Connection::class,
-			function( Container $container ) {
+			function (Container $container) {
 				return new Connection();
 			}
 		);
 		$this->container->register(
 			EarnRules::class,
-			function( Container $container ) {
+			function (Container $container) {
 				return new EarnRules();
 			}
 		);
 		$this->container->register(
 			PromotionRules::class,
-			function( Container $container ) {
-				return new PromotionRules( $container->get( Connection::class ) );
+			function (Container $container) {
+				return new PromotionRules($container->get(Connection::class));
 			}
 		);
 		$this->container->register(
 			SpendRules::class,
-			function( Container $container ) {
+			function (Container $container) {
 				return new SpendRules();
 			}
 		);
 		$this->container->register(
 			SyncVouchers::class,
-			function( Container $container ) {
-				return new SyncVouchers( $container->get( Connection::class ), $container->get( PromotionRules::class ) );
+			function (Container $container) {
+				return new SyncVouchers($container->get(Connection::class), $container->get(PromotionRules::class));
 			}
 		);
 		$this->container->register(
 			SyncPromotions::class,
-			function( Container $container ) {
-				return new SyncPromotions( $container->get( Connection::class ), $container->get( PromotionRules::class ) );
+			function (Container $container) {
+				return new SyncPromotions($container->get(Connection::class), $container->get(PromotionRules::class));
 			}
 		);
 		$this->container->register(
 			AssetsController::class,
-			function( Container $container ) {
-				return new AssetsController( $container->get( AssetApi::class ), $container->get( Settings::class, ), $container->get( Connection::class ) );
+			function (Container $container) {
+				return new AssetsController($container->get(AssetApi::class), $container->get(Settings::class,), $container->get(Connection::class));
 			}
 		);
 		$this->container->register(
 			CustomerSession::class,
-			function( Container $container ) {
-				return new CustomerSession( $container->get( Connection::class ), $container->get( EarnRules::class ), $container->get( SpendRules::class ), $container->get( Settings::class ) );
+			function (Container $container) {
+				return new CustomerSession($container->get(Connection::class), $container->get(EarnRules::class), $container->get(SpendRules::class), $container->get(Settings::class));
 			}
 		);
 		$this->container->register(
 			GiftcardProduct::class,
-			function( Container $container ) {
-				return new GiftcardProduct( $container->get( Connection::class ), $container->get( Settings::class ) );
+			function (Container $container) {
+				return new GiftcardProduct($container->get(Connection::class), $container->get(Settings::class));
 			}
 		);
 		$this->container->register(
@@ -321,11 +331,17 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
+			WebhookManager::class,
+			function (Container $container) {
+				return new WebhookManager($container->get(Connection::class));
+			}
+		);
+		$this->container->register(
 			CustomerDashboardShortcode::class,
-			function ( Container $container ) {
-				$asset_api = $container->get( AssetApi::class );
+			function (Container $container) {
+				$asset_api = $container->get(AssetApi::class);
 
-				return new CustomerDashboardShortcode( $asset_api );
+				return new CustomerDashboardShortcode($asset_api);
 			}
 		);
 		$this->container->register(
@@ -334,7 +350,6 @@ class Bootstrap {
 				return new Api();
 			}
 		);
-
 	}
 
 	/**
@@ -345,8 +360,9 @@ class Bootstrap {
 	 * @param string $replacement Replacement class or function, if applicable.
 	 * @param string $trigger_error_version Optional version to start surfacing this as a PHP error rather than a log. Defaults to $version.
 	 */
-	protected function deprecated_dependency( $function, $version, $replacement = '', $trigger_error_version = '' ) {
-		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+	protected function deprecated_dependency($function, $version, $replacement = '', $trigger_error_version = '')
+	{
+		if (! defined('WP_DEBUG') || ! WP_DEBUG) {
 			return;
 		}
 
@@ -368,17 +384,17 @@ class Bootstrap {
 		 * @param string $error_message The error message.
 		 * @since 1.0.0
 		 */
-		do_action( 'deprecated_function_run', $function, $replacement, $version );
+		do_action('deprecated_function_run', $function, $replacement, $version);
 
 		$log_error = false;
 
 		// If headers have not been sent yet, log to avoid breaking the request.
-		if ( ! headers_sent() ) {
+		if (! headers_sent()) {
 			$log_error = true;
 		}
 
 		// If the $trigger_error_version was not yet reached, only log the error.
-		if ( version_compare( $this->package->get_version(), $trigger_error_version, '<' ) ) {
+		if (version_compare($this->package->get_version(), $trigger_error_version, '<')) {
 			$log_error = true;
 		}
 
@@ -387,16 +403,16 @@ class Bootstrap {
 		 *
 		 * @since 1.0.0
 		 */
-		if ( ! apply_filters( 'deprecated_function_trigger_error', true ) ) {
+		if (! apply_filters('deprecated_function_trigger_error', true)) {
 			$log_error = true;
 		}
 
-		if ( $log_error ) {
+		if ($log_error) {
 			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( $error_message );
+			error_log($error_message);
 		} else {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-			trigger_error( $error_message, E_USER_DEPRECATED );
+			trigger_error($error_message, E_USER_DEPRECATED);
 		}
 	}
 }

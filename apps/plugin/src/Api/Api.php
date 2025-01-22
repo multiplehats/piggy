@@ -1,4 +1,5 @@
 <?php
+
 namespace Leat\Api;
 
 use Leat\Registry\Container;
@@ -9,20 +10,23 @@ use Leat\Api\Schemas\ExtendSchema;
 use Leat\Domain\Services\SyncPromotions;
 use Leat\Domain\Services\SyncVouchers;
 use Leat\Domain\Services\PromotionRules;
+use Leat\Domain\Services\WebhookManager;
 use Leat\Settings;
 
 /**
  * Api Main Class.
  */
-final class Api {
+final class Api
+{
 	/**
 	 * Init and hook in Leat API functionality.
 	 */
-	public function init() {
+	public function init()
+	{
 		add_action(
 			'rest_api_init',
-			function() {
-				self::container()->get( RoutesController::class )->register_all_routes();
+			function () {
+				self::container()->get(RoutesController::class)->register_all_routes();
 			}
 		);
 	}
@@ -33,14 +37,15 @@ final class Api {
 	 * @param boolean $reset Used to reset the container to a fresh instance. Note: this means all dependencies will be reconstructed.
 	 * @return mixed
 	 */
-	public static function container( $reset = false ) {
+	public static function container($reset = false)
+	{
 		static $container;
 
-		if ( $reset ) {
+		if ($reset) {
 			$container = null;
 		}
 
-		if ( $container ) {
+		if ($container) {
 			return $container;
 		}
 
@@ -62,62 +67,72 @@ final class Api {
 
 		$container->register(
 			PromotionRules::class,
-			function ( $container ) {
+			function ($container) {
 				return new PromotionRules(
-					$container->get( Connection::class )
+					$container->get(Connection::class)
+				);
+			}
+		);
+
+		$container->register(
+			WebhookManager::class,
+			function ($container) {
+				return new WebhookManager(
+					$container->get(Connection::class)
 				);
 			}
 		);
 
 		$container->register(
 			SyncVouchers::class,
-			function ( $container ) {
+			function ($container) {
 				return new SyncVouchers(
-					$container->get( Connection::class ),
-					$container->get( PromotionRules::class )
+					$container->get(Connection::class),
+					$container->get(PromotionRules::class)
 				);
 			}
 		);
 
 		$container->register(
 			SyncPromotions::class,
-			function ( $container ) {
+			function ($container) {
 				return new SyncPromotions(
-					$container->get( Connection::class ),
-					$container->get( PromotionRules::class )
+					$container->get(Connection::class),
+					$container->get(PromotionRules::class)
 				);
 			}
 		);
 
 		$container->register(
 			RoutesController::class,
-			function ( $container ) {
+			function ($container) {
 				return new RoutesController(
-					$container->get( SchemaController::class ),
-					$container->get( Connection::class ),
-					$container->get( Settings::class ),
-					$container->get( SyncVouchers::class ),
-					$container->get( SyncPromotions::class ),
+					$container->get(SchemaController::class),
+					$container->get(Connection::class),
+					$container->get(Settings::class),
+					$container->get(SyncVouchers::class),
+					$container->get(SyncPromotions::class),
+					$container->get(WebhookManager::class)
 				);
 			}
 		);
 
 		$container->register(
 			SchemaController::class,
-			function ( $container ) {
+			function ($container) {
 				return new SchemaController(
-					$container->get( ExtendSchema::class ),
-					$container->get( Settings::class ),
-					$container->get( PromotionRules::class )
+					$container->get(ExtendSchema::class),
+					$container->get(Settings::class),
+					$container->get(PromotionRules::class)
 				);
 			}
 		);
 
 		$container->register(
 			ExtendSchema::class,
-			function ( $container ) {
+			function ($container) {
 				return new ExtendSchema(
-					$container->get( Formatters::class )
+					$container->get(Formatters::class)
 				);
 			}
 		);
