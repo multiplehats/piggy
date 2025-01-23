@@ -5,13 +5,15 @@ namespace Leat\Api\Routes\V1;
 use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Domain\Services\SpendRules;
+use Leat\Utils\Coupons as UtilsCoupons;
 
 /**
  * Coupons class.
  *
  * @internal
  */
-class Coupons extends AbstractRoute {
+class Coupons extends AbstractRoute
+{
 	/**
 	 * The route identifier.
 	 *
@@ -31,7 +33,8 @@ class Coupons extends AbstractRoute {
 	 *
 	 * @return string
 	 */
-	public function get_path() {
+	public function get_path()
+	{
 		return '/coupons';
 	}
 
@@ -40,26 +43,27 @@ class Coupons extends AbstractRoute {
 	 *
 	 * @return array An array of endpoints.
 	 */
-	public function get_args() {
+	public function get_args()
+	{
 		return [
 			[
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => function( $request ) {
-					$user_id = $request->get_param( 'userId' );
-					return Middleware::is_valid_user( intval( $user_id ) );
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => function ($request) {
+					$user_id = $request->get_param('userId');
+					return Middleware::is_valid_user(intval($user_id));
 				},
 				'args'                => [
 					'userId' => [
 						'type'              => 'integer',
-						'validate_callback' => function( $param ) {
-							return is_numeric( $param ) && $param > 0;
+						'validate_callback' => function ($param) {
+							return is_numeric($param) && $param > 0;
 						},
 						'sanitize_callback' => 'absint',
 					],
 				],
 			],
-			'schema' => [ $this->schema, 'get_public_item_schema' ],
+			'schema' => [$this->schema, 'get_public_item_schema'],
 		];
 	}
 
@@ -71,29 +75,28 @@ class Coupons extends AbstractRoute {
 	 * @return \WP_REST_Response
 	 * @throws \RouteException If the user is not found.
 	 */
-	public function get_route_response( \WP_REST_Request $request ) {
-		$user_id = $request->get_param( 'userId' );
+	public function get_route_response(\WP_REST_Request $request)
+	{
+		$user_id = $request->get_param('userId');
 
-		if ( ! $user_id ) {
+		if (! $user_id) {
 			$user_id = get_current_user_id();
 		}
 
-		if ( ! $user_id ) {
-			throw new RouteException( 'no_user_id', 'User ID is required', 400 );
+		if (! $user_id) {
+			throw new RouteException('no_user_id', 'User ID is required', 400);
 		}
 
 		$spend_rules_service = new SpendRules();
-		$coupons             = $spend_rules_service->get_coupons_by_user_id( $user_id );
 
-		$response_objects = array();
+		$spend_rules_coupons             = $spend_rules_service->get_coupons_by_user_id($user_id);
+		$promotion_rules_coupons = $this->promotion_rules_service->get_coupons_by_user_id($user_id);
 
-		foreach ( $coupons as $coupon ) {
-			$data               = $this->prepare_item_for_response( $coupon, $request );
-			$response_objects[] = $this->prepare_response_for_collection( $data );
-		}
+		$response_objects = array(
+			'spend_rules_coupons' => $spend_rules_coupons,
+			'promotion_rules_coupons' => $promotion_rules_coupons,
+		);
 
-		$response = rest_ensure_response( $response_objects );
-
-		return $response;
+		return rest_ensure_response($response_objects);
 	}
 }

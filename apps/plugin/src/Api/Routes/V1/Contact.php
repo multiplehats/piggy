@@ -11,7 +11,8 @@ use Leat\Api\Routes\V1\Middleware;
  *
  * @internal
  */
-class Contact extends AbstractRoute {
+class Contact extends AbstractRoute
+{
 	/**
 	 * The route identifier.
 	 *
@@ -31,7 +32,8 @@ class Contact extends AbstractRoute {
 	 *
 	 * @return string
 	 */
-	public function get_path() {
+	public function get_path()
+	{
 		return '/contact';
 	}
 
@@ -40,17 +42,18 @@ class Contact extends AbstractRoute {
 	 *
 	 * @return array An array of endpoints.
 	 */
-	public function get_args() {
+	public function get_args()
+	{
 		return [
 			[
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => function( $request ) {
-					$user_id = $request->get_param( 'userId' );
-					return Middleware::is_valid_user( intval( $user_id ) );
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => function ($request) {
+					$user_id = $request->get_param('userId');
+					return Middleware::is_valid_user(intval($user_id));
 				},
 			],
-			'schema' => [ $this->schema, 'get_public_item_schema' ],
+			'schema' => [$this->schema, 'get_public_item_schema'],
 		];
 	}
 
@@ -63,15 +66,16 @@ class Contact extends AbstractRoute {
 	 *
 	 * @throws RouteException If the user ID is not provided.
 	 */
-	public function get_route_response( \WP_REST_Request $request ) {
-		$user_id = $request->get_param( 'userId' );
+	public function get_route_response(\WP_REST_Request $request)
+	{
+		$user_id = $request->get_param('userId');
 
-		if ( ! $user_id ) {
-			throw new RouteException( 'no_user_id', 'User ID is required', 400 );
+		if (! $user_id) {
+			throw new RouteException('no_user_id', 'User ID is required', 400);
 		}
 
-		$contact         = $this->connection->get_contact( $user_id );
-		$claimed_rewards = $this->connection->get_user_reward_logs( $user_id );
+		$contact         = $this->connection->get_contact_by_wp_id($user_id);
+		$claimed_rewards = $this->connection->get_user_reward_logs($user_id);
 
 		$response = rest_ensure_response(
 			array(

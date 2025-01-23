@@ -101,6 +101,7 @@ class PromotionRules extends AbstractRoute
 			'post_title'  => $data['title'],
 			'post_status' => $data['status'],
 			'meta_input'  => array(
+				'_leat_promotion_rule_label'                    => $data['label'],
 				'_leat_promotion_rule_selected_products' => $data['selectedProducts'],
 				'_leat_promotion_rule_discount_value'    => $data['discountValue'],
 				'_leat_promotion_rule_discount_type'     => $data['discountType'],

@@ -1,17 +1,13 @@
 <script lang="ts">
-	import { createQuery } from "@tanstack/svelte-query";
 	import { replaceStrings } from "@leat/lib";
 	import DashboardCouponCard from "./dashboard-coupon-card.svelte";
-	import { apiService } from "$lib/modules/leat";
 	import { currentLanguage, isLoggedIn, pluginSettings } from "$lib/modules/settings";
-	import { QueryKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
+	import type { GetCouponsResponse } from "$lib/modules/leat/types";
 
-	const query = createQuery({
-		queryKey: [QueryKeys.coupons],
-		queryFn: async () => await apiService.getCoupons(window.leatMiddlewareConfig.userId),
-		enabled: isLoggedIn,
-	});
+	export let coupons: GetCouponsResponse | undefined | null = undefined;
+	export let isLoading: boolean;
+	export let isSuccess: boolean;
 
 	function getNavItemText(text?: string) {
 		if (!text) return "";
@@ -30,21 +26,27 @@
 			</h3>
 		</div>
 
-		{#if $query.isLoading}
+		{#if isLoading}
 			<div class="leat-dashboard-coupons__loading">
 				<p>{getTranslatedText($pluginSettings?.dashboard_coupons_loading_state)}</p>
 			</div>
 		{/if}
 
-		{#if $query.isSuccess && $query.data}
-			{@const filteredCoupons = $query.data.filter(
-				(coupon) =>
-					coupon.spend_rule.status.value === "publish" && coupon.spend_rule.label.value
+		{#if isSuccess && coupons}
+			{@const filteredSpendRuleCoupons = coupons.spend_rules_coupons.filter(
+				(c) => c.rule.status.value === "publish" && c.rule.label.value
 			)}
+			{@const filteredPromotionRuleCoupons = coupons.promotion_rules_coupons.filter(
+				(c) => c.rule.status.value === "publish" && c.rule.label.value
+			)}
+			{@const allFilteredCoupons = [
+				...filteredSpendRuleCoupons,
+				...filteredPromotionRuleCoupons,
+			]}
 
-			{#if filteredCoupons.length > 0}
+			{#if allFilteredCoupons.length > 0}
 				<div class="leat-dashboard-coupons__cards">
-					{#each filteredCoupons as coupon}
+					{#each allFilteredCoupons as coupon}
 						<DashboardCouponCard {coupon} />
 					{/each}
 				</div>
@@ -65,15 +67,6 @@
 		max-width: 1260px;
 		width: 100%;
 		margin-top: 3rem;
-	}
-
-	.leat-dashboard__header {
-		font-size: 1.5rem;
-		margin: 0;
-		margin-bottom: 1.5rem;
-		margin-left: auto;
-		margin-right: auto;
-		max-width: 450px;
 	}
 
 	.leat-dashboard-coupons__cards {

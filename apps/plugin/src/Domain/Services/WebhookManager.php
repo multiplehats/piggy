@@ -162,13 +162,6 @@ class WebhookManager
 
 	public function handle_webhook($event_type, $data)
 	{
-		// $this->logger->debug('Handling webhook', [
-		// 	'event_type' => $event_type,
-		// 	'data' => array_keys($data)
-		// ]);
-
-		// error_log(print_r($data, true));
-
 		switch ($event_type) {
 			case 'contact_updated':
 				$this->handle_contact_updated($data);
@@ -180,6 +173,7 @@ class WebhookManager
 				$this->handle_voucher_deleted($data);
 				break;
 			case 'voucher_redeemed':
+				$this->handle_voucher_redeemed($data);
 				break;
 		}
 	}
@@ -235,6 +229,24 @@ class WebhookManager
 		$this->logger->debug('Contact updated webhook processed', [
 			'contact_uuid' => $contact['uuid'],
 			'contact_email' => $contact['email']
+		]);
+	}
+
+	private function handle_voucher_redeemed($data)
+	{
+		if (empty($data['voucher'])) {
+			$this->logger->error('Voucher data missing from webhook payload', [
+				'data' => $data,
+			]);
+			return;
+		}
+
+		$voucher = $data['voucher'];
+
+		do_action('leat_webhook_voucher_redeemed', $voucher);
+
+		$this->logger->debug('Voucher redeemed webhook processed', [
+			'voucher' => $voucher
 		]);
 	}
 }

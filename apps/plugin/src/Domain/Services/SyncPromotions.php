@@ -45,7 +45,7 @@ class SyncPromotions extends AbstractSync
 
 	protected function format_data(array $item): array
 	{
-		return $item; // Implement specific formatting if needed
+		return $item;
 	}
 
 	protected function upsert_item(array $data, ?int $existing_id = null): void

@@ -449,6 +449,13 @@ class Connection
 	 */
 	public function format_promotion(Promotion $promotion)
 	{
+		// TODO: Missing getMedia() in SDK.
+		// $media_obj = $promotion->getMedia();
+		// $media     = $media_obj ? [
+		// 	'type'  => $media_obj->getType(),
+		// 	'value' => $media_obj->getValue(),
+		// ] : null;
+
 		return [
 			'uuid'               => $promotion->getUuid(),
 			'title'              => $promotion->getName(),

@@ -19,6 +19,62 @@ use Leat\Settings;
 final class Api
 {
 	/**
+	 * @var Connection
+	 */
+	private $connection;
+
+	/**
+	 * @var Settings
+	 */
+	private $settings;
+
+	/**
+	 * @var PromotionRules
+	 */
+	private $promotion_rules;
+
+	/**
+	 * @var SyncVouchers
+	 */
+	private $sync_vouchers;
+
+	/**
+	 * @var SyncPromotions
+	 */
+	private $sync_promotions;
+
+	/**
+	 * @var WebhookManager
+	 */
+	private $webhook_manager;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Connection     $connection      The Connection instance.
+	 * @param Settings      $settings       The Settings instance.
+	 * @param PromotionRules $promotion_rules The PromotionRules instance.
+	 * @param SyncVouchers   $sync_vouchers   The SyncVouchers instance.
+	 * @param SyncPromotions $sync_promotions The SyncPromotions instance.
+	 * @param WebhookManager $webhook_manager The WebhookManager instance.
+	 */
+	public function __construct(
+		Connection $connection,
+		Settings $settings,
+		PromotionRules $promotion_rules,
+		SyncVouchers $sync_vouchers,
+		SyncPromotions $sync_promotions,
+		WebhookManager $webhook_manager
+	) {
+		$this->connection = $connection;
+		$this->settings = $settings;
+		$this->promotion_rules = $promotion_rules;
+		$this->sync_vouchers = $sync_vouchers;
+		$this->sync_promotions = $sync_promotions;
+		$this->webhook_manager = $webhook_manager;
+	}
+
+	/**
 	 * Init and hook in Leat API functionality.
 	 */
 	public function init()
@@ -26,7 +82,9 @@ final class Api
 		add_action(
 			'rest_api_init',
 			function () {
-				self::container()->get(RoutesController::class)->register_all_routes();
+				self::container($this->connection, $this->settings, $this->promotion_rules, $this->sync_vouchers, $this->sync_promotions, $this->webhook_manager)
+					->get(RoutesController::class)
+					->register_all_routes();
 			}
 		);
 	}
@@ -34,11 +92,24 @@ final class Api
 	/**
 	 * Loads the DI container for Leat API.
 	 *
-	 * @param boolean $reset Used to reset the container to a fresh instance. Note: this means all dependencies will be reconstructed.
-	 * @return mixed
+	 * @param Connection     $connection      The Connection instance.
+	 * @param Settings      $settings       The Settings instance.
+	 * @param PromotionRules $promotion_rules The PromotionRules instance.
+	 * @param SyncVouchers   $sync_vouchers   The SyncVouchers instance.
+	 * @param SyncPromotions $sync_promotions The SyncPromotions instance.
+	 * @param WebhookManager $webhook_manager The WebhookManager instance.
+	 * @param boolean       $reset          Used to reset the container to a fresh instance.
+	 * @return Container
 	 */
-	public static function container($reset = false)
-	{
+	public static function container(
+		Connection $connection = null,
+		Settings $settings = null,
+		PromotionRules $promotion_rules = null,
+		SyncVouchers $sync_vouchers = null,
+		SyncPromotions $sync_promotions = null,
+		WebhookManager $webhook_manager = null,
+		$reset = false
+	) {
 		static $container;
 
 		if ($reset) {
@@ -51,58 +122,44 @@ final class Api
 
 		$container = new Container();
 
-		$container->register(
-			Settings::class,
-			function () {
-				return new Settings();
-			}
-		);
+		// Register existing instances if provided
+		if ($settings) {
+			$container->register(Settings::class, function () use ($settings) {
+				return $settings;
+			});
+		}
 
-		$container->register(
-			Connection::class,
-			function () {
-				return new Connection();
-			}
-		);
+		if ($connection) {
+			$container->register(Connection::class, function () use ($connection) {
+				return $connection;
+			});
+		}
 
-		$container->register(
-			PromotionRules::class,
-			function ($container) {
-				return new PromotionRules(
-					$container->get(Connection::class)
-				);
-			}
-		);
+		if ($webhook_manager) {
+			$container->register(WebhookManager::class, function () use ($webhook_manager) {
+				return $webhook_manager;
+			});
+		}
 
-		$container->register(
-			WebhookManager::class,
-			function ($container) {
-				return new WebhookManager(
-					$container->get(Connection::class)
-				);
-			}
-		);
+		if ($sync_vouchers) {
+			$container->register(SyncVouchers::class, function () use ($sync_vouchers) {
+				return $sync_vouchers;
+			});
+		}
 
-		$container->register(
-			SyncVouchers::class,
-			function ($container) {
-				return new SyncVouchers(
-					$container->get(Connection::class),
-					$container->get(PromotionRules::class)
-				);
-			}
-		);
+		if ($sync_promotions) {
+			$container->register(SyncPromotions::class, function () use ($sync_promotions) {
+				return $sync_promotions;
+			});
+		}
 
-		$container->register(
-			SyncPromotions::class,
-			function ($container) {
-				return new SyncPromotions(
-					$container->get(Connection::class),
-					$container->get(PromotionRules::class)
-				);
-			}
-		);
+		if ($promotion_rules) {
+			$container->register(PromotionRules::class, function () use ($promotion_rules) {
+				return $promotion_rules;
+			});
+		}
 
+		// Register remaining dependencies
 		$container->register(
 			RoutesController::class,
 			function ($container) {
@@ -112,7 +169,8 @@ final class Api
 					$container->get(Settings::class),
 					$container->get(SyncVouchers::class),
 					$container->get(SyncPromotions::class),
-					$container->get(WebhookManager::class)
+					$container->get(WebhookManager::class),
+					$container->get(PromotionRules::class)
 				);
 			}
 		);
@@ -136,14 +194,14 @@ final class Api
 				);
 			}
 		);
+
 		$container->register(
 			Formatters::class,
 			function () {
-				$formatters = new Formatters();
-
-				return $formatters;
+				return new Formatters();
 			}
 		);
+
 		return $container;
 	}
 }

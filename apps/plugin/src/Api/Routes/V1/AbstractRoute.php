@@ -10,6 +10,7 @@ use Leat\Api\Connection;
 use Leat\Domain\Services\SyncPromotions;
 use Leat\Domain\Services\SyncVouchers;
 use Leat\Domain\Services\WebhookManager;
+use Leat\Domain\Services\PromotionRules;
 use Leat\Settings;
 use WP_Error;
 
@@ -75,6 +76,13 @@ abstract class AbstractRoute implements RouteInterface
 	protected $webhook_manager;
 
 	/**
+	 * Promotion rules service.
+	 *
+	 * @var PromotionRules
+	 */
+	protected $promotion_rules_service;
+
+	/**
 	 * The routes schema.
 	 *
 	 * @var string
@@ -94,7 +102,7 @@ abstract class AbstractRoute implements RouteInterface
 	 * @param SchemaController $schema_controller Schema Controller instance.
 	 * @param AbstractSchema   $schema Schema class for this route.
 	 */
-	public function __construct(SchemaController $schema_controller, AbstractSchema $schema, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager)
+	public function __construct(SchemaController $schema_controller, AbstractSchema $schema, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager, PromotionRules $promotion_rules_service)
 	{
 		$this->schema_controller = $schema_controller;
 		$this->schema            = $schema;
@@ -103,6 +111,7 @@ abstract class AbstractRoute implements RouteInterface
 		$this->sync_vouchers     = $sync_vouchers;
 		$this->sync_promotions   = $sync_promotions;
 		$this->webhook_manager   = $webhook_manager;
+		$this->promotion_rules_service = $promotion_rules_service;
 	}
 
 	/**

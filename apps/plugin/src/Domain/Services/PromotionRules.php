@@ -2,9 +2,8 @@
 
 namespace Leat\Domain\Services;
 
-use Leat\Api\Connection;
+use Leat\Utils\Coupons;
 use Leat\Utils\Logger;
-use Piggy\Api\Models\Vouchers\Voucher;
 
 /**
  * Class PromotionRules
@@ -18,17 +17,9 @@ class PromotionRules
 	 */
 	private $logger;
 
-	/**
-	 * Connection instance.
-	 *
-	 * @var Connection
-	 */
-	private $connection;
-
-	public function __construct(Connection $connection)
+	public function __construct()
 	{
 		$this->logger     = new Logger();
-		$this->connection = $connection;
 	}
 
 	private function get_post_meta_data($post_id, $key, $fallback_value = null)
@@ -83,7 +74,7 @@ class PromotionRules
 				'id'          => 'label',
 				'label'       => __('Label', 'leat-crm'),
 				'default'     => $this->get_default_label(),
-				'value'       => $this->get_post_meta_data($post->ID, '_leat_spend_rule_label'),
+				'value'       => $this->get_post_meta_data($post->ID, '_leat_promotion_rule_label'),
 				'type'        => 'translatable_text',
 				'description' => $this->get_label_description(),
 			],
@@ -410,5 +401,46 @@ class PromotionRules
 		}
 
 		return null;
+	}
+
+	/**
+	 * Query coupons by user ID.
+	 *
+	 * @param int $user_id The user ID.
+	 * @return array The list of coupons associated with the user ID.
+	 */
+	public function get_coupons_by_user_id($user_id)
+	{
+		$user = get_user_by('id', $user_id);
+
+		if (! $user || is_wp_error($user)) {
+			return [];
+		}
+
+		$coupon_codes = [];
+
+		$coupons = Coupons::find_coupons_by_email($user->user_email);
+
+		foreach ($coupons as $coupon) {
+			$post_id = get_post_meta($coupon->get_id(), '_leat_promotion_rule_id', true);
+
+			if (! $post_id) {
+				continue;
+			}
+
+			$rule    = $this->get_promotion_rule_by_id($post_id);
+
+			if (! $rule) {
+				continue;
+			}
+
+			$coupon_codes[] = array(
+				'type'       => 'promotion_rule',
+				'code'       => $coupon->get_code(),
+				'rule' => $rule,
+			);
+		}
+
+		return $coupon_codes;
 	}
 }

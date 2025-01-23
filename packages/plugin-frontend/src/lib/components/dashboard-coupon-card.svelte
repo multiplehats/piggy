@@ -9,7 +9,7 @@
 
 	export let coupon: Coupon;
 
-	$: ({ spend_rule } = coupon);
+	$: ({ rule, type } = coupon);
 
 	let isCopied = false;
 	let timeoutId: NodeJS.Timeout;
@@ -41,21 +41,25 @@
 
 <div class="leat-dashboard-coupon-card">
 	<div class="leat-dashboard-coupon-card__icon">
-		{#if coupon.spend_rule?.image?.value}
-			<img src={coupon.spend_rule.image.value} alt={coupon.code} />
+		{#if coupon.rule?.image?.value}
+			<img src={coupon.rule.image.value} alt={coupon.code} />
 		{:else}
 			<Gift size={48} />
 		{/if}
 	</div>
 
 	<h4 class="leat-dashboard-coupon-card__header">
-		{getSpendRuleLabel(
-			getTranslatedText(spend_rule.label.value),
-			spend_rule.creditCost.value,
-			$creditsName,
-			spend_rule.discountValue?.value,
-			spend_rule.discountType.value
-		)}
+		{#if type === "spend_rule"}
+			{getSpendRuleLabel(
+				getTranslatedText(rule.label.value),
+				rule.creditCost.value,
+				$creditsName,
+				rule.discountValue?.value,
+				rule.discountType.value
+			)}
+		{:else if type === "promotion_rule"}
+			{getTranslatedText(rule.label.value)}
+		{/if}
 	</h4>
 
 	<div class="coupon-input-wrapper">
@@ -153,7 +157,6 @@
 
 	.leat-dashboard-coupon-card__icon {
 		width: 100%;
-		height: 80px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -162,6 +165,7 @@
 
 	.leat-dashboard-coupon-card__icon img {
 		max-width: 100%;
+		height: 80px;
 		max-height: 100%;
 		object-fit: contain;
 		border-radius: 0.375rem;

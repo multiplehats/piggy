@@ -4,6 +4,7 @@ namespace Leat\Api;
 
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Connection;
+use Leat\Domain\Services\PromotionRules;
 use Leat\Domain\Services\SyncVouchers;
 use Leat\Domain\Services\SyncPromotions;
 use Leat\Domain\Services\WebhookManager;
@@ -57,6 +58,13 @@ class RoutesController
 	protected $webhook_manager;
 
 	/**
+	 * Promotion rules.
+	 *
+	 * @var PromotionRules
+	 */
+	protected $promotion_rules_service;
+
+	/**
 	 * Leat routes.
 	 *
 	 * @var array
@@ -68,7 +76,7 @@ class RoutesController
 	 *
 	 * @param SchemaController $schema_controller Schema controller class passed to each route.
 	 */
-	public function __construct(SchemaController $schema_controller, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager)
+	public function __construct(SchemaController $schema_controller, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager, PromotionRules $promotion_rules_service)
 	{
 		$this->schema_controller = $schema_controller;
 		$this->connection        = $connection;
@@ -76,6 +84,7 @@ class RoutesController
 		$this->sync_vouchers     = $sync_vouchers;
 		$this->sync_promotions   = $sync_promotions;
 		$this->webhook_manager   = $webhook_manager;
+		$this->promotion_rules_service   = $promotion_rules_service;
 
 		$this->routes = [
 			'v1'      => [
@@ -137,7 +146,8 @@ class RoutesController
 			$this->settings,
 			$this->sync_vouchers,
 			$this->sync_promotions,
-			$this->webhook_manager
+			$this->webhook_manager,
+			$this->promotion_rules_service
 		);
 	}
 

@@ -72,6 +72,7 @@
 			<div class="flex gap-2">
 				<Button
 					size="sm"
+					variant="secondary"
 					loading={$mutateSync.isPending}
 					on:click={() => $mutateSync.mutate()}
 					disabled={$mutateSync.isPending}

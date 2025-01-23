@@ -1,30 +1,20 @@
 <script lang="ts">
-	import { createQuery } from "@tanstack/svelte-query";
 	import { replaceStrings } from "@leat/lib";
 	import DashboardSpendRuleCard from "./dashboard-spend-rule-card.svelte";
-	import { apiService } from "$lib/modules/leat";
-	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
-	import { QueryKeys } from "$lib/utils/query-keys";
+	import { creditsName, pluginSettings } from "$lib/modules/settings";
 	import { getTranslatedText } from "$lib/utils/translated-text";
+	import type { SpendRule } from "$lib/modules/leat/types";
 
-	const query = createQuery({
-		queryKey: [QueryKeys.spendRules],
-		queryFn: async () => await apiService.getSpendRules(window.leatMiddlewareConfig.userId),
-		enabled: isLoggedIn,
-	});
+	export let spendRules: SpendRule[] | null | undefined = undefined;
 
 	function getNavItemText(text?: string) {
 		if (!text) return "";
 
 		return replaceStrings(text, [{ "{{credits_currency}}": $creditsName ?? "" }]);
 	}
-
-	$: filteredRules = $query.data?.filter(
-		(rule) => rule.status.value === "publish" && rule.label.value
-	);
 </script>
 
-{#if filteredRules && filteredRules.length > 0}
+{#if spendRules && spendRules.length > 0}
 	<div class="leat-dashboard-rewards">
 		<div>
 			<h3 class="leat-dashboard__header">
@@ -32,11 +22,9 @@
 			</h3>
 
 			<div class="leat-dashboard-rewards__cards">
-				{#if filteredRules && filteredRules.length > 0}
-					{#each filteredRules as rule}
-						<DashboardSpendRuleCard {rule} />
-					{/each}
-				{/if}
+				{#each spendRules as rule}
+					<DashboardSpendRuleCard {rule} />
+				{/each}
 			</div>
 		</div>
 	</div>
@@ -48,15 +36,6 @@
 		max-width: 1260px;
 		width: 100%;
 		margin-top: 3rem;
-	}
-
-	.leat-dashboard__header {
-		font-size: 1.5rem;
-		margin: 0;
-		margin-bottom: 1.5rem;
-		margin-left: auto;
-		margin-right: auto;
-		max-width: 450px;
 	}
 
 	.leat-dashboard-rewards__cards {

@@ -1,8 +1,5 @@
 <script lang="ts">
 	import { createMutation } from "@tanstack/svelte-query";
-	import BadgeEuro from "lucide-svelte/icons/badge-euro";
-	import ShoppingBag from "lucide-svelte/icons/shopping-bag";
-	import Tag from "lucide-svelte/icons/tag";
 	import { replaceStrings } from "@leat/lib";
 	import { Button } from "$lib/components/button/index.js";
 	import { leatService } from "$lib/config/services";
@@ -11,6 +8,8 @@
 	import { MutationKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
 
+	export let navItems: { icon: any; id: string; text: string; show: boolean }[];
+
 	const joinProgramMutation = createMutation({
 		mutationKey: [MutationKeys.joinProgram],
 		mutationFn: () => leatService.joinProgram(window.leatMiddlewareConfig.userId),
@@ -18,29 +17,6 @@
 			location.reload();
 		},
 	});
-
-	const navItems = [
-		{
-			icon: Tag,
-			id: "coupons",
-			text: getTranslatedText($pluginSettings?.dashboard_nav_coupons),
-		},
-		{
-			icon: BadgeEuro,
-			id: "earn",
-			text: getTranslatedText($pluginSettings?.dashboard_nav_earn),
-		},
-		{
-			icon: ShoppingBag,
-			id: "rewards",
-			text: getTranslatedText($pluginSettings?.dashboard_nav_rewards),
-		},
-		// {
-		// 	icon: BarChart,
-		// 	id: 'activity',
-		// 	text: getTranslatedText($pluginSettings?.dashboard_nav_activity)
-		// }
-	];
 
 	function getHeaderTitle(text: string, credits: number | string) {
 		if (!text) return "";
@@ -140,14 +116,19 @@
 	{#if isLoggedIn && !isContactNull}
 		<nav class="leat-dashboard__nav">
 			<ul class="leat-dashboard__list">
-				{#each navItems as { icon, text, id }}
-					<li>
-						<button class="leat-dashboard__item" on:click={handleScrollNavigation(id)}>
-							<svelte:component this={icon} size={24} />
+				{#each navItems as { icon, text, id, show }}
+					{#if show}
+						<li>
+							<button
+								class="leat-dashboard__item"
+								on:click={handleScrollNavigation(id)}
+							>
+								<svelte:component this={icon} size={24} />
 
-							{getNavItemText(text)}
-						</button>
-					</li>
+								{getNavItemText(text)}
+							</button>
+						</li>
+					{/if}
 				{/each}
 			</ul>
 		</nav>
@@ -159,25 +140,21 @@
 		text-align: center;
 	}
 
+	.leat-dashboard__nav {
+		justify-content: center;
+		display: flex;
+		align-items: center;
+	}
+
 	.leat-dashboard__header {
+		font-weight: 700;
 		font-size: 1.5rem;
-		margin: 0;
-		margin-bottom: 1.5rem;
-		margin-left: auto;
-		margin-right: auto;
-		max-width: 450px;
 	}
 
 	@media screen and (max-width: 768px) {
 		.leat-dashboard__header {
 			font-size: 1.25rem;
 		}
-	}
-
-	.leat-dashboard__nav {
-		justify-content: center;
-		display: flex;
-		align-items: center;
 	}
 
 	.leat-dashboard__list {

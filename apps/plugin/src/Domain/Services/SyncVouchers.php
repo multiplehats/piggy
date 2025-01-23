@@ -5,12 +5,8 @@ namespace Leat\Domain\Services;
 use Leat\Api\Connection;
 use Leat\Domain\Services\PromotionRules as PromotionRuleService;
 use Leat\Domain\Syncing\BackgroundProcess;
-use Leat\Utils\Common;
 use Leat\Utils\Coupons;
 use Leat\Utils\Logger;
-use Leat\Utils\Users;
-use Piggy\Api\Mappers\Vouchers\PromotionMapper;
-use Piggy\Api\Mappers\Vouchers\VoucherMapper;
 use Piggy\Api\Models\Vouchers\Voucher;
 
 class SyncVouchers extends BackgroundProcess
@@ -74,6 +70,7 @@ class SyncVouchers extends BackgroundProcess
 		add_action('leat_webhook_voucher_updated', [$this, 'handle_voucher_updated_webhook']);
 		add_action('leat_webhook_voucher_created', [$this, 'handle_voucher_created_webhook']);
 		add_action('leat_webhook_voucher_deleted', [$this, 'handle_voucher_deleted_webhook']);
+		add_action('leat_webhook_voucher_redeemed', [$this, 'handle_voucher_redeemed_webhook']);
 	}
 
 	/**
@@ -312,30 +309,71 @@ class SyncVouchers extends BackgroundProcess
 		}
 	}
 
+	/**
+	 * When a voucher gets redeemed, we need to check if we have to disable the coupon.
+	 * Because it coudl be used on this WooCommerce store or in a physical store (or other location).
+	 *
+	 * @param array $voucher The voucher data.
+	 */
+	public function handle_voucher_redeemed_webhook($voucher)
+	{
+		$this->logger->debug('Voucher redeemed webhook processed', [
+			'voucher' => $voucher
+		]);
+
+		try {
+			$coupon = Coupons::find_coupon_by_code($voucher['code']);
+			$coupon_status = $coupon->get_status();
+
+			if ($coupon_status === 'publish') {
+				$coupon->set_status('draft');
+
+				// Get contact UUID from coupon metadata
+				$contact_uuid = $coupon->get_meta('_leat_contact_uuid');
+
+				if ($contact_uuid) {
+					$user = $this->connection->find_or_create_wp_user_by_uuid($contact_uuid);
+					if ($user) {
+						$coupon->set_used_by([$user->user_email]);
+					}
+				}
+
+				$coupon->save();
+
+				$this->logger->info('Coupon disabled for voucher ' . $voucher['code']);
+			}
+		} catch (\Throwable $th) {
+			$this->logger->error('Failed to disable coupon for voucher ' . $voucher['code'], [
+				'error' => $th->getMessage(),
+				'voucher' => $voucher,
+			]);
+		}
+	}
+
 	public function upsert_coupon_for_promotion_rule($formatted_rule, $voucher_data)
 	{
 		$coupon = Coupons::find_or_create_coupon_by_code($voucher_data['code']);
+		$contact_uuid = $voucher_data['contact_uuid'];
+		$is_redeemed  = $voucher_data['is_redeemed'];
 
 		try {
-			// WE set a descripotion for internal use.
-			$descripotion = sprintf(
+			/**
+			 * Set a description so that it's easier to identify how the coupon was created.
+			 */
+			$coupon->set_description(sprintf(
 				/* translators: %s: The promotion rule name */
 				__('Leat Promotion Voucher: %s', 'leat-crm'),
 				$voucher_data['name']
-			);
-			$coupon->set_description($descripotion);
+			));
 
-			$contact_uuid = $voucher_data['contact_uuid'];
-			$is_redeemed  = $voucher_data['is_redeemed'];
+			$coupon->update_meta_data('_leat_contact_uuid', $contact_uuid);
+			$coupon->update_meta_data('_leat_voucher_uuid', $voucher_data['uuid']);
+			$coupon->update_meta_data('_leat_promotion_uuid', $voucher_data['promotion']['uuid']);
+			$coupon->update_meta_data('_leat_promotion_rule_id', $formatted_rule['id']);
 
-
-			if ($voucher_data['status'] === 'INACTIVE') {
-				$coupon->set_status('draft');
-			} else {
-				$coupon->set_status('publish');
-			}
-
-
+			/**
+			 * Set the coupon individual use.
+			 */
 			if ($formatted_rule['individualUse']['value'] === 'on') {
 				$coupon->set_individual_use(true);
 			} else {
@@ -367,12 +405,9 @@ class SyncVouchers extends BackgroundProcess
 				$coupon->set_amount($discount_value);
 			}
 
-			$coupon->update_meta_data('_leat_voucher_uuid', $voucher_data['uuid']);
-			$coupon->update_meta_data('_leat_promotion_uuid', $voucher_data['promotion']['uuid']);
-
-			// error_log('minimumPurchaseAmount: ' . $formatted_rule['minimumPurchaseAmount']['value']);
-
-			// Check for minimum purchase amount.
+			/**
+			 * Assign a minimum purchase amount to the coupon.
+			 */
 			if (
 				isset($formatted_rule['minimumPurchaseAmount']) &&
 				is_numeric($formatted_rule['minimumPurchaseAmount']['value'])
@@ -427,6 +462,20 @@ class SyncVouchers extends BackgroundProcess
 				}
 			} else {
 				$coupon->set_email_restrictions([]);
+			}
+
+			/**
+			 * Set the coupon status.
+			 */
+			if ($voucher_data['status'] === 'INACTIVE') {
+				$coupon->set_status('draft');
+				$this->logger->info('Voucher is inactive, setting coupon status to draft for ' . $voucher_data['code']);
+			} else if ($voucher_data['status'] === 'DEACTIVATED') {
+				$coupon->set_status('draft');
+				$this->logger->info('Voucher is deactivated, setting coupon status to draft for ' . $voucher_data['code']);
+			} else {
+				$coupon->set_status('publish');
+				$this->logger->info('Voucher is active, setting coupon status to publish for ' . $voucher_data['code']);
 			}
 
 			$coupon->save();

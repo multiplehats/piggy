@@ -346,8 +346,15 @@ class Bootstrap
 		);
 		$this->container->register(
 			Api::class,
-			function () {
-				return new Api();
+			function (Container $container) {
+				return new Api(
+					$container->get(Connection::class),
+					$container->get(Settings::class),
+					$container->get(PromotionRules::class),
+					$container->get(SyncVouchers::class),
+					$container->get(SyncPromotions::class),
+					$container->get(WebhookManager::class)
+				);
 			}
 		);
 	}
