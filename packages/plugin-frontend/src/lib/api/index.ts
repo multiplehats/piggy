@@ -29,7 +29,7 @@ function isStoreApiRequest(options: APIFetchOptions) {
 		return false;
 	}
 
-	if (!options.method ?? options.method === "GET") {
+	if (!options.method || options.method === "GET") {
 		return false;
 	}
 

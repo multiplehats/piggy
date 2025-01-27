@@ -52,6 +52,7 @@
 		{#if type === "spend_rule"}
 			{getSpendRuleLabel(
 				getTranslatedText(rule.label.value),
+				// @ts-expect-error -- This does exist, but we need to separate the types
 				rule.creditCost.value,
 				$creditsName,
 				rule.discountValue?.value,
