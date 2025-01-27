@@ -17,7 +17,7 @@
 
 	let showPopup = false;
 
-	let picker: RgbaStringColorPicker | null;
+	let picker: RgbaStringColorPicker | null = null;
 	let input: HTMLInputElement;
 
 	onMount(() => {
@@ -49,6 +49,7 @@
 		value = colorToRgbaString(_value);
 
 		if (picker) {
+			// @ts-expect-error -- Fix types
 			picker.color = value;
 		}
 

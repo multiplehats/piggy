@@ -62,7 +62,7 @@
 		derived(mutateSync, ($mutateSync) => ({
 			queryKey: ["sync-vouchers-information"],
 			queryFn: () => service.getSyncVouchersInformation({ id: $params.id.toString() }),
-			refetchInterval: (query) => {
+			refetchInterval: (query: any) => {
 				if (
 					query.state.data?.is_queued ||
 					query.state.data?.is_processing ||

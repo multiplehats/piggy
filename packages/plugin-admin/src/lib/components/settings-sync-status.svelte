@@ -13,7 +13,7 @@
 	export let title: string;
 	export let mutationFn: () => Promise<any>;
 	export let showButton = true;
-	export let queryFn: () => Promise<TaskInformation | SyncStatus> | undefined = undefined;
+	export let queryFn: () => Promise<TaskInformation | SyncStatus> | undefined = () => undefined;
 	export let onMutationSuccess: (() => void) | undefined = undefined;
 	export let disabled = false;
 
@@ -75,7 +75,7 @@
 					variant="secondary"
 					loading={$mutateSync.isPending}
 					on:click={() => $mutateSync.mutate()}
-					disabled={$mutateSync.isPending}
+					disabled={$mutateSync.isPending || disabled}
 					class="w-full"
 				>
 					{__("Sync now", "leat")}

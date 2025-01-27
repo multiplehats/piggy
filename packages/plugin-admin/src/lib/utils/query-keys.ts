@@ -21,4 +21,5 @@ export const MutationKeys = {
 	upsertEarnRule: "upsertEarnRule",
 	upsertSpendRule: "upsertSpendRule",
 	upsertPromotionRule: "upsertPromotionRule",
+	searchCategories: "searchCategories",
 } as const;
