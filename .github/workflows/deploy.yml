@@ -48,7 +48,7 @@ jobs:
               env:
                   SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
                   SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-                  BUILD_DIR: apps/plugin/zip-file
+                  BUILD_DIR: zip-file
                   SLUG: leat-crm
 
             - name: Upload release asset
