@@ -38,9 +38,7 @@ jobs:
               run: pnpm install
 
             - name: Build
-              run: |
-                  cd apps/plugin
-                  pnpm package-plugin:ci
+              run: pnpm package-plugin:ci
 
             - name: WordPress Plugin Deploy
               id: deploy
@@ -48,7 +46,7 @@ jobs:
               env:
                   SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
                   SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-                  BUILD_DIR: zip-file
+                  BUILD_DIR: apps/plugin/zip-file
                   SLUG: leat-crm
 
             - name: Upload release asset
