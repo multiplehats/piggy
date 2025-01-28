@@ -18,26 +18,30 @@
 	const client = useQueryClient();
 	const service = new SettingsAdminService();
 	const saveSettingsMutation = createMutation(
-		saveSettingsMutationConfig(client, {
-			onSuccess: async () => {
-				await client.invalidateQueries({ queryKey: [QueryKeys.leatShops] });
+		saveSettingsMutationConfig(
+			client,
+			{},
+			{
+				onSuccessCb: async () => {
+					await client.invalidateQueries({ queryKey: [QueryKeys.leatShops] });
 
-				const isLastStep = onboarding.isLastStep();
+					const isLastStep = onboarding.isLastStep();
 
-				if (isLastStep) {
-					navigate("/general", {
-						state: {
-							onboarding: "complete",
-						},
-					});
-					return;
-				}
+					if (isLastStep) {
+						navigate("/general", {
+							state: {
+								onboarding: "complete",
+							},
+						});
+						return;
+					}
 
-				const { href } = onboarding.nextStep();
+					const { href } = onboarding.nextStep();
 
-				navigate(href);
-			},
-		})
+					navigate(href);
+				},
+			}
+		)
 	);
 	const query = createQuery({
 		queryKey: [QueryKeys.settings],
