@@ -30,7 +30,7 @@ class SyncVouchers extends BackgroundProcess
 	 *
 	 * @var int
 	 */
-	private const BATCH_SIZE = 500;
+	private const BATCH_SIZE = 100;
 
 	/**
 	 * @var PromotionRuleService
@@ -124,14 +124,13 @@ class SyncVouchers extends BackgroundProcess
 
 			do {
 				$uuid = $formatted_promotion_rule['leatPromotionUuid']['value'];
-				$vouchers = Voucher::list(
-					[
-						'promotion_uuid' => $uuid,
-						'limit'          => self::BATCH_SIZE,
-						'page'           => $page,
-					]
+				$paginated_vouchers = Voucher::paginatedList(
+					$page,
+					self::BATCH_SIZE,
+					['promotion_uuid' => $uuid]
 				);
 
+				$vouchers = $paginated_vouchers->getData();
 
 				if (empty($vouchers)) {
 					break;
@@ -146,10 +145,11 @@ class SyncVouchers extends BackgroundProcess
 
 				$this->logger->info(
 					sprintf(
-						'Queueing batch for promotion %s (page %d, vouchers: %d, status: %s)',
+						'Queueing batch for promotion %s (page %d, vouchers: %d, total pages: %d, status: %s)',
 						$uuid,
 						$page,
-						count($vouchers),
+						$paginated_vouchers->getLastPage(),
+						$paginated_vouchers->getTotal(),
 						$this->get_status()
 					)
 				);
@@ -162,7 +162,7 @@ class SyncVouchers extends BackgroundProcess
 				);
 
 				$page++;
-			} while (! empty($vouchers));
+			} while ($page <= $paginated_vouchers->getLastPage());
 		} catch (\Throwable $th) {
 			$this->logger->error(
 				sprintf(
@@ -469,13 +469,10 @@ class SyncVouchers extends BackgroundProcess
 			 */
 			if ($voucher_data['status'] === 'INACTIVE') {
 				$coupon->set_status('draft');
-				$this->logger->info('Voucher is inactive, setting coupon status to draft for ' . $voucher_data['code']);
 			} else if ($voucher_data['status'] === 'DEACTIVATED') {
 				$coupon->set_status('draft');
-				$this->logger->info('Voucher is deactivated, setting coupon status to draft for ' . $voucher_data['code']);
 			} else {
 				$coupon->set_status('publish');
-				$this->logger->info('Voucher is active, setting coupon status to publish for ' . $voucher_data['code']);
 			}
 
 			$coupon->save();

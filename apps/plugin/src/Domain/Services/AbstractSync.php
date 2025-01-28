@@ -137,8 +137,28 @@ abstract class AbstractSync
             }
 
             $this->stats['total_items'] = count($items);
-
             $this->logger->info("Starting {$this->get_action_name()} sync. Total items: " . count($items));
+
+            // Get all UUIDs from the API response
+            $api_uuids = array_column($items, 'uuid');
+
+            // Get all existing posts
+            $existing_posts = get_posts([
+                'post_type' => $this->get_post_type(),
+                'posts_per_page' => -1,
+                'post_status' => ['publish', 'draft', 'pending'],
+            ]);
+
+            // Delete posts that don't exist in the API response
+            foreach ($existing_posts as $post) {
+                $post_uuid = get_post_meta($post->ID, $this->get_uuid_meta_key(), true);
+                if (!in_array($post_uuid, $api_uuids, true)) {
+                    $this->logger->info("Deleting orphaned post ID: {$post->ID} with UUID: {$post_uuid}");
+                    if (wp_delete_post($post->ID, true)) {
+                        $this->stats['items_deleted']++;
+                    }
+                }
+            }
 
             // Process items in batches
             $chunks = array_chunk($items, static::BATCH_SIZE);
@@ -153,9 +173,10 @@ abstract class AbstractSync
             }
 
             // Move duplicate handling to after all items are processed
-            $this->handleDuplicates(array_column($items, 'uuid'));
+            $this->handleDuplicates($api_uuids);
 
             $this->logger->info("Sync completed. Updated: {$this->stats['items_updated']}, Created: {$this->stats['items_created']}, Deleted: {$this->stats['items_deleted']}");
+            $this->update_sync_success();
             return true;
         } catch (\Throwable $th) {
             $this->update_sync_failure($th->getMessage());

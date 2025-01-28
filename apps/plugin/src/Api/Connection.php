@@ -234,10 +234,6 @@ class Connection
 			$existing_wp_user = get_user_by('email', $contact['email']);
 
 			if ($existing_wp_user) {
-				$this->logger->info('Existing user found for email ' . $contact['email'], [
-					'existing_wp_user' => $existing_wp_user,
-				]);
-
 				return $existing_wp_user;
 			} else {
 				if ($contact_email) {
