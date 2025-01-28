@@ -40,7 +40,7 @@ jobs:
             - name: Build
               run: |
                   cd apps/plugin
-                  ./bin/build-plugin-zip.sh -k
+                  pnpm package-plugin:ci
 
             - name: WordPress Plugin Deploy
               id: deploy

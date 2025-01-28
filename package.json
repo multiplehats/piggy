@@ -15,7 +15,6 @@
     "dev:admin": "turbo run dev:admin",
     "dev:frontend": "turbo run dev:frontend",
     "package-plugin": "turbo run package-plugin",
-    "package-plugin:ci": "turbo run package-plugin:ci",
     "lint-staged": "lint-staged",
     "prepare": "husky install",
     "format": "prettier --write .",
