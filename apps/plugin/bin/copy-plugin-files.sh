@@ -1,5 +1,7 @@
 cd "$1" || exit
 rsync ./ "$2" --recursive --delete --delete-excluded \
+	--include=".wordpress-org/" \
+	--include=".wordpress-org/**" \
 	--exclude=".*/" \
 	--exclude="*.md" \
 	--exclude=".*" \

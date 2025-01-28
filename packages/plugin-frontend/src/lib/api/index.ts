@@ -13,8 +13,8 @@ try {
 	const parsedNonce = storedNonceValue
 		? (JSON.parse(storedNonceValue) as { nonce: string; timestamp: number })
 		: null;
-	currentNonce = parsedNonce?.nonce ?? "";
-	currentTimestamp = parsedNonce?.timestamp ?? 0;
+	currentNonce = parsedNonce?.nonce || "";
+	currentTimestamp = parsedNonce?.timestamp || 0;
 } catch {
 	// We can ignore an error from JSON parse.
 }
@@ -23,7 +23,7 @@ try {
  * Returns whether or not this is a wc/store API request.
  */
 function isStoreApiRequest(options: APIFetchOptions) {
-	const url = options.url ?? options.path;
+	const url = options.url || options.path;
 
 	if (!url) {
 		return false;
@@ -71,7 +71,7 @@ function updateNonce(nonce: string, timestamp: string | null) {
 	}
 
 	currentNonce = nonce;
-	currentTimestamp = Number(timestamp) ?? Date.now() / 1000; // Convert ms to seconds to match php time()
+	currentTimestamp = Number(timestamp) || Date.now() / 1000; // Convert ms to seconds to match php time()
 
 	// Update the persisted values.
 	window.localStorage.setItem(
@@ -84,7 +84,7 @@ function updateNonce(nonce: string, timestamp: string | null) {
 }
 
 function appendNonceHeader(request: APIFetchOptions) {
-	const headers = request.headers ?? {};
+	const headers = request.headers || {};
 
 	request.headers = {
 		...headers,

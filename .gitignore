@@ -48,3 +48,7 @@ package
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 vite-*.config.ts.timestamp-*
+
+# plugin
+leat-crm.zip
+zip-file/

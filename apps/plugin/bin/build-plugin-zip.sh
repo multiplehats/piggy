@@ -18,17 +18,18 @@ print_usage() {
 	echo "options:"
 	echo "-h          show brief help"
 	echo "-d          build plugin in development mode"
-	echo "-z          build zip only, skipping build commands (so it uses files"
-	echo "            existing on disk already)"
+	echo "-z          build zip only, skipping build commands"
+	echo "-k          keep the zip-file directory after creating zip"
 	echo " "
 }
 
 # get args
-while getopts 'hdz' flag; do
+while getopts 'hdzk' flag; do
 	case "${flag}" in
 		h) print_usage ;;
 		d) TYPE='DEV' ;;
 		z) TYPE='ZIP_ONLY' ;;
+		k) KEEP_DIR='true' ;;
 		*)
 			print_usage
 			exit 1
@@ -114,7 +115,9 @@ sh "$CURR_DIR/bin/copy-plugin-files.sh" "$CURR_DIR" "$CURR_DIR/zip-file"
 cd "$(pwd)/zip-file"
 zip -r ../leat-crm.zip ./
 cd ..
-rm -r zip-file
+if [ -z "$KEEP_DIR" ]; then
+	rm -r zip-file
+fi
 
 # cleanup composer.json
 git checkout -- composer.json

@@ -1,6 +1,6 @@
 {
 	"name": "@leat/plugin",
-	"version": "0.5.10",
+	"version": "0.5.14",
 	"description": "Leat WordPress plugin",
 	"author": "Leat",
 	"homepage": "https://leat.com",
@@ -33,6 +33,7 @@
 		"package-plugin": "rimraf leat.zip && ./bin/build-plugin-zip.sh",
 		"package-plugin:dev": "rimraf leat.zip && ./bin/build-plugin-zip.sh -d",
 		"package-plugin:zip-only": "rimraf leat.zip && ./bin/build-plugin-zip.sh -z",
+		"package-plugin:ci": "rimraf leat.zip && ./bin/build-plugin-zip.sh -k",
 		"lint-php": "composer run-script phpcs ./src",
 		"lint-php-fix": "composer run-script phpcbf ./src",
 		"lint": "eslint \"./src/**/*.{js,cjs,mjs,ts,tsx,md,json}\"",

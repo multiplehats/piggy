@@ -49,7 +49,7 @@
 		value = colorToRgbaString(_value);
 
 		if (picker) {
-			// @ts-expect-error -- Fix types
+			// @ts-expect-error -- This exists but is not typed
 			picker.color = value;
 		}
 

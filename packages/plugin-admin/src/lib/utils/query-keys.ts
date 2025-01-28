@@ -18,6 +18,7 @@ export const MutationKeys = {
 	setApiKey: "setApiKey",
 	searchProducts: "searchProducts",
 	saveSettings: "saveSettings",
+	searchCategories: "searchCategories",
 	upsertEarnRule: "upsertEarnRule",
 	upsertSpendRule: "upsertSpendRule",
 	upsertPromotionRule: "upsertPromotionRule",
