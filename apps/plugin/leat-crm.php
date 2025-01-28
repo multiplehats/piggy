@@ -9,6 +9,7 @@
  * Text Domain: leat-crm
  * Requires at least: 5.9
  * Domain Path: /languages
+ * Stable tag: 0.5.11
  * Requires PHP: 8.0
  * Requires PHP Architecture: 64 bits
  * Requires Plugins: woocommerce
