@@ -64,7 +64,7 @@ class Webhooks extends AbstractRoute
 	 */
 	public function verify_webhook_signature(\WP_REST_Request $request)
 	{
-		$signature = $request->get_header('X-Piggy-Signature');
+		$signature = $request->get_header('signature');
 
 		if (! $signature) {
 			$this->logger->error('No webhook signature provided');

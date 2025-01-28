@@ -70,6 +70,9 @@ class Users
             if (!$user) {
                 return new \WP_Error('user_creation_failed', 'User was created but could not be retrieved.');
             }
+
+            // Set WooCommerce customer role
+            $user->set_role('customer');
         }
 
         return $user;

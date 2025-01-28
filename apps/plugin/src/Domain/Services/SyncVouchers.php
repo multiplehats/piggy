@@ -448,10 +448,6 @@ class SyncVouchers extends BackgroundProcess
 					return;
 				}
 
-				$this->logger->info('Created user for voucher ' . $voucher_data['code'], [
-					'user' => $user,
-				]);
-
 				$coupon->set_email_restrictions([$user->user_email]);
 
 				// If we have a wp user and the voucher is redeemed, set the coupon status to trash.
@@ -467,15 +463,21 @@ class SyncVouchers extends BackgroundProcess
 			/**
 			 * Set the coupon status.
 			 */
-			if ($voucher_data['status'] === 'INACTIVE') {
-				$coupon->set_status('draft');
-			} else if ($voucher_data['status'] === 'DEACTIVATED') {
-				$coupon->set_status('draft');
-			} else {
-				$coupon->set_status('publish');
+			$new_status = 'publish';
+			if ($voucher_data['status'] === 'INACTIVE' || $voucher_data['status'] === 'DEACTIVATED') {
+				$new_status = 'draft';
 			}
 
+			// First save other coupon data
 			$coupon->save();
+
+			/**
+			 * Have to use wp_update_post, because $coupon->set_status() doesn't work ¯\_(ツ)_/¯
+			 */
+			wp_update_post([
+				'ID' => $coupon->get_id(),
+				'post_status' => $new_status
+			]);
 		} catch (\Throwable $th) {
 			$this->logger->error('Failed to save coupon for voucher ' . $voucher_data['code'], [
 				'error' => $th->getMessage(),
