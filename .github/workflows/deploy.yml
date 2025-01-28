@@ -47,6 +47,7 @@ jobs:
                   SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
                   SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
                   BUILD_DIR: apps/plugin/zip-file
+                  ASSETS_DIR: apps/plugin/.wordpress-org
                   SLUG: leat-crm
 
             - name: Upload release asset
