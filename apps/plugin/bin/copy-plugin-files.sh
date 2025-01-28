@@ -1,7 +1,6 @@
 cd "$1" || exit
 rsync ./ "$2" --recursive --delete --delete-excluded \
 	--exclude=".*/" \
-	--include=".wordpress-org/" \
 	--exclude="*.md" \
 	--exclude=".*" \
 	--exclude="composer.lock" \
@@ -42,5 +41,7 @@ rsync ./ "$2" --recursive --delete --delete-excluded \
 	--exclude=packages/ \
     --exclude=patches/ \
     --exclude=reports/ \
-	--exclude=storybook/
+	--exclude=storybook/ \
+	--include=".wordpress-org/**" \
+	--include=".wordpress-org/"
 echo -e "\nDone copying files!\n"
