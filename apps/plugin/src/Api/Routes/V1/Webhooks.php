@@ -69,7 +69,7 @@ class Webhooks extends AbstractRoute
 		// $signature = $request->get_header('X-Piggy-Signature');
 
 		// // Log all headers
-		// // error_log('headers: ' . json_encode($request->get_headers()));
+		error_log('headers: ' . json_encode($request->get_headers()));
 
 		// if (! $signature) {
 		// 	return true;

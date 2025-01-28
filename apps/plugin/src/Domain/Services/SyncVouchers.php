@@ -167,7 +167,7 @@ class SyncVouchers extends BackgroundProcess
 			$this->logger->error(
 				sprintf(
 					'Failed to queue vouchers for promotion %s: %s',
-					$formatted_promotion_rule['leatPromotionUuid'],
+					$formatted_promotion_rule['leatPromotionUuid']['value'],
 					$th->getMessage()
 				)
 			);
@@ -304,8 +304,8 @@ class SyncVouchers extends BackgroundProcess
 			$this->upsert_coupon_for_promotion_rule($formatted_promotion_rule, $voucher_data);
 		} catch (\Exception $e) {
 			// Coupon doesn't exist, create new one.
-			$coupon = new \WC_Coupon();
-			$coupon->set_code(strtoupper($voucher_data['code']));
+			// $coupon = new \WC_Coupon();
+			// $coupon->set_code(strtoupper($voucher_data['code']));
 		}
 	}
 
