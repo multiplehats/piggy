@@ -64,29 +64,31 @@ class Webhooks extends AbstractRoute
 	 */
 	public function verify_webhook_signature(\WP_REST_Request $request)
 	{
-		// error_log('request: ' . json_encode($request->get_json_params()));
+		$signature = $request->get_header('X-Piggy-Signature');
 
-		// $signature = $request->get_header('X-Piggy-Signature');
+		if (! $signature) {
+			$this->logger->error('No webhook signature provided');
 
-		// // Log all headers
-		error_log('headers: ' . json_encode($request->get_headers()));
+			return false;
+		}
 
-		// if (! $signature) {
-		// 	return true;
-		// }
+		$payload = $request->get_body();
+		$secret  = get_option('leat_webhook_secret');
 
-		// $payload = $request->get_body();
-		// $secret  = get_option('leat_webhook_secret');
+		if (! $secret) {
+			$this->logger->error('Webhook secret not found');
 
-		// if (! $secret) {
-		// 	throw new RouteException('webhook-signature', 'Webhook secret not found', 400);
-		// }
+			return false;
+		}
 
-		// $calculated_signature = hash_hmac('sha256', $payload, $secret);
+		$calculated_signature = hash_hmac('sha256', $payload, $secret);
+		$is_valid = hash_equals($signature, $calculated_signature);
 
-		// return hash_equals($signature, $calculated_signature);
+		if (!$is_valid) {
+			$this->logger->error('Webhook signature verification failed');
+		}
 
-		return true;
+		return $is_valid;
 	}
 
 	/**

@@ -5,6 +5,7 @@ namespace Leat\Api;
 use Leat\Api\Schemas\ExtendSchema;
 use Leat\Domain\Services\PromotionRules;
 use Leat\Settings;
+use Leat\Utils\Logger;
 
 /**
  * SchemaController class.
@@ -18,6 +19,13 @@ class SchemaController
 	 * @var Schemas\V1\AbstractSchema[]
 	 */
 	protected $schemas = [];
+
+	/**
+	 * Logger.
+	 *
+	 * @var Logger
+	 */
+	protected $logger;
 
 	/**
 	 * Settings
@@ -45,9 +53,10 @@ class SchemaController
 	 *
 	 * @param ExtendSchema $extend Rest Extending instance.
 	 */
-	public function __construct(ExtendSchema $extend, Settings $settings, PromotionRules $promotion_rules_service)
+	public function __construct(ExtendSchema $extend, Logger $logger, Settings $settings, PromotionRules $promotion_rules_service)
 	{
 		$this->extend                  = $extend;
+		$this->logger                  = $logger;
 		$this->settings                = $settings;
 		$this->promotion_rules_service = $promotion_rules_service;
 
@@ -91,6 +100,6 @@ class SchemaController
 			throw new \Exception(esc_html(sprintf('%s v%d schema does not exist', $name, $version)));
 		}
 
-		return new $schema($this->extend, $this, $this->settings, $this->promotion_rules_service);
+		return new $schema($this->extend, $this->logger, $this, $this->settings, $this->promotion_rules_service);
 	}
 }

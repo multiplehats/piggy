@@ -12,6 +12,7 @@ use Leat\Domain\Services\SyncVouchers;
 use Leat\Domain\Services\PromotionRules;
 use Leat\Domain\Services\WebhookManager;
 use Leat\Settings;
+use Leat\Utils\Logger;
 
 /**
  * Api Main Class.
@@ -27,6 +28,11 @@ final class Api
 	 * @var Settings
 	 */
 	private $settings;
+
+	/**
+	 * @var Logger
+	 */
+	private $logger;
 
 	/**
 	 * @var PromotionRules
@@ -72,6 +78,7 @@ final class Api
 		$this->sync_vouchers = $sync_vouchers;
 		$this->sync_promotions = $sync_promotions;
 		$this->webhook_manager = $webhook_manager;
+		$this->logger = new Logger('leat-api');
 	}
 
 	/**
@@ -108,6 +115,7 @@ final class Api
 		SyncVouchers $sync_vouchers = null,
 		SyncPromotions $sync_promotions = null,
 		WebhookManager $webhook_manager = null,
+		Logger $logger = null,
 		$reset = false
 	) {
 		static $container;
@@ -121,6 +129,12 @@ final class Api
 		}
 
 		$container = new Container();
+
+		if ($logger) {
+			$container->register(Logger::class, function () use ($logger) {
+				return $logger;
+			});
+		}
 
 		// Register existing instances if provided
 		if ($settings) {
@@ -165,12 +179,13 @@ final class Api
 			function ($container) {
 				return new RoutesController(
 					$container->get(SchemaController::class),
+					$container->get(Logger::class),
 					$container->get(Connection::class),
 					$container->get(Settings::class),
 					$container->get(SyncVouchers::class),
 					$container->get(SyncPromotions::class),
 					$container->get(WebhookManager::class),
-					$container->get(PromotionRules::class)
+					$container->get(PromotionRules::class),
 				);
 			}
 		);
@@ -180,6 +195,7 @@ final class Api
 			function ($container) {
 				return new SchemaController(
 					$container->get(ExtendSchema::class),
+					$container->get(Logger::class),
 					$container->get(Settings::class),
 					$container->get(PromotionRules::class)
 				);

@@ -58,6 +58,12 @@ class WebhookManager
 
 		$webhook_url = trailingslashit($site_url) . 'wp-json/leat/private/webhooks';
 
+		// Generate or get existing webhook secret
+		$webhook_secret = get_option('leat_webhook_secret');
+		if (!$webhook_secret) {
+			$webhook_secret = wp_generate_password(32, false);
+			update_option('leat_webhook_secret', $webhook_secret);
+		}
 
 		if (! $client) {
 			$this->logger->error('Failed to initialize API client for webhook installation');
@@ -101,6 +107,7 @@ class WebhookManager
 								$updateData = [
 									'url'    => $webhook_url,
 									'status' => 'ACTIVE',
+									'secret' => $webhook_secret,
 								];
 
 								// Add attributes if they exist in the config
@@ -123,6 +130,7 @@ class WebhookManager
 							'event_type' => $webhook_config['event_type'],
 							'url'        => $webhook_url,
 							'status'     => 'ACTIVE',
+							'secret'     => $webhook_secret,
 						];
 
 						// Add attributes if they exist in the config

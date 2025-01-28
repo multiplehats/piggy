@@ -1,17 +1,20 @@
 <?php
+
 namespace Leat\Api\Schemas\V1;
 
 use Leat\Api\SchemaController;
 use Leat\Api\Schemas\ExtendSchema;
 use Leat\Domain\Services\PromotionRules;
 use Leat\Settings;
+use Leat\Utils\Logger;
 
 /**
  * AbstractSchema class.
  *
  * For REST Route Schemas
  */
-abstract class AbstractSchema {
+abstract class AbstractSchema
+{
 	/**
 	 * The schema item name.
 	 *
@@ -25,6 +28,13 @@ abstract class AbstractSchema {
 	 * @var ExtendSchema
 	 */
 	protected $extend;
+
+	/**
+	 * Logger.
+	 *
+	 * @var Logger
+	 */
+	protected $logger;
 
 	/**
 	 * Schema Controller instance.
@@ -60,8 +70,10 @@ abstract class AbstractSchema {
 	 * @param ExtendSchema     $extend Rest Extending instance.
 	 * @param SchemaController $controller Schema Controller instance.
 	 */
-	public function __construct( ExtendSchema $extend, SchemaController $controller, Settings $settings, PromotionRules $promotion_rules_service ) {
+	public function __construct(ExtendSchema $extend, Logger $logger, SchemaController $controller, Settings $settings, PromotionRules $promotion_rules_service)
+	{
 		$this->extend                  = $extend;
+		$this->logger                  = $logger;
 		$this->controller              = $controller;
 		$this->settings                = $settings;
 		$this->promotion_rules_service = $promotion_rules_service;
@@ -72,7 +84,8 @@ abstract class AbstractSchema {
 	 *
 	 * @return array
 	 */
-	public function get_item_schema() {
+	public function get_item_schema()
+	{
 		return array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
 			'title'      => $this->title,
@@ -87,7 +100,8 @@ abstract class AbstractSchema {
 	 * @param mixed $item Item to get response for.
 	 * @return array|stdClass
 	 */
-	public function get_item_response( $item ) {
+	public function get_item_response($item)
+	{
 		return [];
 	}
 
@@ -103,15 +117,16 @@ abstract class AbstractSchema {
 	 *
 	 * @param array $properties Schema properties.
 	 */
-	protected function remove_arg_options( $properties ) {
+	protected function remove_arg_options($properties)
+	{
 		return array_map(
-			function( $property ) {
-				if ( isset( $property['properties'] ) ) {
-					$property['properties'] = $this->remove_arg_options( $property['properties'] );
-				} elseif ( isset( $property['items']['properties'] ) ) {
-					$property['items']['properties'] = $this->remove_arg_options( $property['items']['properties'] );
+			function ($property) {
+				if (isset($property['properties'])) {
+					$property['properties'] = $this->remove_arg_options($property['properties']);
+				} elseif (isset($property['items']['properties'])) {
+					$property['items']['properties'] = $this->remove_arg_options($property['items']['properties']);
 				}
-				unset( $property['arg_options'] );
+				unset($property['arg_options']);
 				return $property;
 			},
 			(array) $properties
@@ -123,11 +138,12 @@ abstract class AbstractSchema {
 	 *
 	 * @return array
 	 */
-	public function get_public_item_schema() {
+	public function get_public_item_schema()
+	{
 		$schema = $this->get_item_schema();
 
-		if ( isset( $schema['properties'] ) ) {
-			$schema['properties'] = $this->remove_arg_options( $schema['properties'] );
+		if (isset($schema['properties'])) {
+			$schema['properties'] = $this->remove_arg_options($schema['properties']);
 		}
 
 		return $schema;
@@ -140,8 +156,9 @@ abstract class AbstractSchema {
 	 * @param array  ...$passed_args An array of arguments to be passed to callbacks.
 	 * @return object the data that will get added.
 	 */
-	protected function get_extended_data( $endpoint, ...$passed_args ) {
-		return $this->extend->get_endpoint_data( $endpoint, $passed_args );
+	protected function get_extended_data($endpoint, ...$passed_args)
+	{
+		return $this->extend->get_endpoint_data($endpoint, $passed_args);
 	}
 
 	/**
@@ -150,14 +167,15 @@ abstract class AbstractSchema {
 	 * @param array $properties Schema property data.
 	 * @return array Array of defaults, pulled from arg_options
 	 */
-	protected function get_recursive_schema_property_defaults( $properties ) {
+	protected function get_recursive_schema_property_defaults($properties)
+	{
 		$defaults = [];
 
-		foreach ( $properties as $property_key => $property_value ) {
-			if ( isset( $property_value['arg_options']['default'] ) ) {
-				$defaults[ $property_key ] = $property_value['arg_options']['default'];
-			} elseif ( isset( $property_value['properties'] ) ) {
-				$defaults[ $property_key ] = $this->get_recursive_schema_property_defaults( $property_value['properties'] );
+		foreach ($properties as $property_key => $property_value) {
+			if (isset($property_value['arg_options']['default'])) {
+				$defaults[$property_key] = $property_value['arg_options']['default'];
+			} elseif (isset($property_value['properties'])) {
+				$defaults[$property_key] = $this->get_recursive_schema_property_defaults($property_value['properties']);
 			}
 		}
 
@@ -170,7 +188,8 @@ abstract class AbstractSchema {
 	 * @param array $properties Schema property data.
 	 * @return function Anonymous validation callback.
 	 */
-	protected function get_recursive_validate_callback( $properties ) {
+	protected function get_recursive_validate_callback($properties)
+	{
 		/**
 		 * Validate a request argument based on details registered to the route.
 		 *
@@ -179,27 +198,27 @@ abstract class AbstractSchema {
 		 * @param string           $param
 		 * @return true|\WP_Error
 		 */
-		return function ( $values, $request, $param ) use ( $properties ) {
-			foreach ( $properties as $property_key => $property_value ) {
-				$current_value = isset( $values[ $property_key ] ) ? $values[ $property_key ] : null;
+		return function ($values, $request, $param) use ($properties) {
+			foreach ($properties as $property_key => $property_value) {
+				$current_value = isset($values[$property_key]) ? $values[$property_key] : null;
 
-				if ( isset( $property_value['arg_options']['validate_callback'] ) ) {
+				if (isset($property_value['arg_options']['validate_callback'])) {
 					$callback = $property_value['arg_options']['validate_callback'];
-					$result   = is_callable( $callback ) ? $callback( $current_value, $request, $param ) : false;
+					$result   = is_callable($callback) ? $callback($current_value, $request, $param) : false;
 				} else {
-					$result = rest_validate_value_from_schema( $current_value, $property_value, $param . ' > ' . $property_key );
+					$result = rest_validate_value_from_schema($current_value, $property_value, $param . ' > ' . $property_key);
 				}
 
-				if ( ! $result || is_wp_error( $result ) ) {
+				if (! $result || is_wp_error($result)) {
 					// If schema validation fails, we return here as we don't need to validate any deeper.
 					return $result;
 				}
 
-				if ( isset( $property_value['properties'] ) ) {
-					$validate_callback = $this->get_recursive_validate_callback( $property_value['properties'] );
-					$result            = $validate_callback( $current_value, $request, $param . ' > ' . $property_key );
+				if (isset($property_value['properties'])) {
+					$validate_callback = $this->get_recursive_validate_callback($property_value['properties']);
+					$result            = $validate_callback($current_value, $request, $param . ' > ' . $property_key);
 
-					if ( ! $result || is_wp_error( $result ) ) {
+					if (! $result || is_wp_error($result)) {
 						// If schema validation fails, we return here as we don't need to validate any deeper.
 						return $result;
 					}
@@ -216,7 +235,8 @@ abstract class AbstractSchema {
 	 * @param array $properties Schema property data.
 	 * @return function Anonymous validation callback.
 	 */
-	protected function get_recursive_sanitize_callback( $properties ) {
+	protected function get_recursive_sanitize_callback($properties)
+	{
 		/**
 		 * Validate a request argument based on details registered to the route.
 		 *
@@ -225,29 +245,29 @@ abstract class AbstractSchema {
 		 * @param string           $param
 		 * @return true|\WP_Error
 		 */
-		return function ( $values, $request, $param ) use ( $properties ) {
+		return function ($values, $request, $param) use ($properties) {
 			$sanitized_values = [];
 
-			foreach ( $properties as $property_key => $property_value ) {
-				$current_value = isset( $values[ $property_key ] ) ? $values[ $property_key ] : null;
+			foreach ($properties as $property_key => $property_value) {
+				$current_value = isset($values[$property_key]) ? $values[$property_key] : null;
 
-				if ( isset( $property_value['arg_options']['sanitize_callback'] ) ) {
+				if (isset($property_value['arg_options']['sanitize_callback'])) {
 					$callback      = $property_value['arg_options']['sanitize_callback'];
-					$current_value = is_callable( $callback ) ? $callback( $current_value, $request, $param ) : $current_value;
+					$current_value = is_callable($callback) ? $callback($current_value, $request, $param) : $current_value;
 				} else {
-					$current_value = rest_sanitize_value_from_schema( $current_value, $property_value, $param . ' > ' . $property_key );
+					$current_value = rest_sanitize_value_from_schema($current_value, $property_value, $param . ' > ' . $property_key);
 				}
 
 				// If sanitization failed, return the WP_Error object straight away.
-				if ( is_wp_error( $current_value ) ) {
+				if (is_wp_error($current_value)) {
 					return $current_value;
 				}
 
-				if ( isset( $property_value['properties'] ) ) {
-					$sanitize_callback                 = $this->get_recursive_sanitize_callback( $property_value['properties'] );
-					$sanitized_values[ $property_key ] = $sanitize_callback( $current_value, $request, $param . ' > ' . $property_key );
+				if (isset($property_value['properties'])) {
+					$sanitize_callback                 = $this->get_recursive_sanitize_callback($property_value['properties']);
+					$sanitized_values[$property_key] = $sanitize_callback($current_value, $request, $param . ' > ' . $property_key);
 				} else {
-					$sanitized_values[ $property_key ] = $current_value;
+					$sanitized_values[$property_key] = $current_value;
 				}
 			}
 
@@ -262,17 +282,18 @@ abstract class AbstractSchema {
 	 * @param array  ...$passed_args An array of arguments to be passed to callbacks.
 	 * @return array the data that will get added.
 	 */
-	protected function get_extended_schema( $endpoint, ...$passed_args ) {
-		$extended_schema = $this->extend->get_endpoint_schema( $endpoint, $passed_args );
-		$defaults        = $this->get_recursive_schema_property_defaults( $extended_schema );
+	protected function get_extended_schema($endpoint, ...$passed_args)
+	{
+		$extended_schema = $this->extend->get_endpoint_schema($endpoint, $passed_args);
+		$defaults        = $this->get_recursive_schema_property_defaults($extended_schema);
 
 		return [
 			'type'        => 'object',
-			'context'     => [ 'view', 'edit' ],
+			'context'     => ['view', 'edit'],
 			'arg_options' => [
 				'default'           => $defaults,
-				'validate_callback' => $this->get_recursive_validate_callback( $extended_schema ),
-				'sanitize_callback' => $this->get_recursive_sanitize_callback( $extended_schema ),
+				'validate_callback' => $this->get_recursive_validate_callback($extended_schema),
+				'sanitize_callback' => $this->get_recursive_sanitize_callback($extended_schema),
 			],
 			'properties'  => $extended_schema,
 		];
@@ -285,14 +306,15 @@ abstract class AbstractSchema {
 	 * @param array          $items Array of items.
 	 * @return array Array of values from the callback function.
 	 */
-	protected function get_item_responses_from_schema( AbstractSchema $schema, $items ) {
-		$items = array_filter( $items );
+	protected function get_item_responses_from_schema(AbstractSchema $schema, $items)
+	{
+		$items = array_filter($items);
 
-		if ( empty( $items ) ) {
+		if (empty($items)) {
 			return [];
 		}
 
-		return array_values( array_map( [ $schema, 'get_item_response' ], $items ) );
+		return array_values(array_map([$schema, 'get_item_response'], $items));
 	}
 
 	/**
@@ -302,10 +324,11 @@ abstract class AbstractSchema {
 	 * @param string $method Optional. HTTP method of the request.
 	 * @return array Endpoint arguments.
 	 */
-	public function get_endpoint_args_for_item_schema( $method = \WP_REST_Server::CREATABLE ) {
+	public function get_endpoint_args_for_item_schema($method = \WP_REST_Server::CREATABLE)
+	{
 		$schema        = $this->get_item_schema();
-		$endpoint_args = rest_get_endpoint_args_for_schema( $schema, $method );
-		$endpoint_args = $this->remove_arg_options( $endpoint_args );
+		$endpoint_args = rest_get_endpoint_args_for_schema($schema, $method);
+		$endpoint_args = $this->remove_arg_options($endpoint_args);
 		return $endpoint_args;
 	}
 
@@ -316,12 +339,13 @@ abstract class AbstractSchema {
 	 * @param array $properties Schema.
 	 * @return array Updated schema.
 	 */
-	protected function force_schema_readonly( $properties ) {
+	protected function force_schema_readonly($properties)
+	{
 		return array_map(
-			function( $property ) {
+			function ($property) {
 				$property['readonly'] = true;
-				if ( isset( $property['items']['properties'] ) ) {
-					$property['items']['properties'] = $this->force_schema_readonly( $property['items']['properties'] );
+				if (isset($property['items']['properties'])) {
+					$property['items']['properties'] = $this->force_schema_readonly($property['items']['properties']);
 				}
 				return $property;
 			},
@@ -334,48 +358,49 @@ abstract class AbstractSchema {
 	 *
 	 * @return array
 	 */
-	protected function get_store_currency_properties() {
+	protected function get_store_currency_properties()
+	{
 		return [
 			'currency_code'               => [
-				'description' => __( 'Currency code (in ISO format) for returned prices.', 'leat-crm' ),
+				'description' => __('Currency code (in ISO format) for returned prices.', 'leat-crm'),
 				'type'        => 'string',
-				'context'     => [ 'view', 'edit' ],
+				'context'     => ['view', 'edit'],
 				'readonly'    => true,
 			],
 			'currency_symbol'             => [
-				'description' => __( 'Currency symbol for the currency which can be used to format returned prices.', 'leat-crm' ),
+				'description' => __('Currency symbol for the currency which can be used to format returned prices.', 'leat-crm'),
 				'type'        => 'string',
-				'context'     => [ 'view', 'edit' ],
+				'context'     => ['view', 'edit'],
 				'readonly'    => true,
 			],
 			'currency_minor_unit'         => [
-				'description' => __( 'Currency minor unit (number of digits after the decimal separator) for returned prices.', 'leat-crm' ),
+				'description' => __('Currency minor unit (number of digits after the decimal separator) for returned prices.', 'leat-crm'),
 				'type'        => 'integer',
-				'context'     => [ 'view', 'edit' ],
+				'context'     => ['view', 'edit'],
 				'readonly'    => true,
 			],
 			'currency_decimal_separator'  => array(
-				'description' => __( 'Decimal separator for the currency which can be used to format returned prices.', 'leat-crm' ),
+				'description' => __('Decimal separator for the currency which can be used to format returned prices.', 'leat-crm'),
 				'type'        => 'string',
-				'context'     => array( 'view', 'edit' ),
+				'context'     => array('view', 'edit'),
 				'readonly'    => true,
 			),
 			'currency_thousand_separator' => array(
-				'description' => __( 'Thousand separator for the currency which can be used to format returned prices.', 'leat-crm' ),
+				'description' => __('Thousand separator for the currency which can be used to format returned prices.', 'leat-crm'),
 				'type'        => 'string',
-				'context'     => array( 'view', 'edit' ),
+				'context'     => array('view', 'edit'),
 				'readonly'    => true,
 			),
 			'currency_prefix'             => array(
-				'description' => __( 'Price prefix for the currency which can be used to format returned prices.', 'leat-crm' ),
+				'description' => __('Price prefix for the currency which can be used to format returned prices.', 'leat-crm'),
 				'type'        => 'string',
-				'context'     => array( 'view', 'edit' ),
+				'context'     => array('view', 'edit'),
 				'readonly'    => true,
 			),
 			'currency_suffix'             => array(
-				'description' => __( 'Price prefix for the currency which can be used to format returned prices.', 'leat-crm' ),
+				'description' => __('Price prefix for the currency which can be used to format returned prices.', 'leat-crm'),
 				'type'        => 'string',
-				'context'     => array( 'view', 'edit' ),
+				'context'     => array('view', 'edit'),
 				'readonly'    => true,
 			),
 		];
@@ -387,8 +412,9 @@ abstract class AbstractSchema {
 	 * @param array $values Monetary amounts.
 	 * @return array Monetary amounts with currency data appended.
 	 */
-	protected function prepare_currency_response( $values ) {
-		return $this->extend->get_formatter( 'currency' )->format( $values );
+	protected function prepare_currency_response($values)
+	{
+		return $this->extend->get_formatter('currency')->format($values);
 	}
 
 	/**
@@ -400,8 +426,9 @@ abstract class AbstractSchema {
 	 * @param int          $rounding_mode Defaults to the PHP_ROUND_HALF_UP constant.
 	 * @return string      The new amount.
 	 */
-	protected function prepare_money_response( $amount, $decimals = 2, $rounding_mode = PHP_ROUND_HALF_UP ) {
-		return $this->extend->get_formatter( 'money' )->format(
+	protected function prepare_money_response($amount, $decimals = 2, $rounding_mode = PHP_ROUND_HALF_UP)
+	{
+		return $this->extend->get_formatter('money')->format(
 			$amount,
 			[
 				'decimals'      => $decimals,
@@ -416,7 +443,8 @@ abstract class AbstractSchema {
 	 * @param string|array $response Data to format.
 	 * @return string|array Formatted data.
 	 */
-	protected function prepare_html_response( $response ) {
-		return $this->extend->get_formatter( 'html' )->format( $response );
+	protected function prepare_html_response($response)
+	{
+		return $this->extend->get_formatter('html')->format($response);
 	}
 }

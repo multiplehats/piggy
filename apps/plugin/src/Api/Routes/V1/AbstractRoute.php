@@ -55,6 +55,13 @@ abstract class AbstractRoute implements RouteInterface
 	protected $settings;
 
 	/**
+	 * Logger.
+	 *
+	 * @var Logger
+	 */
+	protected $logger;
+
+	/**
 	 * Sync vouchers.
 	 *
 	 * @var SyncVouchers
@@ -102,9 +109,10 @@ abstract class AbstractRoute implements RouteInterface
 	 * @param SchemaController $schema_controller Schema Controller instance.
 	 * @param AbstractSchema   $schema Schema class for this route.
 	 */
-	public function __construct(SchemaController $schema_controller, AbstractSchema $schema, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager, PromotionRules $promotion_rules_service)
+	public function __construct(SchemaController $schema_controller, Logger $logger, AbstractSchema $schema, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager, PromotionRules $promotion_rules_service)
 	{
 		$this->schema_controller = $schema_controller;
+		$this->logger            = $logger;
 		$this->schema            = $schema;
 		$this->connection        = $connection;
 		$this->settings          = $settings;

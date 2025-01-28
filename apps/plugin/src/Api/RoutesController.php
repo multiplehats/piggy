@@ -9,6 +9,7 @@ use Leat\Domain\Services\SyncVouchers;
 use Leat\Domain\Services\SyncPromotions;
 use Leat\Domain\Services\WebhookManager;
 use Leat\Settings;
+use Leat\Utils\Logger;
 
 /**
  * RoutesController class.
@@ -21,6 +22,13 @@ class RoutesController
 	 * @var SchemaController
 	 */
 	protected $schema_controller;
+
+	/**
+	 * Logger.
+	 *
+	 * @var Logger
+	 */
+	protected $logger;
 
 	/**
 	 * Leat connection.
@@ -76,9 +84,10 @@ class RoutesController
 	 *
 	 * @param SchemaController $schema_controller Schema controller class passed to each route.
 	 */
-	public function __construct(SchemaController $schema_controller, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager, PromotionRules $promotion_rules_service)
+	public function __construct(SchemaController $schema_controller, Logger $logger, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager, PromotionRules $promotion_rules_service)
 	{
 		$this->schema_controller = $schema_controller;
+		$this->logger            = $logger;
 		$this->connection        = $connection;
 		$this->settings          = $settings;
 		$this->sync_vouchers     = $sync_vouchers;
@@ -141,6 +150,7 @@ class RoutesController
 
 		return new $route(
 			$this->schema_controller,
+			$this->logger,
 			$this->schema_controller->get($route::SCHEMA_TYPE, $route::SCHEMA_VERSION),
 			$this->connection,
 			$this->settings,
