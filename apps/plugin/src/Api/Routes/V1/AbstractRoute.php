@@ -12,6 +12,7 @@ use Leat\Domain\Services\SyncVouchers;
 use Leat\Domain\Services\WebhookManager;
 use Leat\Domain\Services\PromotionRules;
 use Leat\Settings;
+use Leat\Utils\Logger;
 use WP_Error;
 
 /**

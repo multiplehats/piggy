@@ -30,11 +30,6 @@ final class Api
 	private $settings;
 
 	/**
-	 * @var Logger
-	 */
-	private $logger;
-
-	/**
 	 * @var PromotionRules
 	 */
 	private $promotion_rules;
@@ -78,7 +73,6 @@ final class Api
 		$this->sync_vouchers = $sync_vouchers;
 		$this->sync_promotions = $sync_promotions;
 		$this->webhook_manager = $webhook_manager;
-		$this->logger = new Logger('leat-api');
 	}
 
 	/**
@@ -115,7 +109,6 @@ final class Api
 		SyncVouchers $sync_vouchers = null,
 		SyncPromotions $sync_promotions = null,
 		WebhookManager $webhook_manager = null,
-		Logger $logger = null,
 		$reset = false
 	) {
 		static $container;
@@ -130,11 +123,9 @@ final class Api
 
 		$container = new Container();
 
-		if ($logger) {
-			$container->register(Logger::class, function () use ($logger) {
-				return $logger;
-			});
-		}
+		$container->register(Logger::class, function () {
+			return new Logger('leat-api');
+		});
 
 		// Register existing instances if provided
 		if ($settings) {
