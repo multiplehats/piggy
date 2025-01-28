@@ -1,15 +1,15 @@
 === Leat CRM ===
 Contributors: leat
 Donate link: https://leat.com
-Tags: loyalty program, rewards, customer loyalty, vouchers, marketing automation
-Requires at least: 6.0
+Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Requires PHP: 8.0
 Stable tag: 0.5.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-### Customer loyalty that works in-store and online.
+Create and manage customer loyalty programs with points, rewards, and automated marketing - works both online and in-store.
+
+== Description ==
 
 Enhance Your Customer Experience with Leat!
 
@@ -17,15 +17,21 @@ Enhance Your Customer Experience with Leat!
 
 Leat's all-in-one platform empowers you to:
 
-● Quickly set up a fully customized loyalty program and rewards, with no coding required.
-● Effortlessly engage customers using targeted vouchers and promotions integrated with
-automated marketing tools.
-● Drive growth with real-time analytics and insights, ensuring your customers stay
-connected and engaged.
-● Seamlessly manage your loyalty program both online and offline with Leat's extensive
-integrations, eliminating any gaps in your customer experience.
+* Quickly set up a fully customized loyalty program and rewards, with no coding required
+* Effortlessly engage customers using targeted vouchers and promotions
+* Drive growth with real-time analytics and insights
+* Seamlessly manage your loyalty program both online and offline
 
-### External services
+= Key Features =
+
+* **Points & Rewards Program** - Create a flexible points system where customers earn points for purchases
+* **Custom Rewards** - Design attractive rewards that keep customers coming back
+* **Automated Marketing** - Send targeted emails and notifications based on customer behavior
+* **Real-time Analytics** - Track program performance and customer engagement
+* **WooCommerce Integration** - Seamlessly works with your existing store
+* **Multi-channel Support** - Works both online and in physical stores
+
+= External Services =
 
 This plugin requires an API connection to [Leat](https://www.leat.com) and it's business portal ([business.leat.eu](https://business.leat.eu)) for core functionality including reward management, customer tracking, and loyalty point calculations.
 
@@ -45,7 +51,7 @@ Users of this plugin should ensure they comply with the terms and privacy polici
 
 == Screenshots ==
 
-1. The main dashboard showing customer loyalty points and available rewards.
+1. The plugin settings dashboard
 
 == Installation ==
 
