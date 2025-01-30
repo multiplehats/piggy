@@ -14,7 +14,7 @@
 	<Search class="mr-2 h-4 w-4 shrink-0 opacity-50" />
 	<CommandPrimitive.Input
 		class={cn(
-			"!min-h-8 !border-input !ring-offset-background !placeholder:text-muted-foreground focus-visible:ring-ring flex !h-8 w-full rounded-md !border bg-transparent px-3 py-2 text-sm !shadow-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+			"!border-input !ring-offset-background !placeholder:text-muted-foreground focus-visible:ring-ring flex !h-8 !min-h-8 w-full rounded-md !border bg-transparent px-3 py-2 text-sm !shadow-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
 			className
 		)}
 		{...$$restProps}

@@ -1,4 +1,3 @@
-import { __ } from "@wordpress/i18n";
 import { z } from "zod";
 import * as adminFields from "./adminTypes";
 
