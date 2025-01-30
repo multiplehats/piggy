@@ -77,9 +77,7 @@ export class SettingsAdminService {
 	}
 
 	async getAllSettings(): Promise<GetSettingsResponse> {
-		const { data, error } = await api.get<GetSettingsResponse>("/leat/private/settings", {
-			cache: "no-store",
-		});
+		const { data, error } = await api.get<GetSettingsResponse>("/leat/private/settings");
 
 		if (error ?? !data) {
 			if (error) {
@@ -96,10 +94,7 @@ export class SettingsAdminService {
 		id,
 	}: GetSettingByIdParams<K>): Promise<GetSettingByIdResponse<K>> {
 		const { data, error } = await api.get<GetSettingByIdResponse<K>>(
-			`/leat/private/settings/?id=${id}`,
-			{
-				cache: "no-store",
-			}
+			`/leat/private/settings/?id=${id}`
 		);
 
 		if (error ?? !data) {
@@ -115,10 +110,7 @@ export class SettingsAdminService {
 
 	async getEarnRuleById({ id }: GetEarnRuleByIdParams): Promise<GetEarnRuleByIdResponse> {
 		const { data, error } = await api.get<GetEarnRuleByIdResponse>(
-			`/leat/v1/earn-rules/?id=${id}&status=publish,draft`,
-			{
-				cache: "no-store",
-			}
+			`/leat/v1/earn-rules/?id=${id}&status=publish,draft`
 		);
 
 		if (error ?? !data) {
@@ -134,10 +126,7 @@ export class SettingsAdminService {
 
 	async getEarnRules(): Promise<GetEarnRulesResponse> {
 		const { data, error } = await api.get<GetEarnRulesResponse>(
-			"/leat/v1/earn-rules?status=draft,publish",
-			{
-				cache: "no-store",
-			}
+			"/leat/v1/earn-rules?status=draft,publish"
 		);
 
 		if (error ?? !data) {
@@ -170,10 +159,7 @@ export class SettingsAdminService {
 
 	async getSpendRules(): Promise<GetSpendRulesResponse> {
 		const { data, error } = await api.get<GetSpendRulesResponse>(
-			"/leat/v1/spend-rules?status=draft,publish",
-			{
-				cache: "no-store",
-			}
+			"/leat/v1/spend-rules?status=draft,publish"
 		);
 
 		if (error ?? !data) {
@@ -205,9 +191,7 @@ export class SettingsAdminService {
 	}
 
 	async syncRewards(): Promise<{ ok: true }> {
-		const { data, error } = await api.get<{ ok: true }>(`/leat/private/spend-rules-sync`, {
-			cache: "no-store",
-		});
+		const { data, error } = await api.get<{ ok: true }>(`/leat/private/spend-rules-sync`, {});
 
 		if (error ?? !data) {
 			if (error) {
@@ -222,10 +206,7 @@ export class SettingsAdminService {
 
 	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
 		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
-			`/leat/v1/spend-rules/?id=${id}&status=publish,draft`,
-			{
-				cache: "no-store",
-			}
+			`/leat/v1/spend-rules/?id=${id}&status=publish,draft`
 		);
 
 		if (error ?? !data) {
@@ -240,9 +221,10 @@ export class SettingsAdminService {
 	}
 
 	async syncPromotions() {
-		const { data, error } = await api.post<{ success: true }>(`/leat/private/sync-promotions`, {
-			cache: "no-store",
-		});
+		const { data, error } = await api.post<{ success: true }>(
+			`/leat/private/sync-promotions`,
+			{}
+		);
 
 		if (error ?? !data) {
 			if (error) {
@@ -256,9 +238,7 @@ export class SettingsAdminService {
 	}
 
 	async getSyncPromotionsInformation() {
-		const { data, error } = await api.get<TaskInformation>(`/leat/private/sync-promotions`, {
-			cache: "no-store",
-		});
+		const { data, error } = await api.get<TaskInformation>(`/leat/private/sync-promotions`, {});
 
 		if (error ?? !data) {
 			if (error) {
@@ -272,15 +252,9 @@ export class SettingsAdminService {
 	}
 
 	async syncVouchers(id: string): Promise<{ ok: true }> {
-		const { data, error } = await api.post<{ ok: true }>(
-			`/leat/private/sync-vouchers`,
-			{
-				id,
-			},
-			{
-				cache: "no-store",
-			}
-		);
+		const { data, error } = await api.post<{ ok: true }>(`/leat/private/sync-vouchers`, {
+			id,
+		});
 
 		if (error ?? !data) {
 			if (error) {
@@ -297,10 +271,7 @@ export class SettingsAdminService {
 		id,
 	}: GetSyncVouchersInformationParams): Promise<GetSyncVouchersInformationResponse> {
 		const { data, error } = await api.get<GetSyncVouchersInformationResponse>(
-			`/leat/private/sync-vouchers?id=${id}`,
-			{
-				cache: "no-store",
-			}
+			`/leat/private/sync-vouchers?id=${id}`
 		);
 
 		if (error ?? !data) {
@@ -316,10 +287,7 @@ export class SettingsAdminService {
 
 	async getPromotionRules(): Promise<GetPromotionRulesResponse> {
 		const { data, error } = await api.get<GetPromotionRulesResponse>(
-			"/leat/v1/promotion-rules?status=draft,publish",
-			{
-				cache: "no-store",
-			}
+			"/leat/v1/promotion-rules?status=draft,publish"
 		);
 
 		if (error ?? !data) {
@@ -337,10 +305,7 @@ export class SettingsAdminService {
 		id,
 	}: GetPromotionRuleByIdParams): Promise<GetPromotionRuleByIdResponse> {
 		const { data, error } = await api.get<GetPromotionRuleByIdResponse>(
-			`/leat/v1/promotion-rules/?id=${id}&status=publish,draft`,
-			{
-				cache: "no-store",
-			}
+			`/leat/v1/promotion-rules/?id=${id}&status=publish,draft`
 		);
 
 		if (error ?? !data) {
