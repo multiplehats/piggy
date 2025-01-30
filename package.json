@@ -21,7 +21,8 @@
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint .",
     "lint:fix": "eslint --fix .",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "lint:ws": "pnpm dlx sherif@latest"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.6.1",

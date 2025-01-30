@@ -6,7 +6,6 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { visualizer } from "rollup-plugin-visualizer";
 import type { PluginOption, UserConfig } from "vite";
 import { splitVendorChunkPlugin } from "vite";
-import { imagetools } from "vite-imagetools";
 import license from "rollup-plugin-license";
 import { createBanner } from "./bin/assets-banner";
 
@@ -35,7 +34,6 @@ const config = {
 			},
 		}) as PluginOption,
 		wp_scripts(),
-		imagetools(),
 		svelte({
 			configFile: resolve(__dirname, "./svelte.config.js"),
 		}),
