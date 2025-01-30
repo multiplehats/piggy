@@ -142,9 +142,6 @@ importers:
       '@types/qs':
         specifier: ^6.9.17
         version: 6.9.17
-      '@wordpress/api-fetch':
-        specifier: ^6.55.0
-        version: 6.55.0
       '@wordpress/env':
         specifier: ^9.10.0
         version: 9.10.0
@@ -259,9 +256,6 @@ importers:
 
   packages/lib:
     dependencies:
-      '@wordpress/api-fetch':
-        specifier: ^6.55.0
-        version: 6.55.0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -396,9 +390,6 @@ importers:
       '@types/qs':
         specifier: ^6.9.17
         version: 6.9.17
-      '@wordpress/api-fetch':
-        specifier: ^6.55.0
-        version: 6.55.0
       '@wordpress/env':
         specifier: ^9.10.0
         version: 9.10.0
@@ -613,9 +604,6 @@ importers:
       '@types/qs':
         specifier: ^6.9.17
         version: 6.9.17
-      '@wordpress/api-fetch':
-        specifier: ^6.55.0
-        version: 6.55.0
       '@wordpress/env':
         specifier: ^9.10.0
         version: 9.10.0

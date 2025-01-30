@@ -13,8 +13,8 @@
 	export let title: string;
 	export let mutationFn: () => Promise<any>;
 	export let showButton = true;
-	export let queryFn: () => Promise<TaskInformation | SyncStatus> | undefined = () => undefined;
-	export let onMutationSuccess: (() => void) | undefined = undefined;
+	export let queryFn: () => Promise<TaskInformation | SyncStatus> | null = () => null;
+	export let onMutationSuccess: (() => void) | null = null;
 	export let disabled = false;
 
 	let isStillSyncing = false;

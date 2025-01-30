@@ -21,6 +21,7 @@ declare global {
 			currentLanguage: string;
 			storeApiNonce: string;
 			wcStoreApiNonceTimestamp: string;
+			wpApiNonce: string;
 		};
 		wp: {
 			hooks: Hooks;
