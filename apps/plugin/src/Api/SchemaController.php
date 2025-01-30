@@ -1,13 +1,17 @@
 <?php
+
 namespace Leat\Api;
 
 use Leat\Api\Schemas\ExtendSchema;
+use Leat\Domain\Services\PromotionRules;
 use Leat\Settings;
+use Leat\Utils\Logger;
 
 /**
  * SchemaController class.
  */
-class SchemaController {
+class SchemaController
+{
 
 	/**
 	 * Leat schema class instances.
@@ -17,12 +21,25 @@ class SchemaController {
 	protected $schemas = [];
 
 	/**
+	 * Logger.
+	 *
+	 * @var Logger
+	 */
+	protected $logger;
+
+	/**
 	 * Settings
 	 *
 	 * @var Settings
 	 */
 	protected $settings;
 
+	/**
+	 * Promotion rules service instance
+	 *
+	 * @var PromotionRules
+	 */
+	protected $promotion_rules_service;
 
 	/**
 	 * Leat Rest Extending instance
@@ -36,19 +53,24 @@ class SchemaController {
 	 *
 	 * @param ExtendSchema $extend Rest Extending instance.
 	 */
-	public function __construct( ExtendSchema $extend, Settings $settings ) {
-		$this->extend   = $extend;
-		$this->settings = $settings;
+	public function __construct(ExtendSchema $extend, Logger $logger, Settings $settings, PromotionRules $promotion_rules_service)
+	{
+		$this->extend                  = $extend;
+		$this->logger                  = $logger;
+		$this->settings                = $settings;
+		$this->promotion_rules_service = $promotion_rules_service;
 
 		$this->schemas = [
 			'v1' => [
+				Schemas\V1\WebhooksSchema::IDENTIFIER => Schemas\V1\WebhooksSchema::class,
 				Schemas\V1\EarnRewardSchema::IDENTIFIER    => Schemas\V1\EarnRewardSchema::class,
 				Schemas\V1\EarnRulesSchema::IDENTIFIER     => Schemas\V1\EarnRulesSchema::class,
 				Schemas\V1\SpendRulesSchema::IDENTIFIER    => Schemas\V1\SpendRulesSchema::class,
 				Schemas\V1\PromotionRulesSchema::IDENTIFIER => Schemas\V1\PromotionRulesSchema::class,
 				Schemas\V1\WCProductsSearchSchema::IDENTIFIER => Schemas\V1\WCProductsSearchSchema::class,
 				Schemas\V1\SpendRulesSyncSchema::IDENTIFIER => Schemas\V1\SpendRulesSyncSchema::class,
-				Schemas\V1\PromotionRulesSyncSchema::IDENTIFIER => Schemas\V1\PromotionRulesSyncSchema::class,
+				Schemas\V1\SyncPromotionsSchema::IDENTIFIER => Schemas\V1\SyncPromotionsSchema::class,
+				Schemas\V1\SyncVouchersSchema::IDENTIFIER  => Schemas\V1\SyncVouchersSchema::class,
 				Schemas\V1\Admin\SettingsSchema::IDENTIFIER => Schemas\V1\Admin\SettingsSchema::class,
 				Schemas\V1\Admin\ShopsSchema::IDENTIFIER   => Schemas\V1\Admin\ShopsSchema::class,
 				Schemas\V1\Admin\RewardsSchema::IDENTIFIER => Schemas\V1\Admin\RewardsSchema::class,
@@ -70,13 +92,14 @@ class SchemaController {
 	 * @param int    $version API Version being requested.
 	 * @return Schemas\V1\AbstractSchema A new instance of the requested schema.
 	 */
-	public function get( $name, $version = 1 ) {
-		$schema = $this->schemas[ "v{$version}" ][ $name ] ?? false;
+	public function get($name, $version = 1)
+	{
+		$schema = $this->schemas["v{$version}"][$name] ?? false;
 
-		if ( ! $schema ) {
-			throw new \Exception( esc_html( sprintf( '%s v%d schema does not exist', $name, $version ) ) );
+		if (! $schema) {
+			throw new \Exception(esc_html(sprintf('%s v%d schema does not exist', $name, $version)));
 		}
 
-		return new $schema( $this->extend, $this, $this->settings );
+		return new $schema($this->extend, $this->logger, $this, $this->settings, $this->promotion_rules_service);
 	}
 }

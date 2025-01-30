@@ -14,8 +14,11 @@ import type {
 	GetSpendRuleByIdParams,
 	GetSpendRuleByIdResponse,
 	GetSpendRulesResponse,
+	GetSyncVouchersInformationParams,
+	GetSyncVouchersInformationResponse,
 	SaveSettingsParams,
 	SaveSettingsResponse,
+	TaskInformation,
 	UpsertEarnRuleParams,
 	UpsertEarnRuleResponse,
 	UpsertPromotionRuleParams,
@@ -236,10 +239,69 @@ export class SettingsAdminService {
 		return data;
 	}
 
-	async syncPromotions(): Promise<{ ok: true }> {
-		const { data, error } = await api.get<{ ok: true }>(`/leat/private/promotion-rules-sync`, {
+	async syncPromotions() {
+		const { data, error } = await api.post<{ success: true }>(`/leat/private/sync-promotions`, {
 			cache: "no-store",
 		});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async getSyncPromotionsInformation() {
+		const { data, error } = await api.get<TaskInformation>(`/leat/private/sync-promotions`, {
+			cache: "no-store",
+		});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async syncVouchers(id: string): Promise<{ ok: true }> {
+		const { data, error } = await api.post<{ ok: true }>(
+			`/leat/private/sync-vouchers`,
+			{
+				id,
+			},
+			{
+				cache: "no-store",
+			}
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async getSyncVouchersInformation({
+		id,
+	}: GetSyncVouchersInformationParams): Promise<GetSyncVouchersInformationResponse> {
+		const { data, error } = await api.get<GetSyncVouchersInformationResponse>(
+			`/leat/private/sync-vouchers?id=${id}`,
+			{
+				cache: "no-store",
+			}
+		);
 
 		if (error ?? !data) {
 			if (error) {

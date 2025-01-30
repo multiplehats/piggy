@@ -13,11 +13,13 @@
 	type $$Props = SettingsLabelProps & {
 		value: SwitchValue;
 		class?: string | undefined;
+		showErrors?: boolean;
 	};
 
 	export let id: string;
 	export let value: $$Props["value"];
 	export { className as class };
+	export let showErrors = true;
 
 	$: checked = value === "on";
 </script>
@@ -43,5 +45,7 @@
 		</div>
 	</div>
 
-	<SettingsFieldErrors {...$$props} />
+	{#if showErrors}
+		<SettingsFieldErrors {...$$props} />
+	{/if}
 </div>

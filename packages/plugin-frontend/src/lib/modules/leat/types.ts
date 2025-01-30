@@ -1,4 +1,8 @@
-import type { EarnRuleValueItem, SpendRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
+import type {
+	EarnRuleValueItem,
+	PromotionRuleValueItem,
+	SpendRuleValueItem,
+} from "@leat/types/plugin/settings/adminTypes";
 
 export type Shop = {
 	uuid: string;
@@ -20,12 +24,24 @@ export type Rewards = {
 	};
 };
 
-export type Coupon = {
+export type SpendRuleCoupon = {
+	type: "spend_rule";
 	code: string;
-	spend_rule: SpendRuleValueItem;
+	rule: SpendRuleValueItem;
 };
 
-export type GetCouponsResponse = Coupon[];
+export type PromotionRuleCoupon = {
+	type: "promotion_rule";
+	code: string;
+	rule: PromotionRuleValueItem;
+};
+
+export type Coupon = SpendRuleCoupon | PromotionRuleCoupon;
+
+export type GetCouponsResponse = {
+	spend_rules_coupons: Coupon[];
+	promotion_rules_coupons: Coupon[];
+};
 
 export type GetRewardsResponse = Rewards[];
 

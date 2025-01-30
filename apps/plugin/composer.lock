@@ -445,16 +445,16 @@
         },
         {
             "name": "piggy/piggy-php-sdk",
-            "version": "3.11.2",
+            "version": "3.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Piggy-Loyalty/piggy-php-sdk.git",
-                "reference": "058a0e92fb048e014bf27fb59ea0bd3fc614ec8f"
+                "reference": "0e9a680c70a006e801b02141ded7785f54c3428a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Piggy-Loyalty/piggy-php-sdk/zipball/058a0e92fb048e014bf27fb59ea0bd3fc614ec8f",
-                "reference": "058a0e92fb048e014bf27fb59ea0bd3fc614ec8f",
+                "url": "https://api.github.com/repos/Piggy-Loyalty/piggy-php-sdk/zipball/0e9a680c70a006e801b02141ded7785f54c3428a",
+                "reference": "0e9a680c70a006e801b02141ded7785f54c3428a",
                 "shasum": ""
             },
             "require": {
@@ -497,9 +497,9 @@
             "description": "php sdk piggy",
             "support": {
                 "issues": "https://github.com/Piggy-Loyalty/piggy-php-sdk/issues",
-                "source": "https://github.com/Piggy-Loyalty/piggy-php-sdk/tree/3.11.2"
+                "source": "https://github.com/Piggy-Loyalty/piggy-php-sdk/tree/3.12.0"
             },
-            "time": "2024-11-14T15:16:34+00:00"
+            "time": "2025-01-23T14:09:23+00:00"
         },
         {
             "name": "psr/http-client",
@@ -1389,16 +1389,16 @@
         },
         {
             "name": "phpcompatibility/phpcompatibility-wp",
-            "version": "2.1.5",
+            "version": "2.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCompatibility/PHPCompatibilityWP.git",
-                "reference": "01c1ff2704a58e46f0cb1ca9d06aee07b3589082"
+                "reference": "80ccb1a7640995edf1b87a4409fa584cd5869469"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCompatibility/PHPCompatibilityWP/zipball/01c1ff2704a58e46f0cb1ca9d06aee07b3589082",
-                "reference": "01c1ff2704a58e46f0cb1ca9d06aee07b3589082",
+                "url": "https://api.github.com/repos/PHPCompatibility/PHPCompatibilityWP/zipball/80ccb1a7640995edf1b87a4409fa584cd5869469",
+                "reference": "80ccb1a7640995edf1b87a4409fa584cd5869469",
                 "shasum": ""
             },
             "require": {
@@ -1455,20 +1455,20 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-04-24T21:37:59+00:00"
+            "time": "2025-01-16T22:34:19+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.11.2",
+            "version": "3.11.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "1368f4a58c3c52114b86b1abe8f4098869cb0079"
+                "reference": "ba05f990e79cbe69b9f35c8c1ac8dca7eecc3a10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/1368f4a58c3c52114b86b1abe8f4098869cb0079",
-                "reference": "1368f4a58c3c52114b86b1abe8f4098869cb0079",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/ba05f990e79cbe69b9f35c8c1ac8dca7eecc3a10",
+                "reference": "ba05f990e79cbe69b9f35c8c1ac8dca7eecc3a10",
                 "shasum": ""
             },
             "require": {
@@ -1533,9 +1533,13 @@
                 {
                     "url": "https://opencollective.com/php_codesniffer",
                     "type": "open_collective"
+                },
+                {
+                    "url": "https://thanks.dev/phpcsstandards",
+                    "type": "thanks_dev"
                 }
             ],
-            "time": "2024-12-11T16:04:26+00:00"
+            "time": "2025-01-23T17:04:15+00:00"
         },
         {
             "name": "symfony/finder",
@@ -1913,12 +1917,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-cli/wp-cli.git",
-                "reference": "0187f2b4ce7e83f31bf4beecd5ad4f11ddf8b57b"
+                "reference": "78fb639f73fb7cb9c863d5c92a0eaf0ef44280b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-cli/wp-cli/zipball/0187f2b4ce7e83f31bf4beecd5ad4f11ddf8b57b",
-                "reference": "0187f2b4ce7e83f31bf4beecd5ad4f11ddf8b57b",
+                "url": "https://api.github.com/repos/wp-cli/wp-cli/zipball/78fb639f73fb7cb9c863d5c92a0eaf0ef44280b5",
+                "reference": "78fb639f73fb7cb9c863d5c92a0eaf0ef44280b5",
                 "shasum": ""
             },
             "require": {
@@ -1976,7 +1980,7 @@
                 "issues": "https://github.com/wp-cli/wp-cli/issues",
                 "source": "https://github.com/wp-cli/wp-cli"
             },
-            "time": "2024-11-26T19:13:58+00:00"
+            "time": "2025-01-23T13:55:00+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
@@ -2032,11 +2036,11 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.0"
     },

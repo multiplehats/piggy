@@ -2,34 +2,29 @@
 namespace Leat\Api\Schemas\V1;
 
 use Leat\Api\Schemas\V1\AbstractSchema;
-use Leat\Domain\Services\PromotionRules as PromotionRulesService;
+
 
 /**
  * Settings class.
  *
  * @internal
  */
-class PromotionRulesSyncSchema extends AbstractSchema {
-	/**
-	 * The Earn Rules service.
-	 *
-	 * @var PromotionRulesService
-	 */
-	private $promotion_rules_service;
+class SyncVouchersSchema extends AbstractSchema {
+
 
 	/**
 	 * The schema item name.
 	 *
 	 * @var string
 	 */
-	protected $title = 'promotion-rules-sync';
+	protected $title = 'sync-vouchers';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'promotion-rules-sync';
+	const IDENTIFIER = 'sync-vouchers';
 
 	/**
 	 * API key schema properties.
@@ -83,15 +78,5 @@ class PromotionRulesSyncSchema extends AbstractSchema {
 				'type'        => 'number',
 			],
 		];
-	}
-
-	/**
-	 * Convert a Spent Rule post into an object suitable for the response.
-	 *
-	 * @param \WP_Post $post Spent Rule post object.
-	 * @return array
-	 */
-	public function get_item_response( $post ) {
-		return $this->promotion_rules_service->get_formatted_post( $post );
 	}
 }

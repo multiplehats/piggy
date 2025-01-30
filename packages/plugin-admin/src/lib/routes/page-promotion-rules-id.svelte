@@ -1,12 +1,9 @@
 <script lang="ts">
 	import { createMutation, createQuery, useQueryClient } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
-	// import SettingsCalendar from '$lib/components/settings-calendar.svelte';
 	import ChevronLeft from "lucide-svelte/icons/chevron-left";
 	import { useNavigate, useParams } from "svelte-navigator";
 	import { derived, writable } from "svelte/store";
-	// import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
-	// import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
 	import { Badge } from "$lib/components/ui/badge/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
@@ -19,6 +16,9 @@
 	import SettingsInput from "$lib/components/settings-input.svelte";
 	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
 	import PromotionRuleProductSelect from "$lib/components/promotions/promotion-rule-product-select.svelte";
+	import SettingsSyncStatus from "$lib/components/settings-sync-status.svelte";
+	import PromotionRuleProductDiscountFields from "$lib/components/promotions/promotion-rule-product-discount-fields.svelte";
+	import SettingsSwitch from "$lib/components/settings-switch.svelte";
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
@@ -50,7 +50,42 @@
 			}
 		)
 	);
+	const mutateSync = createMutation({
+		mutationFn: () => service.syncVouchers($params.id.toString()),
+		mutationKey: ["sync-vouchers"],
+		onSuccess: () => {
+			$query.refetch();
+		},
+	});
+
+	const querySyncInformation = createQuery(
+		derived(mutateSync, ($mutateSync) => ({
+			queryKey: ["sync-vouchers-information"],
+			queryFn: () => service.getSyncVouchersInformation({ id: $params.id.toString() }),
+			refetchInterval: (query: any) => {
+				if (
+					query.state.data?.is_queued ||
+					query.state.data?.is_processing ||
+					$mutateSync.isPending
+				) {
+					return 2000;
+				}
+
+				return false;
+			},
+		}))
+	);
 	const rule = writable<GetPromotionRuleByIdResponse[0] | null>(null);
+
+	let isStillSyncing = false;
+
+	$: {
+		isStillSyncing =
+			($mutateSync.isPending ||
+				$querySyncInformation.data?.is_processing ||
+				$querySyncInformation.data?.is_queued) ??
+			false;
+	}
 
 	function handleSave() {
 		if (!$rule) {
@@ -76,9 +111,7 @@
 	}
 </script>
 
-{#if $query.isLoading}
-	<p>Loading...</p>
-{:else if $query.isError}
+{#if $query.isError}
 	<p>Error: {$query.error.message}</p>
 {:else if $query.isSuccess && $rule}
 	<div class="grid max-w-[59rem] flex-1 auto-rows-max gap-4">
@@ -106,8 +139,13 @@
 			</Badge>
 
 			<div class="hidden items-center gap-2 md:ml-auto md:flex">
-				<Button size="sm" on:click={handleSave}>
-					{__("Save rule", "leat")}
+				<Button
+					size="sm"
+					on:click={handleSave}
+					loading={$mutate.isPending}
+					disabled={$mutate.isPending}
+				>
+					{__("Save rule", "leat-crm")}
 				</Button>
 			</div>
 		</div>
@@ -151,6 +189,17 @@
 								bind:value={$rule.minimumPurchaseAmount.value}
 							></SettingsInput>
 
+							<SettingsSwitch
+								{...$rule.individualUse}
+								bind:value={$rule.individualUse.value}
+								showErrors={false}
+							/>
+
+							<PromotionRuleProductDiscountFields
+								bind:discountType={$rule.discountType}
+								bind:discountValue={$rule.discountValue}
+							/>
+
 							<PromotionRuleProductSelect selectedProducts={$rule.selectedProducts} />
 						</div>
 					</Card.Content>
@@ -160,7 +209,7 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__("Details", "leat")}</Card.Title>
+						<Card.Title>{__("Details xqwreqwr", "leat")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>
@@ -181,36 +230,35 @@
 					</Card.Content>
 				</Card.Root>
 
-				<!-- Disabled until this feature is implemented -->
-				<!-- <Card.Root>
-					<Card.Header>
-						<Card.Title>{__('Schedule', 'leat')}</Card.Title>
-					</Card.Header>
+				<div>
+					<SettingsSyncStatus
+						key="vouchers"
+						title={__("Sync vouchers", "leat")}
+						mutationFn={() => service.syncVouchers($params.id.toString())}
+						queryFn={() =>
+							service.getSyncVouchersInformation({ id: $params.id.toString() })}
+						onMutationSuccess={() => $query.refetch()}
+						disabled={$rule.status.value !== "publish"}
+					/>
 
-					<Card.Content>
-						<div class="grid gap-6">
-							<SettingsCalendar
-								{...$rule.startsAt}
-								bind:value={$rule.startsAt.value}
-								placeholder={$rule.startsAt.value}
-							/>
-							<SettingsCalendar
-								{...$rule.expiresAt}
-								bind:value={$rule.expiresAt.value}
-								placeholder={$rule.expiresAt.value}
-							/>
-						</div>
-					</Card.Content>
-				</Card.Root> -->
+					{#if $rule.status.value !== "publish"}
+						<p class="text-muted-foreground/75 mt-2 px-4 text-center text-sm">
+							{__("You can only sync vouchers when the rule is published.", "leat")}
+						</p>
+					{/if}
+				</div>
 			</div>
 		</div>
 
 		<div class="flex items-center justify-center gap-2 md:hidden">
-			<Button size="sm" on:click={handleSave}>
-				{__("Save rule", "leat")}
+			<Button
+				size="sm"
+				on:click={handleSave}
+				loading={$mutate.isPending}
+				disabled={$mutate.isPending}
+			>
+				{__("Save rule", "leat-crm")}
 			</Button>
 		</div>
 	</div>
-{:else}
-	<p>Rule not found</p>
 {/if}

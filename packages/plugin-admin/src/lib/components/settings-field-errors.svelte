@@ -6,7 +6,6 @@
 	let className: string | undefined = undefined;
 
 	// BIt hacky of a component, but whatever it works for now.
-
 	$: result = zPluginOptionsAdmin.shape[$$props.id as PluginOptionsAdminKeys].safeParse({
 		...$$props,
 	});

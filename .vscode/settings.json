@@ -12,14 +12,6 @@
 		"source.fixAll.php": "explicit",
 		"source.fixAll": "explicit"
 	},
-	// PHP Settings
-	"php.validate.enable": true,
-	"phpcbf.enable": true,
-	"phpcbf.executablePath": "/Users/jayden/.composer/vendor/bin/phpcbf",
-	"phpcbf.standard": "/Users/jayden/Code/leat/apps/plugin/phpcs.xml",
-	"phpcs.enable": true,
-	"phpcs.executablePath": "/Users/jayden/.composer/vendor/bin/phpcs",
-	"phpcs.standard": "/Users/jayden/Code/leat/apps/plugin/phpcs.xml",
 	// Enable eslint for all supported languages
 	"eslint.validate": [
 		"javascript",
@@ -39,7 +31,7 @@
 	],
 	// PHP formatting
 	"[php]": {
-		"editor.defaultFormatter": "persoderlind.vscode-phpcbf",
+		"editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
 		"editor.formatOnSave": true,
 		"editor.codeActionsOnSave": {
 			"source.fixAll.php": "explicit"

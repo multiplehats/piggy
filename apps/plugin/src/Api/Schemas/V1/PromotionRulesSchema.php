@@ -2,7 +2,6 @@
 namespace Leat\Api\Schemas\V1;
 
 use Leat\Api\Schemas\V1\AbstractSchema;
-use Leat\Domain\Services\PromotionRules as PromotionRulesService;
 
 /**
  * Settings class.
@@ -10,13 +9,6 @@ use Leat\Domain\Services\PromotionRules as PromotionRulesService;
  * @internal
  */
 class PromotionRulesSchema extends AbstractSchema {
-	/**
-	 * The Earn Rules service.
-	 *
-	 * @var PromotionRulesService
-	 */
-	private $promotion_rules_service;
-
 	/**
 	 * The schema item name.
 	 *
@@ -30,10 +22,6 @@ class PromotionRulesSchema extends AbstractSchema {
 	 * @var string
 	 */
 	const IDENTIFIER = 'promotion-rules';
-
-	public function __construct() {
-		$this->promotion_rules_service = new PromotionRulesService();
-	}
 
 	/**
 	 * API key schema properties.
