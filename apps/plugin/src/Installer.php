@@ -1,7 +1,9 @@
 <?php
+
 namespace Leat;
 
 use Leat\Api\Connection;
+use Leat\Domain\Services\WebhookManager;
 
 /**
  * Installer class.
@@ -9,25 +11,43 @@ use Leat\Api\Connection;
  *
  * @internal
  */
-class Installer {
+class Installer
+{
+	/**
+	 * @var WebhookManager
+	 */
+	private $webhook_manager;
+
+	/**
+	 * Constructor
+	 *
+	 * @param WebhookManager $webhook_manager The webhook manager instance
+	 */
+	public function __construct(WebhookManager $webhook_manager)
+	{
+		$this->webhook_manager = $webhook_manager;
+	}
+
 	/**
 	 * Initialize class features.
 	 */
-	public function init() {
-		add_action( 'admin_init', array( $this, 'maybe_create_tables' ) );
-		// add_action( 'admin_init', array( $this, 'maybe_redirect_to_onboarding' ) );.
+	public function init()
+	{
+		add_action('admin_init', array($this, 'maybe_create_tables'));
+		add_action('admin_init', array($this, 'maybe_install_webhooks'));
 	}
 
 	/**
 	 * Set up the database tables which the plugin needs to function.
 	 */
-	public function maybe_create_tables() {
+	public function maybe_create_tables()
+	{
 		global $wpdb;
 
 		$schema_version    = 1;
-		$db_schema_version = (int) get_option( 'leat_db_schema_version', 0 );
+		$db_schema_version = (int) get_option('leat_db_schema_version', 0);
 
-		if ( $db_schema_version >= $schema_version && 0 !== $db_schema_version ) {
+		if ($db_schema_version >= $schema_version && 0 !== $db_schema_version) {
 			return;
 		}
 
@@ -37,19 +57,19 @@ class Installer {
 			'leat_reward_logs',
 		];
 
-		foreach ( $tables as $table_name ) {
-			$exists = $this->maybe_create_table( $table_name );
+		foreach ($tables as $table_name) {
+			$exists = $this->maybe_create_table($table_name);
 
-			if ( ! $exists ) {
-				$this->add_create_table_notice( $table_name );
+			if (! $exists) {
+				$this->add_create_table_notice($table_name);
 			}
 		}
 
-		if ( $show_errors ) {
+		if ($show_errors) {
 			$wpdb->show_errors();
 		}
 
-		update_option( 'leat_db_schema_version', $schema_version );
+		update_option('leat_db_schema_version', $schema_version);
 	}
 
 	/**
@@ -60,23 +80,24 @@ class Installer {
 	 * @param string $table_name Database table name.
 	 * @return bool False on error, true if already exists or success.
 	 */
-	protected function maybe_create_table( $table_name ) {
+	protected function maybe_create_table($table_name)
+	{
 		global $wpdb;
 
 		$cache_key    = 'leat_table_exists_' . $table_name;
-		$table_exists = wp_cache_get( $cache_key );
+		$table_exists = wp_cache_get($cache_key);
 
-		if ( false === $table_exists ) {
+		if (false === $table_exists) {
 			$table_exists = $wpdb->get_var(
 				$wpdb->prepare(
 					'SHOW TABLES LIKE %s',
 					$wpdb->prefix . $table_name
 				)
 			);
-			wp_cache_set( $cache_key, (bool) $table_exists );
+			wp_cache_set($cache_key, (bool) $table_exists);
 		}
 
-		if ( $table_exists ) {
+		if ($table_exists) {
 			return true;
 		}
 
@@ -98,14 +119,14 @@ class Installer {
 		);
 
 		// Clear and refresh cache after table creation.
-		wp_cache_delete( $cache_key );
+		wp_cache_delete($cache_key);
 		$table_exists = $wpdb->get_var(
 			$wpdb->prepare(
 				'SHOW TABLES LIKE %s',
 				$wpdb->prefix . $table_name
 			)
 		);
-		wp_cache_set( $cache_key, (bool) $table_exists );
+		wp_cache_set($cache_key, (bool) $table_exists);
 
 		return (bool) $table_exists;
 	}
@@ -115,29 +136,39 @@ class Installer {
 	 *
 	 * @param string $table_name Name of the missing table.
 	 */
-	protected function add_create_table_notice( $table_name ) {
+	protected function add_create_table_notice($table_name)
+	{
 		add_action(
 			'admin_notices',
-			function() use ( $table_name ) {
+			function () use ($table_name) {
 				echo '<div class="error"><p>';
 				printf(
 					/* translators: %1$s table name, %2$s database user, %3$s database name. */
-					esc_html__( 'Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?', 'leat-crm' ),
-					'<code>' . esc_html( $table_name ) . '</code>',
-					'<code>' . esc_html( DB_USER ) . '</code>',
-					'<code>' . esc_html( DB_NAME ) . '</code>'
+					esc_html__('Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?', 'leat-crm'),
+					'<code>' . esc_html($table_name) . '</code>',
+					'<code>' . esc_html(DB_USER) . '</code>',
+					'<code>' . esc_html(DB_NAME) . '</code>'
 				);
 				echo '</p></div>';
 			}
 		);
 	}
 
-	public function maybe_redirect_to_onboarding() {
-		$api_key = get_option( 'leat_api_key', null );
+	/**
+	 * Check and install webhooks if needed
+	 */
+	public function maybe_install_webhooks()
+	{
+		$this->webhook_manager->check_webhooks();
+	}
 
-		if ( false === get_option( 'leat_first_activation', false ) && null !== $api_key && '' !== $api_key ) {
-			update_option( 'leat_first_activation', true );
-			wp_safe_redirect( admin_url( 'admin.php?page=leat#/onboarding' ) );
+	public function maybe_redirect_to_onboarding()
+	{
+		$api_key = get_option('leat_api_key', null);
+
+		if (false === get_option('leat_first_activation', false) && null !== $api_key && '' !== $api_key) {
+			update_option('leat_first_activation', true);
+			wp_safe_redirect(admin_url('admin.php?page=leat#/onboarding'));
 			exit;
 		}
 	}

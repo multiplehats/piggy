@@ -11,6 +11,11 @@ class WebhookManager
 {
 	private const WEBHOOK_PREFIX = 'WordPress: ';
 
+	// Store the option name for tracking last webhook sync
+	private const LAST_SYNC_OPTION = 'leat_webhooks_last_sync';
+	// How often to check webhooks (24 hours in seconds)
+	private const SYNC_INTERVAL = 24 * 60 * 60;
+
 	/**
 	 * @var Connection
 	 */
@@ -43,14 +48,85 @@ class WebhookManager
 		$this->logger     = new Logger();
 	}
 
-	public function init()
+	/**
+	 * Initialize the webhook manager
+	 */
+	public function init(): void
 	{
-		add_action('leat_settings_updated', [$this, 'ensure_webhooks_installed']);
+		// Register activation hook
+		register_activation_hook(LEAT_URL, [$this, 'install_webhooks']);
+
+		// Register daily cron event for periodic checks
+		add_action('leat_daily_webhook_check', [$this, 'check_webhooks']);
+
+		// Schedule the cron event if not already scheduled
+		if (!wp_next_scheduled('leat_daily_webhook_check')) {
+			wp_schedule_event(time(), 'daily', 'leat_daily_webhook_check');
+		}
+	}
+
+	/**
+	 * Install webhooks on plugin activation
+	 */
+	public function install_webhooks(): void
+	{
+		$this->sync_webhooks();
+	}
+
+	/**
+	 * Periodic check of webhooks
+	 */
+	public function check_webhooks(): void
+	{
+		$lastSync = get_option(self::LAST_SYNC_OPTION, 0);
+		$now = time();
+
+		// Only sync if enough time has passed since last sync
+		if (($now - $lastSync) >= self::SYNC_INTERVAL) {
+			$this->sync_webhooks();
+		}
+	}
+
+	/**
+	 * Sync webhooks with Leat API
+	 */
+	private function sync_webhooks(): void
+	{
+		try {
+			$result = $this->ensure_webhooks_installed();
+
+			if ($result) {
+				// Update last sync timestamp only if successful
+				update_option(self::LAST_SYNC_OPTION, time());
+				$this->logger->debug('Webhook sync completed successfully');
+			} else {
+				$this->logger->error('Webhook sync failed');
+			}
+		} catch (\Exception $e) {
+			$this->logger->error('Leat webhook sync failed: ' . $e->getMessage());
+		}
+	}
+
+	/**
+	 * Clean up when plugin is deactivated
+	 */
+	public function cleanup(): void
+	{
+		// Remove scheduled cron event
+		wp_clear_scheduled_hook('leat_daily_webhook_check');
+
+		// Clean up options
+		delete_option(self::LAST_SYNC_OPTION);
 	}
 
 	public function ensure_webhooks_installed()
 	{
 		$client = $this->connection->init_client();
+
+		// If no client, we don't have an API key, so we can't install webhooks
+		if (! $client) {
+			return false;
+		}
 
 		$site_url = defined('WP_DEBUG') && defined('LEAT_WEBHOOK_URL')
 			? LEAT_WEBHOOK_URL

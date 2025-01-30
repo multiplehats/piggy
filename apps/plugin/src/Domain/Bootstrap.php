@@ -326,8 +326,10 @@ class Bootstrap
 		);
 		$this->container->register(
 			Installer::class,
-			function () {
-				return new Installer();
+			function (Container $container) {
+				return new Installer(
+					$container->get(WebhookManager::class)
+				);
 			}
 		);
 		$this->container->register(
