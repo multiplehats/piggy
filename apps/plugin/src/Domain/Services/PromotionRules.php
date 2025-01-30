@@ -407,7 +407,7 @@ class PromotionRules
 	 * Query coupons by user ID.
 	 *
 	 * @param int $user_id The user ID.
-	 * @return array The list of coupons associated with the user ID.
+	 * @return array The list of valid, usable coupons associated with the user ID.
 	 */
 	public function get_coupons_by_user_id($user_id)
 	{
@@ -418,25 +418,46 @@ class PromotionRules
 		}
 
 		$coupon_codes = [];
-
 		$coupons = Coupons::find_coupons_by_email($user->user_email);
 
 		foreach ($coupons as $coupon) {
+			// Check if coupon has expired
+			$expiry_date = $coupon->get_date_expires();
+			if ($expiry_date && current_time('timestamp', true) > $expiry_date->getTimestamp()) {
+				continue;
+			}
+
+			// Skip if usage limit is reached
+			if ($coupon->get_usage_limit() > 0 && $coupon->get_usage_count() >= $coupon->get_usage_limit()) {
+				continue;
+			}
+
+			// Skip if per user usage limit is reached
+			if ($coupon->get_usage_limit_per_user() > 0) {
+				$used_by = $coupon->get_used_by();
+				$user_usage_count = count(array_filter($used_by, function ($user_data) use ($user) {
+					return $user_data == $user->ID || $user_data == $user->user_email;
+				}));
+				if ($user_usage_count >= $coupon->get_usage_limit_per_user()) {
+					continue;
+				}
+			}
+
 			$post_id = get_post_meta($coupon->get_id(), '_leat_promotion_rule_id', true);
 
 			if (! $post_id) {
 				continue;
 			}
 
-			$rule    = $this->get_promotion_rule_by_id($post_id);
+			$rule = $this->get_promotion_rule_by_id($post_id);
 
 			if (! $rule) {
 				continue;
 			}
 
 			$coupon_codes[] = array(
-				'type'       => 'promotion_rule',
-				'code'       => $coupon->get_code(),
+				'type' => 'promotion_rule',
+				'code' => $coupon->get_code(),
 				'rule' => $rule,
 			);
 		}
