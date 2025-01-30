@@ -33,7 +33,7 @@ Leat's all-in-one platform empowers you to:
 
 = External Services =
 
-This plugin requires an API connection to [Leat](https://www.leat.com) and it's business portal ([business.leat.eu](https://business.leat.eu)) for core functionality including reward management, customer tracking, and loyalty point calculations.
+This plugin requires an API connection to [Leat](https://www.leat.com) and it's business portal ([business.leat.eu](https://business.leat.com)) for core functionality including reward management, customer tracking, and loyalty point calculations.
 
 **Data transmitted includes**:
 - Customer information (email, name, order history, purchase categories)
@@ -65,7 +65,7 @@ Users of this plugin should ensure they comply with the terms and privacy polici
 
 = How do I get an API key? =
 
-Sign up for a Leat account at [business.leat.eu](https://business.leat.eu). Once logged in, navigate to Settings > API Integration to find your API key.
+Sign up for a Leat account at [business.leat.eu](https://business.leat.com). Once logged in, navigate to Settings > API Integration to find your API key.
 
 = Can I customize the loyalty dashboard appearance? =
 
