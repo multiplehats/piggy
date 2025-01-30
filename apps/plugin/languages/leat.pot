@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-01-30T12:58:24+00:00\n"
+"POT-Creation-Date: 2025-01-30T13:01:45+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: leat-crm\n"
@@ -467,7 +467,7 @@ msgstr ""
 msgid "Contact ID"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:69
+#: src/Domain/Services/EarnRules.php:74
 #: src/Domain/Services/PromotionRules.php:63
 #: src/Domain/Services/SpendRules.php:108
 #: dist/admin/assets/index-7e90eaf8.js:13461
@@ -475,25 +475,25 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:73
+#: src/Domain/Services/EarnRules.php:78
 #: src/Domain/Services/PromotionRules.php:67
 #: src/Domain/Services/SpendRules.php:112
 #: dist/admin/assets/index-7e90eaf8.js:8747
 msgid "Active"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:74
+#: src/Domain/Services/EarnRules.php:79
 #: src/Domain/Services/PromotionRules.php:68
 #: src/Domain/Services/SpendRules.php:113
 #: dist/admin/assets/index-7e90eaf8.js:8749
 msgid "Inactive"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:77
+#: src/Domain/Services/EarnRules.php:82
 msgid "Set the status of the rule. Inactive earn rules will not be displayed to users."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:81
+#: src/Domain/Services/EarnRules.php:86
 #: src/Domain/Services/PromotionRules.php:83
 #: src/Domain/Services/SpendRules.php:120
 #: dist/admin/assets/index-7e90eaf8.js:13425
@@ -501,149 +501,149 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:85
+#: src/Domain/Services/EarnRules.php:90
 msgid "This is not displayed to the user and is only used for internal reference."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:89
+#: src/Domain/Services/EarnRules.php:94
 #: src/Domain/Services/SpendRules.php:128
 msgid "Type"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:94
+#: src/Domain/Services/EarnRules.php:99
 #: dist/admin/assets/index-7e90eaf8.js:14269
 msgid "Like on Facebook"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:95
+#: src/Domain/Services/EarnRules.php:100
 #: dist/admin/assets/index-7e90eaf8.js:14273
 msgid "Follow on TikTok"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:96
+#: src/Domain/Services/EarnRules.php:101
 #: dist/admin/assets/index-7e90eaf8.js:14277
 msgid "Follow on Instagram"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:97
+#: src/Domain/Services/EarnRules.php:102
 #: dist/admin/assets/index-7e90eaf8.js:14281
 msgid "Place an order"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:99
+#: src/Domain/Services/EarnRules.php:104
 #: dist/admin/assets/index-7e90eaf8.js:14286
 msgid "Create an account"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:101
+#: src/Domain/Services/EarnRules.php:106
 msgid "The type of earn rule."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:106
+#: src/Domain/Services/EarnRules.php:111
 #: src/Domain/Services/SpendRules.php:142
 msgid "Starts at"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:110
+#: src/Domain/Services/EarnRules.php:115
 #: src/Domain/Services/SpendRules.php:146
 msgid "Optional date for when the rule should start."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:114
+#: src/Domain/Services/EarnRules.php:119
 #: src/Domain/Services/SpendRules.php:150
 msgid "Expires at"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:118
+#: src/Domain/Services/EarnRules.php:123
 #: src/Domain/Services/SpendRules.php:154
 msgid "Optional date for when the rule should expire."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:123
+#: src/Domain/Services/EarnRules.php:128
 msgid "Minimum order amount"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:127
+#: src/Domain/Services/EarnRules.php:132
 msgid "The minimum order amount required to satisfy the rule"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:135
+#: src/Domain/Services/EarnRules.php:140
 #: src/Settings.php:49
 msgid "Credits"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:139
+#: src/Domain/Services/EarnRules.php:144
 msgid "The number of credits awarded for completing this action."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:159
+#: src/Domain/Services/EarnRules.php:164
 #: src/Domain/Services/PromotionRules.php:75
 #: src/Domain/Services/SpendRules.php:233
 msgid "Label"
 msgstr ""
 
-#. translators: %s: List of available placeholders that can be used in the label text
+#. translators: %s: List of placeholders that can be used in the label text (e.g. {{ credits }}, {{ credits_currency }})
 #. translators: %s: List of available placeholders that can be used in the promotion label text
 #. translators: %s: List of available placeholders that can be used in the label text.
-#: src/Domain/Services/EarnRules.php:187
+#: src/Domain/Services/EarnRules.php:193
 #: src/Domain/Services/PromotionRules.php:214
 #: src/Domain/Services/SpendRules.php:288
 msgid "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:195
+#: src/Domain/Services/EarnRules.php:202
 msgid "Follow us on Facebook and earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:198
+#: src/Domain/Services/EarnRules.php:205
 msgid "Follow us on TikTok and earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:201
+#: src/Domain/Services/EarnRules.php:208
 msgid "Follow us on Instagram and earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:204
+#: src/Domain/Services/EarnRules.php:211
 msgid "For every order you place, you earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:207
+#: src/Domain/Services/EarnRules.php:214
 msgid "On your birthday, you earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:210
+#: src/Domain/Services/EarnRules.php:217
 msgid "Create an account and earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:222
+#: src/Domain/Services/EarnRules.php:230
 msgid "Facebook handle"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:224
+#: src/Domain/Services/EarnRules.php:232
 msgid "TikTok handle"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:226
+#: src/Domain/Services/EarnRules.php:234
 msgid "Instagram handle"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:228
+#: src/Domain/Services/EarnRules.php:236
 msgid "Social network handle"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:235
+#: src/Domain/Services/EarnRules.php:244
 msgid "The handle of the Facebook account (without the @) that the user must like"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:237
+#: src/Domain/Services/EarnRules.php:246
 msgid "The handle of the TikTok account (without the @) that the user must follow"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:239
+#: src/Domain/Services/EarnRules.php:248
 msgid "The handle of the Instagram account (without the @) that the user must follow"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:241
+#: src/Domain/Services/EarnRules.php:250
 msgid "The handle of the social network account that the user must like or follow"
 msgstr ""
 
