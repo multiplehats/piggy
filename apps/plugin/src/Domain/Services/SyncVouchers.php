@@ -145,11 +145,11 @@ class SyncVouchers extends BackgroundProcess
 
 				$this->logger->info(
 					sprintf(
-						'Queueing batch for promotion %s (page %d, vouchers: %d, total pages: %d, status: %s)',
+						'Queueing batch for promotion %s (page %d, current/total pages: %d/%d, status: %s)',
 						$uuid,
 						$page,
+						$page,
 						$paginated_vouchers->getLastPage(),
-						$paginated_vouchers->getTotal(),
 						$this->get_status()
 					)
 				);

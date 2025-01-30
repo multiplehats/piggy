@@ -225,7 +225,6 @@ class Connection
 				throw new \Exception('No contact found for uuid ' . $uuid);
 			}
 
-			$this->logger->info('Checking for existing user for email ' . $contact['email']);
 			/**
 			 * Silently create a new user, without sending notification emails.
 			 *

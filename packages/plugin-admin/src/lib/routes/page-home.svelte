@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { useLocation } from "svelte-navigator";
+	import { __ } from "@wordpress/i18n";
 	import { Alert } from "$lib/components/ui/alert";
 
 	// eslint-disable-next-line no-unused-expressions
@@ -14,8 +15,8 @@
 	{#if onboardingComplete}
 		<Alert
 			type="success"
-			title="Onboarding completed"
-			description="You have successfully completed the onboarding process. You can now start using Leat."
+			title={__("Onboarding completed")}
+			description={__("You have successfully completed the onboarding process. You can now start using Leat.")}
 		/>
 	{/if}
 </div>

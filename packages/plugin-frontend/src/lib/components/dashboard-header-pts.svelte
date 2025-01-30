@@ -19,16 +19,24 @@
 	});
 
 	function getHeaderTitle(text: string, credits: number | string) {
-		if (!text) return "";
+		if (!text) return { before: "", credits: "", after: "" };
 
 		const creditsName = getTranslatedText($pluginSettings?.credits_name);
 
-		return replaceStrings(text, [
-			{
-				"{{credits_currency}}": creditsName ?? "",
-				"{{credits}}": credits?.toString() ?? "0",
-			},
-		]);
+
+		// eslint-disable-next-line regexp/no-super-linear-backtracking
+		const pattern = /^(.*?)\s*\{\{\s*credits\s*\}\}\s*(.*)$/;
+		const match = text.match(pattern);
+
+		if (!match) {
+			return { before: text, credits: credits?.toString() ?? "0", after: "" };
+		}
+
+		return {
+			before: `${replaceStrings(match[1], [{ "{{credits_currency}}": creditsName ?? "" }]).trim()  } `,
+			credits: credits?.toString() ?? "0",
+			after: ` ${  replaceStrings(match[2] || "", [{ "{{credits_currency}}": creditsName ?? "" }]).trim()}`
+		};
 	}
 
 	function getNavItemText(text?: string) {
@@ -60,19 +68,22 @@
 <section>
 	<h2 class="leat-dashboard__header">
 		{#if isLoggedIn}
+
 			{#if isContactNull}
 				{getTranslatedText($pluginSettings.dashboard_title_join_program)}
 			{:else}
-				{getHeaderTitle(
+				{@const title = getHeaderTitle(
 					getTranslatedText($pluginSettings.dashboard_title_logged_in),
 					$contactStore?.contact?.balance?.credits ?? 0
 				)}
+				{title.before}<span class="credits">{title.credits}</span>{title.after}
 			{/if}
 		{:else}
-			{getHeaderTitle(
+			{@const title = getHeaderTitle(
 				getTranslatedText($pluginSettings.dashboard_title_logged_out) ?? "",
 				400
 			)}
+			{title.before}<span class="credits">{title.credits}</span>{title.after}
 		{/if}
 	</h2>
 

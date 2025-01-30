@@ -96,7 +96,7 @@ class EarnReward extends AbstractRoute
 		// Check if the rule is claimable only once and if the user has already claimed it.
 		if ($earn_rules_service->is_rule_claimable_once($data['earn_rule_id'])) {
 			if ($earn_rules_service->has_user_claimed_rule($data['user_id'], $data['earn_rule_id'])) {
-				throw new RouteException('earn-rule-already-claimed', 'You have already claimed this.', 400);
+				throw new RouteException('earn-rule-already-claimed', __('You have already claimed this.', 'leat-crm'), 400);
 			}
 		}
 

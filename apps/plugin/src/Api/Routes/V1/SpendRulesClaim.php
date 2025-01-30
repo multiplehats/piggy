@@ -13,7 +13,8 @@ use Leat\Domain\Services\SpendRules;
  *
  * @internal
  */
-class SpendRulesClaim extends AbstractRoute {
+class SpendRulesClaim extends AbstractRoute
+{
 	/**
 	 * The route identifier.
 	 *
@@ -33,7 +34,8 @@ class SpendRulesClaim extends AbstractRoute {
 	 *
 	 * @return string
 	 */
-	public function get_path() {
+	public function get_path()
+	{
 		return '/spend-rules-claim';
 	}
 
@@ -42,14 +44,15 @@ class SpendRulesClaim extends AbstractRoute {
 	 *
 	 * @return array An array of endpoints.
 	 */
-	public function get_args() {
+	public function get_args()
+	{
 		return [
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => function( $request ) {
-					$user_id = $request->get_param( 'userId' );
-					return Middleware::is_valid_user( intval( $user_id ) );
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => function ($request) {
+					$user_id = $request->get_param('userId');
+					return Middleware::is_valid_user(intval($user_id));
 				},
 				'args'                => [
 					'id'      => [
@@ -62,10 +65,10 @@ class SpendRulesClaim extends AbstractRoute {
 					],
 				],
 			],
-			'schema'      => [ $this->schema, 'get_public_item_schema' ],
-			'allow_batch' => [ 'v1' => true ],
-			'schema'      => [ $this->schema, 'get_public_item_schema' ],
-			'allow_batch' => [ 'v1' => true ],
+			'schema'      => [$this->schema, 'get_public_item_schema'],
+			'allow_batch' => ['v1' => true],
+			'schema'      => [$this->schema, 'get_public_item_schema'],
+			'allow_batch' => ['v1' => true],
 		];
 	}
 
@@ -77,72 +80,72 @@ class SpendRulesClaim extends AbstractRoute {
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 * @throws \RouteException If the spend rule is not found.
 	 */
-	protected function get_route_post_response( \WP_REST_Request $request ) {
+	protected function get_route_post_response(\WP_REST_Request $request)
+	{
 		$spend_rules_service = new SpendRules();
 		$connection          = new Connection();
-		$id                  = $request->get_param( 'id' );
-		$user_id             = $request->get_param( 'userId' );
+		$id                  = $request->get_param('id');
+		$user_id             = $request->get_param('userId');
 
-		if ( ! $id ) {
-			throw new RouteException( 'spend-rules-claim', 'Spend rule ID is required', 400 );
+		if (! $id) {
+			throw new RouteException('spend-rules-claim', 'Spend rule ID is required', 400);
 		}
 
-		if ( ! $user_id ) {
-			throw new RouteException( 'spend-rules-claim', 'User ID is required', 400 );
+		if (! $user_id) {
+			throw new RouteException('spend-rules-claim', 'User ID is required', 400);
 		}
 
-		$rule = $spend_rules_service->get_spend_rule_by_id( $id );
+		$rule = $spend_rules_service->get_spend_rule_by_id($id);
 
-		if ( ! $rule ) {
-			throw new RouteException( 'spend-rules-claim', 'Spend rule not found', 404 );
+		if (! $rule) {
+			throw new RouteException('spend-rules-claim', 'Spend rule not found', 404);
 		}
 
-		if ( 'draft' === $rule['status']['value'] ) {
-			throw new RouteException( 'spend-rules-claim', 'Spend rule is a draft', 400 );
+		if ('draft' === $rule['status']['value']) {
+			throw new RouteException('spend-rules-claim', 'Spend rule is a draft', 400);
 		}
 
 		// Get the contact UUID for the user.
-		$contact = $connection->get_contact( $user_id );
+		$contact = $connection->get_contact($user_id);
 		$uuid    = $contact['uuid'];
 
-		if ( ! $uuid ) {
-			throw new RouteException( 'spend-rules-claim', 'User not found in Leat', 404 );
+		if (! $uuid) {
+			throw new RouteException('spend-rules-claim', 'User not found in Leat', 404);
 		}
 
 		$reward_uuid = $rule['leatRewardUuid']['value'];
 
-		if ( ! $reward_uuid ) {
-			throw new RouteException( 'spend-rules-claim', 'Reward UUID not found for this spend rule', 404 );
+		if (! $reward_uuid) {
+			throw new RouteException('spend-rules-claim', 'Reward UUID not found for this spend rule', 404);
 		}
 
 		// Create a Reward Reception.
 		try {
-			$reception = $connection->create_reward_reception( $uuid, $reward_uuid );
+			$reception = $connection->create_reward_reception($uuid, $reward_uuid);
 
-			if ( ! $reception ) {
-				throw new RouteException( 'spend-rules-claim', 'Failed to create Reward Reception', 500 );
+			if (! $reception) {
+				throw new RouteException('spend-rules-claim', 'Failed to create Reward Reception', 500);
 			}
 
-			$coupon = $spend_rules_service->create_coupon_for_spend_rule( $rule, $user_id );
+			$coupon = $spend_rules_service->create_coupon_for_spend_rule($rule, $user_id);
 
-			if ( ! $coupon ) {
-				throw new RouteException( 'spend-rules-claim', 'Failed to create coupon', 500 );
+			if (! $coupon) {
+				throw new RouteException('spend-rules-claim', 'Failed to create coupon', 500);
 			}
 
 			return [
 				'coupon'           => $coupon,
 				'reward_reception' => $reception,
 			];
-		} catch ( \Throwable $th ) {
+		} catch (\Throwable $th) {
 			$message = $th->getMessage();
 
 			// If the message sdtars with "You have insufficient credits" we return a 400.
-			if ( strpos( $th->getMessage(), 'You have insufficient credits' ) !== false ) {
-				throw new RouteException( 'spend-rules-claim', 'Insufficient credits', 400 );
+			if (strpos($th->getMessage(), 'You have insufficient credits') !== false) {
+				throw new RouteException('spend-rules-claim', __('Insufficient credits', 'leat-crm'), 400);
 			}
 
-			throw new RouteException( 'spend-rules-claim', $message, 500 );
+			throw new RouteException('spend-rules-claim', $message, 500);
 		}
-
 	}
 }

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createMutation, useQueryClient } from "@tanstack/svelte-query";
 	import { useLocation } from "svelte-navigator";
+	import { __ } from "@wordpress/i18n";
 	import SettingsFormActions from "$lib/components/settings-form-actions.svelte";
 	import SettingsSectionGeneral from "$lib/components/settings-section-general.svelte";
 	import { Alert } from "$lib/components/ui/alert";
@@ -32,8 +33,8 @@
 		{#if onboardingComplete}
 			<Alert
 				type="info"
-				title="You're all set!"
-				description="You have successfully completed the onboarding process. You can now start using Leat."
+				title={__("You're all set!")}
+				description={__("You have successfully completed the onboarding process. You can now start using Leat.")}
 			/>
 		{/if}
 
