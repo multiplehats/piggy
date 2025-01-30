@@ -6,7 +6,7 @@
 	import type { PluginOptionsAdminKeys } from "@leat/types/plugin";
 	import Input from "$lib/components/settings-input.svelte";
 	import { Label } from "$lib/components/ui/label";
-	import { settingsState, updateSettings } from "$lib/stores/settings";
+	import { settingsState } from "$lib/stores/settings";
 	import { colorToRgbaString } from "$lib/utils/color-converters";
 	import { cn } from "$lib/utils/tw.js";
 	import "vanilla-colorful/rgba-string-color-picker.js";
@@ -32,11 +32,6 @@
 		}
 
 		input.value = value;
-
-		updateSettings({
-			id,
-			value,
-		});
 	}, 75);
 
 	const onInputChange = debounce((event: Event) => {
@@ -52,11 +47,6 @@
 			// @ts-expect-error -- This exists but is not typed
 			picker.color = value;
 		}
-
-		updateSettings({
-			id,
-			value,
-		});
 	}, 75);
 </script>
 

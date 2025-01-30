@@ -17,7 +17,6 @@
 		"zod": "^3.24.1"
 	},
 	"dependencies": {
-		"@wordpress/api-fetch": "^6.55.0",
 		"clsx": "^2.1.1",
 		"tailwind-merge": "^1.14.0",
 		"tailwind-variants": "^0.1.20"

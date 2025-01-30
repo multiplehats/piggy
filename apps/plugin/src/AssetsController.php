@@ -234,6 +234,7 @@ final class AssetsController
 			'languages'                => $all_languages,
 			'storeApiNonce'            => wp_create_nonce('wc_store_api'),
 			'wcStoreApiNonceTimestamp' => time(),
+			'wpApiNonce'               => wp_create_nonce('wp_rest'),
 		];
 
 		return $config;

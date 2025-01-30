@@ -1,121 +1,4 @@
-import apiFetch from "@wordpress/api-fetch";
-import type { APIFetchMiddleware, APIFetchOptions } from "@wordpress/api-fetch";
 import type { ApiErrorResponse } from "@leat/types";
-
-const localStorageKey = "leat:storeApiNonce";
-
-// Stores the current nonce for the middleware.
-let currentNonce = "";
-let currentTimestamp = 0;
-
-try {
-	const storedNonceValue = window.localStorage.getItem(localStorageKey);
-	const parsedNonce = storedNonceValue
-		? (JSON.parse(storedNonceValue) as { nonce: string; timestamp: number })
-		: null;
-	currentNonce = parsedNonce?.nonce ?? "";
-	currentTimestamp = parsedNonce?.timestamp ?? 0;
-} catch {
-	// We can ignore an error from JSON parse.
-}
-
-/**
- * Returns whether or not this is a wc/store API request.
- */
-function isStoreApiRequest(options: APIFetchOptions) {
-	const url = options.url ?? options.path;
-
-	if (!url) {
-		return false;
-	}
-
-	if (!options.method || options.method === "GET") {
-		return false;
-	}
-
-	return /wc\/store\/v1\//.exec(url) !== null;
-}
-
-/**
- * Set the current nonce from a header object.
- */
-function setNonce(headers: APIFetchOptions["headers"] | Headers) {
-	let nonce: string | null = null;
-	let timestamp: string | null = null;
-
-	if (headers instanceof Headers) {
-		nonce = headers.get("Nonce");
-		timestamp = headers.get("Nonce-Timestamp");
-	} else if (typeof headers === "object" && headers !== null) {
-		nonce = headers.Nonce;
-		timestamp = headers["Nonce-Timestamp"];
-	}
-
-	if (nonce) {
-		updateNonce(nonce, timestamp);
-	}
-}
-
-/**
- * Updates the stored nonce within localStorage so it is persisted between page loads.
- */
-function updateNonce(nonce: string, timestamp: string | null) {
-	// If the "new" nonce matches the current nonce, we don't need to update.
-	if (nonce === currentNonce) {
-		return;
-	}
-
-	// Only update the nonce if newer. It might be coming from cache.
-	if (currentTimestamp && timestamp && Number(timestamp) < currentTimestamp) {
-		return;
-	}
-
-	currentNonce = nonce;
-	currentTimestamp = Number(timestamp) ?? Date.now() / 1000; // Convert ms to seconds to match php time()
-
-	// Update the persisted values.
-	window.localStorage.setItem(
-		localStorageKey,
-		JSON.stringify({
-			nonce: currentNonce,
-			timestamp: currentTimestamp,
-		})
-	);
-}
-
-function appendNonceHeader(request: APIFetchOptions) {
-	const headers = request.headers ?? {};
-
-	request.headers = {
-		...headers,
-		Nonce: currentNonce,
-	};
-
-	return request;
-}
-
-const wcStoreApiNonceMiddleware: APIFetchMiddleware = (options, next) => {
-	if (isStoreApiRequest(options)) {
-		options = appendNonceHeader(options);
-
-		if (Array.isArray(options?.data?.requests)) {
-			options.data.requests = options.data.requests.map(appendNonceHeader);
-		}
-	}
-
-	return next(options);
-};
-
-apiFetch.use(wcStoreApiNonceMiddleware);
-
-// @see https://github.com/woocommerce/woocommerce-blocks/blob/6cd3ab745be5a07ef486eee9f4f34c1708428154/assets/js/middleware/store-api-nonce.js#L114C1-L114C30
-// @ts-expect-error - This is actually available, but not typed in the package.
-apiFetch.setNonce = setNonce;
-
-updateNonce(
-	window.leatMiddlewareConfig.storeApiNonce,
-	window.leatMiddlewareConfig.wcStoreApiNonceTimestamp
-);
 
 export type ApiError = {
 	status: number;
@@ -123,79 +6,107 @@ export type ApiError = {
 	data: string;
 };
 
+type ApiFetchOptions = {
+	headers?: Record<string, string>;
+};
+
 // API Wrapper
 async function request<T = unknown>(
 	method = "GET",
 	path: string,
 	data?: unknown,
-	options?: APIFetchOptions
+	options?: ApiFetchOptions
 ): Promise<{
 	data: T | null;
 	error: ApiError | null;
 }> {
-	return apiFetch<T>({ path, method, data, ...options })
-		.then((data) => {
-			// In case someone accidentally returns a RouteException instead of throwing it.
-			if (
-				(
-					data as {
-						error_code: string;
-					}
-				)?.error_code
-			) {
-				const error = data as {
-					error_code: string;
-					additional_data?: {
-						message?: string;
-					};
-				};
+	try {
+		// Ensure we have the nonce
+		const nonce = window?.leatMiddlewareConfig?.wpApiNonce;
+		if (!nonce) {
+			console.error("WordPress API nonce is missing");
+		}
 
-				return {
-					data: null,
-					error: {
-						status: 200,
-						statusText: error.error_code,
-						data: error?.additional_data?.message ?? "Unknown error",
-					},
-				};
+		const response = await fetch(path.startsWith("http") ? path : `/wp-json${path}`, {
+			method,
+			headers: {
+				Accept: "application/json, */*;q=0.1",
+				"Cache-Control": "no-cache",
+				Pragma: "no-cache",
+				"X-WP-Nonce": nonce || "",
+				...(method !== "GET" && data ? { "Content-Type": "application/json" } : {}),
+				...(options?.headers || {}),
+			},
+			...(method !== "GET" && data ? { body: JSON.stringify(data) } : {}),
+			credentials: "same-origin",
+			mode: "same-origin", // Changed from "cors" to "same-origin"
+			referrerPolicy: "strict-origin-when-cross-origin",
+		});
+
+		if (!response.ok) {
+			const errorText = await response.text();
+			let errorData;
+			try {
+				errorData = JSON.parse(errorText);
+			} catch (e) {
+				errorData = errorText;
 			}
-
-			return {
-				data,
-				error: null,
-			};
-		})
-		.catch((e) => {
-			const err = e as ApiErrorResponse | null;
 
 			return {
 				data: null,
 				error: {
-					status: err?.data?.status ? err.data.status : 500,
-					statusText: err ? err.code : "unknown",
-					data: err ? err.message : "unknown",
+					status: response.status,
+					statusText: response.statusText,
+					data: errorData?.message || errorText,
 				},
 			};
-		});
+		}
+
+		const responseData = await response.json();
+
+		// Handle WordPress error responses
+		if (responseData?.error_code) {
+			return {
+				data: null,
+				error: {
+					status: 200,
+					statusText: responseData.error_code,
+					data: responseData?.additional_data?.message ?? "Unknown error",
+				},
+			};
+		}
+
+		return {
+			data: responseData as T,
+			error: null,
+		};
+	} catch (e) {
+		const err = e as ApiErrorResponse | null;
+		return {
+			data: null,
+			error: {
+				status: err?.data?.status ? err.data.status : 500,
+				statusText: err ? err.code : "unknown",
+				data: err ? err.message : "unknown",
+			},
+		};
+	}
 }
 
 /**
- * A simple SDK wrapper around the `@wordpress/api-fetch` package.
- *
- * @see https://github.com/woocommerce/woocommerce-blocks/blob/trunk/src/StoreApi/docs
- * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-api-fetch
+ * A simple fetch wrapper for making API requests
  */
 export const api = {
-	get: <T = unknown>(path: string, options?: APIFetchOptions) => {
+	get: <T = unknown>(path: string, options?: ApiFetchOptions) => {
 		return request<T>("GET", path, undefined, options);
 	},
-	post: <T = unknown>(path: string, data?: unknown, options?: APIFetchOptions) => {
+	post: <T = unknown>(path: string, data?: unknown, options?: ApiFetchOptions) => {
 		return request<T>("POST", path, data, options);
 	},
-	put: <T = unknown>(path: string, data?: unknown, options?: APIFetchOptions) => {
+	put: <T = unknown>(path: string, data?: unknown, options?: ApiFetchOptions) => {
 		return request<T>("PUT", path, data, options);
 	},
-	delete: <T = unknown>(path: string, options?: APIFetchOptions) => {
+	delete: <T = unknown>(path: string, options?: ApiFetchOptions) => {
 		return request<T>("DELETE", path, undefined, options);
 	},
 };

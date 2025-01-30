@@ -77,9 +77,9 @@ export class SettingsAdminService {
 	}
 
 	async getAllSettings(): Promise<GetSettingsResponse> {
-		const { data, error } = await api.get<GetSettingsResponse>("/leat/private/settings", {
-			cache: "no-store",
-		});
+		const { data, error } = await api.get<GetSettingsResponse>(
+			"/leat/private/settings?_locale=user"
+		);
 
 		if (error ?? !data) {
 			if (error) {
