@@ -10,7 +10,6 @@
 	"prefer-stable": true,
 	"minimum-stability": "dev",
 	"require": {
-		"kucrut/vite-for-wp": "^0.10.0",
 		"piggy/piggy-php-sdk": "^3.11"
 	},
 	"require-dev": {

@@ -3,7 +3,7 @@ name: Create translation files
 on:
     push:
         branches:
-            - develop
+            - main
         paths:
             - "apps/plugin/**"
             - "packages/**"

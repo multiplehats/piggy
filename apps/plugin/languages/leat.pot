@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Leat CRM 0.6.0\n"
+"Project-Id-Version: Leat CRM 0.6.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/leat-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-01-30T13:01:45+00:00\n"
+"POT-Creation-Date: 2025-02-04T11:02:12+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: leat-crm\n"
@@ -73,6 +73,10 @@ msgstr ""
 msgid "The Customer ID"
 msgstr ""
 
+#: src/Api/Routes/V1/EarnReward.php:99
+msgid "You have already claimed this."
+msgstr ""
+
 #: src/Api/Routes/V1/EarnRules.php:50
 msgid "Earn rules"
 msgstr ""
@@ -122,6 +126,10 @@ msgstr ""
 
 #: src/Api/Routes/V1/SpendRules.php:133
 msgid "Failed to save spend rule"
+msgstr ""
+
+#: src/Api/Routes/V1/SpendRulesClaim.php:145
+msgid "Insufficient credits"
 msgstr ""
 
 #: src/Api/Routes/V1/SyncVouchers.php:56
@@ -470,22 +478,22 @@ msgstr ""
 #: src/Domain/Services/EarnRules.php:74
 #: src/Domain/Services/PromotionRules.php:63
 #: src/Domain/Services/SpendRules.php:108
-#: dist/admin/assets/index-7e90eaf8.js:13461
-#: dist/admin/assets/index-7e90eaf8.js:14740
+#: dist/admin/assets/index-59d498ad.js:13461
+#: dist/admin/assets/index-59d498ad.js:14740
 msgid "Status"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:78
 #: src/Domain/Services/PromotionRules.php:67
 #: src/Domain/Services/SpendRules.php:112
-#: dist/admin/assets/index-7e90eaf8.js:8747
+#: dist/admin/assets/index-59d498ad.js:8747
 msgid "Active"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:79
 #: src/Domain/Services/PromotionRules.php:68
 #: src/Domain/Services/SpendRules.php:113
-#: dist/admin/assets/index-7e90eaf8.js:8749
+#: dist/admin/assets/index-59d498ad.js:8749
 msgid "Inactive"
 msgstr ""
 
@@ -496,8 +504,8 @@ msgstr ""
 #: src/Domain/Services/EarnRules.php:86
 #: src/Domain/Services/PromotionRules.php:83
 #: src/Domain/Services/SpendRules.php:120
-#: dist/admin/assets/index-7e90eaf8.js:13425
-#: dist/admin/assets/index-7e90eaf8.js:14704
+#: dist/admin/assets/index-59d498ad.js:13425
+#: dist/admin/assets/index-59d498ad.js:14704
 msgid "Title"
 msgstr ""
 
@@ -511,27 +519,27 @@ msgid "Type"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:99
-#: dist/admin/assets/index-7e90eaf8.js:14269
+#: dist/admin/assets/index-59d498ad.js:14269
 msgid "Like on Facebook"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:100
-#: dist/admin/assets/index-7e90eaf8.js:14273
+#: dist/admin/assets/index-59d498ad.js:14273
 msgid "Follow on TikTok"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:101
-#: dist/admin/assets/index-7e90eaf8.js:14277
+#: dist/admin/assets/index-59d498ad.js:14277
 msgid "Follow on Instagram"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:102
-#: dist/admin/assets/index-7e90eaf8.js:14281
+#: dist/admin/assets/index-59d498ad.js:14281
 msgid "Place an order"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:104
-#: dist/admin/assets/index-7e90eaf8.js:14286
+#: dist/admin/assets/index-59d498ad.js:14286
 msgid "Create an account"
 msgstr ""
 
@@ -988,7 +996,7 @@ msgid "Leat Promotion Voucher: %s"
 msgstr ""
 
 #. translators: %1$s table name, %2$s database user, %3$s database name.
-#: src/Installer.php:125
+#: src/Installer.php:147
 msgid "Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?"
 msgstr ""
 
@@ -1628,130 +1636,130 @@ msgstr ""
 msgid "Shortcode name is required."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:614
+#: dist/admin/assets/index-59d498ad.js:614
 msgid "Save"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:2410
+#: dist/admin/assets/index-59d498ad.js:2410
 msgid "Select a language"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:2438
+#: dist/admin/assets/index-59d498ad.js:2438
 msgid "Languages"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:7376
-#: dist/admin/assets/index-7e90eaf8.js:7699
+#: dist/admin/assets/index-59d498ad.js:7376
+#: dist/admin/assets/index-59d498ad.js:7699
 msgid "Rule settings"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:7399
+#: dist/admin/assets/index-59d498ad.js:7399
 msgid "The amount of credits customers will earn will be calculated based on the rules you have set up in the Leat Dashboard."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:7959
+#: dist/admin/assets/index-59d498ad.js:7959
 msgid "Select an option"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:9247
-#: dist/admin/assets/index-7e90eaf8.js:10072
-#: dist/admin/assets/index-7e90eaf8.js:27999
-#: dist/admin/assets/index-7e90eaf8.js:29201
-#: dist/admin/assets/index-7e90eaf8.js:30243
-#: dist/admin/assets/index-7e90eaf8.js:30989
+#: dist/admin/assets/index-59d498ad.js:9247
+#: dist/admin/assets/index-59d498ad.js:10072
+#: dist/admin/assets/index-59d498ad.js:27999
+#: dist/admin/assets/index-59d498ad.js:29201
+#: dist/admin/assets/index-59d498ad.js:30243
+#: dist/admin/assets/index-59d498ad.js:30989
 msgid "Save rule"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:9265
-#: dist/admin/assets/index-7e90eaf8.js:28017
-#: dist/admin/assets/index-7e90eaf8.js:31993
+#: dist/admin/assets/index-59d498ad.js:9265
+#: dist/admin/assets/index-59d498ad.js:28017
+#: dist/admin/assets/index-59d498ad.js:31993
 msgid "General"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:9327
+#: dist/admin/assets/index-59d498ad.js:9327
 msgid "Credit Calculation"
 msgstr ""
 
 #. translators: %s: Link to the Leat Dashboard
-#: dist/admin/assets/index-7e90eaf8.js:9359
+#: dist/admin/assets/index-59d498ad.js:9359
 msgid "These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href=\"%s\" class=\"underline\" target=\"_blank\" rel=\"noopener noreferrer\">Leat Dashboard</a>."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:9806
-#: dist/admin/assets/index-7e90eaf8.js:28935
+#: dist/admin/assets/index-59d498ad.js:9806
+#: dist/admin/assets/index-59d498ad.js:28935
 msgid "Details"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:10201
-#: dist/admin/assets/index-7e90eaf8.js:29342
+#: dist/admin/assets/index-59d498ad.js:10201
+#: dist/admin/assets/index-59d498ad.js:29342
 msgid "New rule"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:13443
-#: dist/admin/assets/index-7e90eaf8.js:14722
+#: dist/admin/assets/index-59d498ad.js:13443
+#: dist/admin/assets/index-59d498ad.js:14722
 msgid "Created at"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:14197
+#: dist/admin/assets/index-59d498ad.js:14197
 msgid "Create rules that reward customers with credits when they perform certain actions. For example, you can reward customers with credits when they create an account or place an order."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:15476
+#: dist/admin/assets/index-59d498ad.js:15476
 msgid "Create and manage spend rules to allow customers to spend their credits."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:18922
+#: dist/admin/assets/index-59d498ad.js:18922
 msgid "Existing Leat user?"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:18923
+#: dist/admin/assets/index-59d498ad.js:18923
 msgid "Connect your account to get started."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:18933
+#: dist/admin/assets/index-59d498ad.js:18933
 msgid "New to Leat?"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:18934
+#: dist/admin/assets/index-59d498ad.js:18934
 msgid "Create a new account to get started."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:21292
+#: dist/admin/assets/index-59d498ad.js:21292
 msgid "Loading your shops..."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:21308
+#: dist/admin/assets/index-59d498ad.js:21308
 msgid "There was an error loading your shops. Please try again later."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:21325
+#: dist/admin/assets/index-59d498ad.js:21325
 msgid "Your API key is invalid. Please check your API key and try again."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:21604
+#: dist/admin/assets/index-59d498ad.js:21604
 msgid "Connect to Leat"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:23871
+#: dist/admin/assets/index-59d498ad.js:23871
 msgid "Only customers who have an account on your store will be included in the loyalty program."
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:24271
+#: dist/admin/assets/index-59d498ad.js:24271
 msgid "Back"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:24289
+#: dist/admin/assets/index-59d498ad.js:24289
 msgid "Save and continue"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:31998
+#: dist/admin/assets/index-59d498ad.js:31998
 msgid "Loyalty Program"
 msgstr ""
 
-#: dist/admin/assets/index-7e90eaf8.js:32008
+#: dist/admin/assets/index-59d498ad.js:32008
 msgid "Customer Dashboard"
 msgstr ""
 
-#: dist/frontend/assets/index-19c5d2fe.js:3543
+#: dist/frontend/assets/index-c2f66eed.js:3632
 msgid "Reward image"
 msgstr ""

@@ -23,7 +23,6 @@
 
 		const creditsName = getTranslatedText($pluginSettings?.credits_name);
 
-
 		// eslint-disable-next-line regexp/no-super-linear-backtracking
 		const pattern = /^(.*?)\s*\{\{\s*credits\s*\}\}\s*(.*)$/;
 		const match = text.match(pattern);
@@ -33,9 +32,9 @@
 		}
 
 		return {
-			before: `${replaceStrings(match[1], [{ "{{credits_currency}}": creditsName ?? "" }]).trim()  } `,
+			before: `${replaceStrings(match[1], [{ "{{credits_currency}}": creditsName ?? "" }]).trim()} `,
 			credits: credits?.toString() ?? "0",
-			after: ` ${  replaceStrings(match[2] || "", [{ "{{credits_currency}}": creditsName ?? "" }]).trim()}`
+			after: ` ${replaceStrings(match[2] || "", [{ "{{credits_currency}}": creditsName ?? "" }]).trim()}`,
 		};
 	}
 
@@ -68,7 +67,6 @@
 <section>
 	<h2 class="leat-dashboard__header">
 		{#if isLoggedIn}
-
 			{#if isContactNull}
 				{getTranslatedText($pluginSettings.dashboard_title_join_program)}
 			{:else}
@@ -76,14 +74,14 @@
 					getTranslatedText($pluginSettings.dashboard_title_logged_in),
 					$contactStore?.contact?.balance?.credits ?? 0
 				)}
-				{title.before}<span class="credits">{title.credits}</span>{title.after}
+				{title.before}<span class="leat-credits">{title.credits}</span>{title.after}
 			{/if}
 		{:else}
 			{@const title = getHeaderTitle(
 				getTranslatedText($pluginSettings.dashboard_title_logged_out) ?? "",
 				400
 			)}
-			{title.before}<span class="credits">{title.credits}</span>{title.after}
+			{title.before}<span class="leat-credits">{title.credits}</span>{title.after}
 		{/if}
 	</h2>
 

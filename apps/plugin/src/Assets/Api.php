@@ -1,9 +1,10 @@
 <?php
+
 namespace Leat\Assets;
 
 use Leat\Domain\Package;
 use Exception;
-use Kucrut\Vite;
+use Leat\Assets\Vite;
 
 /**
  * The Api class provides an interface to various asset registration helpers.
@@ -12,7 +13,8 @@ use Kucrut\Vite;
  *
  * @since 2.5.0
  */
-class Api {
+class Api
+{
 	/**
 	 * Stores inline scripts already enqueued.
 	 *
@@ -32,7 +34,8 @@ class Api {
 	 *
 	 * @param Package $package An instance of Package.
 	 */
-	public function __construct( Package $package ) {
+	public function __construct(Package $package)
+	{
 		$this->package = $package;
 	}
 
@@ -43,9 +46,10 @@ class Api {
 	 *                     directory).
 	 * @return string The cache buster value to use for the given file.
 	 */
-	protected function get_file_version( $file ) {
-		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG && file_exists( $this->package->get_path() . $file ) ) {
-			return filemtime( $this->package->get_path( trim( $file, '/' ) ) );
+	protected function get_file_version($file)
+	{
+		if (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG && file_exists($this->package->get_path() . $file)) {
+			return filemtime($this->package->get_path(trim($file, '/')));
 		}
 		return $this->package->get_version();
 	}
@@ -58,8 +62,9 @@ class Api {
 	 *
 	 * @return string
 	 */
-	protected function get_asset_url( $relative_path = '' ) {
-		return $this->package->get_url( $relative_path );
+	protected function get_asset_url($relative_path = '')
+	{
+		return $this->package->get_url($relative_path);
 	}
 
 	/**
@@ -69,9 +74,10 @@ class Api {
 	 *
 	 * @return string|boolean False if metadata file is not found for the block.
 	 */
-	public function get_block_metadata_path( $block_name ) {
-		$path_to_metadata_from_plugin_root = $this->package->get_path( 'dist/' . $block_name . '/block.json' );
-		if ( ! file_exists( $path_to_metadata_from_plugin_root ) ) {
+	public function get_block_metadata_path($block_name)
+	{
+		$path_to_metadata_from_plugin_root = $this->package->get_path('dist/' . $block_name . '/block.json');
+		if (! file_exists($path_to_metadata_from_plugin_root)) {
 			return false;
 		}
 		return $path_to_metadata_from_plugin_root;
@@ -85,22 +91,23 @@ class Api {
 	 *
 	 * @return array src, version and dependencies of the script.
 	 */
-	public function get_script_data( $relative_src, $dependencies = [] ) {
+	public function get_script_data($relative_src, $dependencies = [])
+	{
 		$src     = '';
 		$version = '1';
 
-		if ( $relative_src ) {
-			$src        = $this->get_asset_url( $relative_src );
+		if ($relative_src) {
+			$src        = $this->get_asset_url($relative_src);
 			$asset_path = $this->package->get_path(
-				str_replace( '.js', '.asset.php', $relative_src )
+				str_replace('.js', '.asset.php', $relative_src)
 			);
 
-			if ( file_exists( $asset_path ) ) {
+			if (file_exists($asset_path)) {
 				$asset        = require $asset_path;
-				$dependencies = isset( $asset['dependencies'] ) ? array_merge( $asset['dependencies'], $dependencies ) : $dependencies;
-				$version      = ! empty( $asset['version'] ) ? $asset['version'] : $this->get_file_version( $relative_src );
+				$dependencies = isset($asset['dependencies']) ? array_merge($asset['dependencies'], $dependencies) : $dependencies;
+				$version      = ! empty($asset['version']) ? $asset['version'] : $this->get_file_version($relative_src);
 			} else {
-				$version = $this->get_file_version( $relative_src );
+				$version = $this->get_file_version($relative_src);
 			}
 		}
 
@@ -129,7 +136,8 @@ class Api {
 	 * @param array  $dependencies  Optional. An array of registered script handles this script depends on. Default empty array.
 	 * @param bool   $has_i18n      Optional. Whether to add a script translation call to this file. Default: true.
 	 */
-	public function register_script( $handle, $relative_entry, $folder = 'frontend', $dependencies = [], $has_i18n = true ) {
+	public function register_script($handle, $relative_entry, $folder = 'frontend', $dependencies = [], $has_i18n = true)
+	{
 		/**
 		 * Filters the list of script dependencies.
 		 *
@@ -137,10 +145,10 @@ class Api {
 		 * @param string $handle The script's handle.
 		 * @return array
 		 */
-		$script_dependencies = apply_filters( 'leat_register_script_dependencies', $dependencies, $handle );
+		$script_dependencies = apply_filters('leat_register_script_dependencies', $dependencies, $handle);
 
-		Vite\enqueue_asset(
-			$this->get_manifest_path( $folder ),
+		Vite::enqueue_asset(
+			$this->get_manifest_path($folder),
 			$relative_entry,
 			array(
 				'dependencies' => $script_dependencies,
@@ -149,8 +157,8 @@ class Api {
 			)
 		);
 
-		if ( $has_i18n && function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( $handle, 'leat-crm', $this->package->get_path( 'languages' ) );
+		if ($has_i18n && function_exists('wp_set_script_translations')) {
+			wp_set_script_translations($handle, 'leat-crm', $this->package->get_path('languages'));
 		}
 	}
 
@@ -162,14 +170,15 @@ class Api {
 	 *
 	 * @return string The path to the manifest.
 	 */
-	public function get_manifest_path( $folder = 'frontend' ) {
-		$manifest = $this->package->get_path( "dist/$folder" );
+	public function get_manifest_path($folder = 'frontend')
+	{
+		$manifest = $this->package->get_path("dist/$folder");
 
-		if ( ! file_exists( $manifest ) ) {
+		if (! file_exists($manifest)) {
 			throw new \Exception(
 				sprintf(
 					'Manifest path not found: %s',
-					esc_html( $manifest )
+					esc_html($manifest)
 				),
 				500
 			);
@@ -183,7 +192,8 @@ class Api {
 	 *
 	 * @param string $folder The folder in which to look.
 	 */
-	public function get_manifest_path_url( string $folder = 'frontend' ) {
+	public function get_manifest_path_url(string $folder = 'frontend')
+	{
 		return $this->package->get_url() . "dist/$folder/";
 	}
 
@@ -199,11 +209,12 @@ class Api {
 	 * @param string $media        Optional. The media for which this stylesheet has been defined. Default 'all'. Accepts media types like
 	 *                             'all', 'print' and 'screen', or media queries like '(orientation: portrait)' and '(max-width: 640px)'.
 	 */
-	public function register_style( $handle, $relative_src, $deps = [], $media = 'all' ) {
-		$filename = str_replace( plugins_url( '/', __DIR__ ), '', $relative_src );
-		$src      = $this->get_asset_url( $relative_src );
-		$ver      = $this->get_file_version( $filename );
-		wp_register_style( $handle, $src, $deps, $ver, $media );
+	public function register_style($handle, $relative_src, $deps = [], $media = 'all')
+	{
+		$filename = str_replace(plugins_url('/', __DIR__), '', $relative_src);
+		$src      = $this->get_asset_url($relative_src);
+		$ver      = $this->get_file_version($filename);
+		wp_register_style($handle, $src, $deps, $ver, $media);
 	}
 
 	/**
@@ -212,7 +223,8 @@ class Api {
 	 * @param   string $folder  Folder for asset path.
 	 * @return  string             The generated path.
 	 */
-	public function get_dist_path( $folder = 'frontend' ) {
+	public function get_dist_path($folder = 'frontend')
+	{
 		return "dist/$folder/";
 	}
 }
