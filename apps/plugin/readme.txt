@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.5.9
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,3 +86,20 @@ Yes, Leat is fully GDPR compliant. We process all data in accordance with EU pri
 = What happens if I uninstall the plugin? =
 
 Your customer data and loyalty program settings are safely stored in your Leat account. If you reinstall the plugin later, you can simply reconnect using your API key and all data will be restored.
+
+== Changelog ==
+
+= 0.6.0 =
+
+* Feat: Added automatic voucher sync between Leat and WooCommerce
+  - Vouchers created in Leat are automatically synced as WooCommerce coupons
+  - Real-time sync when vouchers are redeemed, updated, or deleted
+  - Maintains contact-specific restrictions and custom attributes
+  - Handles expiration dates and usage limits
+  - Note: Activation date is not yet supported, only expiration date.
+
+= 0.6.1 =
+
+* Bug: fixed an issue where URL parameters in script tags could cause conflicts with caching plugins by stripping parameters before comparison
+* Enhancement: Added span element with class 'leat-credits' around credits text in customer dashboard for improved styling control
+* Bug: Improved coupon visibility logic to prevent coupons from being displayed to customers under certain unintended conditions
