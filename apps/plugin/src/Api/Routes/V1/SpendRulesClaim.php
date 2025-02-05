@@ -106,7 +106,7 @@ class SpendRulesClaim extends AbstractRoute
 		}
 
 		// Get the contact UUID for the user.
-		$contact = $connection->get_contact($user_id);
+		$contact = $connection->get_contact_by_wp_id($user_id);
 		$uuid    = $contact['uuid'];
 
 		if (! $uuid) {

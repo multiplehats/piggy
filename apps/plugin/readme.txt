@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.6.1
+Stable tag: 0.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,3 +103,7 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 * Bug: fixed an issue where URL parameters in script tags could cause conflicts with caching plugins by stripping parameters before comparison
 * Enhancement: Added span element with class 'leat-credits' around credits text in customer dashboard for improved styling control
 * Bug: Improved coupon visibility logic to prevent coupons from being displayed to customers under certain unintended conditions
+
+= 0.6.2 =
+
+* Bug: fixed an issue where it was not possible to claim spend rule under certain conditions
