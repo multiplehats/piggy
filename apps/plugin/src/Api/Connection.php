@@ -13,7 +13,6 @@ use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
 use Piggy\Api\Models\Loyalty\Receptions\RewardReception;
 use Piggy\Api\Exceptions\PiggyRequestException;
 use Leat\Domain\Services\SpendRules;
-use Leat\Domain\Services\PromotionRules;
 use Leat\Utils\Logger;
 use Leat\Utils\Users;
 use Piggy\Api\Models\Giftcards\Giftcard;

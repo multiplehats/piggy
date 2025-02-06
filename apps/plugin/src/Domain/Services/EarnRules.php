@@ -3,16 +3,40 @@
 namespace Leat\Domain\Services;
 
 /**
- * Class EarnRules
+ * Handles the business logic for earn rules in the loyalty program.
+ *
+ * This class manages earn rules, which define how users can earn credits through
+ * various actions like social media follows, placing orders, or creating accounts.
+ *
+
  */
 class EarnRules
 {
+	/**
+	 * Gets post meta data with fallback value support.
+	 *
+
+	 *
+	 * @param int    $post_id        The post ID.
+	 * @param string $key            The meta key to retrieve.
+	 * @param mixed  $fallback_value Optional. Default value if meta is empty.
+	 * @return mixed The meta value or fallback value if empty.
+	 */
 	private function get_post_meta_data($post_id, $key, $fallback_value = null)
 	{
 		$value = get_post_meta($post_id, $key, true);
 		return empty($value) ? $fallback_value : $value;
 	}
 
+	/**
+	 * Retrieves earn rules by their type.
+	 *
+
+	 *
+	 * @param string       $type        The earn rule type to filter by.
+	 * @param string|array $post_status Optional. Post status(es) to include. Default ['publish'].
+	 * @return array|null Array of formatted earn rules or null if none found.
+	 */
 	public function get_earn_rules_by_type($type, $post_status = ['publish'])
 	{
 		$args = [

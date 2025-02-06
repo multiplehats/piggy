@@ -6,25 +6,44 @@ use Leat\Utils\Coupons;
 use Leat\Utils\Logger;
 
 /**
- * Class SpendRules
+ * Handles spend rule management and operations.
  *
+ * This class manages spend rules for the loyalty program, including creation,
+ * retrieval, formatting, and coupon generation for spend rules.
+ *
+
+ * @package Leat\Domain\Services
  * @internal
  */
 class SpendRules
 {
-
 	/**
-	 * Logger instance.
+	 * Logger instance for debugging and error tracking.
 	 *
+
 	 * @var Logger
 	 */
 	private $logger;
 
+	/**
+	 * Initializes a new instance of the SpendRules class.
+	 *
+
+	 */
 	public function __construct()
 	{
 		$this->logger = new Logger();
 	}
 
+	/**
+	 * Retrieves post meta data with fallback value support.
+	 *
+
+	 * @param int    $post_id        The post ID to retrieve meta for.
+	 * @param string $key            The meta key to retrieve.
+	 * @param mixed  $fallback_value Optional. Value to return if meta is empty.
+	 * @return mixed The meta value or fallback value if empty.
+	 */
 	private function get_post_meta_data($post_id, $key, $fallback_value = null)
 	{
 		$value = get_post_meta($post_id, $key, true);
@@ -32,11 +51,12 @@ class SpendRules
 	}
 
 	/**
-	 * Get spend rules by type.
+	 * Retrieves spend rules filtered by type.
 	 *
-	 * @param string|null $type The type of spend rule.
-	 * @param array       $post_status The status of the spend rule.
-	 * @return array|null The spend rules, or null if none found.
+
+	 * @param string|null $type        Optional. The type of spend rule to filter by.
+	 * @param array      $post_status Optional. Array of post statuses to include. Default ['publish'].
+	 * @return array|null Array of formatted spend rules or null if none found.
 	 */
 	public function get_spend_rules_by_type($type, $post_status = ['publish'])
 	{
@@ -73,10 +93,11 @@ class SpendRules
 	}
 
 	/**
-	 * Get a spend rule by its ID.
+	 * Retrieves a spend rule by its ID.
 	 *
-	 * @param int $id Spend Rule ID.
-	 * @return array|null
+
+	 * @param int $id The spend rule post ID.
+	 * @return array|null Formatted spend rule data or null if not found.
 	 */
 	public function get_by_id($id)
 	{
@@ -90,10 +111,14 @@ class SpendRules
 	}
 
 	/**
-	 * Convert a Spend Rule post into an object suitable for a WP REST API response.
+	 * Formats a spend rule post for API response.
 	 *
-	 * @param \WP_Post $post Spend Rule post object.
-	 * @return array
+	 * Converts a WordPress post object into a structured array containing
+	 * all spend rule settings and metadata.
+	 *
+
+	 * @param \WP_Post $post The spend rule post object to format.
+	 * @return array Formatted spend rule data.
 	 */
 	public function get_formatted_post($post)
 	{
@@ -280,6 +305,13 @@ class SpendRules
 		return $spend_rule;
 	}
 
+	/**
+	 * Gets the description text for spend rule labels.
+	 *
+
+	 * @param string $type The spend rule type.
+	 * @return string The formatted description text with placeholder information.
+	 */
 	private function get_label_description($type)
 	{
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
@@ -288,6 +320,13 @@ class SpendRules
 		return sprintf(__("The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s", 'leat-crm'), $placeholders);
 	}
 
+	/**
+	 * Gets the default label template for a spend rule type.
+	 *
+
+	 * @param string $type The spend rule type.
+	 * @return array Default label configuration.
+	 */
 	private function get_default_label($type)
 	{
 		return [
@@ -295,6 +334,13 @@ class SpendRules
 		];
 	}
 
+	/**
+	 * Gets the description text for spend rule descriptions.
+	 *
+
+	 * @param string $type The spend rule type.
+	 * @return string The formatted description text with placeholder information.
+	 */
 	private function get_description_placeholder($type)
 	{
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
@@ -303,6 +349,13 @@ class SpendRules
 		return sprintf(__('Add a description of the reward. Available placeholders: %s', 'leat-crm'), $placeholders);
 	}
 
+	/**
+	 * Gets the instructions text for spend rule instructions.
+	 *
+
+	 * @param string $type The spend rule type.
+	 * @return string The formatted instructions text with placeholder information.
+	 */
 	private function get_instructions_placeholder($type)
 	{
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
@@ -311,6 +364,13 @@ class SpendRules
 		return sprintf(__('Add instructions on how to redeem the reward. Available placeholders: %s', 'leat-crm'), $placeholders);
 	}
 
+	/**
+	 * Gets the fulfillment text for spend rule fulfillments.
+	 *
+
+	 * @param string $type The spend rule type.
+	 * @return string The formatted fulfillment text with placeholder information.
+	 */
 	private function get_fulfillment_placeholder($type)
 	{
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
@@ -319,6 +379,13 @@ class SpendRules
 		return sprintf(__('Add instructions on how fulfillment will be handled. Available placeholders: %s', 'leat-crm'), $placeholders);
 	}
 
+	/**
+	 * Deletes a spend rule by its Leat UUID.
+	 *
+
+	 * @param string $uuid The Leat reward UUID to find and delete.
+	 * @return void
+	 */
 	public function delete_spend_rule_by_leat_uuid($uuid)
 	{
 		$posts = get_posts(
@@ -340,8 +407,12 @@ class SpendRules
 	}
 
 	/**
-	 * Get the applicable spend rule for a given credit amount.
+	 * Gets the applicable spend rule for a given credit amount.
 	 *
+	 * Finds the spend rule with the highest credit cost that is still within
+	 * the user's available credit amount.
+	 *
+
 	 * @param int $credit_amount The available credit amount.
 	 * @return array|null The applicable spend rule, or null if none found.
 	 */
@@ -368,6 +439,14 @@ class SpendRules
 		return $applicable_rule;
 	}
 
+	/**
+	 * Creates or updates a spend rule based on a Leat reward.
+	 *
+
+	 * @param array    $reward           The Leat reward data.
+	 * @param int|null $existing_post_id Optional. Existing post ID to update.
+	 * @return void
+	 */
 	public function create_or_update_spend_rule_from_reward($reward, $existing_post_id = null)
 	{
 		$post_data = array(
@@ -396,6 +475,13 @@ class SpendRules
 		}
 	}
 
+	/**
+	 * Retrieves a spend rule by its Leat UUID.
+	 *
+
+	 * @param string $uuid The Leat reward UUID.
+	 * @return array|null Formatted spend rule or null if not found.
+	 */
 	public function get_spend_rule_by_leat_uuid($uuid)
 	{
 		$cache_key = 'leat_spend_rule_' . md5($uuid);
@@ -420,6 +506,13 @@ class SpendRules
 		return null;
 	}
 
+	/**
+	 * Retrieves a formatted spend rule by its post ID.
+	 *
+
+	 * @param int $id The post ID.
+	 * @return array|null Formatted spend rule or null if not found.
+	 */
 	public function get_spend_rule_by_id($id)
 	{
 		$post = get_post($id);
@@ -431,6 +524,13 @@ class SpendRules
 		return $this->get_formatted_post($post);
 	}
 
+	/**
+	 * Converts the discount type value to WooCommerce format.
+	 *
+
+	 * @param string $value The discount type value ('percentage' or 'fixed').
+	 * @return string|null The WooCommerce discount type or null if invalid.
+	 */
 	private function get_discount_type($value)
 	{
 		if ('percentage' === $value) {
@@ -442,6 +542,14 @@ class SpendRules
 		return null;
 	}
 
+	/**
+	 * Creates a WooCommerce coupon for a spend rule.
+	 *
+
+	 * @param array    $formatted_spend_rule The formatted spend rule data.
+	 * @param int|null $user_id             Optional. The user ID to restrict the coupon to.
+	 * @return string The generated coupon code.
+	 */
 	public function create_coupon_for_spend_rule($formatted_spend_rule, $user_id)
 	{
 		$coupon_code = wp_generate_uuid4();
@@ -524,10 +632,11 @@ class SpendRules
 	}
 
 	/**
-	 * Query coupons by user ID.
+	 * Retrieves all valid and usable coupons for a specific user.
 	 *
+
 	 * @param int $user_id The user ID.
-	 * @return array The list of valid, usable coupons associated with the user ID.
+	 * @return array List of valid coupons with their associated spend rules.
 	 */
 	public function get_coupons_by_user_id($user_id)
 	{

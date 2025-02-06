@@ -10,24 +10,29 @@ use Leat\Installer;
 use Leat\Registry\Container;
 use Leat\Migration;
 use Leat\Api\Api;
-use Leat\Domain\Services\CustomerSession;
 use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\PromotionRules;
-use Leat\Domain\Services\GiftcardProduct;
 use Leat\Domain\Services\SpendRules;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Syncing\SyncPromotions;
-use Leat\Domain\Services\WebhookManager;
 use Leat\Domain\Syncing\SyncRewards;
+use Leat\Domain\Services\WebhookManager;
+use Leat\Domain\Services\LoyaltyManager;
+use Leat\Domain\Services\Customer\CustomerAttributeSync;
+use Leat\Domain\Services\Customer\CustomerCreationHandler;
+use Leat\Domain\Services\Customer\CustomerProfileDisplay;
+use Leat\Domain\Services\Order\OrderProcessor;
+use Leat\Domain\Services\Order\OrderCreditHandler;
+use Leat\Domain\Services\Cart\CartManager;
+use Leat\Domain\Services\GiftcardProduct;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
 use Leat\RedirectController;
+use Leat\Utils\Logger;
 
 /**
  * Takes care of bootstrapping the plugin.
- *
- * @since 2.5.0
  */
 class Bootstrap
 {
@@ -54,6 +59,13 @@ class Bootstrap
 	private $migration;
 
 	/**
+	 * Holds the Logger instance
+	 *
+	 * @var Logger
+	 */
+	private $logger;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Container $container  The Dependency Injection Container.
@@ -77,8 +89,6 @@ class Bootstrap
 					 *
 					 * This hook is intended to be used as a safe event hook for when the plugin has been loaded, and all
 					 * dependency requirements have been met.
-					 *
-					 * @since 1.0.0
 					 */
 					do_action('leat_loaded');
 				}
@@ -93,8 +103,6 @@ class Bootstrap
 	{
 		/**
 		 * Action triggered before Leat initialization begins.
-		 *
-		 * @since 1.0.0
 		 */
 		do_action('leat_before_init');
 
@@ -122,7 +130,7 @@ class Bootstrap
 			// $this->container->get(RedirectController::class)->init();
 		}
 		$this->container->get(CustomerDashboardShortcode::class)->init();
-		$this->container->get(CustomerSession::class);
+		$this->container->get(LoyaltyManager::class);
 		$this->container->get(SyncVouchers::class)->init();
 		$this->container->get(SyncPromotions::class)->init();
 		$this->container->get(SyncRewards::class)->init();
@@ -131,8 +139,6 @@ class Bootstrap
 
 		/**
 		 * Action triggered after Leat initialization finishes.
-		 *
-		 * @since 1.0.0
 		 */
 		do_action('leat_init');
 	}
@@ -243,6 +249,13 @@ class Bootstrap
 	protected function register_dependencies()
 	{
 		$this->container->register(
+			Logger::class,
+			function (Container $container) {
+				return new Logger('leat');
+			}
+		);
+
+		$this->container->register(
 			PostTypeController::class,
 			function (Container $container) {
 				return new PostTypeController();
@@ -321,9 +334,72 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
-			CustomerSession::class,
+			CartManager::class,
 			function (Container $container) {
-				return new CustomerSession($container->get(Connection::class), $container->get(EarnRules::class), $container->get(SpendRules::class), $container->get(Settings::class));
+				return new CartManager($container->get(SpendRules::class), $container->get(Logger::class));
+			}
+		);
+		$this->container->register(
+			CustomerAttributeSync::class,
+			function (Container $container) {
+				return new CustomerAttributeSync(
+					$container->get(Connection::class),
+					$container->get(Logger::class)
+				);
+			}
+		);
+		$this->container->register(
+			CustomerCreationHandler::class,
+			function (Container $container) {
+				return new CustomerCreationHandler(
+					$container->get(Connection::class),
+					$container->get(EarnRules::class),
+					$container->get(Logger::class),
+				);
+			}
+		);
+		$this->container->register(
+			CustomerProfileDisplay::class,
+			function (Container $container) {
+				return new CustomerProfileDisplay(
+					$container->get(Connection::class),
+					$container->get(Logger::class),
+				);
+			}
+		);
+		$this->container->register(
+			OrderProcessor::class,
+			function (Container $container) {
+				return new OrderProcessor(
+					$container->get(Connection::class),
+					$container->get(EarnRules::class)
+				);
+			}
+		);
+		$this->container->register(
+			OrderCreditHandler::class,
+			function (Container $container) {
+				return new OrderCreditHandler(
+					$container->get(Connection::class)
+				);
+			}
+		);
+		$this->container->register(
+			LoyaltyManager::class,
+			function (Container $container) {
+				return new LoyaltyManager(
+					$container->get(Logger::class),
+					$container->get(Connection::class),
+					$container->get(EarnRules::class),
+					$container->get(SpendRules::class),
+					$container->get(Settings::class),
+					$container->get(CustomerAttributeSync::class),
+					$container->get(CustomerCreationHandler::class),
+					$container->get(CustomerProfileDisplay::class),
+					$container->get(OrderProcessor::class),
+					$container->get(OrderCreditHandler::class),
+					$container->get(CartManager::class)
+				);
 			}
 		);
 		$this->container->register(
@@ -401,7 +477,6 @@ class Bootstrap
 		 * Filters the deprecation notice for a dependency.
 		 *
 		 * @param string $error_message The error message.
-		 * @since 1.0.0
 		 */
 		do_action('deprecated_function_run', $function, $replacement, $version);
 
@@ -419,8 +494,6 @@ class Bootstrap
 
 		/**
 		 * Filters whether to trigger a PHP error for deprecated dependencies.
-		 *
-		 * @since 1.0.0
 		 */
 		if (! apply_filters('deprecated_function_trigger_error', true)) {
 			$log_error = true;

@@ -1,12 +1,12 @@
 <?php
+
 namespace Leat\Registry;
 
 /**
  * A definition for the SharedType dependency type.
- *
- * @since 2.5.0
  */
-class SharedType extends AbstractDependencyType {
+class SharedType extends AbstractDependencyType
+{
 
 	/**
 	 * Holds a cached instance of the value stored (or returned) internally.
@@ -23,9 +23,10 @@ class SharedType extends AbstractDependencyType {
 	 *
 	 * @return mixed
 	 */
-	public function get( Container $container ) {
-		if ( empty( $this->shared_instance ) ) {
-			$this->shared_instance = $this->resolve_value( $container );
+	public function get(Container $container)
+	{
+		if (empty($this->shared_instance)) {
+			$this->shared_instance = $this->resolve_value($container);
 		}
 		return $this->shared_instance;
 	}

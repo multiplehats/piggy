@@ -12,7 +12,6 @@ use WP_Post;
 /**
  * AssetsController class.
  *
- * @since 5.0.0
  * @internal
  */
 final class AssetsController

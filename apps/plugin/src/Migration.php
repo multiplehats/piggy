@@ -1,12 +1,12 @@
 <?php
+
 namespace Leat;
 
 /**
  * Takes care of the migrations.
- *
- * @since 2.5.0
  */
-class Migration {
+class Migration
+{
 	/**
 	 * DB updates and callbacks that need to be run per version.
 	 *
@@ -26,20 +26,21 @@ class Migration {
 	 *
 	 * @var array
 	 */
-	public function run_migrations() {
-		$current_db_version = get_option( 'leat_version' );
+	public function run_migrations()
+	{
+		$current_db_version = get_option('leat_version');
 
-		if ( empty( $current_db_version ) ) {
+		if (empty($current_db_version)) {
 			return;
 		}
 
-		if ( empty( $this->db_upgrades ) ) {
+		if (empty($this->db_upgrades)) {
 			return;
 		}
 
-		foreach ( $this->db_upgrades as $version => $update_callbacks ) {
-			if ( version_compare( $current_db_version, $version, '<' ) ) {
-				foreach ( $update_callbacks as $update_callback ) {
+		foreach ($this->db_upgrades as $version => $update_callbacks) {
+			if (version_compare($current_db_version, $version, '<')) {
+				foreach ($update_callbacks as $update_callback) {
 					$this->{$update_callback}();
 				}
 			}

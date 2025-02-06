@@ -262,7 +262,7 @@ class Settings
 		/**
 		 * Filter the default settings.
 		 *
-		 * @since 1.0.0
+
 		 */
 		return apply_filters('leat_default_settings', $settings, $this);
 	}
