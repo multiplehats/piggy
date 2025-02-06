@@ -33,7 +33,7 @@ Leat's all-in-one platform empowers you to:
 
 = External Services =
 
-This plugin requires an API connection to [Leat](https://www.leat.com) and it's business portal ([business.leat.eu](https://business.leat.com)) for core functionality including reward management, customer tracking, and loyalty point calculations.
+This plugin requires an API connection to [Leat](https://www.leat.com) and its business portal ([business.leat.eu](https://business.leat.com)) for core functionality including reward management, customer tracking, and loyalty point calculations.
 
 **Data transmitted includes**:
 - Customer information (email, name, order history, purchase categories)
@@ -100,14 +100,17 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 
 = 0.6.1 =
 
-* Bug: fixed an issue where URL parameters in script tags could cause conflicts with caching plugins by stripping parameters before comparison
+* Bug fix: fixed an issue where URL parameters in script tags could cause conflicts with caching plugins by stripping parameters before comparison
 * Enhancement: Added span element with class 'leat-credits' around credits text in customer dashboard for improved styling control
-* Bug: Improved coupon visibility logic to prevent coupons from being displayed to customers under certain unintended conditions
+* Bug fix: Improved coupon visibility logic to prevent coupons from being displayed to customers under certain unintended conditions
 
 = 0.6.2 =
 
-* Bug: fixed an issue where it was not possible to claim spend rule under certain conditions
+* Bug fix: fixed an issue where it was not possible to claim spend rule under certain conditions
 
 = 0.6.3 =
 
-* Bug: Fixed gift card completion message showing on all orders instead of only orders containing gift cards
+* Bug fix: Fixed gift card completion message showing on all orders instead of only orders containing gift cards
+* Bug fix: Fixed reward images not syncing properly for newer rewards
+* Enhancement: When a coupon is removed from the cart for a free product, the free product will also be removed for WC Store API requests
+* Enhancement: After claiming a reward, the dashboard now scrolls up to the coupon section

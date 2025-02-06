@@ -132,6 +132,10 @@ abstract class AbstractSync
             $items = $this->connection->get_items_for_sync($this->get_action_name());
             if (!$items) {
                 $this->logger->info("No items found for {$this->get_action_name()} sync");
+
+                // IF that's the case, we'll delete all posts for this sync.
+                $this->delete_all_posts();
+
                 $this->update_sync_success();
                 return true;
             }
@@ -173,7 +177,7 @@ abstract class AbstractSync
             }
 
             // Move duplicate handling to after all items are processed
-            $this->handleDuplicates($api_uuids);
+            $this->handle_duplicates($api_uuids);
 
             $this->logger->info("Sync completed. Updated: {$this->stats['items_updated']}, Created: {$this->stats['items_created']}, Deleted: {$this->stats['items_deleted']}");
             $this->update_sync_success();
@@ -182,6 +186,19 @@ abstract class AbstractSync
             $this->update_sync_failure($th->getMessage());
             $this->logger->error("Failed to start {$this->get_action_name()} sync: " . $th->getMessage());
             throw $th;
+        }
+    }
+
+    protected function delete_all_posts(): void
+    {
+        $posts = get_posts([
+            'post_type' => $this->get_post_type(),
+            'posts_per_page' => -1,
+            'post_status' => ['publish', 'draft', 'pending'],
+        ]);
+
+        foreach ($posts as $post) {
+            wp_delete_post($post->ID, true);
         }
     }
 
@@ -222,7 +239,7 @@ abstract class AbstractSync
         }
     }
 
-    protected function handleDuplicates(array $uuids): void
+    protected function handle_duplicates(array $uuids): void
     {
         $this->logger->info("Starting duplicate handling for " . count($uuids) . " UUIDs");
 

@@ -459,8 +459,8 @@ class SpendRules
 			),
 		);
 
-		if (isset($reward['image'])) {
-			$post_data['meta_input']['_leat_spend_rule_image'] = $reward['image'];
+		if (isset($reward['media'])) {
+			$post_data['meta_input']['_leat_spend_rule_image'] = $reward['media']['value'];
 		}
 
 		if ($existing_post_id) {
@@ -584,8 +584,21 @@ class SpendRules
 
 		switch ($formatted_spend_rule['type']['value']) {
 			case 'FREE_PRODUCT':
-			case 'ORDER_DISCOUNT':
 				$coupon->set_amount(0);
+
+				// Set product IDs for product restrictions.
+				// Note: For 100% discounts, we intentionally skip setting product IDs due to
+				// a WooCommerce Store API limitation where product restrictions aren't applied.
+				if (
+					! empty($formatted_spend_rule['selectedProducts']['value']) &&
+					intval($formatted_spend_rule['discountValue']['value']) !== 100
+				) {
+					$coupon->set_product_ids($formatted_spend_rule['selectedProducts']['value']);
+				}
+
+				break;
+			case 'ORDER_DISCOUNT':
+				$coupon->set_amount($formatted_spend_rule['discountValue']['value']);
 				break;
 
 			case 'FREE_SHIPPING':
