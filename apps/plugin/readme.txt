@@ -107,3 +107,7 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 = 0.6.2 =
 
 * Bug: fixed an issue where it was not possible to claim spend rule under certain conditions
+
+= 0.6.3 =
+
+* Bug: Fixed gift card completion message showing on all orders instead of only orders containing gift cards
