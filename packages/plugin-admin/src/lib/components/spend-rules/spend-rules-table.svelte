@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { createMutation, createQuery } from "@tanstack/svelte-query";
+	import { createQuery, useQueryClient } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
 	import { WalletMinimal } from "lucide-svelte";
 	import { useNavigate } from "svelte-navigator";
 	import TableEmptyState from "../table-empty-state.svelte";
+	import SettingsSyncStatus from "../settings-sync-status.svelte";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Button } from "$lib/components/ui/button";
 	import * as Card from "$lib/components/ui/card/index.js";
@@ -14,6 +15,7 @@
 
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
+	const client = useQueryClient();
 
 	const query = createQuery({
 		queryKey: [QueryKeys.spendRules],
@@ -21,32 +23,35 @@
 		queryFn: async () => await service.getSpendRules(),
 		refetchOnWindowFocus: true,
 	});
-	const mutateSync = createMutation({
-		mutationFn: () => service.syncRewards(),
-		mutationKey: ["spend-rules-sync"],
-		onSuccess: () => {
-			$query.refetch();
-		},
-	});
 </script>
 
-<div class="grid grid-cols-6 gap-6">
-	<div class="col-span-6 sm:order-1 sm:col-span-1 sm:mt-2">
+<div class="grid grid-cols-8 gap-6">
+	<div class="col-span-8 sm:order-1 sm:col-span-2 sm:mt-2">
 		<WalletMinimal class="text-foreground/75 mb-4 h-10 w-10" />
 
 		<h2 class="mb-3 text-lg font-semibold">
 			{__("Rewards")}
 		</h2>
 
-		<p>
+		<p class="mb-2">
+			{__("Create and manage rewards to allow customers to spend their credits.")}
+		</p>
+
+		<p class="text-muted-foreground/75 mb-4 text-xs">
 			{__(
-				"Create and manage spend rules to allow customers to spend their credits.",
-				"leat-crm"
+				"Any rewards removed from Leat will be automatically synchronized and removed from your WordPress site upon next sync."
 			)}
 		</p>
+
+		<SettingsSyncStatus
+			key="rewards"
+			title={__("Sync rewards", "leat")}
+			mutationFn={() => service.syncRewards()}
+			onMutationSuccess={() => client.invalidateQueries({ queryKey: [QueryKeys.spendRules] })}
+		/>
 	</div>
 
-	<Card.Root class="col-span-6 sm:order-2 sm:col-span-5">
+	<Card.Root class="col-span-8 sm:order-2 sm:col-span-6">
 		<Card.Header class="flex  items-center justify-between sm:flex-row">
 			<div class="grid gap-2">
 				<Card.Title>{__("Rewards overview")}</Card.Title>
@@ -61,15 +66,6 @@
 					rel="noopener noreferrer"
 				>
 					{__("Add reward")}
-				</Button>
-
-				<Button
-					size="sm"
-					target="_blank"
-					loading={$mutateSync.isPending}
-					on:click={() => $mutateSync.mutate()}
-				>
-					{__("Sync rewards")}
 				</Button>
 			</div>
 		</Card.Header>
@@ -121,17 +117,7 @@
 			<TableEmptyState
 				title={__("Nothing here yet", "leat")}
 				description={__("Sync your rewards to see them here.", "leat")}
-			>
-				<Button
-					size="xs"
-					variant="secondary"
-					target="_blank"
-					loading={$mutateSync.isPending}
-					on:click={() => $mutateSync.mutate()}
-				>
-					{__("Sync Rewards")}
-				</Button>
-			</TableEmptyState>
+			></TableEmptyState>
 		{/if}
 	</Card.Root>
 </div>

@@ -374,7 +374,7 @@ class SpendRules
 			'post_type'  => 'leat_spend_rule',
 			'post_title' => $reward['title'],
 			'meta_input' => array(
-				'_leat_spend_rule_credit_cost'     => $reward['requiredCredits'],
+				'_leat_spend_rule_credit_cost'     => $reward['required_credits'],
 				'_leat_reward_uuid'                => $reward['uuid'],
 				'_leat_spend_rule_selected_reward' => $reward['uuid'],
 			),
@@ -388,11 +388,9 @@ class SpendRules
 			$post_data['ID'] = $existing_post_id;
 			wp_update_post($post_data);
 		} else {
-			// New rules are always draft by default.
 			$post_data['post_status'] = 'draft';
 
-			// _leat_spend_rule_type
-			$post_data['meta_input']['_leat_spend_rule_type'] = $reward['type'];
+			$post_data['meta_input']['_leat_spend_rule_type'] = "ORDER_DISCOUNT";
 
 			wp_insert_post($post_data);
 		}
@@ -420,84 +418,6 @@ class SpendRules
 		}
 
 		return null;
-	}
-
-	public function delete_spend_rules_by_uuids($uuids_to_delete)
-	{
-		foreach ($uuids_to_delete as $post_id => $uuid) {
-			wp_delete_post($post_id, true);
-		}
-	}
-
-	public function handle_duplicated_spend_rules($uuids)
-	{
-		global $wpdb;
-
-		$this->logger->info('Handling duplicated spend rules for UUIDs: ' . implode(', ', $uuids));
-
-		foreach ($uuids as $uuid) {
-			$query = $wpdb->prepare(
-				"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s ORDER BY post_id DESC",
-				'_leat_reward_uuid',
-				$uuid
-			);
-
-			$cache_key = 'leat_duplicate_rules_' . md5($uuid);
-			$post_ids  = wp_cache_get($cache_key);
-
-			if (false === $post_ids) {
-				// @phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				$post_ids = $wpdb->get_col($query);
-				wp_cache_set($cache_key, $post_ids, '', 3600);
-			}
-
-			if (count($post_ids) > 1) {
-				$keep_id = array_shift($post_ids);
-				$this->logger->info("Keeping spend rule with post ID: $keep_id for UUID: $uuid");
-
-				foreach ($post_ids as $post_id) {
-					$this->logger->info("Deleting duplicate spend rule with post ID: $post_id for UUID: $uuid");
-					wp_delete_post($post_id, true);
-				}
-			}
-		}
-
-		$this->logger->info('Finished handling duplicated spend rules');
-	}
-
-	public function delete_spend_rules_with_empty_uuid()
-	{
-		$cache_key = 'leat_empty_uuid_rules';
-		$posts     = wp_cache_get($cache_key);
-
-		if (false === $posts) {
-			$posts = get_posts(
-				[
-					'post_type'      => 'leat_spend_rule',
-					'posts_per_page' => -1,
-					'post_status'    => ['publish', 'draft'],
-					'meta_query'     => [
-						'relation' => 'OR',
-						[
-							'key'     => '_leat_reward_uuid',
-							'value'   => '',
-							'compare' => '=',
-						],
-						[
-							'key'     => '_leat_reward_uuid',
-							'compare' => 'NOT EXISTS',
-						],
-					],
-				]
-			);
-			wp_cache_set($cache_key, $posts, '', 3600);
-		}
-
-		foreach ($posts as $post) {
-			wp_delete_post($post->ID, true);
-		}
-
-		return count($posts);
 	}
 
 	public function get_spend_rule_by_id($id)

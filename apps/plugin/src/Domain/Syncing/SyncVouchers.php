@@ -1,9 +1,9 @@
 <?php
 
-namespace Leat\Domain\Services;
+namespace Leat\Domain\Syncing;
 
 use Leat\Api\Connection;
-use Leat\Domain\Services\PromotionRules as PromotionRuleService;
+use Leat\Domain\Services\PromotionRules;
 use Leat\Domain\Syncing\BackgroundProcess;
 use Leat\Utils\Coupons;
 use Leat\Utils\Logger;
@@ -33,7 +33,7 @@ class SyncVouchers extends BackgroundProcess
 	private const BATCH_SIZE = 100;
 
 	/**
-	 * @var PromotionRuleService
+	 * @var PromotionRules
 	 */
 	private $promotion_rules;
 

@@ -15,9 +15,10 @@ use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\PromotionRules;
 use Leat\Domain\Services\GiftcardProduct;
 use Leat\Domain\Services\SpendRules;
-use Leat\Domain\Services\SyncVouchers;
-use Leat\Domain\Services\SyncPromotions;
+use Leat\Domain\Syncing\SyncVouchers;
+use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Services\WebhookManager;
+use Leat\Domain\Syncing\SyncRewards;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
@@ -124,6 +125,7 @@ class Bootstrap
 		$this->container->get(CustomerSession::class);
 		$this->container->get(SyncVouchers::class)->init();
 		$this->container->get(SyncPromotions::class)->init();
+		$this->container->get(SyncRewards::class)->init();
 		$this->container->get(GiftcardProduct::class)->init();
 		$this->container->get(WebhookManager::class)->init();
 
@@ -307,6 +309,12 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
+			SyncRewards::class,
+			function (Container $container) {
+				return new SyncRewards($container->get(Connection::class), $container->get(SpendRules::class));
+			}
+		);
+		$this->container->register(
 			AssetsController::class,
 			function (Container $container) {
 				return new AssetsController($container->get(AssetApi::class), $container->get(Settings::class,), $container->get(Connection::class));
@@ -353,8 +361,10 @@ class Bootstrap
 					$container->get(Connection::class),
 					$container->get(Settings::class),
 					$container->get(PromotionRules::class),
+					$container->get(SpendRules::class),
 					$container->get(SyncVouchers::class),
 					$container->get(SyncPromotions::class),
+					$container->get(SyncRewards::class),
 					$container->get(WebhookManager::class)
 				);
 			}

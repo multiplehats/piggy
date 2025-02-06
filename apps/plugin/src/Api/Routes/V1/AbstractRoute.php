@@ -7,10 +7,12 @@ use Leat\Api\Routes\RouteInterface;
 use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Schemas\v1\AbstractSchema;
 use Leat\Api\Connection;
-use Leat\Domain\Services\SyncPromotions;
-use Leat\Domain\Services\SyncVouchers;
+use Leat\Domain\Syncing\SyncPromotions;
+use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Services\WebhookManager;
 use Leat\Domain\Services\PromotionRules;
+use Leat\Domain\Syncing\SyncRewards;
+use Leat\Domain\Services\SpendRules;
 use Leat\Settings;
 use Leat\Utils\Logger;
 use WP_Error;
@@ -77,6 +79,13 @@ abstract class AbstractRoute implements RouteInterface
 	protected $sync_promotions;
 
 	/**
+	 * Sync rewards.
+	 *
+	 * @var SyncRewards
+	 */
+	protected $sync_rewards;
+
+	/**
 	 * Webhook manager.
 	 *
 	 * @var WebhookManager
@@ -89,6 +98,13 @@ abstract class AbstractRoute implements RouteInterface
 	 * @var PromotionRules
 	 */
 	protected $promotion_rules_service;
+
+	/**
+	 * Spend rules service.
+	 *
+	 * @var SpendRules
+	 */
+	protected $spend_rules_service;
 
 	/**
 	 * The routes schema.
@@ -110,8 +126,19 @@ abstract class AbstractRoute implements RouteInterface
 	 * @param SchemaController $schema_controller Schema Controller instance.
 	 * @param AbstractSchema   $schema Schema class for this route.
 	 */
-	public function __construct(SchemaController $schema_controller, Logger $logger, AbstractSchema $schema, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager, PromotionRules $promotion_rules_service)
-	{
+	public function __construct(
+		SchemaController $schema_controller,
+		Logger $logger,
+		AbstractSchema $schema,
+		Connection $connection,
+		Settings $settings,
+		SyncVouchers $sync_vouchers,
+		SyncPromotions $sync_promotions,
+		SyncRewards $sync_rewards,
+		WebhookManager $webhook_manager,
+		PromotionRules $promotion_rules_service,
+		SpendRules $spend_rules_service
+	) {
 		$this->schema_controller = $schema_controller;
 		$this->logger            = $logger;
 		$this->schema            = $schema;
@@ -119,8 +146,10 @@ abstract class AbstractRoute implements RouteInterface
 		$this->settings          = $settings;
 		$this->sync_vouchers     = $sync_vouchers;
 		$this->sync_promotions   = $sync_promotions;
+		$this->sync_rewards      = $sync_rewards;
 		$this->webhook_manager   = $webhook_manager;
 		$this->promotion_rules_service = $promotion_rules_service;
+		$this->spend_rules_service = $spend_rules_service;
 	}
 
 	/**

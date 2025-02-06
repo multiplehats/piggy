@@ -1,6 +1,6 @@
 <?php
 
-namespace Leat\Domain\Services;
+namespace Leat\Domain\Syncing;
 
 use Leat\Api\Connection;
 use Leat\Utils\Logger;

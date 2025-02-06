@@ -98,8 +98,8 @@
 	}
 </script>
 
-<div class="grid grid-cols-6 gap-6">
-	<div class="col-span-6 sm:order-1 sm:col-span-1 sm:mt-2">
+<div class="grid grid-cols-8 gap-6">
+	<div class="col-span-8 sm:order-1 sm:col-span-2 sm:mt-2">
 		<WalletMinimal class="text-foreground/75 mb-4 h-10 w-10" />
 
 		<h2 class="mb-3 text-lg font-semibold">
@@ -114,7 +114,7 @@
 		</p>
 	</div>
 
-	<Card.Root class="col-span-6 sm:order-2 sm:col-span-5">
+	<Card.Root class="col-span-8 sm:order-2 sm:col-span-6">
 		<Card.Header class="flex  items-center justify-between sm:flex-row">
 			<div class="grid gap-2">
 				<Card.Title>{__("Earn rules overview")}</Card.Title>

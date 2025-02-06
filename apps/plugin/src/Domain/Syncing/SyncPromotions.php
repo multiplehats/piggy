@@ -1,6 +1,6 @@
 <?php
 
-namespace Leat\Domain\Services;
+namespace Leat\Domain\Syncing;
 
 use Leat\Api\Connection;
 use Leat\Domain\Services\PromotionRules;
@@ -14,7 +14,6 @@ class SyncPromotions extends AbstractSync
 	 */
 	private PromotionRules $promotion_rules;
 
-	// Increase batch size for promotions since they're simple
 	protected const BATCH_SIZE = 50;
 
 	public function __construct(Connection $connection, PromotionRules $promotion_rules)

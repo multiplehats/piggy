@@ -7,10 +7,12 @@ use Leat\Api\Formatters;
 use Leat\Api\RoutesController;
 use Leat\Api\SchemaController;
 use Leat\Api\Schemas\ExtendSchema;
-use Leat\Domain\Services\SyncPromotions;
-use Leat\Domain\Services\SyncVouchers;
+use Leat\Domain\Syncing\SyncPromotions;
+use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Services\PromotionRules;
+use Leat\Domain\Services\SpendRules;
 use Leat\Domain\Services\WebhookManager;
+use Leat\Domain\Syncing\SyncRewards;
 use Leat\Settings;
 use Leat\Utils\Logger;
 
@@ -35,6 +37,11 @@ final class Api
 	private $promotion_rules;
 
 	/**
+	 * @var SpendRules
+	 */
+	private $spend_rules;
+
+	/**
 	 * @var SyncVouchers
 	 */
 	private $sync_vouchers;
@@ -43,6 +50,11 @@ final class Api
 	 * @var SyncPromotions
 	 */
 	private $sync_promotions;
+
+	/**
+	 * @var SyncRewards
+	 */
+	private $sync_rewards;
 
 	/**
 	 * @var WebhookManager
@@ -55,23 +67,29 @@ final class Api
 	 * @param Connection     $connection      The Connection instance.
 	 * @param Settings      $settings       The Settings instance.
 	 * @param PromotionRules $promotion_rules The PromotionRules instance.
+	 * @param SpendRules $spend_rules The SpendRules instance.
 	 * @param SyncVouchers   $sync_vouchers   The SyncVouchers instance.
 	 * @param SyncPromotions $sync_promotions The SyncPromotions instance.
+	 * @param SyncRewards $sync_rewards The SyncRewards instance.
 	 * @param WebhookManager $webhook_manager The WebhookManager instance.
 	 */
 	public function __construct(
 		Connection $connection,
 		Settings $settings,
 		PromotionRules $promotion_rules,
+		SpendRules $spend_rules,
 		SyncVouchers $sync_vouchers,
 		SyncPromotions $sync_promotions,
+		SyncRewards $sync_rewards,
 		WebhookManager $webhook_manager
 	) {
 		$this->connection = $connection;
 		$this->settings = $settings;
 		$this->promotion_rules = $promotion_rules;
+		$this->spend_rules = $spend_rules;
 		$this->sync_vouchers = $sync_vouchers;
 		$this->sync_promotions = $sync_promotions;
+		$this->sync_rewards = $sync_rewards;
 		$this->webhook_manager = $webhook_manager;
 	}
 
@@ -83,7 +101,7 @@ final class Api
 		add_action(
 			'rest_api_init',
 			function () {
-				self::container($this->connection, $this->settings, $this->promotion_rules, $this->sync_vouchers, $this->sync_promotions, $this->webhook_manager)
+				self::container($this->connection, $this->settings, $this->promotion_rules, $this->spend_rules, $this->sync_vouchers, $this->sync_promotions, $this->sync_rewards, $this->webhook_manager)
 					->get(RoutesController::class)
 					->register_all_routes();
 			}
@@ -96,8 +114,10 @@ final class Api
 	 * @param Connection     $connection      The Connection instance.
 	 * @param Settings      $settings       The Settings instance.
 	 * @param PromotionRules $promotion_rules The PromotionRules instance.
+	 * @param SpendRules $spend_rules The SpendRules instance.
 	 * @param SyncVouchers   $sync_vouchers   The SyncVouchers instance.
 	 * @param SyncPromotions $sync_promotions The SyncPromotions instance.
+	 * @param SyncRewards $sync_rewards The SyncRewards instance.
 	 * @param WebhookManager $webhook_manager The WebhookManager instance.
 	 * @param boolean       $reset          Used to reset the container to a fresh instance.
 	 * @return Container
@@ -106,8 +126,10 @@ final class Api
 		Connection $connection = null,
 		Settings $settings = null,
 		PromotionRules $promotion_rules = null,
+		SpendRules $spend_rules = null,
 		SyncVouchers $sync_vouchers = null,
 		SyncPromotions $sync_promotions = null,
+		SyncRewards $sync_rewards = null,
 		WebhookManager $webhook_manager = null,
 		$reset = false
 	) {
@@ -158,9 +180,21 @@ final class Api
 			});
 		}
 
+		if ($sync_rewards) {
+			$container->register(SyncRewards::class, function () use ($sync_rewards) {
+				return $sync_rewards;
+			});
+		}
+
 		if ($promotion_rules) {
 			$container->register(PromotionRules::class, function () use ($promotion_rules) {
 				return $promotion_rules;
+			});
+		}
+
+		if ($spend_rules) {
+			$container->register(SpendRules::class, function () use ($spend_rules) {
+				return $spend_rules;
 			});
 		}
 
@@ -175,8 +209,10 @@ final class Api
 					$container->get(Settings::class),
 					$container->get(SyncVouchers::class),
 					$container->get(SyncPromotions::class),
+					$container->get(SyncRewards::class),
 					$container->get(WebhookManager::class),
 					$container->get(PromotionRules::class),
+					$container->get(SpendRules::class),
 				);
 			}
 		);
@@ -188,7 +224,8 @@ final class Api
 					$container->get(ExtendSchema::class),
 					$container->get(Logger::class),
 					$container->get(Settings::class),
-					$container->get(PromotionRules::class)
+					$container->get(PromotionRules::class),
+					$container->get(SpendRules::class)
 				);
 			}
 		);

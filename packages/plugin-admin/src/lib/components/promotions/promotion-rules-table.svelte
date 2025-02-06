@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createMutation, useQueryClient } from "@tanstack/svelte-query";
+	import { useQueryClient } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
 	import { BadgePercent } from "lucide-svelte";
 	import { useNavigate } from "svelte-navigator";
@@ -19,14 +19,6 @@
 	const client = useQueryClient();
 	const service = new SettingsAdminService();
 	const navigate = useNavigate();
-
-	const mutateSync = createMutation({
-		mutationFn: () => service.syncPromotions(),
-		mutationKey: ["promotion-rules-sync"],
-		onSuccess: () => {
-			client.invalidateQueries({ queryKey: [QueryKeys.promotionRules] });
-		},
-	});
 </script>
 
 <div class="grid grid-cols-8 gap-6">

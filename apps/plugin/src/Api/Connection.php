@@ -427,7 +427,7 @@ class Connection
 		return [
 			'uuid'            => $reward->getUuid(),
 			'title'           => $reward->getTitle(),
-			'requiredCredits' => $reward->getRequiredCredits(),
+			'required_credits' => $reward->getRequiredCredits(),
 			'type'            => $reward->getRewardType(),
 			'active'          => $reward->isActive(),
 			'attributes'      => $reward->getAttributes(),
@@ -1143,93 +1143,6 @@ class Connection
 		return false !== $inserted;
 	}
 
-	/**
-	 * Syncs rewards in Leat with the spend rules CPT.
-	 *
-	 * @return bool
-	 */
-	public function sync_rewards_with_spend_rules()
-	{
-		$client = $this->init_client();
-		if (! $client) {
-			$this->logger->error('Failed to initialize client for reward sync');
-			return false;
-		}
-
-		$rewards = $this->get_rewards();
-		if (! $rewards) {
-			$this->logger->error('Failed to retrieve rewards from Leat');
-			return false;
-		}
-
-		$this->logger->info('Starting reward sync. Total rewards retrieved: ' . count($rewards));
-
-		$prepared_args = [
-			'post_type'      => 'leat_spend_rule',
-			'posts_per_page' => -1,
-			'post_status'    => ['publish', 'draft', 'pending'],
-		];
-
-		$current_spend_rules = get_posts($prepared_args);
-		$this->logger->info('Current spend rules in WordPress: ' . count($current_spend_rules));
-
-		// Collect existing Leat UUIDs from CPT.
-		$existing_uuids = array_column($current_spend_rules, '_leat_reward_uuid', 'ID');
-
-		// Sync Leat rewards with CPT (add/update).
-		$processed_uuids = [];
-		$updated_count   = 0;
-		$created_count   = 0;
-
-		foreach ($rewards as $reward) {
-			$mapped_reward = [
-				'title'           => $reward['title'],
-				'requiredCredits' => $reward['requiredCredits'],
-				'type'            => 'ORDER_DISCOUNT',
-				'uuid'            => $reward['uuid'],
-				'active'          => $reward['active'],
-				'selectedReward'  => $reward['uuid'],
-			];
-
-			if (isset($reward['media'])) {
-				$mapped_reward['image'] = $reward['media']['value'];
-			}
-
-			// Check if the reward already exists in CPT.
-			$existing_post_id = array_search($reward['uuid'], $existing_uuids, true);
-
-			if (false !== $existing_post_id) {
-				// Update existing spend rule.
-				$this->logger->info('Updating existing spend rule: ' . $existing_post_id . ' (UUID: ' . $reward['uuid'] . ')');
-
-				$this->spend_rules_service->create_or_update_spend_rule_from_reward($mapped_reward, $existing_post_id);
-				$updated_count++;
-			} else {
-				// Create new spend rule.
-				$this->logger->info('Creating new spend rule for UUID: ' . $reward['uuid']);
-
-				$this->spend_rules_service->create_or_update_spend_rule_from_reward($mapped_reward);
-				$created_count++;
-			}
-
-			$processed_uuids[] = $reward['uuid'];
-		}
-
-		// Delete spend rules that no longer exist in Leat.
-		$uuids_to_delete = array_diff($existing_uuids, $processed_uuids);
-		$delete_count    = count($uuids_to_delete);
-		$this->logger->info('Deleting ' . $delete_count . ' spend rules that no longer exist in Leat');
-		$this->spend_rules_service->delete_spend_rules_by_uuids($uuids_to_delete);
-
-		// Handle duplicated UUIDs.
-		$this->logger->info('Handling any duplicated spend rules');
-		$this->spend_rules_service->handle_duplicated_spend_rules($processed_uuids);
-
-		$this->logger->info("Reward sync completed. Updated: $updated_count, Created: $created_count, Deleted: $delete_count");
-
-		return true;
-	}
-
 	public function create_reward_reception($contact_uuid, $reward_uuid)
 	{
 		$client = $this->init_client();
@@ -1603,6 +1516,8 @@ class Connection
 		switch ($action_name) {
 			case 'sync_promotions':
 				return $this->get_promotions();
+			case 'sync_spend_rules':
+				return $this->get_rewards();
 			default:
 				throw new \Exception("Invalid action name: {$action_name}");
 		}
