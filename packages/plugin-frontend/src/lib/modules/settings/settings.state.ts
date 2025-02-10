@@ -33,6 +33,7 @@ const initialWcSettingsState: IWooSettings = {
 		priceFormat: "%1$s%2$s",
 		thousandSeparator: ",",
 	},
+	canUserRegister: false,
 	currentUserIsAdmin: false,
 	homeUrl: "",
 	locale: {

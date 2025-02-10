@@ -10,8 +10,6 @@ use Leat\Assets\Vite;
  * The Api class provides an interface to various asset registration helpers.
  *
  * Contains asset api methods
- *
- * @since 2.5.0
  */
 class Api
 {
@@ -121,13 +119,6 @@ class Api
 	/**
 	 * Registers a script according to `wp_register_script`, adding the correct prefix, and additionally loading translations.
 	 *
-	 * When creating script assets, the following rules should be followed:
-	 *   1. All asset handles should have a `wc-` prefix.
-	 *   2. If the asset handle is for a Block (in editor context) use the `-block` suffix.
-	 *   3. If the asset handle is for a Block (in frontend context) use the `-block-frontend` suffix.
-	 *   4. If the asset is for any other script being consumed or enqueued by the blocks plugin, use the `wc-blocks-` prefix.
-	 *
-	 * @since 2.5.0
 	 * @throws Exception If the registered script has a dependency on itself.
 	 *
 	 * @param string $handle        Unique name of the script.
@@ -199,9 +190,6 @@ class Api
 
 	/**
 	 * Registers a style according to `wp_register_style`.
-	 *
-	 * @since 2.5.0
-	 * @since 2.6.0 Change src to be relative source.
 	 *
 	 * @param string $handle       Name of the stylesheet. Should be unique.
 	 * @param string $relative_src Relative source of the stylesheet to the plugin path.

@@ -1,4 +1,5 @@
 <?php
+
 namespace Leat\Registry;
 
 /**
@@ -7,10 +8,9 @@ namespace Leat\Registry;
  * Dependency types are instances of a dependency used by the
  * Dependency Injection Container for storing dependencies to invoke as they
  * are needed.
- *
- * @since 2.5.0
  */
-abstract class AbstractDependencyType {
+abstract class AbstractDependencyType
+{
 
 	/**
 	 * Holds a callable or value provided for this type.
@@ -25,7 +25,8 @@ abstract class AbstractDependencyType {
 	 * @param mixed $callable_or_value  A callable or value for the dependency
 	 *                                  type instance.
 	 */
-	public function __construct( $callable_or_value ) {
+	public function __construct($callable_or_value)
+	{
 		$this->callable_or_value = $callable_or_value;
 	}
 
@@ -36,10 +37,11 @@ abstract class AbstractDependencyType {
 	 *
 	 * @return mixed
 	 */
-	protected function resolve_value( Container $container ) {
+	protected function resolve_value(Container $container)
+	{
 		$callback = $this->callable_or_value;
-		return \is_callable( $callback )
-			? $callback( $container )
+		return \is_callable($callback)
+			? $callback($container)
 			: $callback;
 	}
 
@@ -50,5 +52,5 @@ abstract class AbstractDependencyType {
 	 *
 	 * @return void
 	 */
-	abstract public function get( Container $container );
+	abstract public function get(Container $container);
 }

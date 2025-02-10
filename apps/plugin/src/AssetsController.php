@@ -12,7 +12,6 @@ use WP_Post;
 /**
  * AssetsController class.
  *
- * @since 5.0.0
  * @internal
  */
 final class AssetsController
@@ -290,6 +289,7 @@ final class AssetsController
 			'taxesEnabled'                  => wc_tax_enabled(),
 			'couponsEnabled'                => wc_coupons_enabled(),
 			'displayCartPricesIncludingTax' => 'incl' === get_option('woocommerce_tax_display_cart'),
+
 			'shippingEnabled'               => wc_shipping_enabled(),
 			'baseLocation'                  => wc_get_base_location(),
 			'shippingCalculatorEnabled'     => filter_var(get_option('woocommerce_enable_shipping_calc'), FILTER_VALIDATE_BOOLEAN),
@@ -302,6 +302,7 @@ final class AssetsController
 			'wcVersion'                     => defined('WC_VERSION') ? WC_VERSION : '',
 			'wpLoginUrl'                    => wp_login_url(),
 			'wpVersion'                     => get_bloginfo('version'),
+			'canUserRegister'               => 'yes' === get_option('woocommerce_enable_myaccount_registration'),
 			'endpoints'                     => [
 				'order-received' => [
 					'active' => is_wc_endpoint_url('order-received'),

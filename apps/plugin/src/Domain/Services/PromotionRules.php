@@ -6,22 +6,42 @@ use Leat\Utils\Coupons;
 use Leat\Utils\Logger;
 
 /**
- * Class PromotionRules
+ * Handles promotion rules management and operations.
+ *
+ * This class manages promotion rules including CRUD operations, formatting,
+ * and coupon-related functionality for the Leat CRM system.
+ *
+
  */
 class PromotionRules
 {
 	/**
 	 * Logger instance.
 	 *
+
 	 * @var Logger
 	 */
 	private $logger;
 
+	/**
+	 * Constructor.
+	 *
+
+	 */
 	public function __construct()
 	{
 		$this->logger     = new Logger();
 	}
 
+	/**
+	 * Retrieves post meta data with fallback value.
+	 *
+
+	 * @param int    $post_id        The post ID.
+	 * @param string $key            The meta key to retrieve.
+	 * @param mixed  $fallback_value Optional. Default value if meta is empty.
+	 * @return mixed The meta value or fallback value.
+	 */
 	private function get_post_meta_data($post_id, $key, $fallback_value = null)
 	{
 		$value = get_post_meta($post_id, $key, true);
@@ -30,10 +50,11 @@ class PromotionRules
 	}
 
 	/**
-	 * Get a promotion rule by its ID.
+	 * Retrieves a promotion rule by its ID.
 	 *
-	 * @param int $id Promotion Rule ID.
-	 * @return array|null
+
+	 * @param int $id The promotion rule ID.
+	 * @return array|null Formatted promotion rule data or null if not found.
 	 */
 	public function get_by_id($id)
 	{
@@ -47,10 +68,14 @@ class PromotionRules
 	}
 
 	/**
-	 * Convert a Promotion Rule post into an object suitable for a WP REST API response.
+	 * Formats a promotion rule post for API response.
 	 *
-	 * @param \WP_Post $post Promotion Rule post object.
-	 * @return array
+	 * Converts a WordPress post object into a structured array containing
+	 * all promotion rule settings and metadata.
+	 *
+
+	 * @param \WP_Post $post The promotion rule post object.
+	 * @return array Formatted promotion rule data.
 	 */
 	public function get_formatted_post($post)
 	{
@@ -184,6 +209,12 @@ class PromotionRules
 		return $promotion_rule;
 	}
 
+	/**
+	 * Deletes a promotion rule by its Leat UUID.
+	 *
+
+	 * @param string $uuid The Leat promotion UUID.
+	 */
 	public function delete_promotion_rule_by_leat_uuid($uuid)
 	{
 		$args = array(
@@ -205,6 +236,12 @@ class PromotionRules
 		}
 	}
 
+	/**
+	 * Gets the description text for promotion rule labels.
+	 *
+
+	 * @return string The formatted description text with placeholder information.
+	 */
 	private function get_label_description()
 	{
 		$placeholders = '{{ credits }}, {{ credits_currency }}, {{ discount }}';
@@ -216,6 +253,12 @@ class PromotionRules
 		);
 	}
 
+	/**
+	 * Gets the default label template for promotion rules.
+	 *
+
+	 * @return array The default label configuration.
+	 */
 	private function get_default_label()
 	{
 		return [
@@ -224,11 +267,11 @@ class PromotionRules
 	}
 
 	/**
-	 * Create or update a promotion rule from a promotion.
+	 * Creates or updates a promotion rule from promotion data.
 	 *
-	 * @param array $promotion The promotion data.
-	 * @param int|null $existing_post_id The existing post ID.
-	 * @return void
+
+	 * @param array    $promotion        The promotion data.
+	 * @param int|null $existing_post_id Optional. The existing post ID to update.
 	 */
 	public function create_or_update_promotion_rule_from_promotion($promotion, $existing_post_id = null): void
 	{
@@ -259,6 +302,13 @@ class PromotionRules
 		}
 	}
 
+	/**
+	 * Retrieves a promotion rule by its Leat UUID.
+	 *
+
+	 * @param string $uuid The Leat promotion UUID.
+	 * @return array|null Formatted promotion rule data or null if not found.
+	 */
 	public function get_promotion_rule_by_leat_uuid($uuid)
 	{
 		$args = array(
@@ -282,6 +332,12 @@ class PromotionRules
 		return null;
 	}
 
+	/**
+	 * Deletes multiple promotion rules by their UUIDs.
+	 *
+
+	 * @param array $uuids_to_delete Array of UUIDs to delete, keyed by post ID.
+	 */
 	public function delete_promotion_rules_by_uuids($uuids_to_delete)
 	{
 		foreach ($uuids_to_delete as $post_id => $uuid) {
@@ -289,6 +345,14 @@ class PromotionRules
 		}
 	}
 
+	/**
+	 * Handles duplicate promotion rules by removing extras.
+	 *
+	 * Keeps the most recent rule for each UUID and deletes any duplicates.
+	 *
+
+	 * @param array $uuids Array of UUIDs to check for duplicates.
+	 */
 	public function handle_duplicated_promotion_rules($uuids)
 	{
 		$this->logger->info('Handling duplicated promotion rules for UUIDs: ' . implode(', ', $uuids));
@@ -325,6 +389,12 @@ class PromotionRules
 		$this->logger->info('Finished handling duplicated promotion rules');
 	}
 
+	/**
+	 * Deletes promotion rules that have empty UUIDs.
+	 *
+
+	 * @return int Number of deleted promotion rules.
+	 */
 	public function delete_promotion_rules_with_empty_uuid()
 	{
 		$args = array(
@@ -354,6 +424,13 @@ class PromotionRules
 		return count($posts);
 	}
 
+	/**
+	 * Retrieves a promotion rule by its post ID.
+	 *
+
+	 * @param int $id The post ID.
+	 * @return array|null Formatted promotion rule data or null if not found.
+	 */
 	public function get_promotion_rule_by_id($id)
 	{
 		$post = get_post($id);
@@ -366,9 +443,10 @@ class PromotionRules
 	}
 
 	/**
-	 * Get all active promotion rules.
+	 * Retrieves all active promotion rules.
 	 *
-	 * @return array
+
+	 * @return array Array of formatted active promotion rules.
 	 */
 	public function get_active_promotion_rules()
 	{
@@ -392,6 +470,13 @@ class PromotionRules
 		return $formatted_posts;
 	}
 
+	/**
+	 * Converts internal discount type to WooCommerce discount type.
+	 *
+
+	 * @param string $value The internal discount type ('percentage' or 'fixed').
+	 * @return string|null The WooCommerce discount type or null if invalid.
+	 */
 	public function get_discount_type($value)
 	{
 		if ('percentage' === $value) {
@@ -404,10 +489,14 @@ class PromotionRules
 	}
 
 	/**
-	 * Query coupons by user ID.
+	 * Retrieves valid coupons for a specific user.
 	 *
-	 * @param int $user_id The user ID.
-	 * @return array The list of valid, usable coupons associated with the user ID.
+	 * Fetches and validates coupons associated with a user, checking expiration
+	 * dates and usage limits.
+	 *
+
+	 * @param int $user_id The WordPress user ID.
+	 * @return array Array of valid coupon data with associated promotion rules.
 	 */
 	public function get_coupons_by_user_id($user_id)
 	{

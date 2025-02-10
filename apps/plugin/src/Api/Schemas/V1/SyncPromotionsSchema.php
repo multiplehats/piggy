@@ -4,7 +4,6 @@ namespace Leat\Api\Schemas\V1;
 
 use Leat\Api\Schemas\V1\AbstractSchema;
 
-
 /**
  * Settings class.
  *
@@ -12,8 +11,6 @@ use Leat\Api\Schemas\V1\AbstractSchema;
  */
 class SyncPromotionsSchema extends AbstractSchema
 {
-
-
 	/**
 	 * The schema item name.
 	 *

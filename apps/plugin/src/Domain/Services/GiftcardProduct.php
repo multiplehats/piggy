@@ -3,7 +3,14 @@
 /**
  * Giftcard Product Service
  *
+ * Handles all functionality related to gift card products in WooCommerce, including:
+ * - Product settings and metadata
+ * - Order processing and gift card creation
+ * - Email notifications
+ * - Refund and withdrawal handling
+ *
  * @package Leat
+
  */
 
 namespace Leat\Domain\Services;
@@ -13,12 +20,47 @@ use Leat\Settings;
 use Leat\Utils\Logger;
 use Leat\Utils\OrderNotes;
 
+/**
+ * Class GiftcardProduct
+ *
+ * Main service class for handling gift card product functionality.
+ *
+
+ */
 class GiftcardProduct
 {
+	/**
+	 * API connection instance.
+	 *
+
+	 * @var Connection
+	 */
 	private Connection $connection;
+
+	/**
+	 * Plugin settings instance.
+	 *
+
+	 * @var Settings
+	 */
 	private Settings $settings;
+
+	/**
+	 * Logger instance.
+	 *
+
+	 * @var Logger
+	 */
 	private Logger $logger;
 
+	/**
+	 * Constructor.
+	 *
+
+	 *
+	 * @param Connection $connection API connection instance.
+	 * @param Settings   $settings   Plugin settings instance.
+	 */
 	public function __construct(Connection $connection, Settings $settings)
 	{
 		$this->logger = new Logger();
@@ -27,6 +69,19 @@ class GiftcardProduct
 		$this->settings   = $settings;
 	}
 
+	/**
+	 * Initialize the gift card product functionality.
+	 *
+	 * Registers all necessary WordPress hooks and filters for:
+	 * - Product settings UI
+	 * - Order processing
+	 * - Recipient email handling
+	 * - Refund management
+	 *
+
+	 *
+	 * @return void
+	 */
 	public function init()
 	{
 		// Add giftcard product settings.

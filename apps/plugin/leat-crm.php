@@ -50,8 +50,6 @@ add_action(
 
 /**
  * Whether notices must be displayed in the current page (plugins and WooCommerce pages).
- *
- * @since 2.5.0
  */
 function leat_should_display_compatibility_notices()
 {
@@ -74,8 +72,6 @@ function leat_should_display_compatibility_notices()
 if (version_compare($GLOBALS['wp_version'], $minimum_wp_version, '<')) {
 	/**
 	 * Outputs for an admin notice about running Leat on outdated WordPress.
-	 *
-	 * @since 2.5.0
 	 */
 	function leat_admin_unsupported_wp_notice()
 	{

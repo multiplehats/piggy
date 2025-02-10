@@ -1,4 +1,5 @@
 <?php
+
 namespace Leat\Assets;
 
 use Exception;
@@ -8,12 +9,9 @@ use InvalidArgumentException;
  * Class instance for registering data used on the current view session by
  * assets.
  *
- * Holds data registered for output on the current view session when
- * `wc-settings` is enqueued( directly or via dependency )
- *
- * @since 2.5.0
  */
-class AssetDataRegistry {
+class AssetDataRegistry
+{
 	/**
 	 * Contains registered data.
 	 *
@@ -48,7 +46,8 @@ class AssetDataRegistry {
 	 *
 	 * @param Api $asset_api  Asset API interface for various asset registration.
 	 */
-	public function __construct( Api $asset_api ) {
+	public function __construct(Api $asset_api)
+	{
 		$this->api = $asset_api;
 		$this->init();
 	}
@@ -56,9 +55,10 @@ class AssetDataRegistry {
 	/**
 	 * Hook into WP asset registration for enqueueing asset data.
 	 */
-	protected function init() {
-		add_action( 'wp_print_footer_scripts', array( $this, 'enqueue_asset_data' ), 1 );
-		add_action( 'admin_print_footer_scripts', array( $this, 'enqueue_asset_data' ), 1 );
+	protected function init()
+	{
+		add_action('wp_print_footer_scripts', array($this, 'enqueue_asset_data'), 1);
+		add_action('admin_print_footer_scripts', array($this, 'enqueue_asset_data'), 1);
 	}
 
 	/**
@@ -69,22 +69,23 @@ class AssetDataRegistry {
 	 *
 	 * @return array  An array containing core data.
 	 */
-	protected function get_core_data() {
+	protected function get_core_data()
+	{
 		return [
 			'adminUrl'           => admin_url(),
 			'countries'          => WC()->countries->get_countries(),
 			'currency'           => $this->get_currency_data(),
-			'currentUserIsAdmin' => current_user_can( 'manage_woocommerce' ),
-			'homeUrl'            => esc_url( home_url( '/' ) ),
+			'currentUserIsAdmin' => current_user_can('manage_woocommerce'),
+			'homeUrl'            => esc_url(home_url('/')),
 			'locale'             => $this->get_locale_data(),
 			'placeholderImgSrc'  => wc_placeholder_img_src(),
 			'productsSettings'   => $this->get_products_settings(),
-			'siteTitle'          => get_bloginfo( 'name' ),
+			'siteTitle'          => get_bloginfo('name'),
 			'storePages'         => $this->get_store_pages(),
-			'wcAssetUrl'         => plugins_url( 'assets/', WC_PLUGIN_FILE ),
-			'wcVersion'          => defined( 'WC_VERSION' ) ? WC_VERSION : '',
+			'wcAssetUrl'         => plugins_url('assets/', WC_PLUGIN_FILE),
+			'wcVersion'          => defined('WC_VERSION') ? WC_VERSION : '',
 			'wpLoginUrl'         => wp_login_url(),
-			'wpVersion'          => get_bloginfo( 'version' ),
+			'wpVersion'          => get_bloginfo('version'),
 		];
 	}
 
@@ -93,17 +94,18 @@ class AssetDataRegistry {
 	 *
 	 * @return array
 	 */
-	protected function get_currency_data() {
+	protected function get_currency_data()
+	{
 		$currency = get_woocommerce_currency();
 
 		return [
 			'code'              => $currency,
 			'precision'         => wc_get_price_decimals(),
-			'symbol'            => html_entity_decode( get_woocommerce_currency_symbol( $currency ) ),
-			'symbolPosition'    => get_option( 'woocommerce_currency_pos' ),
+			'symbol'            => html_entity_decode(get_woocommerce_currency_symbol($currency)),
+			'symbolPosition'    => get_option('woocommerce_currency_pos'),
 			'decimalSeparator'  => wc_get_price_decimal_separator(),
 			'thousandSeparator' => wc_get_price_thousand_separator(),
-			'priceFormat'       => html_entity_decode( get_woocommerce_price_format() ),
+			'priceFormat'       => html_entity_decode(get_woocommerce_price_format()),
 		];
 	}
 
@@ -112,13 +114,14 @@ class AssetDataRegistry {
 	 *
 	 * @return array
 	 */
-	protected function get_locale_data() {
+	protected function get_locale_data()
+	{
 		global $wp_locale;
 
 		return [
 			'siteLocale'    => get_locale(),
 			'userLocale'    => get_user_locale(),
-			'weekdaysShort' => array_values( $wp_locale->weekday_abbrev ),
+			'weekdaysShort' => array_values($wp_locale->weekday_abbrev),
 		];
 	}
 
@@ -127,14 +130,15 @@ class AssetDataRegistry {
 	 *
 	 * @return array
 	 */
-	protected function get_store_pages() {
+	protected function get_store_pages()
+	{
 		return array_map(
-			[ $this, 'format_page_resource' ],
+			[$this, 'format_page_resource'],
 			[
-				'myaccount' => wc_get_page_id( 'myaccount' ),
-				'shop'      => wc_get_page_id( 'shop' ),
-				'cart'      => wc_get_page_id( 'cart' ),
-				'checkout'  => wc_get_page_id( 'checkout' ),
+				'myaccount' => wc_get_page_id('myaccount'),
+				'shop'      => wc_get_page_id('shop'),
+				'cart'      => wc_get_page_id('cart'),
+				'checkout'  => wc_get_page_id('checkout'),
 				'privacy'   => wc_privacy_policy_page_id(),
 				'terms'     => wc_terms_and_conditions_page_id(),
 			]
@@ -148,9 +152,10 @@ class AssetDataRegistry {
 	 *
 	 * @return array
 	 */
-	protected function get_products_settings() {
+	protected function get_products_settings()
+	{
 		return [
-			'cartRedirectAfterAdd' => get_option( 'woocommerce_cart_redirect_after_add' ) === 'yes',
+			'cartRedirectAfterAdd' => get_option('woocommerce_cart_redirect_after_add') === 'yes',
 		];
 	}
 
@@ -160,11 +165,12 @@ class AssetDataRegistry {
 	 * @param WP_Post|int $page Page object or ID.
 	 * @return array
 	 */
-	protected function format_page_resource( $page ) {
-		if ( is_numeric( $page ) && $page > 0 ) {
-			$page = get_post( $page );
+	protected function format_page_resource($page)
+	{
+		if (is_numeric($page) && $page > 0) {
+			$page = get_post($page);
 		}
-		if ( ! is_a( $page, '\WP_Post' ) || 'publish' !== $page->post_status ) {
+		if (! is_a($page, '\WP_Post') || 'publish' !== $page->post_status) {
 			return [
 				'id'        => 0,
 				'title'     => '',
@@ -174,14 +180,15 @@ class AssetDataRegistry {
 		return [
 			'id'        => $page->ID,
 			'title'     => $page->post_title,
-			'permalink' => get_permalink( $page->ID ),
+			'permalink' => get_permalink($page->ID),
 		];
 	}
 	/**
 	 * Used for on demand initialization of asset data and registering it with
 	 * the internal data registry.
 	 */
-	protected function initialize_core_data() {
+	protected function initialize_core_data()
+	{
 		$this->data = $this->get_core_data();
 	}
 
@@ -194,9 +201,10 @@ class AssetDataRegistry {
 	 *
 	 * @return void
 	 */
-	protected function execute_lazy_data() {
-		foreach ( $this->lazy_data as $key => $callback ) {
-			$this->data[ $key ] = $callback();
+	protected function execute_lazy_data()
+	{
+		foreach ($this->lazy_data as $key => $callback) {
+			$this->data[$key] = $callback();
 		}
 	}
 
@@ -205,7 +213,8 @@ class AssetDataRegistry {
 	 *
 	 * @return array  The registered data on the private data property
 	 */
-	protected function get() {
+	protected function get()
+	{
 		return $this->data;
 	}
 
@@ -215,8 +224,9 @@ class AssetDataRegistry {
 	 * @param string $key  The key to check if exists.
 	 * @return bool  Whether the key exists in the current data registry.
 	 */
-	public function exists( $key ) {
-		return array_key_exists( $key, $this->data );
+	public function exists($key)
+	{
+		return array_key_exists($key, $this->data);
 	}
 
 	/**
@@ -233,18 +243,19 @@ class AssetDataRegistry {
 	 *
 	 * @throws InvalidArgumentException  Only throws when site is in debug mode. Always logs the error.
 	 */
-	public function add( $key, $data, $check_key_exists = false ) {
-		if ( $check_key_exists && $this->exists( $key ) ) {
+	public function add($key, $data, $check_key_exists = false)
+	{
+		if ($check_key_exists && $this->exists($key)) {
 			return;
 		}
 		try {
-			$this->add_data( $key, $data );
-		} catch ( Exception $e ) {
-			if ( $this->debug() ) {
+			$this->add_data($key, $data);
+		} catch (Exception $e) {
+			if ($this->debug()) {
 				// bubble up.
 				throw $e;
 			}
-			wc_caught_exception( $e, __METHOD__, [ $key, $data ] );
+			wc_caught_exception($e, __METHOD__, [$key, $data]);
 		}
 	}
 
@@ -253,11 +264,12 @@ class AssetDataRegistry {
 	 *
 	 * @param integer $page_id Page ID to add to the registry.
 	 */
-	public function register_page_id( $page_id ) {
-		$permalink = $page_id ? get_permalink( $page_id ) : false;
+	public function register_page_id($page_id)
+	{
+		$permalink = $page_id ? get_permalink($page_id) : false;
 
-		if ( $permalink ) {
-			$this->data[ 'page-' . $page_id ] = $permalink;
+		if ($permalink) {
+			$this->data['page-' . $page_id] = $permalink;
 		}
 	}
 
@@ -269,17 +281,18 @@ class AssetDataRegistry {
 	 * is done to allow for any potentially expensive data generation to only
 	 * happen for routes that need it.
 	 */
-	public function enqueue_asset_data() {
-		if ( wp_script_is( $this->handle, 'enqueued' ) ) {
+	public function enqueue_asset_data()
+	{
+		if (wp_script_is($this->handle, 'enqueued')) {
 			$this->initialize_core_data();
 			$this->execute_lazy_data();
 
-			$data = rawurlencode( wp_json_encode( $this->data ) );
+			$data = rawurlencode(wp_json_encode($this->data));
 
 			wp_add_inline_script(
 				$this->handle,
 				"
-				var leatWcSettings = leatWcSettings || JSON.parse( decodeURIComponent( '" . esc_js( $data ) . "' ) );
+				var leatWcSettings = leatWcSettings || JSON.parse( decodeURIComponent( '" . esc_js($data) . "' ) );
 				",
 				'before'
 			);
@@ -295,27 +308,28 @@ class AssetDataRegistry {
 	 * @throws InvalidArgumentException  If key is not a string or already
 	 *                                   exists in internal data cache.
 	 */
-	protected function add_data( $key, $data ) {
-		if ( ! is_string( $key ) ) {
-			if ( $this->debug() ) {
+	protected function add_data($key, $data)
+	{
+		if (! is_string($key)) {
+			if ($this->debug()) {
 				throw new InvalidArgumentException(
 					'Key for the data being registered must be a string'
 				);
 			}
 		}
-		if ( isset( $this->data[ $key ] ) ) {
-			if ( $this->debug() ) {
+		if (isset($this->data[$key])) {
+			if ($this->debug()) {
 				throw new InvalidArgumentException(
 					'Overriding existing data with an already registered key is not allowed'
 				);
 			}
 			return;
 		}
-		if ( \is_callable( $data ) ) {
-			$this->lazy_data[ $key ] = $data;
+		if (\is_callable($data)) {
+			$this->lazy_data[$key] = $data;
 			return;
 		}
-		$this->data[ $key ] = $data;
+		$this->data[$key] = $data;
 	}
 
 	/**
@@ -323,7 +337,8 @@ class AssetDataRegistry {
 	 *
 	 * @return boolean  True means the site is in debug mode.
 	 */
-	protected function debug() {
-		return defined( 'WP_DEBUG' ) && WP_DEBUG;
+	protected function debug()
+	{
+		return defined('WP_DEBUG') && WP_DEBUG;
 	}
 }

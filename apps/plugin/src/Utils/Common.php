@@ -117,4 +117,29 @@ class Common
 	{
 		return json_decode(json_encode($array));
 	}
+
+	/**
+	 * Replace placeholders in text with actual values.
+	 *
+	 * @param string $text Text with placeholders.
+	 * @param array $replacements Key-value pairs of replacements.
+	 *
+	 * @example
+	 * $text = "Hello {{name}}";
+	 * $replacements = array("name" => "Leat");
+	 * $result = Common::replace_placeholders($text, $replacements);
+	 * // $result = "Hello Leat";
+	 *
+	 * @return string
+	 */
+	public static function replace_placeholders($text, $replacements)
+	{
+		foreach ($replacements as $key => $value) {
+			// Match any variation of the placeholder with optional spaces
+			// Matches: {{key}}, {{ key }}, {{key }}, {{ key}}
+			$pattern = '/{{\\s*' . preg_quote($key, '/') . '\\s*}}/';
+			$text = preg_replace($pattern, $value ?? '', $text);
+		}
+		return $text;
+	}
 }

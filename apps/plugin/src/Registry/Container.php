@@ -1,4 +1,5 @@
 <?php
+
 namespace Leat\Registry;
 
 use Closure;
@@ -9,9 +10,9 @@ use Exception;
  *
  * This is used to manage dependencies used throughout the plugin.
  *
- * @since 2.5.0
  */
-class Container {
+class Container
+{
 
 	/**
 	 * A map of Dependency Type objects used to resolve dependencies.
@@ -41,8 +42,9 @@ class Container {
 	 *
 	 * @return FactoryType  An instance of the FactoryType dependency.
 	 */
-	public function factory( Closure $instantiation_callback ) {
-		return new FactoryType( $instantiation_callback );
+	public function factory(Closure $instantiation_callback)
+	{
+		return new FactoryType($instantiation_callback);
 	}
 
 	/**
@@ -64,12 +66,13 @@ class Container {
 	 * @param mixed  $value The value for the dependency. Typically, this is a
 	 *                      closure that will create the class instance needed.
 	 */
-	public function register( $id, $value ) {
-		if ( empty( $this->registry[ $id ] ) ) {
-			if ( ! $value instanceof FactoryType ) {
-				$value = new SharedType( $value );
+	public function register($id, $value)
+	{
+		if (empty($this->registry[$id])) {
+			if (! $value instanceof FactoryType) {
+				$value = new SharedType($value);
 			}
-			$this->registry[ $id ] = $value;
+			$this->registry[$id] = $value;
 		}
 	}
 
@@ -83,16 +86,17 @@ class Container {
 	 *
 	 * @return mixed  Typically a class instance.
 	 */
-	public function get( $id ) {
-		if ( ! isset( $this->registry[ $id ] ) ) {
+	public function get($id)
+	{
+		if (! isset($this->registry[$id])) {
 			// this is a developer facing exception, hence it is not localized.
 			throw new Exception(
 				sprintf(
 					'Cannot construct an instance of %s because it has not been registered.',
-					esc_html( $id )
+					esc_html($id)
 				)
 			);
 		}
-		return $this->registry[ $id ]->get( $this );
+		return $this->registry[$id]->get($this);
 	}
 }

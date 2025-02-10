@@ -5,9 +5,11 @@ namespace Leat\Api;
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Connection;
 use Leat\Domain\Services\PromotionRules;
-use Leat\Domain\Services\SyncVouchers;
-use Leat\Domain\Services\SyncPromotions;
+use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Services\WebhookManager;
+use Leat\Domain\Syncing\SyncRewards;
+use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Settings;
 use Leat\Utils\Logger;
 
@@ -59,6 +61,13 @@ class RoutesController
 	protected $sync_promotions;
 
 	/**
+	 * Sync rewards.
+	 *
+	 * @var SyncRewards
+	 */
+	protected $sync_rewards;
+
+	/**
 	 * Webhook manager.
 	 *
 	 * @var WebhookManager
@@ -73,6 +82,13 @@ class RoutesController
 	protected $promotion_rules_service;
 
 	/**
+	 * Spend rules.
+	 *
+	 * @var SpendRules
+	 */
+	protected $spend_rules_service;
+
+	/**
 	 * Leat routes.
 	 *
 	 * @var array
@@ -84,16 +100,28 @@ class RoutesController
 	 *
 	 * @param SchemaController $schema_controller Schema controller class passed to each route.
 	 */
-	public function __construct(SchemaController $schema_controller, Logger $logger, Connection $connection, Settings $settings, SyncVouchers $sync_vouchers, SyncPromotions $sync_promotions, WebhookManager $webhook_manager, PromotionRules $promotion_rules_service)
-	{
+	public function __construct(
+		SchemaController $schema_controller,
+		Logger $logger,
+		Connection $connection,
+		Settings $settings,
+		SyncVouchers $sync_vouchers,
+		SyncPromotions $sync_promotions,
+		SyncRewards $sync_rewards,
+		WebhookManager $webhook_manager,
+		PromotionRules $promotion_rules_service,
+		SpendRules $spend_rules_service
+	) {
 		$this->schema_controller = $schema_controller;
 		$this->logger            = $logger;
 		$this->connection        = $connection;
 		$this->settings          = $settings;
 		$this->sync_vouchers     = $sync_vouchers;
 		$this->sync_promotions   = $sync_promotions;
+		$this->sync_rewards      = $sync_rewards;
 		$this->webhook_manager   = $webhook_manager;
 		$this->promotion_rules_service   = $promotion_rules_service;
+		$this->spend_rules_service   = $spend_rules_service;
 
 		$this->routes = [
 			'v1'      => [
@@ -109,8 +137,8 @@ class RoutesController
 			],
 			'private' => [
 				Routes\V1\Webhooks::IDENTIFIER => Routes\V1\Webhooks::class,
-				Routes\V1\SpendRulesSync::IDENTIFIER     => Routes\V1\SpendRulesSync::class,
 				Routes\V1\SyncPromotions::IDENTIFIER => Routes\V1\SyncPromotions::class,
+				Routes\V1\SyncRewards::IDENTIFIER     => Routes\V1\SyncRewards::class,
 				Routes\V1\SyncVouchers::IDENTIFIER       => Routes\V1\SyncVouchers::class,
 				Routes\V1\Admin\Settings::IDENTIFIER     => Routes\V1\Admin\Settings::class,
 				Routes\V1\Admin\Shops::IDENTIFIER        => Routes\V1\Admin\Shops::class,
@@ -156,8 +184,10 @@ class RoutesController
 			$this->settings,
 			$this->sync_vouchers,
 			$this->sync_promotions,
+			$this->sync_rewards,
 			$this->webhook_manager,
-			$this->promotion_rules_service
+			$this->promotion_rules_service,
+			$this->spend_rules_service
 		);
 	}
 

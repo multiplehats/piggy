@@ -33,7 +33,7 @@ Leat's all-in-one platform empowers you to:
 
 = External Services =
 
-This plugin requires an API connection to [Leat](https://www.leat.com) and it's business portal ([business.leat.eu](https://business.leat.com)) for core functionality including reward management, customer tracking, and loyalty point calculations.
+This plugin requires an API connection to [Leat](https://www.leat.com) and its business portal ([business.leat.eu](https://business.leat.com)) for core functionality including reward management, customer tracking, and loyalty point calculations.
 
 **Data transmitted includes**:
 - Customer information (email, name, order history, purchase categories)
@@ -60,6 +60,7 @@ Users of this plugin should ensure they comply with the terms and privacy polici
 3. Add your API key in the plugin settings.
 4. Sync your rewards and vouchers with Leat to get started.
 5. Use the [leat_dashboard] shortcode to render the loyalty dashboard.
+6. Optionally use [leat_reward_points] shortcode to display customer points anywhere on your site.
 
 == Frequently Asked Questions ==
 
@@ -87,6 +88,15 @@ Yes, Leat is fully GDPR compliant. We process all data in accordance with EU pri
 
 Your customer data and loyalty program settings are safely stored in your Leat account. If you reinstall the plugin later, you can simply reconnect using your API key and all data will be restored.
 
+= What shortcodes are available? =
+
+1. [leat_dashboard] - Displays the full loyalty program dashboard
+2. [leat_reward_points] - Shows customer's current point balance. Supports these attributes:
+   - format: Customize text (e.g., "You have {{ credits }} {{ credits_currency }}")
+   - hide_zero: Set to "yes" to hide when points are zero
+   - wrapper_class: Add custom CSS classes
+   - user_id: (Admin only) Show points for a specific user
+
 == Changelog ==
 
 = 0.6.0 =
@@ -100,14 +110,20 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 
 = 0.6.1 =
 
-* Bug: fixed an issue where URL parameters in script tags could cause conflicts with caching plugins by stripping parameters before comparison
+* Bug fix: fixed an issue where URL parameters in script tags could cause conflicts with caching plugins by stripping parameters before comparison
 * Enhancement: Added span element with class 'leat-credits' around credits text in customer dashboard for improved styling control
-* Bug: Improved coupon visibility logic to prevent coupons from being displayed to customers under certain unintended conditions
+* Bug fix: Improved coupon visibility logic to prevent coupons from being displayed to customers under certain unintended conditions
 
 = 0.6.2 =
 
-* Bug: fixed an issue where it was not possible to claim spend rule under certain conditions
+* Bug fix: fixed an issue where it was not possible to claim spend rule under certain conditions
 
 = 0.6.3 =
 
-* Bug: Fixed gift card completion message showing on all orders instead of only orders containing gift cards
+* Bug fix: Fixed gift card completion message showing on all orders instead of only orders containing gift cards
+* Bug fix: Fixed reward images not syncing properly for newer rewards
+* Enhancement: When a coupon is removed from the cart for a free product, the free product will also be removed for WC Store API requests
+* Enhancement: After claiming a reward, the dashboard now scrolls up to the coupon section
+* Feature: Added new setting to control visibility of the "Join Program" CTA on the dashboard
+* Enhancement: Added automatic detection of WooCommerce registration settings to hide join CTA when registration is disabled
+* Feature: Added new [leat_reward_points] shortcode for displaying customer points anywhere on your site

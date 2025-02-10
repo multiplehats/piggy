@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createQuery } from "@tanstack/svelte-query";
 	import { __ } from "@wordpress/i18n";
+	import SettingsSwitch from "./settings-switch.svelte";
 	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
 	import { SettingsSection } from "$lib/components/ui/settings-section";
 	import { SettingsAdminService } from "$lib/modules/settings";
@@ -38,6 +39,13 @@
 				{...$settingsState.dashboard_title_logged_out}
 				bind:value={$settingsState.dashboard_title_logged_out.value}
 			/>
+
+			<div class="py-4">
+				<SettingsSwitch
+					{...$settingsState.dashboard_show_join_program_cta}
+					bind:value={$settingsState.dashboard_show_join_program_cta.value}
+				/>
+			</div>
 
 			<SettingsTranslateableInput
 				class="py-4"

@@ -3,7 +3,7 @@
 	import { replaceStrings } from "@leat/lib";
 	import { Button } from "$lib/components/button/index.js";
 	import { leatService } from "$lib/config/services";
-	import { isLoggedIn, pluginSettings } from "$lib/modules/settings";
+	import { isLoggedIn, pluginSettings, wcSettings } from "$lib/modules/settings";
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { MutationKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
@@ -89,12 +89,14 @@
 	{#if !isLoggedIn}
 		<div class="leat-dashboard__cta">
 			{#if window.leatWcSettings.storePages.myaccount?.permalink}
-				<Button
-					href={window.leatWcSettings.storePages.myaccount?.permalink}
-					variant="primary"
-				>
-					{getTranslatedText($pluginSettings.dashboard_join_cta)}
-				</Button>
+				{#if $pluginSettings.dashboard_show_join_program_cta === "on" && $wcSettings.canUserRegister}
+					<Button
+						href={window.leatWcSettings.storePages.myaccount?.permalink}
+						variant="primary"
+					>
+						{getTranslatedText($pluginSettings.dashboard_join_cta)}
+					</Button>
+				{/if}
 
 				<Button
 					href={window.leatWcSettings.storePages.myaccount?.permalink}
@@ -106,13 +108,15 @@
 		</div>
 	{:else if isContactNull}
 		<div class="leat-dashboard__cta">
-			<Button
-				on:click={handleJoinProgram}
-				variant="primary"
-				loading={$joinProgramMutation.isPending}
-			>
-				{getTranslatedText($pluginSettings.dashboard_join_program_cta)}
-			</Button>
+			{#if $pluginSettings.dashboard_show_join_program_cta === "on" && $wcSettings.canUserRegister}
+				<Button
+					on:click={handleJoinProgram}
+					variant="primary"
+					loading={$joinProgramMutation.isPending}
+				>
+					{getTranslatedText($pluginSettings.dashboard_join_program_cta)}
+				</Button>
+			{/if}
 
 			{#if $joinProgramMutation.isError}
 				<p class="leat-dashboard__error">

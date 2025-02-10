@@ -190,20 +190,6 @@ export class SettingsAdminService {
 		return data;
 	}
 
-	async syncRewards(): Promise<{ ok: true }> {
-		const { data, error } = await api.get<{ ok: true }>(`/leat/private/spend-rules-sync`, {});
-
-		if (error ?? !data) {
-			if (error) {
-				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
-			}
-
-			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
-		}
-
-		return data;
-	}
-
 	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
 		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
 			`/leat/v1/spend-rules/?id=${id}&status=publish,draft`
@@ -239,6 +225,34 @@ export class SettingsAdminService {
 
 	async getSyncPromotionsInformation() {
 		const { data, error } = await api.get<TaskInformation>(`/leat/private/sync-promotions`, {});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async syncRewards() {
+		const { data, error } = await api.post<{ success: true }>(`/leat/private/sync-rewards`, {});
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async getSyncRewardsInformation() {
+		const { data, error } = await api.get<TaskInformation>(`/leat/private/sync-rewards`, {});
 
 		if (error ?? !data) {
 			if (error) {

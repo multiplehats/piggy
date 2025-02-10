@@ -27,6 +27,12 @@
 		onSuccess: async () => {
 			await client.invalidateQueries({ queryKey: [QueryKeys.coupons] });
 			await client.refetchQueries({ queryKey: [QueryKeys.coupons] });
+
+			// Scroll to coupons section after successful claim
+			const couponsSection = document.querySelector(".leat-dashboard-coupons");
+			if (couponsSection) {
+				couponsSection.scrollIntoView({ behavior: "smooth" });
+			}
 		},
 	});
 
@@ -104,7 +110,7 @@
 		<div class="leat-dashboard-reward-card__progress">
 			<progress value={$progress} />
 
-			{#if $pluginSettings.credits_spend_rule_progress}
+			{#if $pluginSettings.credits_spend_rule_progress && creditsAccumulated}
 				<p>
 					{getProgressText(
 						getTranslatedText($pluginSettings.credits_spend_rule_progress),

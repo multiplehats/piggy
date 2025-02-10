@@ -4,16 +4,12 @@ namespace Leat\Domain\Services;
 
 use Leat\Api\Connection;
 use Leat\Utils\Logger;
-use Piggy\Api\ApiClient;
 use Piggy\Api\Models\WebhookSubscriptions\WebhookSubscription;
 
 class WebhookManager
 {
 	private const WEBHOOK_PREFIX = 'WordPress: ';
-
-	// Store the option name for tracking last webhook sync
 	private const LAST_SYNC_OPTION = 'leat_webhooks_last_sync';
-	// How often to check webhooks (24 hours in seconds)
 	private const SYNC_INTERVAL = 24 * 60 * 60;
 
 	/**
@@ -151,7 +147,7 @@ class WebhookManager
 
 			$existing_webhooks = WebhookSubscription::list();
 
-			// First, clean up any old WordPress webhooks that are not in our required list
+			// Cleans up any webhooks that are not in our required list
 			foreach ($existing_webhooks as $existing_webhook) {
 				if (strpos($existing_webhook->getName(), self::WEBHOOK_PREFIX) === 0) {
 					$event_type  = $existing_webhook->getEventType();
@@ -168,7 +164,7 @@ class WebhookManager
 				}
 			}
 
-			// Then process required webhooks.
+			// Adds any missing webhooks
 			foreach (self::REQUIRED_WEBHOOKS as $key => $webhook_config) {
 				try {
 					$exists = false;
@@ -209,7 +205,6 @@ class WebhookManager
 							'secret'     => $webhook_secret,
 						];
 
-						// Add attributes if they exist in the config
 						if (isset($webhook_config['attributes'])) {
 							$webhookData['attributes'] = $webhook_config['attributes'];
 						}
@@ -307,7 +302,6 @@ class WebhookManager
 
 		$contact = $data['contact'];
 
-		// Trigger an action that other parts of the system can hook into
 		do_action('leat_webhook_contact_updated', $contact);
 
 		$this->logger->debug('Contact updated webhook processed', [
