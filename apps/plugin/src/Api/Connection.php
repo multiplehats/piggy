@@ -62,6 +62,43 @@ class Connection
 		$this->logger = new Logger();
 	}
 
+
+	/**
+	 * Log API errors.
+	 *
+	 * @param \Exception $e The exception to log.
+	 * @param string     $context Additional context for the error.
+	 */
+	private function log_exception(\Exception $e, string $context = '')
+	{
+		if ($e instanceof PiggyRequestException) {
+			$error_bag = $e->getErrorBag();
+			$this->logger->error(
+				'API Error Details: ' .
+					wp_json_encode(
+						[
+							'message'     => $e->getMessage(),
+							'code'        => $e->getCode(),
+							'error_bag'   => $error_bag ? wp_json_encode($error_bag->all()) : null,
+							'first_error' => $error_bag ? wp_json_encode($error_bag->first()) : null,
+							'context'     => $context,
+						],
+						JSON_PRETTY_PRINT,
+					),
+			);
+		} else {
+			$this->logger->error(
+				$context . ': ' .
+					wp_json_encode(
+						[
+							'error' => $e->getMessage(),
+							'trace' => $e->getTraceAsString(),
+						]
+					),
+			);
+		}
+	}
+
 	/**
 	 * Get the Leat API key.
 	 *
@@ -393,19 +430,24 @@ class Connection
 			return null;
 		}
 
-		$results = Shop::list();
+		try {
+			$results = Shop::list();
 
-		if (! $results) {
+			if (! $results) {
+				return null;
+			}
+
+			$shops = [];
+
+			foreach ($results as $shop) {
+				$shops[] = $this->format_shop($shop);
+			}
+
+			return $shops;
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Get Shops Error');
 			return null;
 		}
-
-		$shops = [];
-
-		foreach ($results as $shop) {
-			$shops[] = $this->format_shop($shop);
-		}
-
-		return $shops;
 	}
 
 	/**
@@ -423,13 +465,18 @@ class Connection
 			return null;
 		}
 
-		$shop = Shop::get($id);
+		try {
+			$shop = Shop::get($id);
 
-		if (! $shop) {
+			if (! $shop) {
+				return null;
+			}
+
+			return $this->format_shop($shop);
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Get Shop Error');
 			return null;
 		}
-
-		return $this->format_shop($shop);
 	}
 
 	/**
@@ -540,19 +587,24 @@ class Connection
 			return null;
 		}
 
-		$results = Reward::list();
+		try {
+			$results = Reward::list();
 
-		if (! $results) {
+			if (! $results) {
+				return null;
+			}
+
+			$rewards = [];
+
+			foreach ($results as $reward) {
+				$rewards[] = $this->format_reward($reward);
+			}
+
+			return $rewards;
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Get Rewards Error');
 			return null;
 		}
-
-		$rewards = [];
-
-		foreach ($results as $reward) {
-			$rewards[] = $this->format_reward($reward);
-		}
-
-		return $rewards;
 	}
 
 	public function get_promotions()
@@ -563,16 +615,20 @@ class Connection
 			return null;
 		}
 
-		$results = Promotion::list();
+		try {
+			$results = Promotion::list();
 
-		$promotions = array();
+			$promotions = array();
 
-		foreach ($results as $promotion) {
+			foreach ($results as $promotion) {
+				$promotions[] = $this->format_promotion($promotion);
+			}
 
-			$promotions[] = $this->format_promotion($promotion);
+			return $promotions;
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Get Promotions Error');
+			return null;
 		}
-
-		return $promotions;
 	}
 
 	public function apply_credits(string $contact_uuid, ?int $credits = null, ?float $unit_value = null, ?string $unit_name = null)
@@ -609,7 +665,12 @@ class Connection
 			return false;
 		}
 
-		$reception = CreditReception::create($params);
+		try {
+			$reception = CreditReception::create($params);
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Apply Credits Error');
+			return false;
+		}
 
 		return $reception ?: false;
 	}
@@ -625,10 +686,15 @@ class Connection
 		$uuid = get_user_meta($wp_id, 'leat_uuid', true);
 
 		if (! $uuid && $create) {
-			$contact = $this->create_contact(get_the_author_meta('email', $wp_id));
-			$uuid    = $contact['uuid'];
+			try {
+				$contact = $this->create_contact(get_the_author_meta('email', $wp_id));
+				$uuid    = $contact['uuid'];
 
-			$this->sync_user_attributes($wp_id, $uuid);
+				$this->sync_user_attributes($wp_id, $uuid);
+			} catch (\Throwable $th) {
+				$this->log_exception($th, 'Get Contact UUID by WP ID Error');
+				return null;
+			}
 
 			return $uuid;
 		}
@@ -1181,15 +1247,20 @@ class Connection
 			return;
 		}
 
-		$reception = RewardReception::create(
-			[
-				'contact_uuid' => $contact_uuid,
-				'reward_uuid'  => $reward_uuid,
-				'shop_uuid'    => $shop_uuid,
-			]
-		);
+		try {
+			$reception = RewardReception::create(
+				[
+					'contact_uuid' => $contact_uuid,
+					'reward_uuid'  => $reward_uuid,
+					'shop_uuid'    => $shop_uuid,
+				]
+			);
 
-		return $reception ?: false;
+			return $reception ?: false;
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Create Reward Reception Error');
+			return false;
+		}
 	}
 
 	public function refund_credits_full($credit_reception_uuid)
@@ -1333,42 +1404,6 @@ class Connection
 			'calculator_flow'     => $program->getCalculatorFlow(),
 			'expiration_days'     => $program->getExpirationDays(),
 		];
-	}
-
-	/**
-	 * Log API errors.
-	 *
-	 * @param \Exception $e The exception to log.
-	 * @param string     $context Additional context for the error.
-	 */
-	private function log_exception(\Exception $e, string $context = '')
-	{
-		if ($e instanceof PiggyRequestException) {
-			$error_bag = $e->getErrorBag();
-			$this->logger->error(
-				'API Error Details: ' .
-					wp_json_encode(
-						[
-							'message'     => $e->getMessage(),
-							'code'        => $e->getCode(),
-							'error_bag'   => $error_bag ? wp_json_encode($error_bag->all()) : null,
-							'first_error' => $error_bag ? wp_json_encode($error_bag->first()) : null,
-							'context'     => $context,
-						],
-						JSON_PRETTY_PRINT,
-					),
-			);
-		} else {
-			$this->logger->error(
-				$context . ': ' .
-					wp_json_encode(
-						[
-							'error' => $e->getMessage(),
-							'trace' => $e->getTraceAsString(),
-						]
-					),
-			);
-		}
 	}
 
 	public function create_giftcard($giftcard_program_uuid)
