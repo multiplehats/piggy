@@ -60,6 +60,7 @@ Users of this plugin should ensure they comply with the terms and privacy polici
 3. Add your API key in the plugin settings.
 4. Sync your rewards and vouchers with Leat to get started.
 5. Use the [leat_dashboard] shortcode to render the loyalty dashboard.
+6. Optionally use [leat_reward_points] shortcode to display customer points anywhere on your site.
 
 == Frequently Asked Questions ==
 
@@ -86,6 +87,15 @@ Yes, Leat is fully GDPR compliant. We process all data in accordance with EU pri
 = What happens if I uninstall the plugin? =
 
 Your customer data and loyalty program settings are safely stored in your Leat account. If you reinstall the plugin later, you can simply reconnect using your API key and all data will be restored.
+
+= What shortcodes are available? =
+
+1. [leat_dashboard] - Displays the full loyalty program dashboard
+2. [leat_reward_points] - Shows customer's current point balance. Supports these attributes:
+   - format: Customize text (e.g., "You have {{ credits }} {{ credits_currency }}")
+   - hide_zero: Set to "yes" to hide when points are zero
+   - wrapper_class: Add custom CSS classes
+   - user_id: (Admin only) Show points for a specific user
 
 == Changelog ==
 
@@ -114,3 +124,6 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 * Bug fix: Fixed reward images not syncing properly for newer rewards
 * Enhancement: When a coupon is removed from the cart for a free product, the free product will also be removed for WC Store API requests
 * Enhancement: After claiming a reward, the dashboard now scrolls up to the coupon section
+* Feature: Added new setting to control visibility of the "Join Program" CTA on the dashboard
+* Enhancement: Added automatic detection of WooCommerce registration settings to hide join CTA when registration is disabled
+* Feature: Added new [leat_reward_points] shortcode for displaying customer points anywhere on your site

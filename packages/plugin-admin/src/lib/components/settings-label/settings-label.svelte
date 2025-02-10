@@ -30,8 +30,9 @@
 	{/if}
 
 	{#if description}
-		<p class="mt-0.5 text-xs">
-			{description}
+		<p class="[&>a]:text-leat-primary-600 mt-0.5 text-xs [&>a]:hover:underline">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+			{@html description}
 		</p>
 	{/if}
 </div>

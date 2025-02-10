@@ -2,7 +2,6 @@
 
 namespace Leat\Api;
 
-use Error;
 use Piggy\Api\RegisterClient;
 use Piggy\Api\ApiClient;
 use Piggy\Api\Models\Loyalty\Rewards\Reward;
@@ -164,25 +163,43 @@ class Connection
 	 * Get a contact.
 	 *
 	 * @param string $wp_user_id The WordPress user ID.
-	 * @return array
+	 * @return array|null
 	 */
-	public function get_contact_by_wp_id(string $wp_user_id)
+	public function get_contact_by_wp_id(string $wp_user_id, bool $create = true)
 	{
-		$client = $this->init_client();
+		try {
+			$client = $this->init_client();
 
-		if (! $client) {
+			if (! $client) {
+				$this->logger->error('Failed to initialize client in get_contact_by_wp_id');
+				return null;
+			}
+
+			$wp_user = get_user_by('id', $wp_user_id);
+			if (! $wp_user) {
+				$this->logger->error('WordPress user not found', ['wp_user_id' => $wp_user_id]);
+				return null;
+			}
+
+			if ($create) {
+				$contact = Contact::findOrCreate(['email' => $wp_user->user_email]);
+			} else {
+				$contact = Contact::findOneBy(['email' => $wp_user->user_email]);
+			}
+
+			if (! $contact) {
+				$this->logger->error('Failed to find or create contact', [
+					'wp_user_id' => $wp_user_id,
+					'email' => $wp_user->user_email
+				]);
+				return null;
+			}
+
+			return $this->format_contact($contact);
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Get Contact By WP ID Error');
 			return null;
 		}
-
-		$wp_user = get_user_by('id', $wp_user_id);
-
-		$contact = Contact::findOrCreate(['email' => $wp_user->user_email]);
-
-		if (! $contact) {
-			return null;
-		}
-
-		return $this->format_contact($contact);
 	}
 
 	/**
@@ -193,19 +210,26 @@ class Connection
 	 */
 	public function get_contact_by_uuid(string $uuid)
 	{
-		$client = $this->init_client();
+		try {
+			$client = $this->init_client();
 
-		if (! $client) {
+			if (! $client) {
+				$this->logger->error('Failed to initialize client in get_contact_by_uuid');
+				return null;
+			}
+
+			$contact = Contact::get($uuid);
+
+			if (! $contact) {
+				$this->logger->error('Contact not found', ['uuid' => $uuid]);
+				return null;
+			}
+
+			return $this->format_contact($contact);
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Get Contact By UUID Error');
 			return null;
 		}
-
-		$contact = Contact::get($uuid);
-
-		if (! $contact) {
-			return null;
-		}
-
-		return $this->format_contact($contact);
 	}
 
 	/**

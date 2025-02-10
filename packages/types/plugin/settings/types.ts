@@ -64,6 +64,7 @@ export const zBasePluginOptions = z.object({
 	credits_name: adminFields.zTranslatableText,
 	credits_spend_rule_progress: adminFields.zTranslatableText,
 	include_guests: adminFields.zSwitch,
+	dashboard_show_join_program_cta: adminFields.zSwitch,
 	reward_order_statuses: adminFields.zSelect,
 	withdraw_order_statuses: adminFields.zCheckboxes,
 	reward_order_parts: adminFields.zCheckboxes,
@@ -225,6 +226,7 @@ export type IWooSettings = {
 	productsSettings: {
 		cartRedirectAfterAdd: boolean;
 	};
+	canUserRegister: boolean;
 	siteTitle: string;
 	storePages: {
 		myaccount: wcConfigPage;

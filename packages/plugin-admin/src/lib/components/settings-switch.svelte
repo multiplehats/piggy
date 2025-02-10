@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { SwitchValue } from "@leat/types/plugin/settings/adminTypes";
-	import SettingsFieldErrors from "./settings-field-errors.svelte";
 	import {
 		SettingsLabel,
 		type SettingsLabelProps,
@@ -46,6 +45,6 @@
 	</div>
 
 	{#if showErrors}
-		<SettingsFieldErrors {...$$props} />
+		<!-- <SettingsFieldErrors {...$$props} /> -->
 	{/if}
 </div>

@@ -28,6 +28,7 @@ use Leat\Domain\Services\GiftcardProduct;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
+use Leat\Shortcodes\RewardPointsShortcode;
 use Leat\RedirectController;
 use Leat\Utils\Logger;
 
@@ -130,6 +131,7 @@ class Bootstrap
 			// $this->container->get(RedirectController::class)->init();
 		}
 		$this->container->get(CustomerDashboardShortcode::class)->init();
+		$this->container->get(RewardPointsShortcode::class)->init();
 		$this->container->get(LoyaltyManager::class);
 		$this->container->get(SyncVouchers::class)->init();
 		$this->container->get(SyncPromotions::class)->init();
@@ -425,9 +427,18 @@ class Bootstrap
 		$this->container->register(
 			CustomerDashboardShortcode::class,
 			function (Container $container) {
-				$asset_api = $container->get(AssetApi::class);
 
-				return new CustomerDashboardShortcode($asset_api);
+				return new CustomerDashboardShortcode($container->get(AssetApi::class));
+			}
+		);
+		$this->container->register(
+			RewardPointsShortcode::class,
+			function (Container $container) {
+				return new RewardPointsShortcode(
+					$container->get(AssetApi::class),
+					$container->get(Connection::class),
+					$container->get(Settings::class)
+				);
 			}
 		);
 		$this->container->register(

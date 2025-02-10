@@ -166,6 +166,18 @@ class Settings
 			'description' => __('The text that will be displayed on the button that allows users to join the loyalty program.', 'leat-crm'),
 		);
 		$settings[] = array(
+			'id'          => 'dashboard_show_join_program_cta',
+			'default'     => 'on',
+			'type'        => 'switch',
+			'label'       => __('Show join program CTA', 'leat-crm'),
+			'description' => sprintf(
+				/* translators: %1$s: opening link tag, %2$s: closing link tag */
+				esc_html__('Show the join program CTA on the dashboard. You must enable customer registration in %1$sWooCommerce Account Settings%2$s to use this feature.', 'leat-crm'),
+				'<a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=account')) . '">',
+				'</a>'
+			),
+		);
+		$settings[] = array(
 			'id'          => 'dashboard_login_cta',
 			'default'     => array(
 				'default' => __('Log in', 'leat-crm'),
