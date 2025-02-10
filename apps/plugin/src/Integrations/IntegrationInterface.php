@@ -1,4 +1,5 @@
 <?php
+
 namespace Leat\Integrations;
 
 /**
@@ -6,7 +7,8 @@ namespace Leat\Integrations;
  *
  * Integrations must use this interface when registering themselves with blocks,
  */
-interface IntegrationInterface {
+interface IntegrationInterface
+{
 	/**
 	 * The name of the integration.
 	 *
@@ -39,4 +41,11 @@ interface IntegrationInterface {
 	 * @return array
 	 */
 	public function get_script_data();
+
+	/**
+	 * Whether or not the integration is active.
+	 *
+	 * @return boolean
+	 */
+	public function is_active();
 }

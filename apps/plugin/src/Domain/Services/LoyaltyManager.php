@@ -118,7 +118,7 @@ class LoyaltyManager
 		CustomerProfileDisplay $profile_display,
 		OrderProcessor $order_processor,
 		OrderCreditHandler $order_credit_handler,
-		CartManager $cart_manager
+		CartManager $cart_manager,
 	) {
 		$this->logger = $logger;
 		$this->connection = $connection;

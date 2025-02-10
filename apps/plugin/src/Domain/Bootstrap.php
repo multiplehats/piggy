@@ -25,12 +25,19 @@ use Leat\Domain\Services\Order\OrderProcessor;
 use Leat\Domain\Services\Order\OrderCreditHandler;
 use Leat\Domain\Services\Cart\CartManager;
 use Leat\Domain\Services\GiftcardProduct;
+use Leat\StoreApiExtension\Api as StoreApiExtensionApi;
+use Leat\StoreApiExtension\StoreApiExtensionRegistry;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
 use Leat\Shortcodes\RewardPointsShortcode;
 use Leat\RedirectController;
 use Leat\Utils\Logger;
+use Automattic\WooCommerce\StoreApi\StoreApi;
+use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
+use Automattic\WooCommerce\StoreApi\SchemaController;
+use Leat\StoreApiExtension\Compat\CompatRegistry;
+use Leat\StoreApiExtension\Core\Common;
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -108,6 +115,7 @@ class Bootstrap
 		do_action('leat_before_init');
 
 		$this->register_dependencies();
+		$this->register_api_route_extensions();
 
 		if (is_admin()) {
 			if ($this->package->get_version() !== $this->package->get_version_stored_on_db()) {
@@ -138,6 +146,7 @@ class Bootstrap
 		$this->container->get(SyncRewards::class)->init();
 		$this->container->get(GiftcardProduct::class)->init();
 		$this->container->get(WebhookManager::class)->init();
+		$this->container->get(StoreApiExtensionApi::class);
 
 		/**
 		 * Action triggered after Leat initialization finishes.
@@ -419,6 +428,12 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
+			StoreApiExtensionRegistry::class,
+			function () {
+				return new StoreApiExtensionRegistry();
+			}
+		);
+		$this->container->register(
 			WebhookManager::class,
 			function (Container $container) {
 				return new WebhookManager($container->get(Connection::class));
@@ -454,6 +469,46 @@ class Bootstrap
 					$container->get(SyncRewards::class),
 					$container->get(WebhookManager::class)
 				);
+			}
+		);
+		$this->container->register(
+			StoreApiExtensionApi::class,
+			function (Container $container) {
+				$store_api_registry = $container->get(StoreApiExtensionRegistry::class);
+				$settings            = $container->get(Settings::class);
+				$extend_schema      = StoreApi::container()->get(ExtendSchema::class);
+
+				return new StoreApiExtensionApi($store_api_registry, $extend_schema, $settings);
+			}
+		);
+	}
+
+
+	/**
+	 * Register payment method integrations with the container.
+	 */
+	protected function register_api_route_extensions()
+	{
+		$this->container->register(
+			CompatRegistry::class,
+			function (Container $container) {
+				$extend_schema     = StoreApi::container()->get(ExtendSchema::class);
+				$schema_controller = StoreApi::container()->get(SchemaController::class);
+				$settings           = $container->get(Settings::class);
+				$connection        = $container->get(Connection::class);
+
+				return new CompatRegistry($extend_schema, $schema_controller, $connection, $settings);
+			}
+		);
+		$this->container->register(
+			Common::class,
+			function (Container $container) {
+				$extend_schema     = StoreApi::container()->get(ExtendSchema::class);
+				$schema_controller = StoreApi::container()->get(SchemaController::class);
+				$connection        = $container->get(Connection::class);
+				$settings          = $container->get(Settings::class);
+
+				return new Common($extend_schema, $schema_controller, $connection, $settings);
 			}
 		);
 	}

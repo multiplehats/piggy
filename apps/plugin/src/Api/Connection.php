@@ -1545,4 +1545,51 @@ class Connection
 				throw new \Exception("Invalid action name: {$action_name}");
 		}
 	}
+
+	/**
+	 * Calculate potential credits for a given purchase amount.
+	 *
+	 * @param float $unit_value The purchase amount to calculate credits for
+	 * @param string|null $contact_uuid Optional contact UUID
+	 * @param string|null $unit_name Optional unit name (defaults to purchase_amount)
+	 * @return int|null The calculated credits or null on failure
+	 */
+	public function calculate_credits($unit_value, $contact_uuid = null, $unit_name = null)
+	{
+		$client = $this->init_client();
+
+		if (!$client) {
+			return null;
+		}
+
+		error_log(print_r($unit_value, true));
+
+		$shop_uuid = get_option('leat_shop_uuid');
+
+		if (!$shop_uuid) {
+			return null;
+		}
+
+		try {
+			$params = [
+				'shop_uuid' => $shop_uuid,
+				'unit_value' => $unit_value
+			];
+
+			if ($contact_uuid) {
+				$params['contact_uuid'] = $contact_uuid;
+			}
+
+			if ($unit_name) {
+				$params['unit_name'] = $unit_name;
+			}
+
+			$response = CreditReception::calculate($params);
+
+			return $response->credits;
+		} catch (\Exception $e) {
+			$this->log_exception($e, 'Calculate Credits Error');
+			return null;
+		}
+	}
 }
