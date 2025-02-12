@@ -92,7 +92,7 @@ class Connection
 					wp_json_encode(
 						[
 							'error' => $e->getMessage(),
-							'trace' => $e->getTraceAsString(),
+							'trace' => defined('WP_DEBUG') && WP_DEBUG ? $e->getTraceAsString() : null,
 						]
 					),
 			);
@@ -131,7 +131,7 @@ class Connection
 	{
 		$api_key = $this->get_api_key();
 
-		if ($api_key) {
+		if ($api_key && strlen($api_key) === 53) {
 			ApiClient::configure($api_key, 'https://api.piggy.eu');
 			ApiClient::setPartnerId('P01-267-loyal_minds');
 
@@ -446,7 +446,23 @@ class Connection
 			return $shops;
 		} catch (\Throwable $th) {
 			$this->log_exception($th, 'Get Shops Error');
-			return null;
+
+			// Check for both PiggyRequestException and GuzzleHttp RequestException
+			if (($th instanceof PiggyRequestException && $th->getCode() === 401) ||
+				($th instanceof \GuzzleHttp\Exception\RequestException && $th->getResponse() && $th->getResponse()->getStatusCode() === 401)
+			) {
+				return [
+					'error' => true,
+					'code' => 'invalid_api_key',
+					'message' => __('The API key is invalid or has expired.', 'leat-crm')
+				];
+			}
+
+			return [
+				'error' => true,
+				'code' => 'unknown_error',
+				'message' => __('An unexpected error occurred while fetching shops.', 'leat-crm')
+			];
 		}
 	}
 
@@ -734,11 +750,14 @@ class Connection
 
 		$last_order_amount = 0;
 		$last_order_date   = '';
+		$last_order_id     = 0;
+
 
 		if (! empty($customer_orders)) {
 			$last_order        = $customer_orders[0];
 			$last_order_amount = $last_order->get_total();
 			$last_order_date   = $last_order->get_date_created()->format('Y-m-d H:i:s');
+			$last_order_id     = $last_order->get_id();
 		}
 
 		$currency         = strtolower(get_woocommerce_currency());
@@ -750,6 +769,7 @@ class Connection
 			'wp_create_date'                         => $create_date,
 			'wp_wc_last_order_amount_' . $currency   => (float) $last_order_amount,
 			'wp_wc_last_order_date'                  => $last_order_date,
+			'wp_wc_last_order_id'                    => $last_order_id,
 			'wp_wc_average_order_value_' . $currency => $orders_count > 0 ? round($total_spent / $orders_count, 2) : 0,
 			'wp_wc_first_order_date'                 => $first_order_date,
 			'wp_wc_product_categories_purchased'     => $this->get_purchased_categories($user_id),
@@ -867,6 +887,7 @@ class Connection
 	protected function get_user_attributes($user_id)
 	{
 		$user       = get_userdata($user_id);
+
 		$attributes = [
 			'wp_user_id'          => $user_id,
 			'firstname'           => $user->first_name,
@@ -875,6 +896,7 @@ class Connection
 			'wp_account_age_days' => floor((time() - strtotime($user->user_registered)) / (60 * 60 * 24)),
 			'wp_last_login'       => get_user_meta($user_id, 'leat_last_login', true) ?: '',
 			'wp_post_count'       => count_user_posts($user_id),
+			'wp_multisite_blogs' => is_multisite() ? $this->get_multisite_blogs($user_id) : '',
 		];
 
 		$wc_attributes = $this->get_woocommerce_user_data($user_id);
@@ -884,6 +906,17 @@ class Connection
 		$this->ensure_custom_attributes_exist();
 
 		return $attributes;
+	}
+
+	private function get_multisite_blogs($user_id)
+	{
+		$blogs = get_blogs_of_user($user_id);
+
+		$blog_ids = array_map(function ($blog) {
+			return $blog->userblog_id;
+		}, $blogs);
+
+		return implode(',', $blog_ids);
 	}
 
 	private function attribute_exists($attributes_list, $name)
@@ -948,6 +981,12 @@ class Connection
 				],
 				[
 					'entity' => 'contact',
+					'name'   => 'wp_multisite_blogs',
+					'label'  => 'WordPress Multisite Blogs',
+					'type'   => 'text',
+				],
+				[
+					'entity' => 'contact',
 					'name'   => 'wp_account_age_days',
 					'label'  => 'WordPress Account Age (Days)',
 					'type'   => 'number',
@@ -993,6 +1032,12 @@ class Connection
 					'name'   => 'wp_wc_last_order_date',
 					'label'  => 'WooCommerce Last Order Date',
 					'type'   => 'date_time',
+				],
+				[
+					'entity' => 'contact',
+					'name'   => 'wp_wc_last_order_id',
+					'label'  => 'WooCommerce Last Order ID',
+					'type'   => 'number',
 				],
 				[
 					'entity' => 'contact',
@@ -1353,6 +1398,7 @@ class Connection
 			'wp_wc_orders_count'                     => (int) $orders_count,
 			'wp_wc_last_order_amount_' . $currency   => (float) $last_order_amount,
 			'wp_wc_last_order_date'                  => $last_order_date,
+			'wp_wc_last_order_id'                    => $current_order->get_id(),
 			'wp_wc_average_order_value_' . $currency => (float) $average_order_value,
 			'wp_wc_first_order_date'                 => $first_order_date,
 			'wp_wc_product_categories_purchased'     => $this->get_purchased_categories(null, $current_order),

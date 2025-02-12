@@ -73,7 +73,7 @@
 
 		<OnboardingSteps class="mb-8" />
 
-		<form method="POST" on:submit={handleSubmit}>
+		<form class="relative" method="POST" on:submit={handleSubmit}>
 			{#each $onboardingSteps as { id, component, status, showActions, initialising } (id)}
 				{#if status === "current"}
 					{#if component}

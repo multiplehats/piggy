@@ -86,13 +86,50 @@ class WebhookManager
 	/**
 	 * Sync webhooks with Leat API
 	 */
-	private function sync_webhooks(): void
+	public function sync_webhooks(): void
 	{
 		try {
-			$result = $this->ensure_webhooks_installed();
+			$current_site_url = defined('WP_DEBUG') && defined('LEAT_WEBHOOK_URL')
+				? LEAT_WEBHOOK_URL
+				: get_site_url();
+
+			$current_webhook_url = trailingslashit($current_site_url) . 'wp-json/leat/private/webhooks';
+
+			$client = $this->connection->init_client();
+			if (!$client) {
+				$this->logger->error('Failed to initialize API client for webhook sync');
+				return;
+			}
+
+			// Check existing webhooks first
+			$existing_webhooks = WebhookSubscription::list();
+			$needs_reinstall = false;
+
+			// Check if any webhook URL doesn't match current URL
+			foreach ($existing_webhooks as $webhook) {
+				if (strpos($webhook->getName(), self::WEBHOOK_PREFIX) === 0) {
+					if ($webhook->getUrl() !== $current_webhook_url) {
+						$needs_reinstall = true;
+						break;
+					}
+				}
+			}
+
+			$result = false;
+			if ($needs_reinstall) {
+				$this->logger->debug('Domain changed, reinstalling webhooks');
+				// Delete all existing WordPress webhooks
+				foreach ($existing_webhooks as $webhook) {
+					if (strpos($webhook->getName(), self::WEBHOOK_PREFIX) === 0) {
+						WebhookSubscription::delete($webhook->getUuid());
+					}
+				}
+				$result = $this->ensure_webhooks_installed();
+			} else {
+				$result = $this->ensure_webhooks_installed();
+			}
 
 			if ($result) {
-				// Update last sync timestamp only if successful
 				update_option(self::LAST_SYNC_OPTION, time());
 				$this->logger->debug('Webhook sync completed successfully');
 			} else {

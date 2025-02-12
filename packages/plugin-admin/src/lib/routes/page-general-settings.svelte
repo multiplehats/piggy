@@ -28,13 +28,15 @@
 	$: onboardingComplete = $location.state?.onboarding === "complete";
 </script>
 
-<form method="POST" on:submit={handleSubmit}>
+<form class="relative" method="POST" on:submit={handleSubmit}>
 	<div class="grid grid-cols-1 gap-3">
 		{#if onboardingComplete}
 			<Alert
 				type="info"
 				title={__("You're all set!")}
-				description={__("You have successfully completed the onboarding process. You can now start using Leat.")}
+				description={__(
+					"You have successfully completed the onboarding process. You can now start using Leat."
+				)}
 			/>
 		{/if}
 

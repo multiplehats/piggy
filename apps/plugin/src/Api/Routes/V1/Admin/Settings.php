@@ -4,13 +4,15 @@ namespace Leat\Api\Routes\V1\Admin;
 
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Routes\V1\Middleware;
+use Leat\Api\Services\WebhookManager;
 
 /**
  * Shops class.
  *
  * @internal
  */
-class Settings extends AbstractRoute {
+class Settings extends AbstractRoute
+{
 	/**
 	 * The route identifier.
 	 *
@@ -30,7 +32,8 @@ class Settings extends AbstractRoute {
 	 *
 	 * @return string
 	 */
-	public function get_path() {
+	public function get_path()
+	{
 		return '/settings';
 	}
 
@@ -39,32 +42,33 @@ class Settings extends AbstractRoute {
 	 *
 	 * @return array An array of endpoints.
 	 */
-	public function get_args() {
+	public function get_args()
+	{
 		return [
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => [Middleware::class, 'is_authorized'],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Settings', 'leat-crm' ),
+						'description' => __('Settings', 'leat-crm'),
 						'type'        => 'object',
 					],
 				],
 			],
 			[
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_authorized' ],
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => [Middleware::class, 'is_authorized'],
 				'args'                => [
 					'id' => [
-						'description' => __( 'Setting ID', 'leat-crm' ),
+						'description' => __('Setting ID', 'leat-crm'),
 						'type'        => 'string',
 					],
 				],
 			],
-			'schema'      => [ $this->schema, 'get_public_item_schema' ],
-			'allow_batch' => [ 'v1' => true ],
+			'schema'      => [$this->schema, 'get_public_item_schema'],
+			'allow_batch' => ['v1' => true],
 		];
 	}
 
@@ -75,16 +79,41 @@ class Settings extends AbstractRoute {
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
-	protected function get_route_post_response( \WP_REST_Request $request ) {
-		$settings = $request->get_param( 'settings' );
+	protected function get_route_post_response(\WP_REST_Request $request)
+	{
+		$settings = $request->get_param('settings');
 
-		if ( ! $settings ) {
-			return rest_ensure_response( null );
+		if (! $settings) {
+			return rest_ensure_response(null);
 		}
 
-		$result = $this->settings->update_settings( $settings );
+		// Store old values to check for changes
+		$old_api_key = $this->settings->get_setting_by_id('api_key');
+		$old_shop_uuid = $this->settings->get_setting_by_id('shop_uuid');
 
-		return rest_ensure_response( $result );
+		$result = $this->settings->update_settings($settings);
+
+		/**
+		 * If the API key changed, we need to sync the rewards and promotions
+		 * and sync the webhooks but only if the shop UUID is set.
+		 */
+		if (isset($settings['api_key']) && $settings['api_key'] !== $old_api_key && !empty($settings['shop_uuid'])) {
+			$this->sync_rewards->start_sync();
+			$this->sync_promotions->start_sync();
+			$this->webhook_manager->sync_webhooks();
+		}
+
+		/**
+		 * If the shop UUID changed, we need to sync the rewards and promotions
+		 * and sync the webhooks but only if the API key is set.
+		 */
+		if (isset($settings['shop_uuid']) && $settings['shop_uuid'] !== $old_shop_uuid && !empty($settings['api_key'])) {
+			$this->sync_rewards->start_sync();
+			$this->sync_promotions->start_sync();
+			$this->webhook_manager->sync_webhooks();
+		}
+
+		return rest_ensure_response($result);
 	}
 
 	/**
@@ -94,30 +123,74 @@ class Settings extends AbstractRoute {
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
-	protected function get_route_response( \WP_REST_Request $request ) {
-		$id = $request->get_param( 'id' );
+	protected function get_route_response(\WP_REST_Request $request)
+	{
+		$id = $request->get_param('id');
 
-		if ( $id ) {
-			$setting = $this->settings->get_setting_by_id( $id );
+		if ($id) {
+			$setting = $this->settings->get_setting_by_id($id);
 
-			if ( ! $setting ) {
-				return rest_ensure_response( null );
+			if (! $setting) {
+				return rest_ensure_response(null);
 			}
 
-			return rest_ensure_response( $setting );
+			// Mask API key if user doesn't have manage_options capability
+			if ($id === 'api_key' && !current_user_can('manage_options')) {
+				$setting = $this->mask_api_key($setting);
+			}
+
+			return rest_ensure_response($setting);
 		}
 
-		$include_api_key = current_user_can( 'manage_options' );
-		$all_settings    = $this->settings->get_all_settings_with_values( $include_api_key );
+		$include_api_key = current_user_can('manage_options');
+		$all_settings    = $this->settings->get_all_settings_with_values($include_api_key);
 
 		// Returns settings as an object rather than an array.
 		// This makes it easier to work with in the front-end.
 		$return = [];
-		foreach ( $all_settings as $item ) {
-			$data                  = $this->prepare_item_for_response( $item['id'], $request );
-			$return[ $item['id'] ] = $this->prepare_response_for_collection( $data );
+		foreach ($all_settings as $item) {
+			$data                  = $this->prepare_item_for_response($item['id'], $request);
+			// Mask API key in the full settings response if user doesn't have manage_options
+			if ($item['id'] === 'api_key' && !current_user_can('manage_options')) {
+				$data = $this->mask_api_key($data);
+			}
+			$return[$item['id']] = $this->prepare_response_for_collection($data);
 		}
 
-		return rest_ensure_response( $return );
+		return rest_ensure_response($return);
+	}
+
+	/**
+	 * Mask API key, showing only the last 4 characters
+	 *
+	 * @param string|array $setting The setting to mask
+	 * @return string|array
+	 */
+	private function mask_api_key($setting)
+	{
+		if (is_array($setting)) {
+			if (isset($setting['value'])) {
+				$setting['value'] = $this->create_masked_value($setting['value']);
+			}
+			return $setting;
+		}
+		return $this->create_masked_value($setting);
+	}
+
+	/**
+	 * Create a masked version of the API key
+	 *
+	 * @param string $value The value to mask
+	 * @return string
+	 */
+	private function create_masked_value($value)
+	{
+		if (empty($value)) {
+			return '';
+		}
+		$length = strlen($value);
+		$visible_chars = 4;
+		$masked_length = $length - $visible_chars;
+		return str_repeat('•', $masked_length) . substr($value, -$visible_chars);
 	}
 }
