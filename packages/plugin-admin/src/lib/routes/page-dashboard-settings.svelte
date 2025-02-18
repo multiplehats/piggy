@@ -22,7 +22,11 @@
 	}
 </script>
 
-<form method="POST" on:submit={handleSubmit}>
+<form
+	class="relative min-h-[calc(100vh-var(--header-height))] pb-24"
+	method="POST"
+	on:submit={handleSubmit}
+>
 	<div class="grid grid-cols-1 gap-3">
 		<SettingsSectionDashboard />
 

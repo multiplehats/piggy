@@ -94,6 +94,9 @@ class PromotionRules extends AbstractRoute
 			'discountType'          => $request->get_param('discountType'),
 			'minimumPurchaseAmount' => $request->get_param('minimumPurchaseAmount'),
 			'selectedProducts'      => $request->get_param('selectedProducts'),
+			'individualUse'         => $request->get_param('individualUse'),
+			'limitPerContact'       => $request->get_param('limitPerContact'),
+			'expirationDuration'    => $request->get_param('expirationDuration'),
 		);
 
 		$post_data = array(
@@ -102,14 +105,18 @@ class PromotionRules extends AbstractRoute
 			'post_status' => $data['status'],
 			'meta_input'  => array(
 				'_leat_promotion_rule_label'                    => $data['label'],
-				'_leat_promotion_rule_selected_products' => $data['selectedProducts'],
 				'_leat_promotion_rule_discount_value'    => $data['discountValue'],
 				'_leat_promotion_rule_discount_type'     => $data['discountType'],
 				'_leat_promotion_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
-				'_leat_promotion_rule_discount_type'     => $data['discountType'],
-				'_leat_promotion_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
+				'_leat_promotion_rule_selected_products' => $data['selectedProducts'],
+				'_leat_promotion_rule_individual_use' => $data['individualUse'],
+				'_leat_promotion_rule_limit_per_contact' => $data['limitPerContact'],
+				'_leat_promotion_rule_expiration_duration' => $data['expirationDuration'],
 			),
 		);
+
+		$old_status = get_post_status($data['id']);
+		$new_status = $data['status'];
 
 		if (! empty($data['id'])) {
 			$post_data['ID'] = $data['id'];
@@ -120,6 +127,12 @@ class PromotionRules extends AbstractRoute
 
 		if (is_wp_error($post_id)) {
 			return new \WP_Error('post_save_failed', __('Failed to save promotion rule', 'leat-crm'), array('status' => 500));
+		}
+
+		if ($old_status !== 'publish' && $new_status === 'publish') {
+			$this->logger->info('Promotion rule published, syncing vouchers');
+
+			$this->sync_vouchers->start_sync();
 		}
 
 		$response = $this->prepare_item_for_response(get_post($post_id), $request);

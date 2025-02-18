@@ -30,11 +30,17 @@ class Settings
 			'tooltip' => __('This will delete all plugins settings upon deactivation. Use with caution!', 'leat-crm'),
 		);
 		$settings[] = array(
-			'id'      => 'api_key',
-			'default' => '',
-			'type'    => 'text',
-			'label'   => __('API Key', 'leat-crm'),
-			'tooltip' => __('Enter your API key here.', 'leat-crm'),
+			'id'          => 'api_key',
+			'default'     => '',
+			'type'        => 'text',
+			'label'       => __('API Key', 'leat-crm'),
+			'tooltip'     => __('Enter your API key here.', 'leat-crm'),
+			'description' => sprintf(
+				/* translators: %1$s: opening link tag, %2$s: closing link tag */
+				__('You can generate an API key in your %1$sLeat Business Dashboard%2$s.', 'leat-crm'),
+				'<a href="' . esc_url('https://business.leat.com/apps/integrations/personal-access-tokens') . '" target="_blank" rel="noopener noreferrer">',
+				'</a>'
+			),
 		);
 		$settings[] = array(
 			'id'      => 'shop_uuid',
@@ -370,11 +376,16 @@ class Settings
 	public function get_setting_by_id($id)
 	{
 		$all_settings = $this->get_all_settings();
+
 		$setting      = current(
 			array_filter(
 				$all_settings,
 				function ($setting) use ($id) {
-					return $setting['id'] === $id;
+					// If the $id somehow includes the leat_ prefix, remove it.
+
+					$setting_id = str_replace('leat_', '', $setting['id']);
+
+					return $setting_id === $id;
 				}
 			)
 		);

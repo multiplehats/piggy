@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.6.3
+Stable tag: 0.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -122,10 +122,22 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 
 * Bug fix: Fixed gift card completion message showing on all orders instead of only orders containing gift cards
 * Bug fix: Fixed reward images not syncing properly for newer rewards
-* Bug fix: Fixed displayed credit amount when `{{ credits }}` placeholder was not being used.
 * Enhancement: When a coupon is removed from the cart for a free product, the free product will also be removed for WC Store API requests
 * Enhancement: After claiming a reward, the dashboard now scrolls up to the coupon section
 * Feature: Added new setting to control visibility of the "Join Program" CTA on the dashboard
 * Enhancement: Added automatic detection of WooCommerce registration settings to hide join CTA when registration is disabled
-* Enhancement: Improved coupon code generation
 * Feature: Added new [leat_reward_points] shortcode for displaying customer points anywhere on your site
+
+= 0.7.0 =
+
+* Enhancement: Added new user attributes:
+  * Syncs WordPress multisite blog memberships for users
+  * Syncs user's last order ID
+* Enhancement: Webhooks automatically resync when site domain changes to maintain functionality
+* Enhancement: Rewards and promotions automatically sync when API key is changed
+* Enhancement: Added direct link to API key generation page in settings for easier access
+* Enhancement: Improved visibility of the save button
+* Enhancement: Vouchers are now automatically synced when promotion rules are published
+* Security: API key is now masked for users without manage_options capability, showing only last 4 characters
+* Enhancement: Improved coupon code generation
+* Bug fix: Fixed displayed credit amount when `{{ credits }}` placeholder was not being used.

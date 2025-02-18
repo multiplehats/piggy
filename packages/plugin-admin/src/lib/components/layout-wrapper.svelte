@@ -29,7 +29,9 @@
 			isOnboarding ? "mx-auto mt-0" : "mb-16 mt-8"
 		)}
 	>
-		<slot />
+		<div class="relative pb-24">
+			<slot />
+		</div>
 	</div>
 </main>
 

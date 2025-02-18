@@ -50,42 +50,8 @@
 			}
 		)
 	);
-	const mutateSync = createMutation({
-		mutationFn: () => service.syncVouchers($params.id.toString()),
-		mutationKey: ["sync-vouchers"],
-		onSuccess: () => {
-			$query.refetch();
-		},
-	});
 
-	const querySyncInformation = createQuery(
-		derived(mutateSync, ($mutateSync) => ({
-			queryKey: ["sync-vouchers-information"],
-			queryFn: () => service.getSyncVouchersInformation({ id: $params.id.toString() }),
-			refetchInterval: (query: any) => {
-				if (
-					query.state.data?.is_queued ||
-					query.state.data?.is_processing ||
-					$mutateSync.isPending
-				) {
-					return 2000;
-				}
-
-				return false;
-			},
-		}))
-	);
 	const rule = writable<GetPromotionRuleByIdResponse[0] | null>(null);
-
-	let isStillSyncing = false;
-
-	$: {
-		isStillSyncing =
-			($mutateSync.isPending ||
-				$querySyncInformation.data?.is_processing ||
-				$querySyncInformation.data?.is_queued) ??
-			false;
-	}
 
 	function handleSave() {
 		if (!$rule) {
@@ -103,7 +69,11 @@
 			minimumPurchaseAmount: $rule?.minimumPurchaseAmount?.value,
 		};
 
-		$mutate.mutate(data);
+		$mutate.mutate(data, {
+			onSuccess: () => {
+				client.invalidateQueries({ queryKey: ["sync-vouchers"] });
+			},
+		});
 	}
 
 	$: if ($query.data && $query.isSuccess) {

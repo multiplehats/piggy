@@ -159,7 +159,10 @@ class Installer
 	 */
 	public function maybe_install_webhooks()
 	{
-		$this->webhook_manager->check_webhooks();
+		// Only check webhooks during admin requests to reduce load
+		if (is_admin()) {
+			$this->webhook_manager->check_webhooks();
+		}
 	}
 
 	public function maybe_redirect_to_onboarding()
