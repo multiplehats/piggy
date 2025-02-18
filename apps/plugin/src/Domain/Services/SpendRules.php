@@ -560,6 +560,9 @@ class SpendRules
 			$coupon_code = wp_generate_uuid4();
 		}
 
+		$rule_amount = $formatted_spend_rule['discountValue']['value'];
+		$rule_limit_usage_to_x_items = $formatted_spend_rule['limitUsageToXItems']['value'];
+
 		$coupon = new \WC_Coupon();
 		$coupon->set_code($coupon_code);
 		$coupon->set_description('Leat Spend Rule: ' . $formatted_spend_rule['title']['value']);
@@ -569,10 +572,7 @@ class SpendRules
 		$coupon->add_meta_data('_leat_spend_rule_coupon', 'true', true);
 		$coupon->add_meta_data('_leat_spend_rule_id', $formatted_spend_rule['id'], true);
 
-		$discount_type = $this->get_discount_type($formatted_spend_rule['discountType']['value']);
-		if ($discount_type) {
-			$coupon->set_discount_type($discount_type);
-		}
+		$discount_type = $formatted_spend_rule['discountType']['value'];
 
 		if ($user_id) {
 			$user       = get_user_by('id', $user_id);
@@ -582,31 +582,47 @@ class SpendRules
 			$coupon->set_email_restrictions([$user_email]);
 		}
 
+		// error_log(print_r($formatted_spend_rule, true));
+
 		switch ($formatted_spend_rule['type']['value']) {
 			case 'FREE_PRODUCT':
 				$coupon->set_amount(0);
+
+				if ('fixed' === $discount_type) {
+					$coupon->set_discount_type('fixed_product');
+				} else {
+					$coupon->set_discount_type('percent');
+				}
 
 				// Set product IDs for product restrictions.
 				// Note: For 100% discounts, we intentionally skip setting product IDs due to
 				// a WooCommerce Store API limitation where product restrictions aren't applied.
 				if (
 					! empty($formatted_spend_rule['selectedProducts']['value']) &&
-					intval($formatted_spend_rule['discountValue']['value']) !== 100
+					intval($rule_amount) !== 100
 				) {
 					$coupon->set_product_ids($formatted_spend_rule['selectedProducts']['value']);
 				}
 
 				break;
 			case 'ORDER_DISCOUNT':
-				$coupon->set_amount($formatted_spend_rule['discountValue']['value']);
-				break;
+				$coupon->set_amount($rule_amount);
 
+				if ('fixed' === $discount_type) {
+					$coupon->set_discount_type('fixed_cart');
+				} else {
+					$coupon->set_discount_type('percent');
+				}
+
+				break;
 			case 'FREE_SHIPPING':
+				$coupon->set_discount_type('fixed_cart');
+				$coupon->set_amount(0);
 				$coupon->set_free_shipping(true);
-				break;
 
+				break;
 			case 'CATEGORY':
-				$coupon->set_amount($formatted_spend_rule['discountValue']['value']);
+				$coupon->set_amount($rule_amount);
 
 				// Set product categories.
 				if (! empty($formatted_spend_rule['selectedCategories']['value'])) {
@@ -614,8 +630,8 @@ class SpendRules
 				}
 
 				// Add limit usage to X items if set.
-				if (isset($formatted_spend_rule['limitUsageToXItems']['value'])) {
-					$limit = $formatted_spend_rule['limitUsageToXItems']['value'];
+				if (isset($rule_limit_usage_to_x_items)) {
+					$limit = $rule_limit_usage_to_x_items;
 
 					if ($limit) {
 						$coupon->set_limit_usage_to_x_items(intval($limit));
