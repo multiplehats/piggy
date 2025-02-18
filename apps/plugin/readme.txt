@@ -129,7 +129,8 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 * Feature: Added new [leat_reward_points] shortcode for displaying customer points anywhere on your site
 
 = 0.7.0 =
-* Added new user attributes:
+
+* Enhancement: Added new user attributes:
   * Syncs WordPress multisite blog memberships for users
   * Syncs user's last order ID
 * Enhancement: Webhooks automatically resync when site domain changes to maintain functionality
@@ -138,3 +139,5 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 * Enhancement: Improved visibility of the save button
 * Enhancement: Vouchers are now automatically synced when promotion rules are published
 * Security: API key is now masked for users without manage_options capability, showing only last 4 characters
+* Enhancement: Improved coupon code generation
+* Bug fix: Fixed displayed credit amount when `{{ credits }}` placeholder was not being used.

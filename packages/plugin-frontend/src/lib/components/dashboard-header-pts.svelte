@@ -74,14 +74,22 @@
 					getTranslatedText($pluginSettings.dashboard_title_logged_in),
 					$contactStore?.contact?.balance?.credits ?? 0
 				)}
-				{title.before}<span class="leat-credits">{title.credits}</span>{title.after}
+				{#if title.credits}
+					{title.before}<span class="leat-credits">{title.credits}</span>{title.after}
+				{:else}
+					{title.before}
+				{/if}
 			{/if}
 		{:else}
 			{@const title = getHeaderTitle(
 				getTranslatedText($pluginSettings.dashboard_title_logged_out) ?? "",
 				400
 			)}
-			{title.before}<span class="leat-credits">{title.credits}</span>{title.after}
+			{#if title.credits && title.after}
+				{title.before}<span class="leat-credits">{title.credits}</span>{title.after}
+			{:else}
+				{title.before}
+			{/if}
 		{/if}
 	</h2>
 
