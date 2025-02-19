@@ -17,8 +17,8 @@ module.exports = {
 	...defaultConfig,
 	entry: entries,
 	output: {
-		path: path.resolve(__dirname, "src"),
-		filename: "[name]/build/index.js",
+		path: path.resolve(__dirname, "build"),
+		filename: "[name]/index.js",
 	},
 	module: {
 		...defaultConfig.module,
@@ -60,7 +60,24 @@ module.exports = {
 		),
 		new WooCommerceDependencyExtractionWebpackPlugin(),
 		new MiniCssExtractPlugin({
-			filename: `[name]/build/style-[name].css`,
+			filename: `[name]/style-[name].css`,
+			chunkFilename: `[name]/[id].[name].css`,
 		}),
 	],
+	optimization: {
+		...defaultConfig.optimization,
+		splitChunks: {
+			cacheGroups: {
+				style: {
+					type: "css/mini-extract",
+					test: /\.(sc|sa|c)ss$/,
+					chunks: "all",
+					enforce: true,
+					name(module, chunks) {
+						return `${chunks[0].name}/style-${chunks[0].name}`;
+					},
+				},
+			},
+		},
+	},
 };
