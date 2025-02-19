@@ -4,7 +4,7 @@ const fs = require("fs-extra");
 const blocks = [
 	{
 		name: "gift-card-recipient",
-		source: path.resolve(__dirname, "../src/gift-card-recipient/build"),
+		source: path.resolve(__dirname, "../build/gift-card-recipient"),
 		target: path.resolve(
 			__dirname,
 			"../../../apps/plugin/src/Blocks/GiftcardRecipientBlock/build"
