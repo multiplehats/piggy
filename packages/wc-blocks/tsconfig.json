@@ -1,0 +1,3 @@
+{
+	"extends": "@leat/tsconfig/react.json"
+}

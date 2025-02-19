@@ -5,9 +5,15 @@ namespace Leat\Blocks;
 use Leat\Api\Connection;
 use Leat\Settings;
 use Leat\Utils\Logger;
+use Leat\Assets\Api as AssetApi;
 
 class BlocksController
 {
+    /**
+     * @var AssetApi
+     */
+    private $asset_api;
+
     /**
      * @var Connection
      */
@@ -23,8 +29,9 @@ class BlocksController
      */
     private $logger;
 
-    public function __construct(Connection $connection, Settings $settings)
+    public function __construct(AssetApi $asset_api, Connection $connection, Settings $settings)
     {
+        $this->asset_api = $asset_api;
         $this->connection = $connection;
         $this->settings = $settings;
         $this->logger = new Logger();
@@ -43,8 +50,8 @@ class BlocksController
 
         $integration_registry = new \Automattic\WooCommerce\Blocks\Integrations\IntegrationRegistry();
 
-        // Register the gift card recipient block integration
-        $integration_registry->register(new GiftCardRecipientBlock(
+        $integration_registry->register(new GiftcardRecipientBlock\Block(
+            $this->asset_api,
             $this->connection,
             $this->settings
         ));

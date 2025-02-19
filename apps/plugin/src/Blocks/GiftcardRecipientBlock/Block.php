@@ -1,8 +1,10 @@
 <?php
 
-namespace Leat\Blocks;
+namespace Leat\Blocks\GiftcardRecipientBlock;
 
-class GiftCardRecipientBlock extends AbstractBlockIntegration
+use Leat\Blocks\AbstractBlockIntegration;
+
+class Block extends AbstractBlockIntegration
 {
     public function get_name(): string
     {

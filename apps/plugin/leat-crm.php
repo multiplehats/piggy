@@ -32,6 +32,10 @@ if (! defined('LEAT_URL')) {
 	define('LEAT_URL', plugins_url('/', __FILE__));
 }
 
+if (! defined('LEAT_PLUGIN_FILE')) {
+	define('LEAT_PLUGIN_FILE', __FILE__);
+}
+
 if (! defined('LEAT_VERSION')) {
 	define('LEAT_VERSION', '0.6.3');
 }
