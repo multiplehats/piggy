@@ -60,7 +60,7 @@ module.exports = {
 		),
 		new WooCommerceDependencyExtractionWebpackPlugin(),
 		new MiniCssExtractPlugin({
-			filename: `[name]/build/[name].css`,
+			filename: `[name]/build/style-[name].css`,
 		}),
 	],
 };
