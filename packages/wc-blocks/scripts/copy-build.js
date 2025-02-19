@@ -22,5 +22,5 @@ blocks.forEach(({ name, source, target }) => {
 		overwrite: true,
 	});
 
-	console.log(`Build files for ${name} copied successfully!`);
+	console.info(`Build files for ${name} copied successfully!`);
 });
