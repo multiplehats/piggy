@@ -2,11 +2,18 @@
 	"$schema": "https://turbo.build/schema.v2.json",
 	"tasks": {
 		"topo": {
-			"dependsOn": ["^topo"]
+			"dependsOn": [
+				"^topo"
+			]
 		},
 		"build": {
-			"dependsOn": ["^build"],
-			"outputs": ["dist/**"]
+			"dependsOn": [
+				"^build"
+			],
+			"outputs": [
+				"dist/**",
+				"build/**"
+			]
 		},
 		"dev": {
 			"persistent": true,
@@ -24,33 +31,69 @@
 			"cache": false
 		},
 		"analyze": {
-			"dependsOn": ["^build"]
+			"dependsOn": [
+				"^build"
+			]
 		},
 		"@leat/plugin#i18n": {
 			"cache": false,
-			"dependsOn": ["^build", "@leat/plugin#package-plugin"],
-			"outputs": ["languages/**"]
+			"dependsOn": [
+				"^build",
+				"@leat/plugin#package-plugin"
+			],
+			"outputs": [
+				"languages/**"
+			]
 		},
 		"@leat/plugin#package-plugin": {
-			"dependsOn": ["build"],
-			"outputs": ["./leat-crm.zip"],
-			"inputs": ["dist/**", "src/**", "vendor/**", "leat-crm.php"]
+			"dependsOn": [
+				"build"
+			],
+			"outputs": [
+				"./leat-crm.zip"
+			],
+			"inputs": [
+				"dist/**",
+				"src/**",
+				"vendor/**",
+				"leat-crm.php"
+			]
 		},
 		"@leat/plugin#package-plugin:ci": {
-			"dependsOn": ["build"],
-			"outputs": ["dist/**", "./leat-crm.zip"],
-			"inputs": ["dist/**", "src/**", "vendor/**", "leat-crm.php"]
+			"dependsOn": [
+				"build"
+			],
+			"outputs": [
+				"dist/**",
+				"./leat-crm.zip"
+			],
+			"inputs": [
+				"dist/**",
+				"src/**",
+				"vendor/**",
+				"leat-crm.php"
+			]
 		},
 		"format": {
-			"outputs": ["node_modules/.cache/.prettiercache"]
+			"outputs": [
+				"node_modules/.cache/.prettiercache"
+			]
 		},
 		"lint": {
-			"dependsOn": ["^topo"],
-			"outputs": ["node_modules/.cache/.eslintcache"]
+			"dependsOn": [
+				"^topo"
+			],
+			"outputs": [
+				"node_modules/.cache/.eslintcache"
+			]
 		},
 		"typecheck": {
-			"dependsOn": ["^topo"],
-			"outputs": ["node_modules/.cache/tsbuildinfo.json"]
+			"dependsOn": [
+				"^topo"
+			],
+			"outputs": [
+				"node_modules/.cache/tsbuildinfo.json"
+			]
 		},
 		"clean": {
 			"cache": false

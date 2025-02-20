@@ -31,6 +31,7 @@ use Leat\Shortcodes\CustomerDashboardShortcode;
 use Leat\Shortcodes\RewardPointsShortcode;
 use Leat\RedirectController;
 use Leat\Utils\Logger;
+use Leat\Blocks\BlocksController;
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -138,6 +139,7 @@ class Bootstrap
 		$this->container->get(SyncRewards::class)->init();
 		$this->container->get(GiftcardProduct::class)->init();
 		$this->container->get(WebhookManager::class)->init();
+		$this->container->get(BlocksController::class)->init();
 
 		/**
 		 * Action triggered after Leat initialization finishes.
@@ -453,6 +455,15 @@ class Bootstrap
 					$container->get(SyncPromotions::class),
 					$container->get(SyncRewards::class),
 					$container->get(WebhookManager::class)
+				);
+			}
+		);
+		$this->container->register(
+			BlocksController::class,
+			function (Container $container) {
+				return new BlocksController(
+					$container->get(Connection::class),
+					$container->get(Settings::class)
 				);
 			}
 		);

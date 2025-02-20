@@ -11,6 +11,11 @@ class Block extends AbstractBlockIntegration
         return 'giftcard-recipient';
     }
 
+    public function initialize(): void
+    {
+        parent::initialize();
+    }
+
     public function get_script_data(): array
     {
         return [
