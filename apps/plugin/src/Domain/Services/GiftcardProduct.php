@@ -25,7 +25,6 @@ use Leat\Utils\OrderNotes;
  *
  * Main service class for handling gift card product functionality.
  *
-
  */
 class GiftcardProduct
 {
@@ -69,18 +68,9 @@ class GiftcardProduct
 		$this->settings   = $settings;
 	}
 
+
 	/**
 	 * Initialize the gift card product functionality.
-	 *
-	 * Registers all necessary WordPress hooks and filters for:
-	 * - Product settings UI
-	 * - Order processing
-	 * - Recipient email handling
-	 * - Refund management
-	 *
-
-	 *
-	 * @return void
 	 */
 	public function init()
 	{
@@ -113,6 +103,29 @@ class GiftcardProduct
 				}
 			}
 		}
+
+		add_action('woocommerce_blocks_loaded', [$this, 'register_giftcard_recipient_field_for_blocks']);
+	}
+
+	/**
+	 * Check if there is a giftcard in the cart.
+	 *
+	 * @return int|false The quantity of giftcards in the cart, or false if there are no giftcards.
+	 */
+	private function has_giftcard_in_cart()
+	{
+		// Check if WooCommerce is loaded and cart is available
+		if (!function_exists('WC') || !WC()->cart || !did_action('wp_loaded')) {
+			return false;
+		}
+
+		foreach (WC()->cart->get_cart() as $cart_item) {
+			if (get_post_meta($cart_item['product_id'], '_leat_giftcard_program_uuid', true)) {
+				return $cart_item['quantity'];
+			}
+		}
+
+		return false;
 	}
 
 	public function add_giftcard_product_tab($tabs)
@@ -179,19 +192,83 @@ class GiftcardProduct
 		update_post_meta($post_id, '_leat_giftcard_program_uuid', $program_uuid);
 	}
 
-	public function add_giftcard_recipient_field($checkout)
+	/**
+	 * Register the giftcard recipient field for block checkout.
+	 *
+	 * @return void
+	 */
+	public function register_giftcard_recipient_field_for_blocks()
 	{
-		$has_giftcard   = false;
-		$giftcard_count = 0;
-		foreach (WC()->cart->get_cart() as $cart_item) {
-			$product_id = $cart_item['product_id'];
-			if (get_post_meta($product_id, '_leat_giftcard_program_uuid', true)) {
-				$has_giftcard    = true;
-				$giftcard_count += $cart_item['quantity'];
+		$giftcard_quantity = $this->has_giftcard_in_cart();
+
+		if ($giftcard_quantity) {
+			woocommerce_register_additional_checkout_field([
+				'id' => 'leat/giftcard-recipient-email',
+				'label' => __('Gift card recipient email', 'leat-crm'),
+				'location' => 'contact',
+				'type' => 'text',
+				'required' => true,
+				'attributes' => [
+					'type' => 'email',
+					'autocomplete' => 'email',
+				],
+				'sanitize_callback' => 'sanitize_email',
+				'validate_callback' => function ($field_value) {
+					if (!is_email($field_value)) {
+						return new \WP_Error(
+							'invalid_giftcard_recipient_email',
+							__('Please enter a valid email address for the gift card recipient.', 'leat-crm')
+						);
+					}
+					return true;
+				}
+			]);
+
+			if ($giftcard_quantity > 1) {
+				// Add notice through WooCommerce notice system
+				wc_add_notice(
+					sprintf(
+						/* translators: %d: number of gift cards */
+						__('You are purchasing %d gift cards. All gift cards will be sent to the same gift card recipient email address. If you want to send gift cards to different recipients, please place separate orders.', 'leat-crm'),
+						$giftcard_quantity
+					),
+					'notice'
+				);
 			}
 		}
 
-		if ($has_giftcard) {
+		add_action('woocommerce_set_additional_field_value', function ($key, $value, $group, $wc_object) {
+			if ('leat/giftcard-recipient-email' !== $key) {
+				return;
+			}
+
+			$this->logger->info('Processing gift card recipient field save', [
+				'key' => $key,
+				'value' => $value,
+				'group' => $group,
+				'object_id' => $wc_object->get_id()
+			]);
+
+			if ($wc_object instanceof \WC_Order) {
+				$wc_object->update_meta_data('_giftcard_recipient_email', sanitize_email($value));
+				$wc_object->save();
+
+				$this->logger->info('Successfully saved gift card recipient email to order', [
+					'order_id' => $wc_object->get_id(),
+					'email' => $value
+				]);
+			}
+		});
+	}
+
+	/**
+	 * For legacy checkout.
+	 */
+	public function add_giftcard_recipient_field($checkout)
+	{
+		$giftcard_quantity = $this->has_giftcard_in_cart();
+
+		if ($giftcard_quantity) {
 			wp_nonce_field('leat_giftcard_recipient', 'leat_giftcard_recipient_nonce');
 
 			woocommerce_form_field(
@@ -206,19 +283,22 @@ class GiftcardProduct
 				esc_attr($checkout->get_value('giftcard_recipient_email'))
 			);
 
-			if ($giftcard_count > 1) {
+			if ($giftcard_quantity > 1) {
 				printf(
 					'<p class="giftcard-notice"><em>%s</em></p>',
 					sprintf(
 						/* translators: %d: number of gift cards */
 						esc_html__('Important: You are purchasing %d gift cards. All gift cards will be sent to the same recipient email address entered above. If you want to send gift cards to different recipients, please place separate orders.', 'leat-crm'),
-						esc_html($giftcard_count)
+						esc_html($giftcard_quantity)
 					)
 				);
 			}
 		}
 	}
 
+	/**
+	 * For legacy checkout.
+	 */
 	public function save_giftcard_recipient_email($order_id)
 	{
 		if (
@@ -298,6 +378,11 @@ class GiftcardProduct
 		return $product->get_price() * 100;
 	}
 
+	/**
+	 * Process giftcard orders.
+	 *
+	 * @param int $order_id The order ID.
+	 */
 	public function process_giftcard_order($order_id)
 	{
 		$order = wc_get_order($order_id);
