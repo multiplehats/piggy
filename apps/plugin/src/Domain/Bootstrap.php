@@ -374,7 +374,8 @@ class Bootstrap
 			function (Container $container) {
 				return new OrderProcessor(
 					$container->get(Connection::class),
-					$container->get(EarnRules::class)
+					$container->get(EarnRules::class),
+					$container->get(Settings::class)
 				);
 			}
 		);

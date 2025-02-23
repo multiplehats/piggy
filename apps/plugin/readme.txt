@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.7.0
+Stable tag: 0.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -142,8 +142,12 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 * Enhancement: Improved coupon code generation
 * Bug fix: Fixed displayed credit amount when `{{ credits }}` placeholder was not being used.
 
-= 0.7.1 =
+= 0.8.0 =
 
 * Feature: Added support for custom WooCommerce order statuses
   - Custom statuses must follow WooCommerce naming convention with 'wc-' prefix to be recognized
+* Feature: Added full loyalty program support for WooCommerce blocks checkout
+  - Automatically links orders to Leat contacts during checkout
+  - Properly syncs customer attributes and rewards points
+  - Maintains loyalty account tracking for both guest and registered users
 * Bug fix: Fix an issue where webhooks, rewards and promotions would always sync on settings save.
