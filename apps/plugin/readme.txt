@@ -142,8 +142,8 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 * Enhancement: Improved coupon code generation
 * Bug fix: Fixed displayed credit amount when `{{ credits }}` placeholder was not being used.
 
-= 0.8.0 =
+= 0.7.1 =
 
 * Feature: Added support for custom WooCommerce order statuses
-  - Compatible with any custom order status that uses the 'wc-' prefix
-  - Note: Custom statuses must follow WooCommerce naming convention with 'wc-' prefix to be recognized
+  - Custom statuses must follow WooCommerce naming convention with 'wc-' prefix to be recognized
+* Bug fix: Fix an issue where webhooks, rewards and promotions would always sync on settings save.
