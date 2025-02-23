@@ -141,3 +141,9 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 * Security: API key is now masked for users without manage_options capability, showing only last 4 characters
 * Enhancement: Improved coupon code generation
 * Bug fix: Fixed displayed credit amount when `{{ credits }}` placeholder was not being used.
+
+= 0.8.0 =
+
+* Feature: Added support for custom WooCommerce order statuses
+  - Compatible with any custom order status that uses the 'wc-' prefix
+  - Note: Custom statuses must follow WooCommerce naming convention with 'wc-' prefix to be recognized

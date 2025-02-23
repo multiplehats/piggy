@@ -582,8 +582,6 @@ class SpendRules
 			$coupon->set_email_restrictions([$user_email]);
 		}
 
-		// error_log(print_r($formatted_spend_rule, true));
-
 		switch ($formatted_spend_rule['type']['value']) {
 			case 'FREE_PRODUCT':
 				$coupon->set_amount(0);

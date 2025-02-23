@@ -79,7 +79,7 @@ class Settings
 		$settings[] = array(
 			'id'          => 'reward_order_statuses',
 			'type'        => 'select',
-			'label'       => __('Reward order statuses', 'leat-crm'),
+			'label'       => __('Reward order status', 'leat-crm'),
 			'description' => __('Select which order status will trigger a credit reward for customers', 'leat-crm'),
 			'default'     => 'completed',
 			'options'     => $this->woocommerce_order_statuses_options(),
@@ -292,35 +292,23 @@ class Settings
 	 */
 	private function woocommerce_order_statuses_options()
 	{
-		$order_statuses = [
-			'wc-pending'        => __('Pending payment', 'leat-crm'),
-			'wc-processing'     => __('Processing', 'leat-crm'),
-			'wc-on-hold'        => __('On hold', 'leat-crm'),
-			'wc-completed'      => __('Completed', 'leat-crm'),
-			'wc-cancelled'      => __('Cancelled', 'leat-crm'),
-			'wc-refunded'       => __('Refunded', 'leat-crm'),
-			'wc-failed'         => __('Failed', 'leat-crm'),
-			'wc-checkout-draft' => __('Draft', 'leat-crm'),
-		];
-
-		$filtered_statuses = array_filter(
-			$order_statuses,
-			function ($status_key) {
-				return strpos($status_key, 'wc-') === 0;
-			},
-			ARRAY_FILTER_USE_KEY
-		);
-
+		$order_statuses = wc_get_order_statuses();
 		$formatted_statuses = array();
 
-		foreach ($filtered_statuses as $status_key => $status_label) {
-			$clean_key                        = str_replace('wc-', '', $status_key);
+		foreach ($order_statuses as $status_key => $status_label) {
+			$clean_key = str_replace('wc-', '', $status_key);
 			$formatted_statuses[$clean_key] = array(
 				'label' => $status_label,
 			);
 		}
 
-		return $formatted_statuses;
+		/**
+		 * Filter the available order statuses for the plugin settings
+		 *
+		 * @param array $formatted_statuses Array of order statuses
+		 * @return array
+		 */
+		return apply_filters('leat_order_statuses_options', $formatted_statuses);
 	}
 
 	/**

@@ -70,6 +70,28 @@
 
 			<div class="py-4">
 				<SettingsSelect
+					class="pb-4"
+					{...$settingsState.reward_order_statuses}
+					bind:value={$settingsState.reward_order_statuses.value}
+					items={Object.entries($settingsState.reward_order_statuses.options).map(
+						([value, { label: name }]) => {
+							return {
+								value,
+								name,
+							};
+						}
+					)}
+				/>
+
+				<SettingsCheckboxes
+					{...$settingsState.withdraw_order_statuses}
+					bind:value={$settingsState.withdraw_order_statuses.value}
+				/>
+			</div>
+
+			<div class="py-4">
+				<SettingsSelect
+					class="pb-4"
 					{...$settingsState.giftcard_order_status}
 					bind:value={$settingsState.giftcard_order_status.value}
 					items={Object.entries($settingsState.giftcard_order_status.options).map(
@@ -81,45 +103,12 @@
 						}
 					)}
 				/>
+
+				<SettingsCheckboxes
+					{...$settingsState.giftcard_withdraw_order_statuses}
+					bind:value={$settingsState.giftcard_withdraw_order_statuses.value}
+				/>
 			</div>
-
-			<SettingsCheckboxes
-				class="py-4"
-				{...$settingsState.giftcard_withdraw_order_statuses}
-				bind:value={$settingsState.giftcard_withdraw_order_statuses.value}
-			/>
-
-			<SettingsSelect
-				class="py-4"
-				{...$settingsState.reward_order_statuses}
-				bind:value={$settingsState.reward_order_statuses.value}
-				items={Object.entries($settingsState.reward_order_statuses.options).map(
-					([value, { label: name }]) => {
-						return {
-							value,
-							name,
-						};
-					}
-				)}
-			/>
-
-			<SettingsCheckboxes
-				class="py-4"
-				{...$settingsState.withdraw_order_statuses}
-				bind:value={$settingsState.withdraw_order_statuses.value}
-			/>
-
-			<!-- <SettingsCheckboxes
-				class="py-4"
-				{...$settingsState.reward_order_parts}
-				bind:value={$settingsState.reward_order_parts.value}
-			/> -->
-
-			<!-- <SettingsSwitch
-				class="py-4"
-				{...$settingsState.marketing_consent_subscription}
-				bind:value={$settingsState.marketing_consent_subscription.value}
-			/> -->
 		{/if}
 	</div>
 </SettingsSection>

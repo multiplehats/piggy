@@ -151,7 +151,10 @@ class LoyaltyManager
 		add_filter('woocommerce_product_get_sale_price', [$this->cart_manager, 'remove_sale_price_for_discounted_products'], 10, 2);
 		add_filter('woocommerce_product_get_price', [$this->cart_manager, 'adjust_price_for_discounted_products'], 10, 2);
 
-		add_action('woocommerce_order_status_completed', [$this->order_processor, 'sync_attributes_on_order_completed'], 10, 1);
+		// Get the configured reward order status
+		$reward_status = $this->settings->get_setting_value_by_id('reward_order_statuses');
+		add_action('woocommerce_order_status_' . $reward_status, [$this->order_processor, 'sync_attributes_on_order_completed'], 10, 1);
+
 		add_action('woocommerce_checkout_order_processed', [$this->order_processor, 'handle_checkout_order_processed'], 10, 1);
 
 		$withdraw_statuses = $this->settings->get_setting_value_by_id('withdraw_order_statuses') ?? ['refunded' => 'on'];

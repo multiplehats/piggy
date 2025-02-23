@@ -80,6 +80,7 @@ class OrderProcessor
                 throw new \Exception("No UUID found for order $order_id");
             }
 
+
             if ($this->are_credits_already_issued($order)) {
                 return;
             }
