@@ -87,27 +87,31 @@ class Settings extends AbstractRoute
 			return rest_ensure_response(null);
 		}
 
-		// Store old values to check for changes
 		$old_api_key = $this->settings->get_setting_by_id('api_key');
 		$old_shop_uuid = $this->settings->get_setting_by_id('shop_uuid');
+
+		$old_api_key_value = is_array($old_api_key) ? ($old_api_key['value'] ?? '') : $old_api_key;
+		$old_shop_uuid_value = is_array($old_shop_uuid) ? ($old_shop_uuid['value'] ?? '') : $old_shop_uuid;
+
+		$new_api_key_value = is_array($settings['api_key']) ? ($settings['api_key']['value'] ?? '') : ($settings['api_key'] ?? '');
+		$new_shop_uuid_value = is_array($settings['shop_uuid']) ? ($settings['shop_uuid']['value'] ?? '') : ($settings['shop_uuid'] ?? '');
 
 		$result = $this->settings->update_settings($settings);
 
 		/**
-		 * If the API key changed, we need to sync the rewards and promotions
+		 * If the API key changes, sync the rewards and promotions
 		 * and sync the webhooks but only if the shop UUID is set.
 		 */
-		if (isset($settings['api_key']) && $settings['api_key'] !== $old_api_key && !empty($settings['shop_uuid'])) {
+		if (isset($new_api_key_value) && $new_api_key_value !== $old_api_key_value && !empty($new_shop_uuid_value)) {
 			$this->sync_rewards->start_sync();
 			$this->sync_promotions->start_sync();
 			$this->webhook_manager->sync_webhooks();
 		}
 
 		/**
-		 * If the shop UUID changed, we need to sync the rewards and promotions
-		 * and sync the webhooks but only if the API key is set.
+		 * If the shop UUID changes, sync the rewards and promotions
 		 */
-		if (isset($settings['shop_uuid']) && $settings['shop_uuid'] !== $old_shop_uuid && !empty($settings['api_key'])) {
+		if (isset($new_shop_uuid_value) && $new_shop_uuid_value !== $old_shop_uuid_value && !empty($new_api_key_value)) {
 			$this->sync_rewards->start_sync();
 			$this->sync_promotions->start_sync();
 			$this->webhook_manager->sync_webhooks();

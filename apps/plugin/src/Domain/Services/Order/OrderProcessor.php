@@ -2,10 +2,14 @@
 
 namespace Leat\Domain\Services\Order;
 
+
 use Leat\Api\Connection;
 use Leat\Domain\Services\EarnRules;
+use Leat\Settings;
 use Leat\Utils\Logger;
 use Leat\Utils\OrderNotes;
+use Automattic\WooCommerce\StoreApi\Payments\PaymentContext;
+use Automattic\WooCommerce\StoreApi\Payments\PaymentResult;
 
 /**
  * Handles order processing operations for the loyalty system.
@@ -42,6 +46,13 @@ class OrderProcessor
     private $logger;
 
     /**
+     * Settings instance.
+     *
+     * @var Settings
+     */
+    private $settings;
+
+    /**
      * Constructor.
      *
 
@@ -49,10 +60,11 @@ class OrderProcessor
      * @param Connection $connection API connection instance.
      * @param EarnRules $earn_rules  Earn rules service instance.
      */
-    public function __construct(Connection $connection, EarnRules $earn_rules)
+    public function __construct(Connection $connection, EarnRules $earn_rules, Settings $settings)
     {
         $this->connection = $connection;
         $this->earn_rules = $earn_rules;
+        $this->settings = $settings;
         $this->logger = new Logger();
     }
 
@@ -79,6 +91,7 @@ class OrderProcessor
             if (!$uuid) {
                 throw new \Exception("No UUID found for order $order_id");
             }
+
 
             if ($this->are_credits_already_issued($order)) {
                 return;
@@ -112,6 +125,35 @@ class OrderProcessor
     {
         try {
             $order = $this->get_order($order_id);
+            $user_id = $order->get_user_id();
+            $guest_checkout = empty($user_id);
+
+            $uuid = $this->process_checkout_contact($order, $guest_checkout);
+
+            if (!$uuid) {
+                OrderNotes::add_error($order, 'Failed to create/find loyalty account');
+                return;
+            }
+
+            OrderNotes::add_success($order, sprintf('Successfully linked to loyalty account %s', $uuid));
+            $this->connection->sync_basic_attributes_from_order($order, $uuid, $guest_checkout);
+        } catch (\Throwable $th) {
+            $this->logger->error('Error processing checkout order: ' . $th->getMessage());
+            OrderNotes::add_error($order, 'Error processing loyalty account: ' . $th->getMessage());
+        }
+    }
+
+
+    /**
+     * Handle checkout payment processing for WooCommerce Blocks
+     *
+     * @param PaymentContext $context Contains order and payment data
+     * @param PaymentResult  $result  Payment result object
+     */
+    public function handle_blocks_checkout_order_processed($context, $result): void
+    {
+        try {
+            $order = $context->order;
             $user_id = $order->get_user_id();
             $guest_checkout = empty($user_id);
 
@@ -195,8 +237,6 @@ class OrderProcessor
     /**
      * Retrieves a WooCommerce order by ID.
      *
-
-     *
      * @param int $order_id WooCommerce order ID.
      * @return \WC_Order
      * @throws \Exception When order cannot be found.
@@ -213,9 +253,7 @@ class OrderProcessor
     /**
      * Processes contact information during checkout.
      *
-     * Creates a new contact for guest users or retrieves existing contact for registered users.
-     *
-
+     * Creates a new Leat contact for guest users or retrieves existing contact for registered users.
      *
      * @param \WC_Order $order         WooCommerce order object.
      * @param bool      $guest_checkout Whether this is a guest checkout.
