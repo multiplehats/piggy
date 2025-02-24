@@ -83,4 +83,68 @@ class Coupons
             return $coupon !== null;
         });
     }
+
+    /**
+     * Get all valid coupons for a specific user.
+     *
+     * @param \WP_User $user WordPress user object
+     * @return array Array of valid coupon data
+     */
+    public function get_coupons_for_user(\WP_User $user): array
+    {
+        $coupons = [];
+        $email_coupons = self::find_coupons_by_email($user->user_email);
+
+        foreach ($email_coupons as $coupon) {
+            if ($this->is_coupon_valid($coupon, $user)) {
+                $coupons[] = [
+                    'id' => $coupon->get_id(),
+                    'code' => $coupon->get_code(),
+                    'type' => $coupon->get_discount_type(),
+                    'amount' => $coupon->get_amount(),
+                    'expiry_date' => $coupon->get_date_expires() ?
+                        $coupon->get_date_expires()->format('Y-m-d') : null,
+                    'usage_count' => $coupon->get_usage_count(),
+                    'usage_limit' => $coupon->get_usage_limit(),
+                    'description' => $coupon->get_description()
+                ];
+            }
+        }
+
+        return $coupons;
+    }
+
+    /**
+     * Check if a coupon is still valid.
+     *
+     * @param \WC_Coupon $coupon WooCommerce coupon object
+     * @return bool Whether the coupon is valid
+     */
+    private function is_coupon_valid(\WC_Coupon $coupon, \WP_User $user): bool
+    {
+        // Check if coupon is expired
+        $expiry_date = $coupon->get_date_expires();
+        if ($expiry_date && current_time('timestamp') > $expiry_date->getTimestamp()) {
+            return false;
+        }
+
+        // Check usage limits
+        $usage_limit = $coupon->get_usage_limit();
+        if ($usage_limit && $coupon->get_usage_count() >= $usage_limit) {
+            return false;
+        }
+
+        // Skip if per user usage limit is reached
+        if ($coupon->get_usage_limit_per_user() > 0) {
+            $used_by = $coupon->get_used_by();
+            $user_usage_count = count(array_filter($used_by, function ($user_data) use ($user) {
+                return $user_data == $user->ID || $user_data == $user->user_email;
+            }));
+            if ($user_usage_count >= $coupon->get_usage_limit_per_user()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

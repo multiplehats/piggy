@@ -11,7 +11,7 @@ use Leat\Registry\Container;
 use Leat\Migration;
 use Leat\Api\Api;
 use Leat\Domain\Services\EarnRules;
-use Leat\Domain\Services\PromotionRules;
+use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRules;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Syncing\SyncPromotions;
@@ -25,6 +25,7 @@ use Leat\Domain\Services\Order\OrderProcessor;
 use Leat\Domain\Services\Order\OrderCreditHandler;
 use Leat\Domain\Services\Cart\CartManager;
 use Leat\Domain\Services\GiftcardProduct;
+use Leat\Infrastructure\Repositories\WPPromotionRuleRepository;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
@@ -300,9 +301,17 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
-			PromotionRules::class,
+			WPPromotionRuleRepository::class,
+			function () {
+				return new WPPromotionRuleRepository();
+			}
+		);
+		$this->container->register(
+			PromotionRulesService::class,
 			function (Container $container) {
-				return new PromotionRules($container->get(Connection::class));
+				return new PromotionRulesService(
+					$container->get(WPPromotionRuleRepository::class)
+				);
 			}
 		);
 		$this->container->register(
@@ -314,13 +323,13 @@ class Bootstrap
 		$this->container->register(
 			SyncVouchers::class,
 			function (Container $container) {
-				return new SyncVouchers($container->get(Connection::class), $container->get(PromotionRules::class));
+				return new SyncVouchers($container->get(Connection::class), $container->get(PromotionRulesService::class));
 			}
 		);
 		$this->container->register(
 			SyncPromotions::class,
 			function (Container $container) {
-				return new SyncPromotions($container->get(Connection::class), $container->get(PromotionRules::class));
+				return new SyncPromotions($container->get(Connection::class), $container->get(PromotionRulesService::class));
 			}
 		);
 		$this->container->register(
@@ -448,7 +457,7 @@ class Bootstrap
 				return new Api(
 					$container->get(Connection::class),
 					$container->get(Settings::class),
-					$container->get(PromotionRules::class),
+					$container->get(PromotionRulesService::class),
 					$container->get(SpendRules::class),
 					$container->get(SyncVouchers::class),
 					$container->get(SyncPromotions::class),

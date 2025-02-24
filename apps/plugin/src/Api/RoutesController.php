@@ -4,7 +4,7 @@ namespace Leat\Api;
 
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Connection;
-use Leat\Domain\Services\PromotionRules;
+use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRules;
 use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Services\WebhookManager;
@@ -77,7 +77,7 @@ class RoutesController
 	/**
 	 * Promotion rules.
 	 *
-	 * @var PromotionRules
+	 * @var PromotionRulesService
 	 */
 	protected $promotion_rules_service;
 
@@ -109,7 +109,7 @@ class RoutesController
 		SyncPromotions $sync_promotions,
 		SyncRewards $sync_rewards,
 		WebhookManager $webhook_manager,
-		PromotionRules $promotion_rules_service,
+		PromotionRulesService $promotion_rules_service,
 		SpendRules $spend_rules_service
 	) {
 		$this->schema_controller = $schema_controller;
