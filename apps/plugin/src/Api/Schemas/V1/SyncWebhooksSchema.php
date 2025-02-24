@@ -49,13 +49,46 @@ class SyncWebhooksSchema extends AbstractSchema
                             'type' => 'string',
                             'description' => 'Webhook ID',
                         ],
-                        'topic' => [
+                        'name' => [
                             'type' => 'string',
-                            'description' => 'Webhook topic',
+                            'description' => 'Webhook name',
                         ],
-                        'delivery_url' => [
+                        'event_type' => [
+                            'type' => 'string',
+                            'description' => 'Webhook event type',
+                        ],
+                        'url' => [
                             'type' => 'string',
                             'description' => 'Webhook delivery URL',
+                        ],
+                        'status' => [
+                            'type' => 'string',
+                            'description' => 'Webhook status',
+                        ],
+                    ],
+                ],
+            ],
+            'required_webhooks' => [
+                'type' => 'array',
+                'description' => 'List of required webhooks',
+                'readonly' => true,
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'name' => [
+                            'type' => 'string',
+                            'description' => 'Webhook name',
+                        ],
+                        'event_type' => [
+                            'type' => 'string',
+                            'description' => 'Webhook event type',
+                        ],
+                        'attributes' => [
+                            'type' => 'array',
+                            'description' => 'Optional webhook attributes',
+                            'items' => [
+                                'type' => 'string'
+                            ],
                         ],
                     ],
                 ],
