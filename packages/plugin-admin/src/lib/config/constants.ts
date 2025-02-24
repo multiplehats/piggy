@@ -22,4 +22,9 @@ export const headerLinks = [
 		label: __("Customer Dashboard", "leat-crm"),
 		type: "link",
 	},
+	{
+		href: "/webhooks",
+		label: __("Webhooks", "leat"),
+		type: "link",
+	},
 ] as HeaderLinkProps[];

@@ -67,6 +67,10 @@ class SyncVouchers extends BackgroundProcess
 	public function init()
 	{
 		add_action('leat_run_vouchers_sync', [$this, 'start_sync']);
+
+		/**
+		 * These actions are triggered by the webhooks endpoint.
+		 */
 		add_action('leat_webhook_voucher_updated', [$this, 'handle_voucher_updated_webhook']);
 		add_action('leat_webhook_voucher_created', [$this, 'handle_voucher_created_webhook']);
 		add_action('leat_webhook_voucher_deleted', [$this, 'handle_voucher_deleted_webhook']);
@@ -279,8 +283,30 @@ class SyncVouchers extends BackgroundProcess
 
 	public function handle_voucher_created_webhook($voucher)
 	{
-		// We need more info on whether we'll impelement this.
-		// What if someone creates 10k coupons?
+		try {
+			// Format the webhook data into our standard structure
+			$voucher_data = $this->format_voucher_webhook($voucher);
+
+			// Get the promotion rule using the promotion UUID from the voucher
+			$formatted_promotion_rule = $this->promotion_rules->get_promotion_rule_by_leat_uuid($voucher_data['promotion']['uuid']);
+
+			if (!$formatted_promotion_rule) {
+				$this->logger->error('Promotion rule not found for voucher ' . $voucher_data['code'], [
+					'voucher' => $voucher_data
+				]);
+				return;
+			}
+
+			// Use existing upsert method to create/update the coupon
+			$this->upsert_coupon_for_promotion_rule($formatted_promotion_rule, $voucher_data);
+
+			$this->logger->info('Created coupon for voucher ' . $voucher_data['code']);
+		} catch (\Throwable $th) {
+			$this->logger->error('Failed to create coupon for voucher ' . $voucher['code'], [
+				'error' => $th->getMessage(),
+				'voucher' => $voucher,
+			]);
+		}
 	}
 
 	public function handle_voucher_updated_webhook($data)
@@ -303,9 +329,10 @@ class SyncVouchers extends BackgroundProcess
 
 			$this->upsert_coupon_for_promotion_rule($formatted_promotion_rule, $voucher_data);
 		} catch (\Exception $e) {
-			// Coupon doesn't exist, create new one.
-			// $coupon = new \WC_Coupon();
-			// $coupon->set_code(strtoupper($voucher_data['code']));
+			$this->logger->error('Failed to update coupon for voucher ' . $voucher_data['code'], [
+				'error' => $e->getMessage(),
+				'voucher' => $voucher_data,
+			]);
 		}
 	}
 

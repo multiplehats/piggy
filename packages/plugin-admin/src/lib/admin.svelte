@@ -8,6 +8,7 @@
 	import PageOnboarding from "./routes/page-onboarding.svelte";
 	import PageSpendRulesId from "./routes/page-spend-rules-id.svelte";
 	import PagePromotionRulesId from "./routes/page-promotion-rules-id.svelte";
+	import PageWebhooks from "./routes/page-webhooks.svelte";
 	import { history } from "$lib/utils/custom-history";
 	import Layout from "$lib/components/layout-wrapper.svelte";
 	import PageGeneralSettings from "$lib/routes/page-general-settings.svelte";
@@ -58,6 +59,9 @@
 				<!-- Index Route for /promotions -->
 				<Route path="/" component={PagePromotions} />
 			</Route>
+
+			<!-- Render the Webhooks component at /webhooks -->
+			<Route path="webhooks" component={PageWebhooks} />
 		</Layout>
 	</Router>
 </QueryClientProvider>

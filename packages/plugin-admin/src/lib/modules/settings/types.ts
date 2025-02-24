@@ -110,3 +110,27 @@ export type GetSyncVouchersInformationResponse = TaskInformation;
 export type GetSyncVouchersInformationParams = {
 	id: string;
 };
+
+type Webhook = {
+	id: string;
+	name: string;
+	event_type: string;
+	url: string;
+	status: string;
+};
+
+type RequiredWebhook = {
+	name: string;
+	event_type: string;
+	attributes?: string[];
+};
+
+export type GetWebhooksResponse = {
+	webhooks: Webhook[];
+	required_webhooks: Record<string, RequiredWebhook>;
+};
+
+export type SyncWebhooksResponse = {
+	webhooks: Webhook[];
+	success: true;
+};

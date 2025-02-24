@@ -150,4 +150,9 @@ Your customer data and loyalty program settings are safely stored in your Leat a
   - Automatically links orders to Leat contacts during checkout
   - Properly syncs customer attributes and rewards points
   - Maintains loyalty account tracking for both guest and registered users
+* Feature: Enhanced webhook management system
+  - Added new webhook management interface in admin dashboard
+  - Improved support for voucher creation webhooks
+  - Improved webhook synchronization and error handling
+  - Added automatic webhook status monitoring
 * Bug fix: Fix an issue where webhooks, rewards and promotions would always sync on settings save.
