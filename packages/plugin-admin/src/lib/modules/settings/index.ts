@@ -16,8 +16,10 @@ import type {
 	GetSpendRulesResponse,
 	GetSyncVouchersInformationParams,
 	GetSyncVouchersInformationResponse,
+	GetWebhooksResponse,
 	SaveSettingsParams,
 	SaveSettingsResponse,
+	SyncWebhooksResponse,
 	TaskInformation,
 	UpsertEarnRuleParams,
 	UpsertEarnRuleResponse,
@@ -286,6 +288,37 @@ export class SettingsAdminService {
 	}: GetSyncVouchersInformationParams): Promise<GetSyncVouchersInformationResponse> {
 		const { data, error } = await api.get<GetSyncVouchersInformationResponse>(
 			`/leat/private/sync-vouchers?id=${id}`
+		);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async getWebhooks(): Promise<GetWebhooksResponse> {
+		const { data, error } = await api.get<GetWebhooksResponse>(`/leat/private/sync-webhooks`);
+
+		if (error ?? !data) {
+			if (error) {
+				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
+			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
+		}
+
+		return data;
+	}
+
+	async syncWebhooks(): Promise<SyncWebhooksResponse> {
+		const { data, error } = await api.post<SyncWebhooksResponse>(
+			`/leat/private/sync-webhooks`,
+			{}
 		);
 
 		if (error ?? !data) {

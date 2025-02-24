@@ -79,6 +79,7 @@ class SchemaController
 				Schemas\V1\JoinProgramSchema::IDENTIFIER   => Schemas\V1\JoinProgramSchema::class,
 				Schemas\V1\ContactSchema::IDENTIFIER       => Schemas\V1\ContactSchema::class,
 				Schemas\V1\WCCategoriesSearchSchema::IDENTIFIER => Schemas\V1\WCCategoriesSearchSchema::class,
+				Schemas\V1\SyncWebhooksSchema::IDENTIFIER => Schemas\V1\SyncWebhooksSchema::class,
 			],
 		];
 	}

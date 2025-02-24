@@ -12,6 +12,7 @@ export const QueryKeys = {
 	apiKey: "apiKey",
 	leatShops: "shops",
 	leatRewards: "leatRewards",
+	webhooks: "webhooks",
 } as const;
 
 export const MutationKeys = {
@@ -22,4 +23,5 @@ export const MutationKeys = {
 	upsertEarnRule: "upsertEarnRule",
 	upsertSpendRule: "upsertSpendRule",
 	upsertPromotionRule: "upsertPromotionRule",
+	syncWebhooks: "syncWebhooks",
 } as const;

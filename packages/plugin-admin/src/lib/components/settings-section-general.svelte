@@ -6,6 +6,7 @@
 	import { Alert } from "./ui/alert";
 	import SettingsSelect from "./settings-select.svelte";
 	import SettingsCheckboxes from "./settings-checkboxes.svelte";
+
 	import SettingsTranslateableInput from "$lib/components/settings-translateable-input.svelte";
 	import { SettingsSection } from "$lib/components/ui/settings-section";
 	import { SettingsAdminService } from "$lib/modules/settings";

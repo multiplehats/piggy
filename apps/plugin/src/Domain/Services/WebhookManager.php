@@ -27,6 +27,10 @@ class WebhookManager
 			'name'       => 'WordPress: Voucher Updated',
 			'event_type' => 'voucher_updated',
 		],
+		'voucher_created'  => [
+			'name'       => 'WordPress: Voucher Created',
+			'event_type' => 'voucher_created',
+		],
 		'voucher_redeemed' => [
 			'name'       => 'WordPress: Voucher Redeemed',
 			'event_type' => 'voucher_redeemed',
@@ -285,6 +289,9 @@ class WebhookManager
 			case 'voucher_updated':
 				$this->handle_voucher_updated($data);
 				break;
+			case 'voucher_created':
+				$this->handle_voucher_created($data);
+				break;
 			case 'voucher_deleted':
 				$this->handle_voucher_deleted($data);
 				break;
@@ -308,6 +315,24 @@ class WebhookManager
 		do_action('leat_webhook_voucher_updated', $voucher);
 
 		$this->logger->debug('Voucher updated webhook processed', [
+			'voucher' => $voucher
+		]);
+	}
+
+	private function handle_voucher_created($data)
+	{
+		if (empty($data['voucher'])) {
+			$this->logger->error('Voucher data missing from webhook payload', [
+				'data' => $data,
+			]);
+			return;
+		}
+
+		$voucher = $data['voucher'];
+
+		do_action('leat_webhook_voucher_created', $voucher);
+
+		$this->logger->debug('Voucher created webhook processed', [
 			'voucher' => $voucher
 		]);
 	}
@@ -363,5 +388,51 @@ class WebhookManager
 		$this->logger->debug('Voucher redeemed webhook processed', [
 			'voucher' => $voucher
 		]);
+	}
+
+	/**
+	 * Returns the required webhooks for the plugin
+	 *
+	 * @return array List of webhooks with their details
+	 */
+	public function get_required_webhooks(): array
+	{
+		return self::REQUIRED_WEBHOOKS;
+	}
+
+	/**
+	 * Get the current list of WordPress webhooks
+	 *
+	 * @return array List of webhooks with their details
+	 */
+	public function get_webhooks(): array
+	{
+		try {
+			$client = $this->connection->init_client();
+			if (!$client) {
+				$this->logger->error('Failed to initialize API client for getting webhooks');
+				return [];
+			}
+
+			$existing_webhooks = WebhookSubscription::list();
+			$wordpress_webhooks = [];
+
+			foreach ($existing_webhooks as $webhook) {
+				if (strpos($webhook->getName(), self::WEBHOOK_PREFIX) === 0) {
+					$wordpress_webhooks[] = [
+						'id' => $webhook->getUuid(),
+						'name' => $webhook->getName(),
+						'event_type' => $webhook->getEventType(),
+						'url' => $webhook->getUrl(),
+						'status' => $webhook->getStatus(),
+					];
+				}
+			}
+
+			return $wordpress_webhooks;
+		} catch (\Exception $e) {
+			$this->logger->error('Failed to get webhooks: ' . $e->getMessage());
+			return [];
+		}
 	}
 }
