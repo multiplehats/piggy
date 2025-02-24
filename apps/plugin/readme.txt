@@ -146,7 +146,7 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 
 * Feature: Added support for custom WooCommerce order statuses
   - Custom statuses must follow WooCommerce naming convention with 'wc-' prefix to be recognized
-* Feature: Added full loyalty program support for WooCommerce blocks checkout
+* Feature: Added loyalty program support for WooCommerce blocks checkout
   - Automatically links orders to Leat contacts during checkout
   - Properly syncs customer attributes and rewards points
   - Maintains loyalty account tracking for both guest and registered users
