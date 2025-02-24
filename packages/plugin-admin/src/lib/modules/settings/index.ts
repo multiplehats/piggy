@@ -308,13 +308,15 @@ export class SettingsAdminService {
 			if (error) {
 				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
 			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
 		}
 
-		return data ?? [];
+		return data;
 	}
 
 	async syncWebhooks(): Promise<SyncWebhooksResponse> {
-		const { data, error } = await api.post<{ success: true }>(
+		const { data, error } = await api.post<SyncWebhooksResponse>(
 			`/leat/private/sync-webhooks`,
 			{}
 		);
@@ -323,6 +325,8 @@ export class SettingsAdminService {
 			if (error) {
 				throw new SettingsAdminApiError(error.status, error.statusText, error.data);
 			}
+
+			throw new SettingsAdminApiError(500, "No data returned", "No data returned");
 		}
 
 		return data;
