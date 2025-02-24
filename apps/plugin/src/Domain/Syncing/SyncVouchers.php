@@ -284,10 +284,8 @@ class SyncVouchers extends BackgroundProcess
 	public function handle_voucher_created_webhook($voucher)
 	{
 		try {
-			// Format the webhook data into our standard structure
 			$voucher_data = $this->format_voucher_webhook($voucher);
 
-			// Get the promotion rule using the promotion UUID from the voucher
 			$formatted_promotion_rule = $this->promotion_rules->get_promotion_rule_by_leat_uuid($voucher_data['promotion']['uuid']);
 
 			if (!$formatted_promotion_rule) {
@@ -297,7 +295,6 @@ class SyncVouchers extends BackgroundProcess
 				return;
 			}
 
-			// Use existing upsert method to create/update the coupon
 			$this->upsert_coupon_for_promotion_rule($formatted_promotion_rule, $voucher_data);
 
 			$this->logger->info('Created coupon for voucher ' . $voucher_data['code']);
@@ -355,7 +352,6 @@ class SyncVouchers extends BackgroundProcess
 			if ($coupon_status === 'publish') {
 				$coupon->set_status('draft');
 
-				// Get contact UUID from coupon metadata
 				$contact_uuid = $coupon->get_meta('_leat_contact_uuid');
 
 				if ($contact_uuid) {
