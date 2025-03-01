@@ -4,7 +4,6 @@ namespace Leat\Domain\Services;
 
 use Leat\Domain\Interfaces\WPSpendRuleRepositoryInterface;
 use Leat\Infrastructure\Constants\WCCoupons;
-use Leat\Infrastructure\Constants\WPPromotionRuleMetaKeys;
 use Leat\Utils\Coupons;
 use Leat\Utils\Logger;
 use Leat\Utils\Post;
@@ -192,7 +191,7 @@ class SpendRulesService
         $coupon->set_individual_use(true);
 
         $coupon->add_meta_data('_leat_spend_rule_coupon', 'true', true);
-        $coupon->add_meta_data('_leat_spend_rule_id', $formatted_spend_rule['id'], true);
+        $coupon->add_meta_data(WCCoupons::SPEND_RULE_ID, $formatted_spend_rule['id'], true);
 
         $discount_type = $formatted_spend_rule['discountType']['value'];
 
