@@ -70,6 +70,9 @@ class SchemaController
 
 		$this->schemas = [
 			'v1' => [
+				/**
+				 * Public Schemas
+				 */
 				Schemas\V1\WebhooksSchema::IDENTIFIER => Schemas\V1\WebhooksSchema::class,
 				Schemas\V1\EarnRewardSchema::IDENTIFIER    => Schemas\V1\EarnRewardSchema::class,
 				Schemas\V1\EarnRulesSchema::IDENTIFIER     => Schemas\V1\EarnRulesSchema::class,
@@ -79,15 +82,19 @@ class SchemaController
 				Schemas\V1\SyncPromotionsSchema::IDENTIFIER => Schemas\V1\SyncPromotionsSchema::class,
 				Schemas\V1\SyncRewardsSchema::IDENTIFIER => Schemas\V1\SyncRewardsSchema::class,
 				Schemas\V1\SyncVouchersSchema::IDENTIFIER  => Schemas\V1\SyncVouchersSchema::class,
-				Schemas\V1\Admin\SettingsSchema::IDENTIFIER => Schemas\V1\Admin\SettingsSchema::class,
-				Schemas\V1\Admin\ShopsSchema::IDENTIFIER   => Schemas\V1\Admin\ShopsSchema::class,
-				Schemas\V1\Admin\RewardsSchema::IDENTIFIER => Schemas\V1\Admin\RewardsSchema::class,
 				Schemas\V1\SpendRulesClaimSchema::IDENTIFIER => Schemas\V1\SpendRulesClaimSchema::class,
 				Schemas\V1\CouponsSchema::IDENTIFIER       => Schemas\V1\CouponsSchema::class,
 				Schemas\V1\JoinProgramSchema::IDENTIFIER   => Schemas\V1\JoinProgramSchema::class,
 				Schemas\V1\ContactSchema::IDENTIFIER       => Schemas\V1\ContactSchema::class,
 				Schemas\V1\WCCategoriesSearchSchema::IDENTIFIER => Schemas\V1\WCCategoriesSearchSchema::class,
 				Schemas\V1\SyncWebhooksSchema::IDENTIFIER => Schemas\V1\SyncWebhooksSchema::class,
+				/**
+				 * Admin Schemas
+				 */
+				Schemas\V1\Admin\SettingsSchema::IDENTIFIER => Schemas\V1\Admin\SettingsSchema::class,
+				Schemas\V1\Admin\ShopsSchema::IDENTIFIER   => Schemas\V1\Admin\ShopsSchema::class,
+				Schemas\V1\Admin\RewardsSchema::IDENTIFIER => Schemas\V1\Admin\RewardsSchema::class,
+				Schemas\V1\Admin\SpendRulesSchema::IDENTIFIER => Schemas\V1\Admin\SpendRulesSchema::class,
 			],
 		];
 	}

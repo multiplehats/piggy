@@ -46,20 +46,12 @@ class SpendRules extends AbstractRoute
 	{
 		return [
 			[
-				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => [$this, 'get_response'],
-				'permission_callback' => [MIddleware::class, 'is_authorized'],
-				'args'                => [
-					'settings' => [
-						'description' => __('Spend rules', 'leat-crm'),
-						'type'        => 'object',
-					],
-				],
-			],
-			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [$this, 'get_response'],
-				'permission_callback' => [Middleware::class, 'is_public'],
+				'permission_callback' => function ($request) {
+					$user_id = $request->get_param('userId');
+					return Middleware::is_valid_user(intval($user_id));
+				},
 				'args'                => [
 					'id'     => [
 						'description' => __('Spend rule ID', 'leat-crm'),
@@ -69,55 +61,15 @@ class SpendRules extends AbstractRoute
 						'description' => __('Spend rule status', 'leat-crm'),
 						'type'        => 'string',
 					],
+					'user_id' => [
+						'description' => __('User ID to get applicable spend rules for', 'leat-crm'),
+						'type'        => 'integer',
+					],
 				],
 			],
 			'schema'      => [$this->schema, 'get_public_item_schema'],
 			'allow_batch' => ['v1' => true],
 		];
-	}
-
-	/**
-	 * Saves spend rule
-	 *
-	 * @param  \WP_REST_Request $request Request object.
-	 *
-	 * @return bool|string|\WP_Error|\WP_REST_Response
-	 */
-	protected function get_route_post_response(\WP_REST_Request $request)
-	{
-		$data = array(
-			'label'                 => $request->get_param('label'),
-			'type'                  => $request->get_param('type'),
-			'status'                => $request->get_param('status'),
-			'title'                 => $request->get_param('title'),
-			'starts_at'             => $request->get_param('starts_at'),
-			'expires_at'             => $request->get_param('expires_at'),
-			'completed'             => $request->get_param('completed'),
-			'description'           => $request->get_param('description'),
-			'instructions'          => $request->get_param('instructions'),
-			'fulfillment'           => $request->get_param('fulfillment'),
-			'discount_value'         => $request->get_param('discountValue'),
-			'discount_type'          => $request->get_param('discountType'),
-			'limit_usage_to_x_items'    => $request->get_param('limitUsageToXItems'),
-			'minimum_purchase_amount' => $request->get_param('minimumPurchaseAmount'),
-			'selected_products'      => $request->get_param('selectedProducts'),
-			'selected_categories'    => $request->get_param('selectedCategories'),
-		);
-
-		try {
-			$this->spend_rules_service->create_or_update($data, $request->get_param('id'));
-
-			$response = $this->prepare_item_for_response(
-				$this->spend_rules_service->get_by_id($request->get_param('id')),
-				$request
-			);
-
-			return rest_ensure_response($response);
-		} catch (\Exception $e) {
-			$this->logger->error('Failed to save spend rule', ['error' => $e->getMessage()]);
-
-			throw new RouteException('spend-rules', 'Failed to save spend rule', 500);
-		}
 	}
 
 	/**
@@ -129,12 +81,20 @@ class SpendRules extends AbstractRoute
 	 */
 	protected function get_route_response(\WP_REST_Request $request)
 	{
-		$id = $request->get_param('id');
-		$status = $request->get_param('status') ? explode(',', $request->get_param('status')) : ['publish'];
+		$user_id             = $request->get_param('userId');
 
-		$posts = $id
-			? $this->get_single_post($id)
-			: $this->spend_rules_service->get_rules($status);
+		if (! $user_id) {
+			throw new RouteException('spend-rules-claim', 'User ID is required', 400);
+		}
+
+		$contact = $this->connection->get_contact_by_wp_id($user_id);
+		$uuid    = $contact['uuid'];
+
+		if (! $uuid) {
+			throw new RouteException('spend-rules-claim', 'User not found in Leat', 404);
+		}
+
+		$posts = $this->spend_rules_service->get_rules_for_contact($uuid, $this->connection);
 
 		$response_objects = array_map(function ($post) use ($request) {
 			return $this->prepare_response_for_collection(

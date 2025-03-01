@@ -11,7 +11,6 @@
 	import SpendRuleFreeProductFields from "$lib/components/spend-rules/spend-rule-free-product-fields.svelte";
 	// import SpendRuleOrderDiscountFields from '$lib/components/spend-rules/spend-rule-order-discount-fields.svelte';
 	import SpendRuleProductOrderDiscountFields from "$lib/components/spend-rules/spend-rule-product-order-discount-fields.svelte";
-	// import SpendRuleRewardSelect from '$lib/components/spend-rules/spend-rule-reward-select.svelte';
 	import { Badge } from "$lib/components/ui/badge/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";

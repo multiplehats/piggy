@@ -611,6 +611,43 @@ class Connection
 		}
 	}
 
+	/**
+	 * Get the rewards for contact
+	 *
+	 * @param string $contact_uuid The contact UUID.
+	 *
+	 * @return array|null
+	 */
+	public function get_rewards_for_contact(string $contact_uuid)
+	{
+		$client = $this->init_client();
+
+		if (! $client) {
+			return null;
+		}
+
+		try {
+			$results = Reward::list([
+				'contact_uuid' => $contact_uuid,
+			]);
+
+			if (! $results) {
+				return null;
+			}
+
+			$rewards = [];
+
+			foreach ($results as $reward) {
+				$rewards[] = $this->format_reward($reward);
+			}
+
+			return $rewards;
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Get Rewards Error');
+			return null;
+		}
+	}
+
 	public function get_promotions()
 	{
 		$client = $this->init_client();

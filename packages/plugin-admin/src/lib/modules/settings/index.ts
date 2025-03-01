@@ -161,7 +161,7 @@ export class SettingsAdminService {
 
 	async getSpendRules(): Promise<GetSpendRulesResponse> {
 		const { data, error } = await api.get<GetSpendRulesResponse>(
-			"/leat/v1/spend-rules?status=draft,publish"
+			"/leat/private/spend-rules?status=draft,publish"
 		);
 
 		if (error ?? !data) {
@@ -177,7 +177,7 @@ export class SettingsAdminService {
 
 	async upsertSpendRule(spendRule: UpsertSpendRuleParams): Promise<UpsertSpendRuleResponse> {
 		const { data, error } = await api.post<UpsertSpendRuleResponse>(
-			"/leat/v1/spend-rules",
+			"/leat/private/spend-rules",
 			spendRule
 		);
 
@@ -194,7 +194,7 @@ export class SettingsAdminService {
 
 	async getSpendRuleById({ id }: GetSpendRuleByIdParams): Promise<GetSpendRuleByIdResponse> {
 		const { data, error } = await api.get<GetSpendRuleByIdResponse>(
-			`/leat/v1/spend-rules/?id=${id}&status=publish,draft`
+			`/leat/private/spend-rules/?id=${id}&status=publish,draft`
 		);
 
 		if (error ?? !data) {
