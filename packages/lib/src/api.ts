@@ -48,7 +48,7 @@ async function request<T = unknown>(
 			let errorData;
 			try {
 				errorData = JSON.parse(errorText);
-			} catch (e) {
+			} catch {
 				errorData = errorText;
 			}
 

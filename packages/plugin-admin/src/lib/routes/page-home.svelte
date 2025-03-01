@@ -18,7 +18,7 @@
 			title={__("Onboarding completed")}
 			description={__(
 				"You have successfully completed the onboarding process. Make sure you add the [leat_dashboard] shortcode to a page so your customers can start earning and redeeming rewards."
-				")}
+			)}
 		/>
 	{/if}
 </div>

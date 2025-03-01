@@ -3,7 +3,6 @@ import type {
 	GetContactResponse,
 	GetCouponsResponse,
 	GetEarnRulesResponse,
-	GetRewardsResponse,
 	GetShopsResponse,
 	GetSpendRulesResponse,
 } from "./types";
@@ -26,20 +25,6 @@ export class LeatApiError extends Error {
 export class LeatFrontendService {
 	async getShops() {
 		const { data, error } = await api.get<GetShopsResponse>("/leat/private/shops");
-
-		if (error ?? !data) {
-			if (error) {
-				throw new LeatApiError(error.status, error.statusText, error.data);
-			}
-
-			throw new Error("No data returned");
-		}
-
-		return data;
-	}
-
-	async getRewards() {
-		const { data, error } = await api.get<GetRewardsResponse>("/leat/private/rewards");
 
 		if (error ?? !data) {
 			if (error) {

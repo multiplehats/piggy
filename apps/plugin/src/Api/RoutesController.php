@@ -142,7 +142,7 @@ class RoutesController
 				Routes\V1\SyncVouchers::IDENTIFIER       => Routes\V1\SyncVouchers::class,
 				Routes\V1\Admin\Settings::IDENTIFIER     => Routes\V1\Admin\Settings::class,
 				Routes\V1\Admin\Shops::IDENTIFIER        => Routes\V1\Admin\Shops::class,
-				Routes\V1\Admin\Rewards::IDENTIFIER      => Routes\V1\Admin\Rewards::class,
+				Routes\V1\Admin\SpendRules::IDENTIFIER      => Routes\V1\Admin\SpendRules::class,
 				Routes\V1\WCProductsSearch::IDENTIFIER   => Routes\V1\WCProductsSearch::class,
 				Routes\V1\WCCategoriesSearch::IDENTIFIER => Routes\V1\WCCategoriesSearch::class,
 				Routes\V1\SyncWebhooks::IDENTIFIER => Routes\V1\SyncWebhooks::class,

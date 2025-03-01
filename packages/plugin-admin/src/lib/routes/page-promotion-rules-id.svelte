@@ -188,7 +188,7 @@
 			<div class="grid auto-rows-max items-start gap-4 lg:gap-8">
 				<Card.Root>
 					<Card.Header>
-						<Card.Title>{__("Details xqwreqwr", "leat")}</Card.Title>
+						<Card.Title>{__("Details", "leat")}</Card.Title>
 					</Card.Header>
 
 					<Card.Content>

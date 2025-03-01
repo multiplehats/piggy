@@ -81,7 +81,6 @@ class SpendRulesClaim extends AbstractRoute
 	 */
 	protected function get_route_post_response(\WP_REST_Request $request)
 	{
-		$connection          = new Connection();
 		$id                  = $request->get_param('id');
 		$user_id             = $request->get_param('userId');
 
@@ -103,8 +102,7 @@ class SpendRulesClaim extends AbstractRoute
 			throw new RouteException('spend-rules-claim', 'Spend rule is a draft', 400);
 		}
 
-		// Get the contact UUID for the user.
-		$contact = $connection->get_contact_by_wp_id($user_id);
+		$contact = $this->connection->get_contact_by_wp_id($user_id);
 		$uuid    = $contact['uuid'];
 
 		if (! $uuid) {
@@ -117,9 +115,8 @@ class SpendRulesClaim extends AbstractRoute
 			throw new RouteException('spend-rules-claim', 'Reward UUID not found for this spend rule', 404);
 		}
 
-		// Create a Reward Reception.
 		try {
-			$reception = $connection->create_reward_reception($uuid, $reward_uuid);
+			$reception = $this->connection->create_reward_reception($uuid, $reward_uuid);
 
 			if (! $reception) {
 				throw new RouteException('spend-rules-claim', 'Failed to create Reward Reception', 500);

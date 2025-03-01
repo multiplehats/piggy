@@ -100,7 +100,57 @@ class SpendRulesService
     }
 
     /**
-     * Creates or updates a promotion rule from Leat promotion data.
+     * Retrieves all applicable spend rules for a specific contact.
+     *
+     * This method cross-references spend rules with the rewards available
+     * for the specified contact from the Leat API.
+     *
+     * @param string $contact_uuid The UUID of the contact to get rules for.
+     * @param \Leat\Api\Connection $connection The API connection instance.
+     * @return array Array of applicable spend rules for the contact.
+     */
+    public function get_rules_for_contact(string $contact_uuid, \Leat\Api\Connection $connection): array
+    {
+        // Get all available spend rules
+        $all_rules = $this->get_rules();
+
+        if (empty($all_rules)) {
+            return [];
+        }
+
+        // Get rewards for the contact from the API
+        $contact_rewards = $connection->get_rewards_for_contact($contact_uuid);
+
+        if (empty($contact_rewards)) {
+            return [];
+        }
+
+        // Extract reward UUIDs for easier comparison
+        $reward_uuids = array_map(function ($reward) {
+            return $reward['uuid'];
+        }, $contact_rewards);
+
+        // Filter spend rules to only include those with matching reward UUIDs
+        $applicable_rules = array_filter($all_rules, function ($rule) use ($reward_uuids) {
+            // Check if the rule has a selected reward that matches any of the contact's rewards
+            if (isset($rule['selectedReward']['value']) && in_array($rule['selectedReward']['value'], $reward_uuids)) {
+                return true;
+            }
+
+            // Also check if the rule's UUID directly matches any reward UUID
+            // This handles cases where the rule itself is the reward
+            if (isset($rule['uuid']['value']) && in_array($rule['uuid']['value'], $reward_uuids)) {
+                return true;
+            }
+
+            return false;
+        });
+
+        return array_values($applicable_rules); // Reset array keys
+    }
+
+    /**
+     * Creates or updates a spend rule from Leat promotion data.
      *
      * @param array    $promotion        The promotion data.
      * @param int|null $existing_post_id Optional. The existing post ID to update.

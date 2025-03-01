@@ -1,5 +1,5 @@
 import { api } from "@leat/lib";
-import type { GetRewardsResponse, GetShopsResponse } from "./types";
+import type { GetShopsResponse } from "./types";
 
 export class LeatApiError extends Error {
 	status: number;
@@ -64,20 +64,6 @@ export class LeatAdminService {
 				title: string;
 			}[]
 		>(`/leat/private/wc-products?ids=${idsParam}`);
-
-		if (error ?? !data) {
-			if (error) {
-				throw new LeatApiError(error.status, error.statusText, error.data);
-			}
-
-			throw new Error("No data returned");
-		}
-
-		return data;
-	}
-
-	async getRewards() {
-		const { data, error } = await api.get<GetRewardsResponse>("/leat/private/rewards");
 
 		if (error ?? !data) {
 			if (error) {
