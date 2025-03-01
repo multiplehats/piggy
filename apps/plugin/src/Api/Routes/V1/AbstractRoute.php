@@ -11,8 +11,8 @@ use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Services\WebhookManager;
 use Leat\Domain\Services\PromotionRulesService;
+use Leat\Domain\Services\SpendRulesService;
 use Leat\Domain\Syncing\SyncRewards;
-use Leat\Domain\Services\SpendRules;
 use Leat\Settings;
 use Leat\Utils\Logger;
 use WP_Error;
@@ -102,7 +102,7 @@ abstract class AbstractRoute implements RouteInterface
 	/**
 	 * Spend rules service.
 	 *
-	 * @var SpendRules
+	 * @var SpendRulesService
 	 */
 	protected $spend_rules_service;
 
@@ -137,7 +137,7 @@ abstract class AbstractRoute implements RouteInterface
 		SyncRewards $sync_rewards,
 		WebhookManager $webhook_manager,
 		PromotionRulesService $promotion_rules_service,
-		SpendRules $spend_rules_service
+		SpendRulesService $spend_rules_service
 	) {
 		$this->schema_controller = $schema_controller;
 		$this->logger            = $logger;

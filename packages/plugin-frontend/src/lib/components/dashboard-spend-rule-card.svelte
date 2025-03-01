@@ -100,11 +100,11 @@
 		{/if}
 	</h4>
 
-	<p class="leat-dashboard-reward-card__description">
-		{#if rule.description.value}
+	{#if rule.description.value}
+		<p class="leat-dashboard-reward-card__description">
 			{getDescription(getTranslatedText(rule.description.value), creditsRequired)}
-		{/if}
-	</p>
+		</p>
+	{/if}
 
 	{#if creditsRequired && isLoggedIn}
 		<div class="leat-dashboard-reward-card__progress">

@@ -60,7 +60,6 @@ class CustomerAttributeSync
             $client = $this->connection->init_client();
 
             if (!$client) {
-                $this->logger->error('Failed to initialize client');
                 return;
             }
 

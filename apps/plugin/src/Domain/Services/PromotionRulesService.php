@@ -25,27 +25,21 @@ class PromotionRulesService
 	private $repository;
 
 	/**
-	 * Coupons instance.
-	 *
-	 * @var Coupons
-	 */
-	private $coupons;
-
-	/**
-	 * Logger instance.
+	 * Logger instance for debugging and error tracking.
 	 *
 	 * @var Logger
 	 */
 	private $logger;
 
 	/**
-	 * Constructor.
+	 * Initializes a new instance of the PromotionRulesService class.
+	 *
+	 * @param WPPromotionRuleRepositoryInterface $repository The repository instance.
 	 */
 	public function __construct(WPPromotionRuleRepositoryInterface $repository)
 	{
 		$this->repository = $repository;
-		$this->coupons = new Coupons();
-		$this->logger     = new Logger();
+		$this->logger     = new Logger('PromotionRulesService');
 	}
 
 	/**
@@ -97,9 +91,9 @@ class PromotionRulesService
 	 * @param array    $promotion        The promotion data.
 	 * @param int|null $existing_post_id Optional. The existing post ID to update.
 	 */
-	public function create_or_update(array $promotion, ?int $existingPostId = null): void
+	public function create_or_update(array $promotion, ?int $existing_post_id = null): void
 	{
-		$this->repository->create_or_update($promotion, $existingPostId);
+		$this->repository->create_or_update($promotion, $existing_post_id);
 	}
 
 	/**
@@ -150,14 +144,12 @@ class PromotionRulesService
 		}
 
 		$coupon_codes = array();
-		$coupons = $this->coupons->get_coupons_for_user($user);
+		$coupons = Coupons::get_coupons_for_user($user);
 
 		foreach ($coupons as $coupon) {
 			$post_id = Post::get_post_meta_data($coupon['id'], WCCoupons::PROMOTION_RULE_ID);
 
 			if (!$post_id) {
-				$this->logger->error('No post ID found for coupon ' . $coupon['code']);
-
 				continue;
 			}
 

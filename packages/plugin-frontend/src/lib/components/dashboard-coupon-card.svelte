@@ -63,6 +63,12 @@
 		{/if}
 	</h4>
 
+	{#if rule.instructions.value}
+		<p class="leat-dashboard-coupon-card__description">
+			{getTranslatedText(rule.instructions.value)}
+		</p>
+	{/if}
+
 	<div class="coupon-input-wrapper">
 		<input
 			class="coupon-input"
@@ -176,6 +182,11 @@
 	h4.leat-dashboard-coupon-card__header {
 		font-size: 1rem;
 		margin: 0.5rem 0 1rem 0;
+	}
+
+	.leat-dashboard-coupon-card__description {
+		font-size: 0.675rem;
+		margin: 0 0 0.5rem 0;
 	}
 
 	.coupon-input-wrapper {

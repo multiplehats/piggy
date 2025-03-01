@@ -10,7 +10,7 @@ use Leat\Api\Schemas\ExtendSchema;
 use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Services\PromotionRulesService;
-use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Services\SpendRulesService;
 use Leat\Domain\Services\WebhookManager;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Settings;
@@ -37,9 +37,9 @@ final class Api
 	private $promotion_rules_service;
 
 	/**
-	 * @var SpendRules
+	 * @var SpendRulesService
 	 */
-	private $spend_rules;
+	private $spend_rules_service;
 
 	/**
 	 * @var SyncVouchers
@@ -67,6 +67,7 @@ final class Api
 	 * @param Connection     $connection      The Connection instance.
 	 * @param Settings      $settings       The Settings instance.
 	 * @param PromotionRulesService $promotion_rules_service The PromotionRulesService instance.
+	 * @param SpendRulesService $spend_rules_service The SpendRulesService instance.
 	 * @param SpendRules $spend_rules The SpendRules instance.
 	 * @param SyncVouchers   $sync_vouchers   The SyncVouchers instance.
 	 * @param SyncPromotions $sync_promotions The SyncPromotions instance.
@@ -77,7 +78,7 @@ final class Api
 		Connection $connection,
 		Settings $settings,
 		PromotionRulesService $promotion_rules_service,
-		SpendRules $spend_rules,
+		SpendRulesService $spend_rules_service,
 		SyncVouchers $sync_vouchers,
 		SyncPromotions $sync_promotions,
 		SyncRewards $sync_rewards,
@@ -86,7 +87,7 @@ final class Api
 		$this->connection = $connection;
 		$this->settings = $settings;
 		$this->promotion_rules_service = $promotion_rules_service;
-		$this->spend_rules = $spend_rules;
+		$this->spend_rules_service = $spend_rules_service;
 		$this->sync_vouchers = $sync_vouchers;
 		$this->sync_promotions = $sync_promotions;
 		$this->sync_rewards = $sync_rewards;
@@ -101,7 +102,16 @@ final class Api
 		add_action(
 			'rest_api_init',
 			function () {
-				self::container($this->connection, $this->settings, $this->promotion_rules_service, $this->spend_rules, $this->sync_vouchers, $this->sync_promotions, $this->sync_rewards, $this->webhook_manager)
+				self::container(
+					$this->connection,
+					$this->settings,
+					$this->promotion_rules_service,
+					$this->spend_rules_service,
+					$this->sync_vouchers,
+					$this->sync_promotions,
+					$this->sync_rewards,
+					$this->webhook_manager
+				)
 					->get(RoutesController::class)
 					->register_all_routes();
 			}
@@ -114,7 +124,7 @@ final class Api
 	 * @param Connection     $connection      The Connection instance.
 	 * @param Settings      $settings       The Settings instance.
 	 * @param PromotionRulesService $promotion_rules_service The PromotionRulesService instance.
-	 * @param SpendRules $spend_rules The SpendRules instance.
+	 * @param SpendRulesService $spend_rules_service The SpendRulesService instance.
 	 * @param SyncVouchers   $sync_vouchers   The SyncVouchers instance.
 	 * @param SyncPromotions $sync_promotions The SyncPromotions instance.
 	 * @param SyncRewards $sync_rewards The SyncRewards instance.
@@ -126,7 +136,7 @@ final class Api
 		Connection $connection = null,
 		Settings $settings = null,
 		PromotionRulesService $promotion_rules_service = null,
-		SpendRules $spend_rules = null,
+		SpendRulesService $spend_rules_service = null,
 		SyncVouchers $sync_vouchers = null,
 		SyncPromotions $sync_promotions = null,
 		SyncRewards $sync_rewards = null,
@@ -192,9 +202,9 @@ final class Api
 			});
 		}
 
-		if ($spend_rules) {
-			$container->register(SpendRules::class, function () use ($spend_rules) {
-				return $spend_rules;
+		if ($spend_rules_service) {
+			$container->register(SpendRulesService::class, function () use ($spend_rules_service) {
+				return $spend_rules_service;
 			});
 		}
 
@@ -212,7 +222,7 @@ final class Api
 					$container->get(SyncRewards::class),
 					$container->get(WebhookManager::class),
 					$container->get(PromotionRulesService::class),
-					$container->get(SpendRules::class),
+					$container->get(SpendRulesService::class)
 				);
 			}
 		);
@@ -225,7 +235,7 @@ final class Api
 					$container->get(Logger::class),
 					$container->get(Settings::class),
 					$container->get(PromotionRulesService::class),
-					$container->get(SpendRules::class)
+					$container->get(SpendRulesService::class)
 				);
 			}
 		);

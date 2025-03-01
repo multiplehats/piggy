@@ -90,13 +90,13 @@ class Coupons
      * @param \WP_User $user WordPress user object
      * @return array Array of valid coupon data
      */
-    public function get_coupons_for_user(\WP_User $user): array
+    public static function get_coupons_for_user(\WP_User $user): array
     {
         $coupons = [];
         $email_coupons = self::find_coupons_by_email($user->user_email);
 
         foreach ($email_coupons as $coupon) {
-            if ($this->is_coupon_valid($coupon, $user)) {
+            if (self::is_coupon_valid($coupon, $user)) {
                 $coupons[] = [
                     'id' => $coupon->get_id(),
                     'code' => $coupon->get_code(),
@@ -120,7 +120,7 @@ class Coupons
      * @param \WC_Coupon $coupon WooCommerce coupon object
      * @return bool Whether the coupon is valid
      */
-    private function is_coupon_valid(\WC_Coupon $coupon, \WP_User $user): bool
+    private static function is_coupon_valid(\WC_Coupon $coupon, \WP_User $user): bool
     {
         // Check if coupon is expired
         $expiry_date = $coupon->get_date_expires();

@@ -3,7 +3,7 @@
 namespace Leat\Domain\Syncing;
 
 use Leat\Api\Connection;
-use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Services\SpendRulesService;
 
 /**
  * Syncs Leat Rewards with the Spend Rules custom post type.
@@ -13,16 +13,16 @@ class SyncRewards extends AbstractSync
 	/**
 	 * The spend rules service.
 	 *
-	 * @var SpendRules
+	 * @var SpendRulesService
 	 */
-	private SpendRules $spend_rules;
+	private SpendRulesService $spend_rules_service;
 
 	protected const BATCH_SIZE = 50;
 
-	public function __construct(Connection $connection, SpendRules $spend_rules)
+	public function __construct(Connection $connection, SpendRulesService $spend_rules_service)
 	{
 		parent::__construct($connection);
-		$this->spend_rules = $spend_rules;
+		$this->spend_rules_service = $spend_rules_service;
 	}
 
 	public function init(): void
@@ -52,6 +52,6 @@ class SyncRewards extends AbstractSync
 
 	protected function upsert_item(array $data, ?int $existing_id = null): void
 	{
-		$this->spend_rules->create_or_update_spend_rule_from_reward($data, $existing_id);
+		$this->spend_rules_service->create_or_update_spend_rule_from_reward($data, $existing_id);
 	}
 }

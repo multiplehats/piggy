@@ -14,7 +14,7 @@ use Leat\Domain\Services\Order\{
 };
 use Leat\Domain\Services\Cart\CartManager;
 use Leat\Domain\Services\EarnRules;
-use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Services\SpendRulesService;
 use Leat\Settings;
 use Leat\Utils\Logger;
 
@@ -43,7 +43,7 @@ class LoyaltyManager
 	 *
 	 * @var SpendRules
 	 */
-	private $spend_rules;
+	private $spend_rules_service;
 
 	/**
 	 * Logger instance.
@@ -105,12 +105,21 @@ class LoyaltyManager
 	 * LoyaltyManager constructor.
 	 *
 	 * @param Connection $connection
+	 * @param EarnRules $earn_rules
+	 * @param SpendRulesService $spend_rules_service
+	 * @param Settings $settings
+	 * @param CustomerAttributeSync $attribute_sync
+	 * @param CustomerCreationHandler $customer_creation
+	 * @param CustomerProfileDisplay $profile_display
+	 * @param OrderProcessor $order_processor
+	 * @param OrderCreditHandler $order_credit_handler
+	 * @param CartManager $cart_manager
 	 */
 	public function __construct(
 		Logger $logger,
 		Connection $connection,
 		EarnRules $earn_rules,
-		SpendRules $spend_rules,
+		SpendRulesService $spend_rules_service,
 		Settings $settings,
 		CustomerAttributeSync $attribute_sync,
 		CustomerCreationHandler $customer_creation,
@@ -122,7 +131,7 @@ class LoyaltyManager
 		$this->logger = $logger;
 		$this->connection = $connection;
 		$this->earn_rules = $earn_rules;
-		$this->spend_rules = $spend_rules;
+		$this->spend_rules_service = $spend_rules_service;
 		$this->settings = $settings;
 		$this->attribute_sync = $attribute_sync;
 		$this->customer_creation = $customer_creation;

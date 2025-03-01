@@ -124,7 +124,6 @@ abstract class AbstractSync
 
             $client = $this->connection->init_client();
             if (!$client) {
-                $this->logger->error('Failed to initialize client for sync');
                 $this->update_sync_failure('Failed to initialize client');
                 return false;
             }

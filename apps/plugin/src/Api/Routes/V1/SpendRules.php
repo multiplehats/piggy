@@ -2,6 +2,7 @@
 
 namespace Leat\Api\Routes\V1;
 
+use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Routes\V1\Middleware;
 
@@ -10,7 +11,8 @@ use Leat\Api\Routes\V1\Middleware;
  *
  * @internal
  */
-class SpendRules extends AbstractRoute {
+class SpendRules extends AbstractRoute
+{
 	/**
 	 * The route identifier.
 	 *
@@ -30,7 +32,8 @@ class SpendRules extends AbstractRoute {
 	 *
 	 * @return string
 	 */
-	public function get_path() {
+	public function get_path()
+	{
 		return '/spend-rules';
 	}
 
@@ -39,36 +42,37 @@ class SpendRules extends AbstractRoute {
 	 *
 	 * @return array An array of endpoints.
 	 */
-	public function get_args() {
+	public function get_args()
+	{
 		return [
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ MIddleware::class, 'is_authorized' ],
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => [MIddleware::class, 'is_authorized'],
 				'args'                => [
 					'settings' => [
-						'description' => __( 'Spend rules', 'leat-crm' ),
+						'description' => __('Spend rules', 'leat-crm'),
 						'type'        => 'object',
 					],
 				],
 			],
 			[
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_response' ],
-				'permission_callback' => [ Middleware::class, 'is_public' ],
+				'callback'            => [$this, 'get_response'],
+				'permission_callback' => [Middleware::class, 'is_public'],
 				'args'                => [
 					'id'     => [
-						'description' => __( 'Spend rule ID', 'leat-crm' ),
+						'description' => __('Spend rule ID', 'leat-crm'),
 						'type'        => 'string',
 					],
 					'status' => [
-						'description' => __( 'Spend rule status', 'leat-crm' ),
+						'description' => __('Spend rule status', 'leat-crm'),
 						'type'        => 'string',
 					],
 				],
 			],
-			'schema'      => [ $this->schema, 'get_public_item_schema' ],
-			'allow_batch' => [ 'v1' => true ],
+			'schema'      => [$this->schema, 'get_public_item_schema'],
+			'allow_batch' => ['v1' => true],
 		];
 	}
 
@@ -79,63 +83,41 @@ class SpendRules extends AbstractRoute {
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
-	protected function get_route_post_response( \WP_REST_Request $request ) {
+	protected function get_route_post_response(\WP_REST_Request $request)
+	{
 		$data = array(
-			'id'                    => $request->get_param( 'id' ),
-			'status'                => $request->get_param( 'status' ),
-			'label'                 => $request->get_param( 'label' ),
-			'title'                 => $request->get_param( 'title' ),
-			'type'                  => $request->get_param( 'type' ),
-			'startsAt'              => $request->get_param( 'startsAt' ),
-			'expiresAt'             => $request->get_param( 'expiresAt' ),
-			'completed'             => $request->get_param( 'completed' ),
-			'instructions'          => $request->get_param( 'instructions' ),
-			'description'           => $request->get_param( 'description' ),
-			'fulfillment'           => $request->get_param( 'fulfillment' ),
-			'discountValue'         => $request->get_param( 'discountValue' ),
-			'discountType'          => $request->get_param( 'discountType' ),
-			'minimumPurchaseAmount' => $request->get_param( 'minimumPurchaseAmount' ),
-			'selectedProducts'      => $request->get_param( 'selectedProducts' ),
-			'selectedCategories'    => $request->get_param( 'selectedCategories' ),
-			'limitUsageToXItems'    => $request->get_param( 'limitUsageToXItems' ),
+			'label'                 => $request->get_param('label'),
+			'type'                  => $request->get_param('type'),
+			'status'                => $request->get_param('status'),
+			'title'                 => $request->get_param('title'),
+			'starts_at'             => $request->get_param('starts_at'),
+			'expires_at'             => $request->get_param('expires_at'),
+			'completed'             => $request->get_param('completed'),
+			'description'           => $request->get_param('description'),
+			'instructions'          => $request->get_param('instructions'),
+			'fulfillment'           => $request->get_param('fulfillment'),
+			'discount_value'         => $request->get_param('discountValue'),
+			'discount_type'          => $request->get_param('discountType'),
+			'limit_usage_to_x_items'    => $request->get_param('limitUsageToXItems'),
+			'minimum_purchase_amount' => $request->get_param('minimumPurchaseAmount'),
+			'selected_products'      => $request->get_param('selectedProducts'),
+			'selected_categories'    => $request->get_param('selectedCategories'),
 		);
 
-		$post_data = array(
-			'post_type'   => 'leat_spend_rule',
-			'post_title'  => $data['title'],
-			'post_status' => $data['status'],
-			'meta_input'  => array(
-				'_leat_spend_rule_type'                    => $data['type'],
-				'_leat_spend_rule_label'                   => $data['label'],
-				'_leat_spend_rule_starts_at'               => $data['startsAt'],
-				'_leat_spend_rule_expires_at'              => $data['expiresAt'],
-				'_leat_spend_rule_completed'               => $data['completed'],
-				'_leat_spend_rule_instructions'            => $data['instructions'],
-				'_leat_spend_rule_description'             => $data['description'],
-				'_leat_spend_rule_fulfillment'             => $data['fulfillment'],
-				'_leat_spend_rule_discount_value'          => $data['discountValue'],
-				'_leat_spend_rule_discount_type'           => $data['discountType'],
-				'_leat_spend_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
-				'_leat_spend_rule_selected_products'       => $data['selectedProducts'],
-				'_leat_spend_rule_selected_categories'     => $data['selectedCategories'],
-				'_leat_spend_rule_limit_usage_to_x_items'  => $data['limitUsageToXItems'],
-			),
-		);
+		try {
+			$this->spend_rules_service->create_or_update($data, $request->get_param('id'));
 
-		if ( ! empty( $data['id'] ) ) {
-			$post_data['ID'] = $data['id'];
-			$post_id         = wp_update_post( $post_data, true );
-		} else {
-			$post_id = wp_insert_post( $post_data, true );
+			$response = $this->prepare_item_for_response(
+				$this->spend_rules_service->get_by_id($request->get_param('id')),
+				$request
+			);
+
+			return rest_ensure_response($response);
+		} catch (\Exception $e) {
+			$this->logger->error('Failed to save spend rule', ['error' => $e->getMessage()]);
+
+			throw new RouteException('spend-rules', 'Failed to save spend rule', 500);
 		}
-
-		if ( is_wp_error( $post_id ) ) {
-			return new \WP_Error( 'post_save_failed', __( 'Failed to save spend rule', 'leat-crm' ), array( 'status' => 500 ) );
-		}
-
-		$response = $this->prepare_item_for_response( get_post( $post_id ), $request );
-
-		return rest_ensure_response( $response );
 	}
 
 	/**
@@ -145,32 +127,39 @@ class SpendRules extends AbstractRoute {
 	 *
 	 * @return bool|string|\WP_Error|\WP_REST_Response
 	 */
-	protected function get_route_response( \WP_REST_Request $request ) {
-		$prepared_args = array(
-			'post_type'      => 'leat_spend_rule',
-			'posts_per_page' => -1,
-			'post_status'    => $request->get_param( 'status' ) ? explode( ',', $request->get_param( 'status' ) ) : array( 'publish' ),
-		);
+	protected function get_route_response(\WP_REST_Request $request)
+	{
+		$id = $request->get_param('id');
+		$status = $request->get_param('status') ? explode(',', $request->get_param('status')) : ['publish'];
 
-		$id = $request->get_param( 'id' );
+		$posts = $id
+			? $this->get_single_post($id)
+			: $this->spend_rules_service->get_rules($status);
 
-		if ( $id ) {
-			// Get a specific post id.
-			$prepared_args['p'] = $id;
+		$response_objects = array_map(function ($post) use ($request) {
+			return $this->prepare_response_for_collection(
+				$this->prepare_item_for_response($post, $request)
+			);
+		}, $posts);
+
+		return rest_ensure_response($response_objects);
+	}
+
+	/**
+	 * Helper method to get and validate a single post
+	 *
+	 * @param string $id Post ID
+	 * @return array Single post in an array
+	 * @throws \WP_Error If post not found
+	 */
+	private function get_single_post($id)
+	{
+		$post = $this->spend_rules_service->get_by_id($id);
+
+		if (empty($post)) {
+			throw new RouteException('spend-rules', 'Spend rule not found', 404);
 		}
 
-		$query        = new \WP_Query();
-		$query_result = $query->query( $prepared_args );
-
-		$response_objects = array();
-
-		foreach ( $query_result as $post ) {
-			$data               = $this->prepare_item_for_response( $post, $request );
-			$response_objects[] = $this->prepare_response_for_collection( $data );
-		}
-
-		$response = rest_ensure_response( $response_objects );
-
-		return $response;
+		return [$post];
 	}
 }

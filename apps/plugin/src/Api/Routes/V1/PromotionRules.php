@@ -5,7 +5,6 @@ namespace Leat\Api\Routes\V1;
 use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Routes\V1\Middleware;
-use Leat\Infrastructure\Constants\WPPostTypes;
 
 /**
  * Shops class.
@@ -105,8 +104,6 @@ class PromotionRules extends AbstractRoute
 			'redemptions_per_voucher' => $request->get_param('redemptionsPerVoucher'),
 		);
 
-		error_log(print_r($promotion, true));
-
 		try {
 			$this->promotion_rules_service->create_or_update($promotion, $request->get_param('id'));
 
@@ -122,11 +119,7 @@ class PromotionRules extends AbstractRoute
 
 			return rest_ensure_response($response);
 		} catch (\Exception $e) {
-			return new \WP_Error(
-				'post_save_failed',
-				__('Failed to save promotion rule', 'leat-crm'),
-				array('status' => 500)
-			);
+			throw new RouteException('promotion-rules', 'Failed to save promotion rule', 500);
 		}
 	}
 

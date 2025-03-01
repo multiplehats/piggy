@@ -2,7 +2,7 @@
 
 namespace Leat\Domain\Services\Cart;
 
-use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Services\SpendRulesService;
 use Leat\Utils\Logger;
 
 /**
@@ -16,9 +16,9 @@ class CartManager
     /**
      * SpendRules service instance.
      *
-     * @var SpendRules
+     * @var SpendRulesService
      */
-    private $spend_rules;
+    private $spend_rules_service;
 
     /**
      * Logger service instance.
@@ -30,12 +30,12 @@ class CartManager
     /**
      * Initializes the cart manager with required dependencies.
      *
-     * @param SpendRules $spend_rules SpendRules service instance.
-     * @param Logger     $logger      Logger service instance.
+     * @param SpendRulesService $spend_rules_service SpendRules service instance.
+     * @param Logger            $logger            Logger service instance.
      */
-    public function __construct(SpendRules $spend_rules, Logger $logger)
+    public function __construct(SpendRulesService $spend_rules_service, Logger $logger)
     {
-        $this->spend_rules = $spend_rules;
+        $this->spend_rules_service = $spend_rules_service;
         $this->logger = $logger;
 
         // Register REST API hooks for cart item removal
@@ -274,7 +274,7 @@ class CartManager
 
         if ($coupon->get_meta('_leat_spend_rule_coupon') === 'true') {
             $spend_rule_id = $coupon->get_meta('_leat_spend_rule_id');
-            $spend_rule = $this->spend_rules->get_spend_rule_by_id($spend_rule_id);
+            $spend_rule = $this->spend_rules_service->get_by_id($spend_rule_id);
 
 
             if ($spend_rule) {
@@ -294,7 +294,7 @@ class CartManager
 
         if ($coupon->get_meta('_leat_spend_rule_coupon') === 'true') {
             $spend_rule_id = $coupon->get_meta('_leat_spend_rule_id');
-            $spend_rule = $this->spend_rules->get_spend_rule_by_id($spend_rule_id);
+            $spend_rule = $this->spend_rules_service->get_by_id($spend_rule_id);
 
             if ($spend_rule) {
                 $this->remove_spend_rule($spend_rule);
