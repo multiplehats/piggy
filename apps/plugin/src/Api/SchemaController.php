@@ -3,7 +3,8 @@
 namespace Leat\Api;
 
 use Leat\Api\Schemas\ExtendSchema;
-use Leat\Domain\Services\PromotionRules;
+use Leat\Domain\Services\PromotionRulesService;
+use Leat\Domain\Services\SpendRulesService;
 use Leat\Settings;
 use Leat\Utils\Logger;
 
@@ -37,10 +38,16 @@ class SchemaController
 	/**
 	 * Promotion rules service instance
 	 *
-	 * @var PromotionRules
+	 * @var PromotionRulesService
 	 */
 	protected $promotion_rules_service;
 
+	/**
+	 * Spend rules service instance
+	 *
+	 * @var SpendRulesService
+	 */
+	protected $spend_rules_service;
 	/**
 	 * Leat Rest Extending instance
 	 *
@@ -53,12 +60,13 @@ class SchemaController
 	 *
 	 * @param ExtendSchema $extend Rest Extending instance.
 	 */
-	public function __construct(ExtendSchema $extend, Logger $logger, Settings $settings, PromotionRules $promotion_rules_service)
+	public function __construct(ExtendSchema $extend, Logger $logger, Settings $settings, PromotionRulesService $promotion_rules_service, SpendRulesService $spend_rules_service)
 	{
 		$this->extend                  = $extend;
 		$this->logger                  = $logger;
 		$this->settings                = $settings;
 		$this->promotion_rules_service = $promotion_rules_service;
+		$this->spend_rules_service     = $spend_rules_service;
 
 		$this->schemas = [
 			'v1' => [
@@ -101,6 +109,6 @@ class SchemaController
 			throw new \Exception(esc_html(sprintf('%s v%d schema does not exist', $name, $version)));
 		}
 
-		return new $schema($this->extend, $this->logger, $this, $this->settings, $this->promotion_rules_service);
+		return new $schema($this->extend, $this->logger, $this, $this->settings, $this->promotion_rules_service, $this->spend_rules_service);
 	}
 }

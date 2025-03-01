@@ -6,7 +6,6 @@ use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Routes\V1\Middleware;
 use Leat\Api\Connection;
 use Leat\Api\Exceptions\RouteException;
-use Leat\Domain\Services\SpendRules;
 
 /**
  * SpendRuleSync class.
@@ -82,7 +81,6 @@ class SpendRulesClaim extends AbstractRoute
 	 */
 	protected function get_route_post_response(\WP_REST_Request $request)
 	{
-		$spend_rules_service = new SpendRules();
 		$connection          = new Connection();
 		$id                  = $request->get_param('id');
 		$user_id             = $request->get_param('userId');
@@ -95,7 +93,7 @@ class SpendRulesClaim extends AbstractRoute
 			throw new RouteException('spend-rules-claim', 'User ID is required', 400);
 		}
 
-		$rule = $spend_rules_service->get_spend_rule_by_id($id);
+		$rule = $this->spend_rules_service->get_by_id($id);
 
 		if (! $rule) {
 			throw new RouteException('spend-rules-claim', 'Spend rule not found', 404);
@@ -127,7 +125,7 @@ class SpendRulesClaim extends AbstractRoute
 				throw new RouteException('spend-rules-claim', 'Failed to create Reward Reception', 500);
 			}
 
-			$coupon = $spend_rules_service->create_coupon_for_spend_rule($rule, $user_id);
+			$coupon = $this->spend_rules_service->create_coupon_for_spend_rule($rule, $user_id);
 
 			if (! $coupon) {
 				throw new RouteException('spend-rules-claim', 'Failed to create coupon', 500);
@@ -140,7 +138,6 @@ class SpendRulesClaim extends AbstractRoute
 		} catch (\Throwable $th) {
 			$message = $th->getMessage();
 
-			// If the message sdtars with "You have insufficient credits" we return a 400.
 			if (strpos($th->getMessage(), 'You have insufficient credits') !== false) {
 				throw new RouteException('spend-rules-claim', __('Insufficient credits', 'leat-crm'), 400);
 			}

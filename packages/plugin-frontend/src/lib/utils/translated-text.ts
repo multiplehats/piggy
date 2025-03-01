@@ -27,7 +27,7 @@ export function getSpendRuleLabel(
 ) {
 	if (!text) return "";
 
-	const getDiscountType = () => {
+	const get_discount_type = () => {
 		if (discountType === "percentage") {
 			return `${discount}%`;
 		} else if (discountType === "fixed") {
@@ -43,7 +43,7 @@ export function getSpendRuleLabel(
 		{
 			"{{ credits_currency }}": creditsName ?? "",
 			"{{ credits }}": credits?.toString() ?? "0",
-			"{{ discount }}": getDiscountType(),
+			"{{ discount }}": get_discount_type(),
 		},
 	]);
 }

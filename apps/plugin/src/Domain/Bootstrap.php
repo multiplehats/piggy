@@ -11,8 +11,8 @@ use Leat\Registry\Container;
 use Leat\Migration;
 use Leat\Api\Api;
 use Leat\Domain\Services\EarnRules;
-use Leat\Domain\Services\PromotionRules;
-use Leat\Domain\Services\SpendRules;
+use Leat\Domain\Services\PromotionRulesService;
+use Leat\Domain\Services\SpendRulesService;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncRewards;
@@ -25,6 +25,8 @@ use Leat\Domain\Services\Order\OrderProcessor;
 use Leat\Domain\Services\Order\OrderCreditHandler;
 use Leat\Domain\Services\Cart\CartManager;
 use Leat\Domain\Services\GiftcardProduct;
+use Leat\Infrastructure\Repositories\WPPromotionRuleRepository;
+use Leat\Infrastructure\Repositories\WPSpendRuleRepository;
 use Leat\PostTypeController;
 use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
@@ -300,33 +302,49 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
-			PromotionRules::class,
-			function (Container $container) {
-				return new PromotionRules($container->get(Connection::class));
+			WPPromotionRuleRepository::class,
+			function () {
+				return new WPPromotionRuleRepository();
 			}
 		);
 		$this->container->register(
-			SpendRules::class,
+			PromotionRulesService::class,
 			function (Container $container) {
-				return new SpendRules();
+				return new PromotionRulesService(
+					$container->get(WPPromotionRuleRepository::class)
+				);
+			}
+		);
+		$this->container->register(
+			WPSpendRuleRepository::class,
+			function () {
+				return new WPSpendRuleRepository();
+			}
+		);
+		$this->container->register(
+			SpendRulesService::class,
+			function (Container $container) {
+				return new SpendRulesService(
+					$container->get(WPSpendRuleRepository::class)
+				);
 			}
 		);
 		$this->container->register(
 			SyncVouchers::class,
 			function (Container $container) {
-				return new SyncVouchers($container->get(Connection::class), $container->get(PromotionRules::class));
+				return new SyncVouchers($container->get(Connection::class), $container->get(PromotionRulesService::class));
 			}
 		);
 		$this->container->register(
 			SyncPromotions::class,
 			function (Container $container) {
-				return new SyncPromotions($container->get(Connection::class), $container->get(PromotionRules::class));
+				return new SyncPromotions($container->get(Connection::class), $container->get(PromotionRulesService::class));
 			}
 		);
 		$this->container->register(
 			SyncRewards::class,
 			function (Container $container) {
-				return new SyncRewards($container->get(Connection::class), $container->get(SpendRules::class));
+				return new SyncRewards($container->get(Connection::class), $container->get(SpendRulesService::class));
 			}
 		);
 		$this->container->register(
@@ -338,7 +356,7 @@ class Bootstrap
 		$this->container->register(
 			CartManager::class,
 			function (Container $container) {
-				return new CartManager($container->get(SpendRules::class), $container->get(Logger::class));
+				return new CartManager($container->get(SpendRulesService::class), $container->get(Logger::class));
 			}
 		);
 		$this->container->register(
@@ -394,7 +412,7 @@ class Bootstrap
 					$container->get(Logger::class),
 					$container->get(Connection::class),
 					$container->get(EarnRules::class),
-					$container->get(SpendRules::class),
+					$container->get(SpendRulesService::class),
 					$container->get(Settings::class),
 					$container->get(CustomerAttributeSync::class),
 					$container->get(CustomerCreationHandler::class),
@@ -448,8 +466,8 @@ class Bootstrap
 				return new Api(
 					$container->get(Connection::class),
 					$container->get(Settings::class),
-					$container->get(PromotionRules::class),
-					$container->get(SpendRules::class),
+					$container->get(PromotionRulesService::class),
+					$container->get(SpendRulesService::class),
 					$container->get(SyncVouchers::class),
 					$container->get(SyncPromotions::class),
 					$container->get(SyncRewards::class),

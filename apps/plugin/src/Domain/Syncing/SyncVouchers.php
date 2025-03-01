@@ -3,7 +3,7 @@
 namespace Leat\Domain\Syncing;
 
 use Leat\Api\Connection;
-use Leat\Domain\Services\PromotionRules;
+use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Syncing\BackgroundProcess;
 use Leat\Utils\Coupons;
 use Leat\Utils\Logger;
@@ -35,7 +35,7 @@ class SyncVouchers extends BackgroundProcess
 	/**
 	 * @var PromotionRules
 	 */
-	private $promotion_rules;
+	private $promotion_rules_service;
 
 	/**
 	 * The Connection instance.
@@ -56,10 +56,10 @@ class SyncVouchers extends BackgroundProcess
 	 *
 	 * @param Connection $connection The Connection instance.
 	 */
-	public function __construct(Connection $connection, PromotionRules $promotion_rules)
+	public function __construct(Connection $connection, PromotionRulesService $promotion_rules_service)
 	{
 		parent::__construct();
-		$this->promotion_rules = $promotion_rules;
+		$this->promotion_rules_service = $promotion_rules_service;
 		$this->connection      = $connection;
 		$this->logger          = new Logger();
 	}
@@ -95,7 +95,7 @@ class SyncVouchers extends BackgroundProcess
 		try {
 			$this->logger->info('Starting voucher sync');
 
-			$active_promotions = $this->promotion_rules->get_active_promotion_rules();
+			$active_promotions = $this->promotion_rules_service->get_active_rules();
 			$this->logger->info('Found ' . count($active_promotions) . ' active promotions');
 
 
@@ -286,7 +286,7 @@ class SyncVouchers extends BackgroundProcess
 		try {
 			$voucher_data = $this->format_voucher_webhook($voucher);
 
-			$formatted_promotion_rule = $this->promotion_rules->get_promotion_rule_by_leat_uuid($voucher_data['promotion']['uuid']);
+			$formatted_promotion_rule = $this->promotion_rules_service->get_promotion_rule_by_leat_uuid($voucher_data['promotion']['uuid']);
 
 			if (!$formatted_promotion_rule) {
 				$this->logger->error('Promotion rule not found for voucher ' . $voucher_data['code'], [
@@ -321,7 +321,7 @@ class SyncVouchers extends BackgroundProcess
 				return;
 			}
 
-			$formatted_promotion_rule = $this->promotion_rules->get_promotion_rule_by_leat_uuid($promotion_rule);
+			$formatted_promotion_rule = $this->promotion_rules_service->get_promotion_rule_by_leat_uuid($promotion_rule);
 			$voucher_data = $this->format_voucher_webhook($voucher_data);
 
 			$this->upsert_coupon_for_promotion_rule($formatted_promotion_rule, $voucher_data);
@@ -418,7 +418,7 @@ class SyncVouchers extends BackgroundProcess
 				$coupon->set_date_expires($expiration_date->getTimestamp());
 			}
 
-			$discount_type = $this->promotion_rules->get_discount_type($formatted_rule['discountType']['value']);
+			$discount_type = $this->promotion_rules_service->get_discount_type($formatted_rule['discountType']['value']);
 			if ($discount_type) {
 				$coupon->set_discount_type($discount_type);
 			}

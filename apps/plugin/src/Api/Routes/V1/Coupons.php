@@ -4,8 +4,6 @@ namespace Leat\Api\Routes\V1;
 
 use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Routes\V1\AbstractRoute;
-use Leat\Domain\Services\SpendRules;
-use Leat\Utils\Coupons as UtilsCoupons;
 
 /**
  * Coupons class.
@@ -87,9 +85,8 @@ class Coupons extends AbstractRoute
 			throw new RouteException('no_user_id', 'User ID is required', 400);
 		}
 
-		$spend_rules_service = new SpendRules();
 
-		$spend_rules_coupons             = $spend_rules_service->get_coupons_by_user_id($user_id);
+		$spend_rules_coupons             = $this->spend_rules_service->get_coupons_by_user_id($user_id);
 		$promotion_rules_coupons = $this->promotion_rules_service->get_coupons_by_user_id($user_id);
 
 		$response_objects = array(

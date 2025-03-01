@@ -67,6 +67,9 @@
 			discountValue: $rule?.discountValue?.value,
 			discountType: $rule?.discountType?.value,
 			minimumPurchaseAmount: $rule?.minimumPurchaseAmount?.value,
+			voucherLimit: $rule?.voucherLimit?.value,
+			limitPerContact: $rule?.limitPerContact?.value,
+			individualUse: $rule?.individualUse?.value,
 		};
 
 		$mutate.mutate(data, {
@@ -143,6 +146,12 @@
 							<SettingsInput
 								{...$rule.voucherLimit}
 								bind:value={$rule.voucherLimit.value}
+								readonly={true}
+							/>
+
+							<SettingsInput
+								{...$rule.redemptionsPerVoucher}
+								bind:value={$rule.redemptionsPerVoucher.value}
 								readonly={true}
 							/>
 

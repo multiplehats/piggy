@@ -101,7 +101,6 @@ class WebhookManager
 
 			$client = $this->connection->init_client();
 			if (!$client) {
-				$this->logger->error('Failed to initialize API client for webhook sync');
 				return;
 			}
 
@@ -179,7 +178,6 @@ class WebhookManager
 		}
 
 		if (! $client) {
-			$this->logger->error('Failed to initialize API client for webhook installation');
 			return false;
 		}
 
@@ -410,7 +408,6 @@ class WebhookManager
 		try {
 			$client = $this->connection->init_client();
 			if (!$client) {
-				$this->logger->error('Failed to initialize API client for getting webhooks');
 				return [];
 			}
 

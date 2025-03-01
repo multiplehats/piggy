@@ -2,6 +2,7 @@
 
 namespace Leat\Api\Routes\V1;
 
+use Leat\Api\Exceptions\RouteException;
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Routes\V1\Middleware;
 
@@ -84,60 +85,42 @@ class PromotionRules extends AbstractRoute
 	 */
 	protected function get_route_post_response(\WP_REST_Request $request)
 	{
-		$data = array(
-			'id'                    => $request->get_param('id'),
-			'status'                => $request->get_param('status'),
-			'label'                 => $request->get_param('label'),
-			'title'                 => $request->get_param('title'),
-			'fulfillment'           => $request->get_param('fulfillment'),
-			'discountValue'         => $request->get_param('discountValue'),
-			'discountType'          => $request->get_param('discountType'),
-			'minimumPurchaseAmount' => $request->get_param('minimumPurchaseAmount'),
-			'selectedProducts'      => $request->get_param('selectedProducts'),
-			'individualUse'         => $request->get_param('individualUse'),
-			'limitPerContact'       => $request->get_param('limitPerContact'),
-			'expirationDuration'    => $request->get_param('expirationDuration'),
+		$old_status = !empty($request->get_param('id')) ? get_post_status($request->get_param('id')) : null;
+		$new_status = $request->get_param('status');
+
+		$promotion = array(
+			'uuid' => $request->get_param('uuid'),
+			'title' => $request->get_param('title'),
+			'selected_products' => $request->get_param('selectedProducts'),
+			'status' => $new_status,
+			'label' => $request->get_param('label'),
+			'discount_value' => $request->get_param('discountValue'),
+			'discount_type' => $request->get_param('discountType'),
+			'minimum_purchase_amount' => $request->get_param('minimumPurchaseAmount'),
+			'voucher_limit' => $request->get_param('voucherLimit'),
+			'individual_use' => $request->get_param('individualUse'),
+			'limit_per_contact' => $request->get_param('limitPerContact'),
+			'expiration_duration' => $request->get_param('expirationDuration'),
+			'redemptions_per_voucher' => $request->get_param('redemptionsPerVoucher'),
 		);
 
-		$post_data = array(
-			'post_type'   => 'leat_promotion_rule',
-			'post_title'  => $data['title'],
-			'post_status' => $data['status'],
-			'meta_input'  => array(
-				'_leat_promotion_rule_label'                    => $data['label'],
-				'_leat_promotion_rule_discount_value'    => $data['discountValue'],
-				'_leat_promotion_rule_discount_type'     => $data['discountType'],
-				'_leat_promotion_rule_minimum_purchase_amount' => $data['minimumPurchaseAmount'],
-				'_leat_promotion_rule_selected_products' => $data['selectedProducts'],
-				'_leat_promotion_rule_individual_use' => $data['individualUse'],
-				'_leat_promotion_rule_limit_per_contact' => $data['limitPerContact'],
-				'_leat_promotion_rule_expiration_duration' => $data['expirationDuration'],
-			),
-		);
+		try {
+			$this->promotion_rules_service->create_or_update($promotion, $request->get_param('id'));
 
-		$old_status = get_post_status($data['id']);
-		$new_status = $data['status'];
+			if ($old_status !== 'publish' && $new_status === 'publish') {
+				$this->logger->info('Promotion rule published, syncing vouchers');
+				$this->sync_vouchers->start_sync();
+			}
 
-		if (! empty($data['id'])) {
-			$post_data['ID'] = $data['id'];
-			$post_id         = wp_update_post($post_data, true);
-		} else {
-			$post_id = wp_insert_post($post_data, true);
+			$response = $this->prepare_item_for_response(
+				$this->promotion_rules_service->get_by_id($request->get_param('id')),
+				$request
+			);
+
+			return rest_ensure_response($response);
+		} catch (\Exception $e) {
+			throw new RouteException('promotion-rules', 'Failed to save promotion rule', 500);
 		}
-
-		if (is_wp_error($post_id)) {
-			return new \WP_Error('post_save_failed', __('Failed to save promotion rule', 'leat-crm'), array('status' => 500));
-		}
-
-		if ($old_status !== 'publish' && $new_status === 'publish') {
-			$this->logger->info('Promotion rule published, syncing vouchers');
-
-			$this->sync_vouchers->start_sync();
-		}
-
-		$response = $this->prepare_item_for_response(get_post($post_id), $request);
-
-		return rest_ensure_response($response);
 	}
 
 	/**
@@ -149,31 +132,37 @@ class PromotionRules extends AbstractRoute
 	 */
 	protected function get_route_response(\WP_REST_Request $request)
 	{
-		$prepared_args = array(
-			'post_type'      => 'leat_promotion_rule',
-			'posts_per_page' => -1,
-			'post_status'    => $request->get_param('status') ? explode(',', $request->get_param('status')) : array('publish'),
-		);
-
 		$id = $request->get_param('id');
+		$status = $request->get_param('status') ? explode(',', $request->get_param('status')) : ['publish'];
 
-		if ($id) {
-			// Get a specific post id.
-			$prepared_args['p'] = $id;
+		$posts = $id
+			? $this->get_single_post($id)
+			: $this->promotion_rules_service->get_rules($status);
+
+		$response_objects = array_map(function ($post) use ($request) {
+			return $this->prepare_response_for_collection(
+				$this->prepare_item_for_response($post, $request)
+			);
+		}, $posts);
+
+		return rest_ensure_response($response_objects);
+	}
+
+	/**
+	 * Helper method to get and validate a single post
+	 *
+	 * @param string $id Post ID
+	 * @return array Single post in an array
+	 * @throws \WP_Error If post not found
+	 */
+	private function get_single_post($id)
+	{
+		$post = $this->promotion_rules_service->get_by_id($id);
+
+		if (empty($post)) {
+			throw new RouteException('promotion-rules', 'Promotion rule not found', 404);
 		}
 
-		$query        = new \WP_Query();
-		$query_result = $query->query($prepared_args);
-
-		$response_objects = array();
-
-		foreach ($query_result as $post) {
-			$data               = $this->prepare_item_for_response($post, $request);
-			$response_objects[] = $this->prepare_response_for_collection($data);
-		}
-
-		$response = rest_ensure_response($response_objects);
-
-		return $response;
+		return [$post];
 	}
 }

@@ -11,7 +11,6 @@ use Piggy\Api\Models\Shops\Shop;
 use Piggy\Api\Models\Loyalty\Receptions\CreditReception;
 use Piggy\Api\Models\Loyalty\Receptions\RewardReception;
 use Piggy\Api\Exceptions\PiggyRequestException;
-use Leat\Domain\Services\SpendRules;
 use Leat\Utils\Logger;
 use Leat\Utils\Users;
 use Piggy\Api\Models\Giftcards\Giftcard;
@@ -30,12 +29,6 @@ class Connection
 	 */
 	protected $client;
 
-	/**
-	 * SpendRules service instance.
-	 *
-	 * @var SpendRules
-	 */
-	protected $spend_rules_service;
 
 	/**
 	 * Logger instance.
@@ -56,8 +49,6 @@ class Connection
 		} else {
 			$this->client = null;
 		}
-
-		$this->spend_rules_service = new SpendRules();
 
 		$this->logger = new Logger();
 	}
@@ -208,7 +199,6 @@ class Connection
 			$client = $this->init_client();
 
 			if (! $client) {
-				$this->logger->error('Failed to initialize client in get_contact_by_wp_id');
 				return null;
 			}
 
@@ -251,7 +241,6 @@ class Connection
 			$client = $this->init_client();
 
 			if (! $client) {
-				$this->logger->error('Failed to initialize client in get_contact_by_uuid');
 				return null;
 			}
 
@@ -375,7 +364,6 @@ class Connection
 		$client = $this->init_client();
 
 		if (! $client) {
-			$this->logger->error('Failed to initialize client in update_contact');
 			return null;
 		}
 
@@ -957,7 +945,6 @@ class Connection
 		$client = $this->init_client();
 
 		if (! $client) {
-			$this->logger->error('Failed to initialize client');
 			return;
 		}
 

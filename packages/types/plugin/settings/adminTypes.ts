@@ -320,6 +320,7 @@ export const zPromotionRuleValueItem = z.object({
 	voucherLimit: zNumber,
 	limitPerContact: zNumber,
 	expirationDuration: zNumber,
+	redemptionsPerVoucher: zNumber,
 });
 export type PromotionRuleValueItem = z.infer<typeof zPromotionRuleValueItem>;
 

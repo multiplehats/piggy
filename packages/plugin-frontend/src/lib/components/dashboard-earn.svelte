@@ -21,7 +21,7 @@
 				{getNavItemText(getTranslatedText($pluginSettings.dashboard_nav_earn))}
 			</h3>
 
-			{#if earnRules.length > 0}
+			{#if earnRules && earnRules.length > 0}
 				<div class="leat-dashboard-earn__cards">
 					{#each earnRules as earnRule}
 						{#if earnRule.label.value}
