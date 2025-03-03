@@ -8,6 +8,47 @@ Run the following commands to get started:
 pnpm install
 ```
 
+## Architecture Overview
+
+This plugin implements a pragmatic, simplified clean architecture pattern tailored for WordPress plugin development:
+
+### Domain Layer
+
+- **Interfaces**: Define contracts that infrastructure components must implement
+    - `WPPromotionRuleRepositoryInterface`: Interface for promotion rule repository operations
+    - `GiftcardProductServiceInterface`: Interface for gift card product business logic
+    - `GiftcardRepositoryInterface`: Interface for gift card data access operations
+- **Services**: Contain business logic independent of WordPress implementation details
+    - `PromotionRulesService`: Manages promotion rules business logic
+    - `GiftcardProductService`: Manages gift card product business logic
+
+### Infrastructure Layer
+
+- **Repositories**: Implement domain interfaces with WordPress-specific code
+    - `WPPromotionRuleRepository`: WordPress implementation of the promotion rule repository
+    - `WPGiftcardRepository`: WordPress implementation of the gift card repository
+- **Constants**: Define WordPress-specific constants
+    - `WPPromotionRuleMetaKeys`: Constants for WordPress meta keys
+- **Formatters**: Transform WordPress data structures
+    - `WPPromotionRuleFormatter`: Formats WordPress posts into domain objects
+- **UI**: Handle WordPress-specific UI operations
+    - `WPGiftcardProductUI`: WordPress-specific UI operations for gift card products
+
+### Bootstrap
+
+- `Bootstrap`: Initializes and wires together the components
+    - Each component is responsible for registering its own WordPress hooks
+    - Services and UI components have an `init()` method that registers their hooks
+
+**Note**: This is an adapted clean architecture approach that focuses on practical separation of concerns within the WordPress ecosystem. We've implemented key concepts like dependency inversion and separation of business logic from infrastructure, while omitting some of the more complex layers and patterns found in full clean architecture implementations.
+
+This simplified approach provides:
+
+- Reasonable separation between WordPress-specific code and business logic
+- Improved testability through interfaces and dependency injection
+- Maintainable codebase that still feels familiar to WordPress developers
+- Consistent pattern where each component registers its own hooks
+
 ## Plugin Development Environments
 
 The plugin makes use of [the `@wordpress/env` package](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/).

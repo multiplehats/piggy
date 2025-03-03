@@ -2,37 +2,42 @@
 
 namespace Leat\Domain;
 
+use Leat\Api\Api;
 use Leat\Api\Connection;
 use Leat\Assets\Api as AssetApi;
 use Leat\Assets\AssetDataRegistry;
 use Leat\AssetsController;
 use Leat\Installer;
-use Leat\Registry\Container;
 use Leat\Migration;
-use Leat\Api\Api;
-use Leat\Domain\Services\EarnRules;
-use Leat\Domain\Services\PromotionRulesService;
-use Leat\Domain\Services\SpendRulesService;
-use Leat\Domain\Syncing\SyncVouchers;
-use Leat\Domain\Syncing\SyncPromotions;
-use Leat\Domain\Syncing\SyncRewards;
-use Leat\Domain\Services\WebhookManager;
-use Leat\Domain\Services\LoyaltyManager;
+use Leat\PostTypeController;
+use Leat\RedirectController;
+use Leat\Registry\Container;
+use Leat\Settings;
+use Leat\Utils\Logger;
+
+use Leat\Domain\Services\Cart\CartManager;
 use Leat\Domain\Services\Customer\CustomerAttributeSync;
 use Leat\Domain\Services\Customer\CustomerCreationHandler;
 use Leat\Domain\Services\Customer\CustomerProfileDisplay;
-use Leat\Domain\Services\Order\OrderProcessor;
+use Leat\Domain\Services\EarnRules;
+use Leat\Domain\Services\GiftcardProductService;
+use Leat\Domain\Services\LoyaltyManager;
 use Leat\Domain\Services\Order\OrderCreditHandler;
-use Leat\Domain\Services\Cart\CartManager;
-use Leat\Domain\Services\GiftcardProduct;
+use Leat\Domain\Services\Order\OrderProcessor;
+use Leat\Domain\Services\PromotionRulesService;
+use Leat\Domain\Services\SpendRulesService;
+use Leat\Domain\Services\WebhookManager;
+
+use Leat\Infrastructure\Repositories\WPGiftcardRepository;
 use Leat\Infrastructure\Repositories\WPPromotionRuleRepository;
 use Leat\Infrastructure\Repositories\WPSpendRuleRepository;
-use Leat\PostTypeController;
-use Leat\Settings;
+
 use Leat\Shortcodes\CustomerDashboardShortcode;
 use Leat\Shortcodes\RewardPointsShortcode;
-use Leat\RedirectController;
-use Leat\Utils\Logger;
+
+use Leat\Domain\Syncing\SyncPromotions;
+use Leat\Domain\Syncing\SyncRewards;
+use Leat\Domain\Syncing\SyncVouchers;
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -60,13 +65,6 @@ class Bootstrap
 	 * @var Migration
 	 */
 	private $migration;
-
-	/**
-	 * Holds the Logger instance
-	 *
-	 * @var Logger
-	 */
-	private $logger;
 
 	/**
 	 * Constructor
@@ -132,14 +130,16 @@ class Bootstrap
 			$this->container->get(PostTypeController::class);
 			// $this->container->get(RedirectController::class)->init();
 		}
+
 		$this->container->get(CustomerDashboardShortcode::class)->init();
 		$this->container->get(RewardPointsShortcode::class)->init();
 		$this->container->get(LoyaltyManager::class);
 		$this->container->get(SyncVouchers::class)->init();
 		$this->container->get(SyncPromotions::class)->init();
 		$this->container->get(SyncRewards::class)->init();
-		$this->container->get(GiftcardProduct::class)->init();
 		$this->container->get(WebhookManager::class)->init();
+
+		$this->container->get(GiftcardProductService::class)->init();
 
 		/**
 		 * Action triggered after Leat initialization finishes.
@@ -258,7 +258,6 @@ class Bootstrap
 				return new Logger();
 			}
 		);
-
 		$this->container->register(
 			PostTypeController::class,
 			function (Container $container) {
@@ -424,12 +423,6 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
-			GiftcardProduct::class,
-			function (Container $container) {
-				return new GiftcardProduct($container->get(Connection::class), $container->get(Settings::class));
-			}
-		);
-		$this->container->register(
 			Installer::class,
 			function (Container $container) {
 				return new Installer(
@@ -460,6 +453,24 @@ class Bootstrap
 				);
 			}
 		);
+
+		$this->container->register(
+			WPGiftcardRepository::class,
+			function (Container $container) {
+				return new WPGiftcardRepository();
+			}
+		);
+		$this->container->register(
+			GiftcardProductService::class,
+			function (Container $container) {
+				return new GiftcardProductService(
+					$container->get(Connection::class),
+					$container->get(Settings::class),
+					$container->get(WPGiftcardRepository::class)
+				);
+			}
+		);
+
 		$this->container->register(
 			Api::class,
 			function (Container $container) {

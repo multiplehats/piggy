@@ -16,6 +16,7 @@
 namespace Leat\Domain\Services;
 
 use Leat\Api\Connection;
+use Leat\Infrastructure\Constants\WCOrders;
 use Leat\Settings;
 use Leat\Utils\Logger;
 use Leat\Utils\OrderNotes;
@@ -25,7 +26,7 @@ use Leat\Utils\OrderNotes;
  *
  * Main service class for handling gift card product functionality.
  *
-
+ * @deprecated Use GiftcardProductService instead.
  */
 class GiftcardProduct
 {
@@ -235,7 +236,7 @@ class GiftcardProduct
 		if (! empty($_POST['giftcard_recipient_email'])) {
 			update_post_meta(
 				$order_id,
-				'_giftcard_recipient_email',
+				WCOrders::GIFT_CARD_RECIPIENT_EMAIL,
 				sanitize_email(wp_unslash($_POST['giftcard_recipient_email']))
 			);
 		}
@@ -309,7 +310,7 @@ class GiftcardProduct
 			return;
 		}
 
-		$recipient_email = get_post_meta($order_id, '_giftcard_recipient_email', true);
+		$recipient_email = get_post_meta($order_id, WCOrders::GIFT_CARD_RECIPIENT_EMAIL, true);
 
 		$has_giftcards = false;
 
