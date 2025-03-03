@@ -15,7 +15,7 @@
 
 	// Order the spend rules by the amount required to redeem, highest first.
 	// In the future we can make them custom sortable i the admin UI.
-	const orderedSpendRules = spendRules?.sort(
+	$: orderedSpendRules = spendRules?.sort(
 		(a, b) => (b.creditCost.value ?? 0) - (a.creditCost.value ?? 0)
 	);
 </script>
