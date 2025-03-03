@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Leat CRM 0.6.2\n"
+"Project-Id-Version: Leat CRM 0.9.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/leat-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-05T16:00:21+00:00\n"
+"POT-Creation-Date: 2025-03-03T09:12:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: leat-crm\n"
@@ -39,28 +39,51 @@ msgstr ""
 msgid "https://leat.com"
 msgstr ""
 
-#: src/Api/Routes/V1/AbstractRoute.php:138
-#: src/Api/Routes/V1/AbstractRoute.php:143
+#: src/Api/Connection.php:445
+msgid "The API key is invalid or has expired."
+msgstr ""
+
+#: src/Api/Connection.php:452
+msgid "An unexpected error occurred while fetching shops."
+msgstr ""
+
+#: src/Api/Routes/V1/AbstractRoute.php:167
+#: src/Api/Routes/V1/AbstractRoute.php:172
 msgid "Invalid API Key"
 msgstr ""
 
-#: src/Api/Routes/V1/AbstractRoute.php:260
-#: src/Api/Routes/V1/AbstractRoute.php:274
-#: src/Api/Routes/V1/AbstractRoute.php:288
-#: src/Api/Routes/V1/AbstractRoute.php:302
+#: src/Api/Routes/V1/AbstractRoute.php:289
+#: src/Api/Routes/V1/AbstractRoute.php:303
+#: src/Api/Routes/V1/AbstractRoute.php:317
+#: src/Api/Routes/V1/AbstractRoute.php:331
 msgid "Method not implemented"
 msgstr ""
 
-#: src/Api/Routes/V1/AbstractRoute.php:361
+#: src/Api/Routes/V1/AbstractRoute.php:390
 msgid "Scope under which the request is made; determines fields present in response."
 msgstr ""
 
-#: src/Api/Routes/V1/Admin/Settings.php:50
+#: src/Api/Routes/V1/Admin/Settings.php:54
 msgid "Settings"
 msgstr ""
 
-#: src/Api/Routes/V1/Admin/Settings.php:61
+#: src/Api/Routes/V1/Admin/Settings.php:65
 msgid "Setting ID"
+msgstr ""
+
+#: src/Api/Routes/V1/Admin/SpendRules.php:54
+msgid "Spend rules"
+msgstr ""
+
+#: src/Api/Routes/V1/Admin/SpendRules.php:65
+#: src/Api/Routes/V1/SpendRules.php:57
+msgid "Spend rule ID"
+msgstr ""
+
+#: src/Api/Routes/V1/Admin/SpendRules.php:69
+#: src/Api/Routes/V1/EarnRules.php:65
+#: src/Api/Routes/V1/SpendRules.php:61
+msgid "Spend rule status"
 msgstr ""
 
 #: src/Api/Routes/V1/EarnReward.php:58
@@ -85,11 +108,6 @@ msgstr ""
 msgid "Earn rule ID"
 msgstr ""
 
-#: src/Api/Routes/V1/EarnRules.php:65
-#: src/Api/Routes/V1/SpendRules.php:65
-msgid "Spend rule status"
-msgstr ""
-
 #: src/Api/Routes/V1/EarnRules.php:127
 msgid "Failed to save earn rule"
 msgstr ""
@@ -100,35 +118,23 @@ msgstr ""
 msgid "You are not allowed to make this request. Please make sure you are logged in."
 msgstr ""
 
-#: src/Api/Routes/V1/PromotionRules.php:53
+#: src/Api/Routes/V1/PromotionRules.php:54
 msgid "Promotion rules"
 msgstr ""
 
-#: src/Api/Routes/V1/PromotionRules.php:64
+#: src/Api/Routes/V1/PromotionRules.php:65
 msgid "Promotion rule ID"
 msgstr ""
 
-#: src/Api/Routes/V1/PromotionRules.php:68
+#: src/Api/Routes/V1/PromotionRules.php:69
 msgid "Promotion rule status"
 msgstr ""
 
-#: src/Api/Routes/V1/PromotionRules.php:122
-msgid "Failed to save promotion rule"
+#: src/Api/Routes/V1/SpendRules.php:65
+msgid "User ID to get applicable spend rules for"
 msgstr ""
 
-#: src/Api/Routes/V1/SpendRules.php:50
-msgid "Spend rules"
-msgstr ""
-
-#: src/Api/Routes/V1/SpendRules.php:61
-msgid "Spend rule ID"
-msgstr ""
-
-#: src/Api/Routes/V1/SpendRules.php:133
-msgid "Failed to save spend rule"
-msgstr ""
-
-#: src/Api/Routes/V1/SpendRulesClaim.php:145
+#: src/Api/Routes/V1/SpendRulesClaim.php:139
 msgid "Insufficient credits"
 msgstr ""
 
@@ -163,28 +169,28 @@ msgstr ""
 msgid "Extension data registered by %s"
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:365
+#: src/Api/Schemas/V1/AbstractSchema.php:380
 msgid "Currency code (in ISO format) for returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:371
+#: src/Api/Schemas/V1/AbstractSchema.php:386
 msgid "Currency symbol for the currency which can be used to format returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:377
+#: src/Api/Schemas/V1/AbstractSchema.php:392
 msgid "Currency minor unit (number of digits after the decimal separator) for returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:383
+#: src/Api/Schemas/V1/AbstractSchema.php:398
 msgid "Decimal separator for the currency which can be used to format returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:389
+#: src/Api/Schemas/V1/AbstractSchema.php:404
 msgid "Thousand separator for the currency which can be used to format returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:395
-#: src/Api/Schemas/V1/AbstractSchema.php:401
+#: src/Api/Schemas/V1/AbstractSchema.php:410
+#: src/Api/Schemas/V1/AbstractSchema.php:416
 msgid "Price prefix for the currency which can be used to format returned prices."
 msgstr ""
 
@@ -212,26 +218,6 @@ msgstr ""
 msgid "The reward's attributes."
 msgstr ""
 
-#: src/Api/Schemas/V1/Admin/SettingsSchema.php:34
-msgid "Reward order statuses."
-msgstr ""
-
-#: src/Api/Schemas/V1/Admin/SettingsSchema.php:40
-msgid "Pending payment."
-msgstr ""
-
-#: src/Api/Schemas/V1/Admin/SettingsSchema.php:44
-msgid "On hold."
-msgstr ""
-
-#: src/Api/Schemas/V1/Admin/SettingsSchema.php:48
-msgid "Processing."
-msgstr ""
-
-#: src/Api/Schemas/V1/Admin/SettingsSchema.php:52
-msgid "Completed."
-msgstr ""
-
 #: src/Api/Schemas/V1/Admin/ShopsSchema.php:34
 msgid "The shops's unique id."
 msgstr ""
@@ -240,112 +226,121 @@ msgstr ""
 msgid "The shops's name."
 msgstr ""
 
-#: src/Api/Schemas/V1/CouponsSchema.php:35
-msgid "List of coupon codes"
-msgstr ""
-
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:45
 #: src/Api/Schemas/V1/EarnRulesSchema.php:47
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:34
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:42
-#: src/Api/Schemas/V1/SpendRulesSchema.php:46
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:46
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:40
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:37
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:45
+#: src/Api/Schemas/V1/SpendRulesSchema.php:45
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:37
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:37
 msgid "Unique identifier for the rule"
 msgstr ""
 
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:49
 #: src/Api/Schemas/V1/EarnRulesSchema.php:51
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:38
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:46
-#: src/Api/Schemas/V1/SpendRulesSchema.php:50
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:50
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:44
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:41
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:49
+#: src/Api/Schemas/V1/SpendRulesSchema.php:49
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:41
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:41
 msgid "Status of the rule"
 msgstr ""
 
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:53
 #: src/Api/Schemas/V1/EarnRulesSchema.php:55
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:42
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:50
-#: src/Api/Schemas/V1/SpendRulesSchema.php:54
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:54
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:48
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:45
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:53
+#: src/Api/Schemas/V1/SpendRulesSchema.php:53
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:45
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:45
 msgid "Title of the rule"
 msgstr ""
 
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:57
 #: src/Api/Schemas/V1/EarnRulesSchema.php:59
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:46
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:54
-#: src/Api/Schemas/V1/SpendRulesSchema.php:58
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:58
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:52
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:49
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:57
+#: src/Api/Schemas/V1/SpendRulesSchema.php:57
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:49
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:49
 msgid "Date rule was created."
 msgstr ""
 
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:61
 #: src/Api/Schemas/V1/EarnRulesSchema.php:63
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:50
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:58
-#: src/Api/Schemas/V1/SpendRulesSchema.php:62
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:62
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:56
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:53
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:61
+#: src/Api/Schemas/V1/SpendRulesSchema.php:61
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:53
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:53
 msgid "Date rule was last updated."
 msgstr ""
 
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:65
 #: src/Api/Schemas/V1/EarnRulesSchema.php:67
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:54
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:62
-#: src/Api/Schemas/V1/SpendRulesSchema.php:66
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:66
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:60
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:57
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:65
+#: src/Api/Schemas/V1/SpendRulesSchema.php:65
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:57
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:57
 msgid "Description of the rule"
 msgstr ""
 
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:69
 #: src/Api/Schemas/V1/EarnRulesSchema.php:71
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:58
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:66
-#: src/Api/Schemas/V1/SpendRulesSchema.php:70
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:70
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:64
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:61
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:69
+#: src/Api/Schemas/V1/SpendRulesSchema.php:69
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:61
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:61
 msgid "Type of the rule"
 msgstr ""
 
-#: src/Api/Schemas/V1/EarnRulesSchema.php:75
-msgid "Leat tier UUIDs that rule is applicable to."
-msgstr ""
-
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:73
 #: src/Api/Schemas/V1/EarnRulesSchema.php:79
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:62
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:70
-#: src/Api/Schemas/V1/SpendRulesSchema.php:74
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:74
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:68
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:65
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:73
+#: src/Api/Schemas/V1/SpendRulesSchema.php:73
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:65
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:65
 msgid "Date rule starts."
 msgstr ""
 
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:77
 #: src/Api/Schemas/V1/EarnRulesSchema.php:83
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:66
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:74
-#: src/Api/Schemas/V1/SpendRulesSchema.php:78
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:78
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:72
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:69
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:77
+#: src/Api/Schemas/V1/SpendRulesSchema.php:77
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:69
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:69
 msgid "Date rule expires."
 msgstr ""
 
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:81
 #: src/Api/Schemas/V1/EarnRulesSchema.php:87
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:70
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:78
-#: src/Api/Schemas/V1/SpendRulesSchema.php:82
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:82
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:76
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:73
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:81
+#: src/Api/Schemas/V1/SpendRulesSchema.php:81
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:73
 #: src/Api/Schemas/V1/SyncVouchersSchema.php:73
 msgid "Whether rule has been completed."
+msgstr ""
+
+#: src/Api/Schemas/V1/Admin/SpendRulesSchema.php:85
+#: src/Api/Schemas/V1/PromotionRulesSchema.php:77
+#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:85
+#: src/Api/Schemas/V1/SpendRulesSchema.php:85
+#: src/Api/Schemas/V1/SyncPromotionsSchema.php:77
+#: src/Api/Schemas/V1/SyncVouchersSchema.php:77
+msgid "Credit cost to redeem the reward"
+msgstr ""
+
+#: src/Api/Schemas/V1/CouponsSchema.php:35
+msgid "List of coupon codes"
+msgstr ""
+
+#: src/Api/Schemas/V1/EarnRulesSchema.php:75
+msgid "Leat tier UUIDs that rule is applicable to."
 msgstr ""
 
 #: src/Api/Schemas/V1/EarnRulesSchema.php:91
@@ -370,15 +365,6 @@ msgstr ""
 
 #: src/Api/Schemas/V1/JoinProgramSchema.php:35
 msgid "The ID of the user joining the program"
-msgstr ""
-
-#: src/Api/Schemas/V1/PromotionRulesSchema.php:74
-#: src/Api/Schemas/V1/SpendRulesClaimSchema.php:82
-#: src/Api/Schemas/V1/SpendRulesSchema.php:86
-#: src/Api/Schemas/V1/SpendRulesSyncSchema.php:86
-#: src/Api/Schemas/V1/SyncPromotionsSchema.php:80
-#: src/Api/Schemas/V1/SyncVouchersSchema.php:77
-msgid "Credit cost to redeem the reward"
 msgstr ""
 
 #: src/Api/Schemas/V1/WCCategoriesSearchSchema.php:14
@@ -434,565 +420,568 @@ msgid "Webhook signature for verification"
 msgstr ""
 
 #. translators: %s: Required WooCommerce version
-#: src/Domain/Bootstrap.php:166
+#: src/Domain/Bootstrap.php:178
 msgid "The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce."
 msgstr ""
 
 #. translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command.
-#: src/Domain/Bootstrap.php:228
+#: src/Domain/Bootstrap.php:240
 msgid "Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes."
 msgstr ""
 
-#: src/Domain/Services/CustomerSession.php:425
+#: src/Domain/Services/Customer/CustomerProfileDisplay.php:50
 msgid "Leat Claimed Rewards"
 msgstr ""
 
-#: src/Domain/Services/CustomerSession.php:428
+#: src/Domain/Services/Customer/CustomerProfileDisplay.php:53
 msgid "Claimed Rewards"
 msgstr ""
 
-#: src/Domain/Services/CustomerSession.php:435
+#: src/Domain/Services/Customer/CustomerProfileDisplay.php:60
 msgid "Earn Rule ID: "
 msgstr ""
 
-#: src/Domain/Services/CustomerSession.php:436
+#: src/Domain/Services/Customer/CustomerProfileDisplay.php:61
 msgid "Credits: "
 msgstr ""
 
-#: src/Domain/Services/CustomerSession.php:437
+#: src/Domain/Services/Customer/CustomerProfileDisplay.php:62
 msgid "Timestamp: "
 msgstr ""
 
-#: src/Domain/Services/CustomerSession.php:442
+#: src/Domain/Services/Customer/CustomerProfileDisplay.php:67
 msgid "No claimed rewards."
 msgstr ""
 
-#: src/Domain/Services/CustomerSession.php:454
+#: src/Domain/Services/Customer/CustomerProfileDisplay.php:89
 msgid "Leat"
 msgstr ""
 
-#: src/Domain/Services/CustomerSession.php:458
+#: src/Domain/Services/Customer/CustomerProfileDisplay.php:92
 msgid "Contact ID"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:74
-#: src/Domain/Services/PromotionRules.php:63
-#: src/Domain/Services/SpendRules.php:108
+#: src/Domain/Services/EarnRules.php:98
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:27
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:29
 #: dist/admin/assets/index-59d498ad.js:13461
 #: dist/admin/assets/index-59d498ad.js:14740
 msgid "Status"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:78
-#: src/Domain/Services/PromotionRules.php:67
-#: src/Domain/Services/SpendRules.php:112
+#: src/Domain/Services/EarnRules.php:102
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:31
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:33
 #: dist/admin/assets/index-59d498ad.js:8747
 msgid "Active"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:79
-#: src/Domain/Services/PromotionRules.php:68
-#: src/Domain/Services/SpendRules.php:113
+#: src/Domain/Services/EarnRules.php:103
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:32
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:34
 #: dist/admin/assets/index-59d498ad.js:8749
 msgid "Inactive"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:82
+#: src/Domain/Services/EarnRules.php:106
 msgid "Set the status of the rule. Inactive earn rules will not be displayed to users."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:86
-#: src/Domain/Services/PromotionRules.php:83
-#: src/Domain/Services/SpendRules.php:120
+#: src/Domain/Services/EarnRules.php:110
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:59
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:41
 #: dist/admin/assets/index-59d498ad.js:13425
 #: dist/admin/assets/index-59d498ad.js:14704
 msgid "Title"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:90
+#: src/Domain/Services/EarnRules.php:114
 msgid "This is not displayed to the user and is only used for internal reference."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:94
-#: src/Domain/Services/SpendRules.php:128
+#: src/Domain/Services/EarnRules.php:118
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:49
 msgid "Type"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:99
+#: src/Domain/Services/EarnRules.php:123
 #: dist/admin/assets/index-59d498ad.js:14269
 msgid "Like on Facebook"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:100
+#: src/Domain/Services/EarnRules.php:124
 #: dist/admin/assets/index-59d498ad.js:14273
 msgid "Follow on TikTok"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:101
+#: src/Domain/Services/EarnRules.php:125
 #: dist/admin/assets/index-59d498ad.js:14277
 msgid "Follow on Instagram"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:102
+#: src/Domain/Services/EarnRules.php:126
 #: dist/admin/assets/index-59d498ad.js:14281
 msgid "Place an order"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:104
+#: src/Domain/Services/EarnRules.php:128
 #: dist/admin/assets/index-59d498ad.js:14286
 msgid "Create an account"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:106
+#: src/Domain/Services/EarnRules.php:130
 msgid "The type of earn rule."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:111
-#: src/Domain/Services/SpendRules.php:142
+#: src/Domain/Services/EarnRules.php:135
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:63
 msgid "Starts at"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:115
-#: src/Domain/Services/SpendRules.php:146
+#: src/Domain/Services/EarnRules.php:139
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:67
 msgid "Optional date for when the rule should start."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:119
-#: src/Domain/Services/SpendRules.php:150
+#: src/Domain/Services/EarnRules.php:143
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:71
 msgid "Expires at"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:123
-#: src/Domain/Services/SpendRules.php:154
+#: src/Domain/Services/EarnRules.php:147
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:75
 msgid "Optional date for when the rule should expire."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:128
+#: src/Domain/Services/EarnRules.php:152
 msgid "Minimum order amount"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:132
+#: src/Domain/Services/EarnRules.php:156
 msgid "The minimum order amount required to satisfy the rule"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:140
-#: src/Settings.php:49
+#: src/Domain/Services/EarnRules.php:164
+#: src/Settings.php:55
 msgid "Credits"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:144
+#: src/Domain/Services/EarnRules.php:168
 msgid "The number of credits awarded for completing this action."
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:164
-#: src/Domain/Services/PromotionRules.php:75
-#: src/Domain/Services/SpendRules.php:233
+#: src/Domain/Services/EarnRules.php:188
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:39
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:152
 msgid "Label"
 msgstr ""
 
 #. translators: %s: List of placeholders that can be used in the label text (e.g. {{ credits }}, {{ credits_currency }})
 #. translators: %s: List of available placeholders that can be used in the promotion label text
 #. translators: %s: List of available placeholders that can be used in the label text.
-#: src/Domain/Services/EarnRules.php:193
-#: src/Domain/Services/PromotionRules.php:214
-#: src/Domain/Services/SpendRules.php:288
+#: src/Domain/Services/EarnRules.php:217
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:52
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:210
 msgid "The text that's shown to the customer in the account and widgets. You can use the following placeholders: %s"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:202
+#: src/Domain/Services/EarnRules.php:226
 msgid "Follow us on Facebook and earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:205
+#: src/Domain/Services/EarnRules.php:229
 msgid "Follow us on TikTok and earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:208
+#: src/Domain/Services/EarnRules.php:232
 msgid "Follow us on Instagram and earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:211
+#: src/Domain/Services/EarnRules.php:235
 msgid "For every order you place, you earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:214
+#: src/Domain/Services/EarnRules.php:238
 msgid "On your birthday, you earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:217
+#: src/Domain/Services/EarnRules.php:241
 msgid "Create an account and earn {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:230
+#: src/Domain/Services/EarnRules.php:254
 msgid "Facebook handle"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:232
+#: src/Domain/Services/EarnRules.php:256
 msgid "TikTok handle"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:234
+#: src/Domain/Services/EarnRules.php:258
 msgid "Instagram handle"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:236
+#: src/Domain/Services/EarnRules.php:260
 msgid "Social network handle"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:244
+#: src/Domain/Services/EarnRules.php:268
 msgid "The handle of the Facebook account (without the @) that the user must like"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:246
+#: src/Domain/Services/EarnRules.php:270
 msgid "The handle of the TikTok account (without the @) that the user must follow"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:248
+#: src/Domain/Services/EarnRules.php:272
 msgid "The handle of the Instagram account (without the @) that the user must follow"
 msgstr ""
 
-#: src/Domain/Services/EarnRules.php:250
+#: src/Domain/Services/EarnRules.php:274
 msgid "The handle of the social network account that the user must like or follow"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:61
+#: src/Domain/Services/GiftcardProduct.php:121
 msgid "Giftcard Settings"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:81
+#: src/Domain/Services/GiftcardProduct.php:142
 msgid "Select a program"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:91
+#: src/Domain/Services/GiftcardProduct.php:152
 msgid "Giftcard Program"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:92
+#: src/Domain/Services/GiftcardProduct.php:153
 msgid "Select the giftcard program this product is connected to"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:137
+#: src/Domain/Services/GiftcardProduct.php:202
 msgid "Gift Card Recipient Email"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:138
+#: src/Domain/Services/GiftcardProduct.php:203
 msgid "Enter recipient email address"
 msgstr ""
 
 #. translators: %d: number of gift cards
-#: src/Domain/Services/GiftcardProduct.php:149
+#: src/Domain/Services/GiftcardProduct.php:214
 msgid "Important: You are purchasing %d gift cards. All gift cards will be sent to the same recipient email address entered above. If you want to send gift cards to different recipients, please place separate orders."
 msgstr ""
 
 #. translators: 1: quantity of gift cards, 2: amount in cents, 3: product name.
-#: src/Domain/Services/GiftcardProduct.php:261
+#: src/Domain/Services/GiftcardProduct.php:335
 msgid "Starting to create %1$d gift card(s) with amount %2$s for %3$s."
 msgstr ""
 
 #. translators: 1: giftcard hash.
-#: src/Domain/Services/GiftcardProduct.php:301
+#: src/Domain/Services/GiftcardProduct.php:375
 msgid "Gift Card Code: %s"
 msgstr ""
 
 #. translators: 1: giftcard id, 2: amount in cents.
-#: src/Domain/Services/GiftcardProduct.php:311
+#: src/Domain/Services/GiftcardProduct.php:385
 msgid "Gift card #%1$s created with amount %2$s successfully."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: recipient email.
-#: src/Domain/Services/GiftcardProduct.php:326
+#: src/Domain/Services/GiftcardProduct.php:400
 msgid "Gift card #%1$s email sent to %2$s."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: recipient email.
-#: src/Domain/Services/GiftcardProduct.php:336
+#: src/Domain/Services/GiftcardProduct.php:410
 msgid "Failed to send gift card #%1$s email to %2$s."
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:345
+#: src/Domain/Services/GiftcardProduct.php:419
 msgid "No recipient email found for gift card."
 msgstr ""
 
 #. translators: 1: error message.
-#: src/Domain/Services/GiftcardProduct.php:367
+#: src/Domain/Services/GiftcardProduct.php:441
 msgid "Error creating gift card: %1$s"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:385
+#: src/Domain/Services/GiftcardProduct.php:459
 msgid "Gift card processing completed."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:423
+#: src/Domain/Services/GiftcardProduct.php:500
 msgid "<a href=\"%1$s\" target=\"_blank\">View Giftcard #%2$s</a>"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:447
+#: src/Domain/Services/GiftcardProduct.php:527
 msgid "Gift Card Recipient Email is required."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:512
-#: src/Domain/Services/GiftcardProduct.php:650
+#: src/Domain/Services/GiftcardProduct.php:593
+#: src/Domain/Services/GiftcardProduct.php:730
 msgid "Gift card #%1$s has already been reversed."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:524
+#: src/Domain/Services/GiftcardProduct.php:605
 msgid "Could not process refund for gift card #%1$s - missing transaction data."
 msgstr ""
 
 #. translators: 1: refund percentage, 2: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:556
+#: src/Domain/Services/GiftcardProduct.php:635
 msgid "Deducted %1$s%% from gift card #%2$s."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:582
+#: src/Domain/Services/GiftcardProduct.php:661
 msgid "Failed to process refund for gift card #%1$s."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: error message.
-#: src/Domain/Services/GiftcardProduct.php:592
+#: src/Domain/Services/GiftcardProduct.php:671
 msgid "Error processing refund for gift card #%1$s: %2$s"
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:662
+#: src/Domain/Services/GiftcardProduct.php:742
 msgid "Could not process withdrawal for gift card #%1$s - missing transaction data."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:683
+#: src/Domain/Services/GiftcardProduct.php:763
 msgid "Gift card #%1$s withdrawn successfully."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:706
+#: src/Domain/Services/GiftcardProduct.php:786
 msgid "Failed to process withdrawal for gift card #%1$s."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: error message.
-#: src/Domain/Services/GiftcardProduct.php:716
+#: src/Domain/Services/GiftcardProduct.php:796
 msgid "Error processing withdrawal for gift card #%1$s: %2$s"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:785
+#: src/Domain/Services/GiftcardProduct.php:867
 msgid "This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:71
+#. translators: %s: The promotion rule name
+#: src/Domain/Syncing/SyncVouchers.php:388
+msgid "Leat Promotion Voucher: %s"
+msgstr ""
+
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:35
 msgid "Set the status of the rule. Inactive promotion rules will not be displayed to users."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:87
-#: src/Domain/Services/SpendRules.php:124
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:63
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:45
 msgid "This is not displayed to the user and is only used for internal reference. You can manage this in the Leat dashboard."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:91
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:67
 msgid "Leat Promotion UUID"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:95
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:71
 msgid "The UUID of the corresponding Leat promotion."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:99
-#: src/Domain/Services/SpendRules.php:175
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:75
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:96
 msgid "Image"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:103
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:79
 msgid "The image that is displayed for the promotion rule."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:109
-#: src/Domain/Services/SpendRules.php:242
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:83
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:160
 msgid "Selected products"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:114
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:88
 msgid "The products that are selected for the promotion rule."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:119
-#: src/Domain/Services/SpendRules.php:251
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:92
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:168
 msgid "Discount value"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:123
-#: src/Domain/Services/SpendRules.php:255
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:96
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:172
 msgid "The value of the discount."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:128
-#: src/Domain/Services/SpendRules.php:260
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:100
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:176
 msgid "Discount type"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:133
-#: src/Domain/Services/SpendRules.php:265
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:105
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:181
 msgid "Percentage"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:134
-#: src/Domain/Services/SpendRules.php:266
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:106
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:182
 msgid "Fixed amount"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:136
-#: src/Domain/Services/SpendRules.php:268
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:108
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:184
 msgid "The type of discount."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:141
-#: src/Domain/Services/SpendRules.php:273
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:112
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:188
 msgid "Minimum purchase amount"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:145
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:116
 msgid "The minimum purchase amount required to redeem the promotion."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:150
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:120
 msgid "Voucher limit"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:154
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:124
 msgid "The maximum number of vouchers that can be issued for this promotion. 0 means unlimited."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:159
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:128
 msgid "Individual Use"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:163
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:132
 msgid "Check this box if the coupon cannot be used in conjunction with other coupons."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:168
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:136
 msgid "Limit Per Contact"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:172
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:140
 msgid "The maximum number of times a single contact can use this promotion. 0 means unlimited."
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:177
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:144
 msgid "Expiration Duration"
 msgstr ""
 
-#: src/Domain/Services/PromotionRules.php:181
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:148
 msgid "The number of days after which the promotion expires. 0 means no expiration."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:116
+#: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:152
+msgid "Redemptions Per Voucher"
+msgstr ""
+
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:37
 msgid "Set the status of the rule. Inactive spend rules will not be displayed to users."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:133
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:54
 msgid "Free / Discounted Product"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:134
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:55
 msgid "Order Discount"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:135
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:56
 msgid "Free Shipping"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:136
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:57
 msgid "Category Discount"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:138
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:59
 msgid "The type of spend rule."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:159
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:80
 msgid "Credit cost"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:163
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:84
 msgid "The amount of credits it will cost to redeem the reward. This is managed in the Leat dashboard."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:167
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:88
 msgid "Selected reward"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:171
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:92
 msgid "The reward that is selected for the spend rule."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:179
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:100
 msgid "The image that is displayed for the spend rule."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:183
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:104
 msgid "Description"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:191
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:112
 msgid "Instructions"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:199
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:120
 msgid "Fulfillment description"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:207
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:128
 msgid "Leat Reward UUID"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:211
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:132
 msgid "The UUID of the corresponding Leat reward."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:215
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:136
 msgid "Selected category"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:219
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:140
 msgid "The category that the user can spent their credits in."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:223
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:144
 msgid "Limit usage to X items"
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:227
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:148
 msgid "Limit the discount to a specific number of items. Set to 0 for unlimited. If you set it to 0 be aware that this will allow the customer to use the discount on all items in the cart."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:246
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:164
 msgid "The products that are selected for the spend rule."
 msgstr ""
 
-#: src/Domain/Services/SpendRules.php:277
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:192
 msgid "The minimum purchase amount required to redeem the reward."
 msgstr ""
 
 #. translators: %s: List of available placeholders that can be used in the description text.
-#: src/Domain/Services/SpendRules.php:303
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:237
 msgid "Add a description of the reward. Available placeholders: %s"
 msgstr ""
 
-#. translators: %s: List of available placeholders that can be used in the instructions text.
-#: src/Domain/Services/SpendRules.php:311
-msgid "Add instructions on how to redeem the reward. Available placeholders: %s"
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:247
+msgid "Add instructions on how to redeem the reward"
 msgstr ""
 
 #. translators: %s: List of available placeholders that can be used in the fulfillment text.
-#: src/Domain/Services/SpendRules.php:319
+#: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:261
 msgid "Add instructions on how fulfillment will be handled. Available placeholders: %s"
-msgstr ""
-
-#. translators: %s: The promotion rule name
-#: src/Domain/Services/SyncVouchers.php:365
-msgid "Leat Promotion Voucher: %s"
 msgstr ""
 
 #. translators: %1$s table name, %2$s database user, %3$s database name.
@@ -1000,316 +989,316 @@ msgstr ""
 msgid "Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?"
 msgstr ""
 
-#: src/Integrations/IntegrationRegistry.php:35
+#: src/Integrations/IntegrationRegistry.php:38
 msgid "Integration registry requires an identifier."
 msgstr ""
 
 #. translators: %s: Integration name.
-#: src/Integrations/IntegrationRegistry.php:68
+#: src/Integrations/IntegrationRegistry.php:72
 msgid "\"%s\" is already registered."
 msgstr ""
 
 #. translators: %s: Integration name.
-#: src/Integrations/IntegrationRegistry.php:99
+#: src/Integrations/IntegrationRegistry.php:105
 msgid "Integration \"%s\" is not registered."
 msgstr ""
 
-#: src/PostTypeController.php:38
+#: src/PostTypeController.php:43
 msgctxt "Post type general name"
 msgid "Earn Rules"
 msgstr ""
 
-#: src/PostTypeController.php:39
+#: src/PostTypeController.php:44
 msgctxt "Post type singular name"
 msgid "Earn Rule"
 msgstr ""
 
-#: src/PostTypeController.php:40
+#: src/PostTypeController.php:45
 msgctxt "Admin Menu text"
 msgid "Earn Rules"
 msgstr ""
 
-#: src/PostTypeController.php:41
+#: src/PostTypeController.php:46
 msgctxt "Add New on Toolbar"
 msgid "Earn Rule"
 msgstr ""
 
-#: src/PostTypeController.php:42
-#: src/PostTypeController.php:88
-#: src/PostTypeController.php:134
+#: src/PostTypeController.php:47
+#: src/PostTypeController.php:94
+#: src/PostTypeController.php:141
 msgid "Add New"
 msgstr ""
 
-#: src/PostTypeController.php:43
+#: src/PostTypeController.php:48
 msgid "Add New Earn Rule"
 msgstr ""
 
-#: src/PostTypeController.php:44
+#: src/PostTypeController.php:49
 msgid "New Earn Rule"
 msgstr ""
 
-#: src/PostTypeController.php:45
+#: src/PostTypeController.php:50
 msgid "Edit Earn Rule"
 msgstr ""
 
-#: src/PostTypeController.php:46
+#: src/PostTypeController.php:51
 msgid "View Earn Rule"
 msgstr ""
 
-#: src/PostTypeController.php:47
+#: src/PostTypeController.php:52
 msgid "All Earn Rules"
 msgstr ""
 
-#: src/PostTypeController.php:48
+#: src/PostTypeController.php:53
 msgid "Search Earn Rules"
 msgstr ""
 
-#: src/PostTypeController.php:49
+#: src/PostTypeController.php:54
 msgid "Parent Earn Rules:"
 msgstr ""
 
-#: src/PostTypeController.php:50
+#: src/PostTypeController.php:55
 msgid "No earn rules found."
 msgstr ""
 
-#: src/PostTypeController.php:51
+#: src/PostTypeController.php:56
 msgid "No earn rules found in Trash."
 msgstr ""
 
-#: src/PostTypeController.php:52
+#: src/PostTypeController.php:57
 msgctxt "Overrides the \"Featured Image\" phrase for this post type. Added in 4.3"
 msgid "Earn Rule Cover Image"
 msgstr ""
 
-#: src/PostTypeController.php:53
-#: src/PostTypeController.php:99
-#: src/PostTypeController.php:145
+#: src/PostTypeController.php:58
+#: src/PostTypeController.php:105
+#: src/PostTypeController.php:152
 msgctxt "Overrides the \"Set featured image\" phrase for this post type. Added in 4.3"
 msgid "Set cover image"
 msgstr ""
 
-#: src/PostTypeController.php:54
-#: src/PostTypeController.php:100
-#: src/PostTypeController.php:146
+#: src/PostTypeController.php:59
+#: src/PostTypeController.php:106
+#: src/PostTypeController.php:153
 msgctxt "Overrides the \"Remove featured image\" phrase for this post type. Added in 4.3"
 msgid "Remove cover image"
 msgstr ""
 
-#: src/PostTypeController.php:55
-#: src/PostTypeController.php:101
-#: src/PostTypeController.php:147
+#: src/PostTypeController.php:60
+#: src/PostTypeController.php:107
+#: src/PostTypeController.php:154
 msgctxt "Overrides the \"Use as featured image\" phrase for this post type. Added in 4.3"
 msgid "Use as cover image"
 msgstr ""
 
-#: src/PostTypeController.php:56
+#: src/PostTypeController.php:61
 msgctxt "The post type archive label used in nav menus. Default \"Post Archives\". Added in 4.4"
 msgid "Earn Rule archives"
 msgstr ""
 
-#: src/PostTypeController.php:57
+#: src/PostTypeController.php:62
 msgctxt "Overrides the \"Insert into post\"/\"Insert into page\" phrase (used when inserting media into a post). Added in 4.4"
 msgid "Insert into earn rule"
 msgstr ""
 
-#: src/PostTypeController.php:58
+#: src/PostTypeController.php:63
 msgctxt "Overrides the \"Uploaded to this post/page\" phrase (used when viewing media attached to a post). Added in 4.4"
 msgid "Uploaded to this earn rule"
 msgstr ""
 
-#: src/PostTypeController.php:59
+#: src/PostTypeController.php:64
 msgctxt "Screen reader text for the filter links heading on the post type listing screen. Default \"Filter posts list\"/\"Filter pages list\". Added in 4.4"
 msgid "Filter earn rules list"
 msgstr ""
 
-#: src/PostTypeController.php:60
+#: src/PostTypeController.php:65
 msgctxt "Screen reader text for the pagination heading on the post type listing screen. Default \"Posts list navigation\"/\"Pages list navigation\". Added in 4.4"
 msgid "Earn rules list navigation"
 msgstr ""
 
-#: src/PostTypeController.php:61
+#: src/PostTypeController.php:66
 msgctxt "Screen reader text for the items list heading on the post type listing screen. Default \"Posts list\"/\"Pages list\". Added in 4.4"
 msgid "Earn rules list"
 msgstr ""
 
-#: src/PostTypeController.php:84
+#: src/PostTypeController.php:90
 msgctxt "Post type general name"
 msgid "Spend Rules"
 msgstr ""
 
-#: src/PostTypeController.php:85
+#: src/PostTypeController.php:91
 msgctxt "Post type singular name"
 msgid "Spend Rule"
 msgstr ""
 
-#: src/PostTypeController.php:86
+#: src/PostTypeController.php:92
 msgctxt "Admin Menu text"
 msgid "Spend Rules"
 msgstr ""
 
-#: src/PostTypeController.php:87
+#: src/PostTypeController.php:93
 msgctxt "Add New on Toolbar"
 msgid "Spend Rule"
 msgstr ""
 
-#: src/PostTypeController.php:89
+#: src/PostTypeController.php:95
 msgid "Add New Spend Rule"
 msgstr ""
 
-#: src/PostTypeController.php:90
+#: src/PostTypeController.php:96
 msgid "New Spend Rule"
 msgstr ""
 
-#: src/PostTypeController.php:91
+#: src/PostTypeController.php:97
 msgid "Edit Spend Rule"
 msgstr ""
 
-#: src/PostTypeController.php:92
+#: src/PostTypeController.php:98
 msgid "View Spend Rule"
 msgstr ""
 
-#: src/PostTypeController.php:93
+#: src/PostTypeController.php:99
 msgid "All Spend Rules"
 msgstr ""
 
-#: src/PostTypeController.php:94
+#: src/PostTypeController.php:100
 msgid "Search Spend Rules"
 msgstr ""
 
-#: src/PostTypeController.php:95
+#: src/PostTypeController.php:101
 msgid "Parent Spend Rules:"
 msgstr ""
 
-#: src/PostTypeController.php:96
+#: src/PostTypeController.php:102
 msgid "No spend rules found."
 msgstr ""
 
-#: src/PostTypeController.php:97
+#: src/PostTypeController.php:103
 msgid "No spend rules found in Trash."
 msgstr ""
 
-#: src/PostTypeController.php:98
+#: src/PostTypeController.php:104
 msgctxt "Overrides the \"Featured Image\" phrase for this post type. Added in 4.3"
 msgid "Spend Rule Cover Image"
 msgstr ""
 
-#: src/PostTypeController.php:102
+#: src/PostTypeController.php:108
 msgctxt "The post type archive label used in nav menus. Default \"Post Archives\". Added in 4.4"
 msgid "Spend Rule archives"
 msgstr ""
 
-#: src/PostTypeController.php:103
+#: src/PostTypeController.php:109
 msgctxt "Overrides the \"Insert into post\"/\"Insert into page\" phrase (used when inserting media into a post). Added in 4.4"
 msgid "Insert into spend rule"
 msgstr ""
 
-#: src/PostTypeController.php:104
+#: src/PostTypeController.php:110
 msgctxt "Overrides the \"Uploaded to this post/page\" phrase (used when viewing media attached to a post). Added in 4.4"
 msgid "Uploaded to this spend rule"
 msgstr ""
 
-#: src/PostTypeController.php:105
+#: src/PostTypeController.php:111
 msgctxt "Screen reader text for the filter links heading on the post type listing screen. Default \"Filter posts list\"/\"Filter pages list\". Added in 4.4"
 msgid "Filter spend rules list"
 msgstr ""
 
-#: src/PostTypeController.php:106
+#: src/PostTypeController.php:112
 msgctxt "Screen reader text for the pagination heading on the post type listing screen. Default \"Posts list navigation\"/\"Pages list navigation\". Added in 4.4"
 msgid "Spend rules list navigation"
 msgstr ""
 
-#: src/PostTypeController.php:107
+#: src/PostTypeController.php:113
 msgctxt "Screen reader text for the items list heading on the post type listing screen. Default \"Posts list\"/\"Pages list\". Added in 4.4"
 msgid "Spend rules list"
 msgstr ""
 
-#: src/PostTypeController.php:130
+#: src/PostTypeController.php:137
 msgctxt "Post type general name"
 msgid "Promotions"
 msgstr ""
 
-#: src/PostTypeController.php:131
+#: src/PostTypeController.php:138
 msgctxt "Post type singular name"
 msgid "Promotion"
 msgstr ""
 
-#: src/PostTypeController.php:132
+#: src/PostTypeController.php:139
 msgctxt "Admin Menu text"
 msgid "Promotions"
 msgstr ""
 
-#: src/PostTypeController.php:133
+#: src/PostTypeController.php:140
 msgctxt "Add New on Toolbar"
 msgid "Promotion"
 msgstr ""
 
-#: src/PostTypeController.php:135
+#: src/PostTypeController.php:142
 msgid "Add New Promotion"
 msgstr ""
 
-#: src/PostTypeController.php:136
+#: src/PostTypeController.php:143
 msgid "New Promotion"
 msgstr ""
 
-#: src/PostTypeController.php:137
+#: src/PostTypeController.php:144
 msgid "Edit Promotion"
 msgstr ""
 
-#: src/PostTypeController.php:138
+#: src/PostTypeController.php:145
 msgid "View Promotion"
 msgstr ""
 
-#: src/PostTypeController.php:139
+#: src/PostTypeController.php:146
 msgid "All Promotions"
 msgstr ""
 
-#: src/PostTypeController.php:140
+#: src/PostTypeController.php:147
 msgid "Search Promotions"
 msgstr ""
 
-#: src/PostTypeController.php:141
+#: src/PostTypeController.php:148
 msgid "Parent Promotions:"
 msgstr ""
 
-#: src/PostTypeController.php:142
+#: src/PostTypeController.php:149
 msgid "No promotions found."
 msgstr ""
 
-#: src/PostTypeController.php:143
+#: src/PostTypeController.php:150
 msgid "No promotions found in Trash."
 msgstr ""
 
-#: src/PostTypeController.php:144
+#: src/PostTypeController.php:151
 msgctxt "Overrides the \"Featured Image\" phrase for this post type. Added in 4.3"
 msgid "Promotion Cover Image"
 msgstr ""
 
-#: src/PostTypeController.php:148
+#: src/PostTypeController.php:155
 msgctxt "The post type archive label used in nav menus. Default \"Post Archives\". Added in 4.4"
 msgid "Promotion archives"
 msgstr ""
 
-#: src/PostTypeController.php:149
+#: src/PostTypeController.php:156
 msgctxt "Overrides the \"Insert into post\"/\"Insert into page\" phrase (used when inserting media into a post). Added in 4.4"
 msgid "Insert into promotion"
 msgstr ""
 
-#: src/PostTypeController.php:150
+#: src/PostTypeController.php:157
 msgctxt "Overrides the \"Uploaded to this post/page\" phrase (used when viewing media attached to a post). Added in 4.4"
 msgid "Uploaded to this promotion"
 msgstr ""
 
-#: src/PostTypeController.php:151
+#: src/PostTypeController.php:158
 msgctxt "Screen reader text for the filter links heading on the post type listing screen. Default \"Filter posts list\"/\"Filter pages list\". Added in 4.4"
 msgid "Filter promotions list"
 msgstr ""
 
-#: src/PostTypeController.php:152
+#: src/PostTypeController.php:159
 msgctxt "Screen reader text for the pagination heading on the post type listing screen. Default \"Posts list navigation\"/\"Pages list navigation\". Added in 4.4"
 msgid "Promotions list navigation"
 msgstr ""
 
-#: src/PostTypeController.php:153
+#: src/PostTypeController.php:160
 msgctxt "Screen reader text for the items list heading on the post type listing screen. Default \"Posts list\"/\"Pages list\". Added in 4.4"
 msgid "Promotions list"
 msgstr ""
@@ -1342,294 +1331,276 @@ msgstr ""
 msgid "Enter your API key here."
 msgstr ""
 
-#: src/Settings.php:43
+#. translators: %1$s: opening link tag, %2$s: closing link tag
+#: src/Settings.php:40
+msgid "You can generate an API key in your %1$sLeat Business Dashboard%2$s."
+msgstr ""
+
+#: src/Settings.php:49
 msgid "Shop ID"
 msgstr ""
 
-#: src/Settings.php:44
+#: src/Settings.php:50
 msgid "Select the shop you want to connect to."
 msgstr ""
 
-#: src/Settings.php:52
+#: src/Settings.php:58
 msgid "Credits name"
 msgstr ""
 
-#: src/Settings.php:53
+#: src/Settings.php:59
 msgid "The name of the credits in your shop."
 msgstr ""
 
-#: src/Settings.php:59
+#: src/Settings.php:65
 msgid "You have {{ credits }} {{ credits_currency }} out of {{ credits_required }}"
 msgstr ""
 
-#: src/Settings.php:62
+#: src/Settings.php:68
 msgid "Credits balance"
 msgstr ""
 
 #. translators: %s: a list of placeholders
-#: src/Settings.php:64
+#: src/Settings.php:70
 msgid "The format of the credits balance message that will be displayed to the user. The following placeholders can be used: %s"
 msgstr ""
 
-#: src/Settings.php:70
+#: src/Settings.php:76
 msgid "Include guests"
 msgstr ""
 
-#: src/Settings.php:71
+#: src/Settings.php:77
 msgid "Include customers without an account (guests) in your loyalty program."
 msgstr ""
 
-#: src/Settings.php:76
-msgid "Reward order statuses"
+#: src/Settings.php:82
+msgid "Reward order status"
 msgstr ""
 
-#: src/Settings.php:77
+#: src/Settings.php:83
 msgid "Select which order status will trigger a credit reward for customers"
 msgstr ""
 
-#: src/Settings.php:84
+#: src/Settings.php:90
 msgid "Withdraw credits order statuses"
 msgstr ""
 
-#: src/Settings.php:85
+#: src/Settings.php:91
 msgid "Select which order statuses will trigger a credit refund to the customer. Credits will be refunded only once, when the order first reaches any of the selected statuses. For example, if both \"Refunded\" and \"Cancelled\" are selected, credits will be returned to the customer when the order is either refunded or cancelled, whichever happens first. Note that partial refunds are only supported for refunded orders."
 msgstr ""
 
-#: src/Settings.php:92
+#: src/Settings.php:98
 msgid "Reward order parts"
 msgstr ""
 
-#: src/Settings.php:93
+#: src/Settings.php:99
 msgid "Reward customers for the following parts of an order"
 msgstr ""
 
-#: src/Settings.php:97
+#: src/Settings.php:103
 msgid "Subtotal"
 msgstr ""
 
-#: src/Settings.php:98
+#: src/Settings.php:104
 msgid "The total amount of the order before taxes and shipping."
 msgstr ""
 
-#: src/Settings.php:101
+#: src/Settings.php:107
 msgid "Shipping"
 msgstr ""
 
-#: src/Settings.php:102
+#: src/Settings.php:108
 msgid "The cost of shipping the order."
 msgstr ""
 
-#: src/Settings.php:105
+#: src/Settings.php:111
 msgid "Tax"
 msgstr ""
 
-#: src/Settings.php:106
+#: src/Settings.php:112
 msgid "The amount of tax on the order."
 msgstr ""
 
-#: src/Settings.php:109
+#: src/Settings.php:115
 msgid "Discount"
 msgstr ""
 
-#: src/Settings.php:110
+#: src/Settings.php:116
 msgid "The amount of discount on the order."
 msgstr ""
 
-#: src/Settings.php:118
+#: src/Settings.php:124
 msgid "Marketing consent subscription"
 msgstr ""
 
-#: src/Settings.php:119
+#: src/Settings.php:125
 msgid "Opt-in users to receive marketing emails."
 msgstr ""
 
-#: src/Settings.php:125
+#: src/Settings.php:131
 msgid "You have {{ credits }} {{ credits_currency }}"
 msgstr ""
 
-#: src/Settings.php:128
+#: src/Settings.php:134
 msgid "Title (Logged in)"
 msgstr ""
 
 #. translators: %s: a list of placeholders
-#: src/Settings.php:130
+#: src/Settings.php:136
 msgid "The title that will be displayed on the dashboard when the user is logged in. You can use the following placeholders: %s"
 msgstr ""
 
-#: src/Settings.php:135
+#: src/Settings.php:141
 msgid "Join our Loyalty Program and get rewarded when you shop with us. Get your first {{ credits }} {{ credits_currency }} when you sign up now"
 msgstr ""
 
-#: src/Settings.php:138
+#: src/Settings.php:144
 msgid "Title (Logged out)"
 msgstr ""
 
 #. translators: %s: a list of placeholders
-#: src/Settings.php:140
+#: src/Settings.php:146
 msgid "The title that will be displayed on the dashboard when the user is logged out. You can use the following placeholders: %s"
 msgstr ""
 
-#: src/Settings.php:145
+#: src/Settings.php:151
 msgid "Join now"
 msgstr ""
 
-#: src/Settings.php:148
-#: src/Settings.php:165
+#: src/Settings.php:154
+#: src/Settings.php:171
 msgid "Join program button"
 msgstr ""
 
-#: src/Settings.php:149
-#: src/Settings.php:166
+#: src/Settings.php:155
+#: src/Settings.php:172
 msgid "The text that will be displayed on the button that allows users to join the loyalty program."
 msgstr ""
 
-#: src/Settings.php:154
+#: src/Settings.php:160
 msgid "Join our Loyalty Program and get rewarded when you shop with us."
 msgstr ""
 
-#: src/Settings.php:157
+#: src/Settings.php:163
 msgid "Title (Join program)"
 msgstr ""
 
-#: src/Settings.php:162
+#: src/Settings.php:168
 msgid "Join program"
 msgstr ""
 
-#: src/Settings.php:171
+#: src/Settings.php:178
+msgid "Show join program CTA"
+msgstr ""
+
+#. translators: %1$s: opening link tag, %2$s: closing link tag
+#: src/Settings.php:181
+msgid "Show the join program CTA on the dashboard. You must enable customer registration in %1$sWooCommerce Account Settings%2$s to use this feature."
+msgstr ""
+
+#: src/Settings.php:189
 msgid "Log in"
 msgstr ""
 
-#: src/Settings.php:174
+#: src/Settings.php:192
 msgid "Log in button"
 msgstr ""
 
-#: src/Settings.php:175
+#: src/Settings.php:193
 msgid "The text that will be displayed on the button that allows users to log in."
 msgstr ""
 
-#: src/Settings.php:180
+#: src/Settings.php:198
 msgid "Your coupons"
 msgstr ""
 
-#: src/Settings.php:183
+#: src/Settings.php:201
 msgid "Coupons navigation item"
 msgstr ""
 
-#: src/Settings.php:188
+#: src/Settings.php:206
 msgid "You don't have any coupons yet."
 msgstr ""
 
-#: src/Settings.php:191
+#: src/Settings.php:209
 msgid "Coupons empty state"
 msgstr ""
 
-#: src/Settings.php:196
+#: src/Settings.php:214
 msgid "Loading your coupons..."
 msgstr ""
 
-#: src/Settings.php:199
+#: src/Settings.php:217
 msgid "Coupons loading state"
 msgstr ""
 
-#: src/Settings.php:204
+#: src/Settings.php:222
 msgid "Earn {{ credits_currency }}"
 msgstr ""
 
-#: src/Settings.php:207
+#: src/Settings.php:225
 msgid "Earn navigation item"
 msgstr ""
 
 #. translators: %s: a list of placeholders
-#: src/Settings.php:209
+#: src/Settings.php:227
 msgid "The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s"
 msgstr ""
 
-#: src/Settings.php:214
+#: src/Settings.php:232
 msgid "Rewards"
 msgstr ""
 
-#: src/Settings.php:217
+#: src/Settings.php:235
 msgid "Rewards navigation item"
 msgstr ""
 
-#: src/Settings.php:222
+#: src/Settings.php:240
 msgid "Your activity"
 msgstr ""
 
-#: src/Settings.php:225
+#: src/Settings.php:243
 msgid "Activity navigation item"
 msgstr ""
 
-#: src/Settings.php:230
+#: src/Settings.php:248
 msgid "Claim reward"
 msgstr ""
 
-#: src/Settings.php:233
+#: src/Settings.php:251
 msgid "Claim reward button"
 msgstr ""
 
-#: src/Settings.php:234
+#: src/Settings.php:252
 msgid "The text that will be displayed on the button that allows users to claim their reward."
 msgstr ""
 
-#: src/Settings.php:239
+#: src/Settings.php:257
 msgid "Unlock"
 msgstr ""
 
-#: src/Settings.php:242
+#: src/Settings.php:260
 msgid "Spend credits button"
 msgstr ""
 
-#: src/Settings.php:243
+#: src/Settings.php:261
 msgid "The text that will be displayed on the button that allows users to spend their credits."
 msgstr ""
 
-#: src/Settings.php:248
+#: src/Settings.php:266
 msgid "Gift Card Order Status"
 msgstr ""
 
-#: src/Settings.php:249
+#: src/Settings.php:267
 msgid "When should gift cards be created and sent to customers?"
 msgstr ""
 
-#: src/Settings.php:256
+#: src/Settings.php:274
 msgid "Gift Card Withdraw Order Statuses"
 msgstr ""
 
-#: src/Settings.php:257
+#: src/Settings.php:275
 msgid "Select which order statuses will trigger a gift card withdrawal to the customer. Gift cards will be withdrawn only once, when the order first reaches any of the selected statuses. For example, if both \"Refunded\" and \"Cancelled\" are selected, gift cards will be returned to the customer when the order is either refunded or cancelled, whichever happens first."
-msgstr ""
-
-#: src/Settings.php:278
-msgid "Pending payment"
-msgstr ""
-
-#: src/Settings.php:279
-msgid "Processing"
-msgstr ""
-
-#: src/Settings.php:280
-msgid "On hold"
-msgstr ""
-
-#: src/Settings.php:281
-msgid "Completed"
-msgstr ""
-
-#: src/Settings.php:282
-msgid "Cancelled"
-msgstr ""
-
-#: src/Settings.php:283
-msgid "Refunded"
-msgstr ""
-
-#: src/Settings.php:284
-msgid "Failed"
-msgstr ""
-
-#: src/Settings.php:285
-msgid "Draft"
 msgstr ""
 
 #: src/Shortcodes/AbstractShortcode.php:57
@@ -1762,4 +1733,9 @@ msgstr ""
 
 #: dist/frontend/assets/index-8b5bdfa1.js:3632
 msgid "Reward image"
+msgstr ""
+
+#: src/Blocks/GiftcardRecipientBlock/build/block.json
+msgctxt "block title"
+msgid "Gift Card Recipient"
 msgstr ""
