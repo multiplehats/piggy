@@ -12,9 +12,15 @@
 
 		return replaceStrings(text, [{ "{{credits_currency}}": $creditsName ?? "" }]);
 	}
+
+	// Order the spend rules by the amount required to redeem, highest first.
+	// In the future we can make them custom sortable i the admin UI.
+	const orderedSpendRules = spendRules?.sort(
+		(a, b) => (b.creditCost.value ?? 0) - (a.creditCost.value ?? 0)
+	);
 </script>
 
-{#if spendRules && spendRules.length > 0}
+{#if orderedSpendRules && orderedSpendRules.length > 0}
 	<div class="leat-dashboard-rewards">
 		<div>
 			<h3 class="leat-dashboard__header">
@@ -22,7 +28,7 @@
 			</h3>
 
 			<div class="leat-dashboard-rewards__cards">
-				{#each spendRules as rule}
+				{#each orderedSpendRules as rule}
 					<DashboardSpendRuleCard {rule} />
 				{/each}
 			</div>
