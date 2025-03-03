@@ -40,7 +40,7 @@ class SpendRulesService
     public function __construct(WPSpendRuleRepositoryInterface $repository)
     {
         $this->repository = $repository;
-        $this->logger = new Logger('SpendRulesService');
+        $this->logger = new Logger();
     }
 
     /**

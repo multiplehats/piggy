@@ -101,10 +101,10 @@ final class AssetsController
 
 		add_submenu_page(
 			'leat',
-			'Onboarding',
-			'Onboarding',
+			'Logs',
+			'Logs',
 			'manage_options',
-			'admin.php?page=leat#/onboarding',
+			'admin.php?page=wc-status&tab=logs&source=leat&paged=1',
 			''
 		);
 	}

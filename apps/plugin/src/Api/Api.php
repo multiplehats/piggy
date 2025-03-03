@@ -156,7 +156,7 @@ final class Api
 		$container = new Container();
 
 		$container->register(Logger::class, function () {
-			return new Logger('leat-api');
+			return new Logger('api');
 		});
 
 		// Register existing instances if provided

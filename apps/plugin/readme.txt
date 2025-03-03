@@ -156,3 +156,9 @@ Your customer data and loyalty program settings are safely stored in your Leat a
   - Improved webhook synchronization and error handling
   - Added automatic webhook status monitoring
 * Bug fix: Fix an issue where webhooks, rewards and promotions would always sync on settings save.
+
+= 0.9.0 =
+
+* Feature: Personalized rewards display - Only shows rewards that match the contact's eligibility based on visibility filters configured in the Leat.com dashboard
+* Enhancement: Improved rewards sorting - Rewards are now displayed in descending order by credit cost (high to low) for better user experience
+* Enhancement: Added logs submenu to easier access debug logs.

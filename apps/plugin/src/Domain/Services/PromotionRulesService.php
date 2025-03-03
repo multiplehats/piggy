@@ -39,7 +39,7 @@ class PromotionRulesService
 	public function __construct(WPPromotionRuleRepositoryInterface $repository)
 	{
 		$this->repository = $repository;
-		$this->logger     = new Logger('PromotionRulesService');
+		$this->logger     = new Logger();
 	}
 
 	/**

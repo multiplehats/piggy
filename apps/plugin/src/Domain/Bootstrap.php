@@ -255,7 +255,7 @@ class Bootstrap
 		$this->container->register(
 			Logger::class,
 			function (Container $container) {
-				return new Logger('leat');
+				return new Logger();
 			}
 		);
 
