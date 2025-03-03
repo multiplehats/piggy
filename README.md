@@ -144,3 +144,85 @@ We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING
 ## License
 
 This integration plugin is licensed under the GPL v2 or later - see the [LICENSE](/apps/plugin/license.txt) file for details.
+
+## Release Process
+
+To create a new release of the Leat WordPress Integration plugin, follow these steps:
+
+### 1. Update Changelog
+
+Add your changelog entries to `apps/plugin/readme.txt` in the Changelog section. Follow the existing format:
+
+```
+= x.x.x =
+
+* Feature: Description of new feature
+* Enhancement: Description of enhancement
+* Bug fix: Description of bug fix
+```
+
+### 2. Bump Version Numbers
+
+Update the version number in the following files:
+
+- `apps/plugin/package.json`: Update the `"version"` field
+- `apps/plugin/leat-crm.php`: Update both the `Version:` and `Stable tag:` fields in the plugin header
+
+### 3. Generate Translation Files
+
+Generate the POT file for translations:
+
+```bash
+cd apps/plugin
+pnpm run i18n
+```
+
+This will create/update the `languages/leat.pot` file with the latest translatable strings.
+
+### 4. Test the Build
+
+Build and package the plugin to ensure everything works correctly:
+
+```bash
+pnpm build
+pnpm package-plugin
+```
+
+### 5. Commit Changes
+
+Commit all your changes with a descriptive message:
+
+```bash
+git add .
+git commit -m "chore: bump version to x.x.x"
+```
+
+### 6. Create GitHub Release
+
+1. Create a new tag matching your version number:
+
+    ```bash
+    git tag vx.x.x
+    git push origin vx.x.x
+    ```
+
+2. Go to GitHub and create a new release using the tag you just pushed.
+    - Title: Version x.x.x
+    - Description: Copy the changelog entries for this version
+
+### 7. Deployment
+
+The GitHub workflow will automatically deploy the plugin to the WordPress.org plugin repository when you publish the release. The workflow:
+
+1. Builds the plugin
+2. Packages it for distribution
+3. Deploys it to WordPress.org
+4. Attaches the zip file to the GitHub release
+
+### Troubleshooting
+
+If the deployment fails, check:
+
+- GitHub Actions logs for any errors
+- Ensure the SVN_USERNAME and SVN_PASSWORD secrets are correctly set in the repository
+- Verify that the version numbers are consistent across all files
