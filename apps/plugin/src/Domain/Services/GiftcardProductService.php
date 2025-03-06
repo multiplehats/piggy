@@ -3,6 +3,7 @@
 namespace Leat\Domain\Services;
 
 use Leat\Api\Connection;
+use Leat\Infrastructure\Constants\WCOrders;
 use Leat\Infrastructure\Repositories\WPGiftcardRepository;
 use Leat\Settings;
 use Leat\Utils\Logger;
@@ -118,7 +119,7 @@ class GiftcardProductService
         }
 
         // Check if we've already processed this order
-        $giftcards_created = get_post_meta($order_id, '_leat_giftcards_created', true);
+        $giftcards_created = get_post_meta($order_id, WCOrders::GIFT_CARD_CREATED, true);
         if ($giftcards_created) {
             $this->logger->info('Giftcards already created for order', ['order_id' => $order_id]);
             OrderNotes::add_warning($order, 'Attempted to process gift cards again, but they were already created.');
@@ -223,8 +224,8 @@ class GiftcardProductService
                 );
 
                 // Store the giftcard UUID as item meta.
-                wc_add_order_item_meta($item->get_id(), '_leat_giftcard_uuid_' . $i, $giftcard_uuid);
-                wc_add_order_item_meta($item->get_id(), '_leat_giftcard_uuid', $giftcard_uuid);
+                wc_add_order_item_meta($item->get_id(), WCOrders::GIFT_CARD_UUID . '_' . $i, $giftcard_uuid);
+                wc_add_order_item_meta($item->get_id(), WCOrders::GIFT_CARD_UUID, $giftcard_uuid);
 
                 // Send the giftcard email.
                 $email_sent = $this->send_giftcard_email($giftcard_uuid, $recipient_email);
@@ -254,7 +255,7 @@ class GiftcardProductService
         }
 
         if ($has_giftcards) {
-            update_post_meta($order_id, '_leat_giftcards_created', true);
+            update_post_meta($order_id, WCOrders::GIFT_CARD_CREATED, true);
             OrderNotes::add_success($order, __('Gift card processing completed.', 'leat-crm'));
         }
     }
@@ -394,11 +395,11 @@ class GiftcardProductService
             }
 
             // Calculate refund percentage for this item.
-            $refund_percentage = abs($refund_item->get_total()) / $original_item->get_total();
+            // $refund_percentage = abs($refund_item->get_total()) / $original_item->get_total();
 
             // Process refund for each giftcard in the item.
             for ($i = 1; $i <= $refunded_qty; $i++) {
-                $giftcard_uuid = wc_get_order_item_meta($original_item->get_id(), '_leat_giftcard_uuid_' . $i, true);
+                $giftcard_uuid = wc_get_order_item_meta($original_item->get_id(), WCOrders::GIFT_CARD_UUID . '_' . $i, true);
                 if (!$giftcard_uuid) {
                     continue;
                 }
@@ -486,7 +487,8 @@ class GiftcardProductService
 
             $quantity = $item->get_quantity();
             for ($i = 1; $i <= $quantity; $i++) {
-                $giftcard_uuid = wc_get_order_item_meta($item->get_id(), '_leat_giftcard_uuid_' . $i, true);
+                $giftcard_uuid = wc_get_order_item_meta($item->get_id(), WCOrders::GIFT_CARD_UUID . '_' . $i, true);
+
                 if (!$giftcard_uuid) {
                     continue;
                 }
