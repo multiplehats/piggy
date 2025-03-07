@@ -7,6 +7,7 @@ use Leat\Settings;
 use Leat\Assets\Api as AssetApi;
 use Leat\Utils\Common;
 use Leat\Utils\Logger;
+use Leat\Utils\TranslatedText;
 use WP_Post;
 
 /**
@@ -289,7 +290,6 @@ final class AssetsController
 			'taxesEnabled'                  => wc_tax_enabled(),
 			'couponsEnabled'                => wc_coupons_enabled(),
 			'displayCartPricesIncludingTax' => 'incl' === get_option('woocommerce_tax_display_cart'),
-
 			'shippingEnabled'               => wc_shipping_enabled(),
 			'baseLocation'                  => wc_get_base_location(),
 			'shippingCalculatorEnabled'     => filter_var(get_option('woocommerce_enable_shipping_calc'), FILTER_VALIDATE_BOOLEAN),
@@ -363,6 +363,7 @@ final class AssetsController
 				'checkout'  => wc_get_page_id('checkout'),
 				'privacy'   => wc_privacy_policy_page_id(),
 				'terms'     => wc_terms_and_conditions_page_id(),
+				'leat_dashboard' => $this->get_leat_dashboard_page_id(),
 			]
 		);
 	}
@@ -380,6 +381,25 @@ final class AssetsController
 	}
 
 	/**
+	 * Get the Leat Dashboard page ID and URL.
+	 *
+	 * Since leat-dashboard is an endpoint and not a page, we use the myaccount page
+	 * and append the endpoint.
+	 *
+	 * @return array
+	 */
+	protected function get_leat_dashboard_page_id()
+	{
+		$myaccount_page_id = wc_get_page_id('myaccount');
+
+		// Return an array with the key and ID so format_page_resource can handle it
+		return [
+			'key' => 'leat_dashboard',
+			'id' => $myaccount_page_id,
+		];
+	}
+
+	/**
 	 * Format a page object into a standard array of data.
 	 *
 	 * @param WP_Post|int $page Page object or ID.
@@ -387,18 +407,33 @@ final class AssetsController
 	 */
 	protected function format_page_resource($page)
 	{
+		// Special handling for leat_dashboard endpoint
+		if (is_array($page) && isset($page['key']) && $page['key'] === 'leat_dashboard') {
+			$myaccount_page_id = $page['id'];
+			if ($myaccount_page_id > 0) {
+				$myaccount_page = get_post($myaccount_page_id);
+				$title_setting = $this->settings->get_setting_value_by_id('dashboard_myaccount_title');
+				$title_text = TranslatedText::get_text($title_setting);
+				if (is_a($myaccount_page, '\WP_Post') && 'publish' === $myaccount_page->post_status) {
+					return [
+						'id'        => $myaccount_page->ID,
+						'title'     => $title_text,
+						'permalink' => wc_get_endpoint_url('leat-dashboard', '', get_permalink($myaccount_page->ID)),
+					];
+				}
+			}
+		}
+
 		if (is_numeric($page) && $page > 0) {
 			$page = get_post($page);
 		}
-
-		if (! ($page instanceof WP_Post) || 'publish' !== $page->post_status) {
+		if (! is_a($page, '\WP_Post') || 'publish' !== $page->post_status) {
 			return [
 				'id'        => 0,
 				'title'     => '',
 				'permalink' => false,
 			];
 		}
-
 		return [
 			'id'        => $page->ID,
 			'title'     => $page->post_title,

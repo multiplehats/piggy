@@ -2,8 +2,7 @@
 
 namespace Leat;
 
-use Leat\Api\Connection;
-use Leat\Domain\Services\WebhookManager;
+use Leat\WebhookManager;
 
 /**
  * Installer class.
