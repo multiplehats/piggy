@@ -21,6 +21,7 @@ use Leat\Domain\Services\Customer\CustomerCreationHandler;
 use Leat\Domain\Services\Customer\CustomerProfileDisplay;
 use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\GiftcardProductService;
+use Leat\Domain\Services\GiftcardCouponService;
 use Leat\Domain\Services\LoyaltyManager;
 use Leat\Domain\Services\Order\OrderCreditHandler;
 use Leat\Domain\Services\Order\OrderProcessor;
@@ -29,6 +30,7 @@ use Leat\Domain\Services\SpendRulesService;
 use Leat\Domain\Services\WebhookManager;
 
 use Leat\Infrastructure\Repositories\WPGiftcardRepository;
+use Leat\Infrastructure\Repositories\WPGiftcardCouponRepository;
 use Leat\Infrastructure\Repositories\WPPromotionRuleRepository;
 use Leat\Infrastructure\Repositories\WPSpendRuleRepository;
 
@@ -140,6 +142,7 @@ class Bootstrap
 		$this->container->get(WebhookManager::class)->init();
 
 		$this->container->get(GiftcardProductService::class)->init();
+		$this->container->get(GiftcardCouponService::class)->init();
 
 		/**
 		 * Action triggered after Leat initialization finishes.
@@ -472,6 +475,23 @@ class Bootstrap
 		);
 
 		$this->container->register(
+			WPGiftcardCouponRepository::class,
+			function () {
+				return new WPGiftcardCouponRepository();
+			}
+		);
+
+		$this->container->register(
+			GiftcardCouponService::class,
+			function (Container $container) {
+				return new GiftcardCouponService(
+					$container->get(Connection::class),
+					$container->get(WPGiftcardCouponRepository::class)
+				);
+			}
+		);
+
+		$this->container->register(
 			Api::class,
 			function (Container $container) {
 				return new Api(
@@ -482,7 +502,8 @@ class Bootstrap
 					$container->get(SyncVouchers::class),
 					$container->get(SyncPromotions::class),
 					$container->get(SyncRewards::class),
-					$container->get(WebhookManager::class)
+					$container->get(WebhookManager::class),
+					$container->get(WPGiftcardCouponRepository::class)
 				);
 			}
 		);
