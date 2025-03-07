@@ -62,13 +62,6 @@ class Bootstrap
 	private $migration;
 
 	/**
-	 * Holds the Logger instance
-	 *
-	 * @var Logger
-	 */
-	private $logger;
-
-	/**
 	 * Constructor
 	 *
 	 * @param Container $container  The Dependency Injection Container.
@@ -131,17 +124,22 @@ class Bootstrap
 			$this->container->get(PostTypeController::class);
 			// $this->container->get(RedirectController::class)->init();
 		}
+
+		$this->container->get(WebhookManager::class)->init();
+		$this->container->get(WooCommerceAccountTab::class)->init();
+
+		// Shortcodes
 		$this->container->get(CustomerDashboardShortcode::class)->init();
 		$this->container->get(RewardPointsShortcode::class)->init();
+
+		// Services
 		$this->container->get(LoyaltyManager::class);
+		$this->container->get(GiftcardProduct::class)->init();
+
+		// Domain
 		$this->container->get(SyncVouchers::class)->init();
 		$this->container->get(SyncPromotions::class)->init();
 		$this->container->get(SyncRewards::class)->init();
-		$this->container->get(GiftcardProduct::class)->init();
-		$this->container->get(WebhookManager::class)->init();
-
-		// Initialize WooCommerce integration
-		$this->container->get(WooCommerceAccountTab::class)->init();
 
 		/**
 		 * Action triggered after Leat initialization finishes.

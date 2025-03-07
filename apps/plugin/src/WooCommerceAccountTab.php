@@ -41,9 +41,6 @@ class WooCommerceAccountTab
 
         // Add content to the new tab
         add_action('woocommerce_account_leat-dashboard_endpoint', array($this, 'leat_dashboard_content'));
-
-        // Redirect after login
-        add_filter('woocommerce_login_redirect', array($this, 'redirect_after_login'), 10, 2);
     }
 
     /**
@@ -97,25 +94,5 @@ class WooCommerceAccountTab
     {
         // Output the customer dashboard shortcode
         echo do_shortcode('[leat_dashboard]');
-    }
-
-    /**
-     * Redirect users to the Leat Dashboard tab after login.
-     *
-     * @param string $redirect Default redirect URL.
-     * @param \WP_User $user Logged in user.
-     * @return string
-     */
-    public function redirect_after_login($redirect, $user)
-    {
-        // Get the My Account page URL
-        $myaccount_page_id = wc_get_page_id('myaccount');
-
-        if ($myaccount_page_id > 0) {
-            // Redirect to the Leat Dashboard tab
-            $redirect = wc_get_endpoint_url('leat-dashboard', '', get_permalink($myaccount_page_id));
-        }
-
-        return $redirect;
     }
 }
