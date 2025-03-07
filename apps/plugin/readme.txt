@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.8.0
+Stable tag: 0.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -162,3 +162,7 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 * Feature: Personalized rewards display - Only shows rewards that match the contact's eligibility based on visibility filters configured in the Leat.com dashboard
 * Enhancement: Improved rewards sorting - Rewards are now displayed in descending order by credit cost (high to low) for better user experience
 * Enhancement: Added logs submenu to easier access debug logs.
+
+= 0.9.1 =
+
+* Enhancement: Improve redirect for customers who choose "Login" or "Join program" in the dashboard.

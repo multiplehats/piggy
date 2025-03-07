@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Leat CRM 0.9.0\n"
+"Project-Id-Version: Leat CRM 0.9.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/leat-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-03T09:12:33+00:00\n"
+"POT-Creation-Date: 2025-03-07T12:15:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: leat-crm\n"
@@ -63,11 +63,11 @@ msgstr ""
 msgid "Scope under which the request is made; determines fields present in response."
 msgstr ""
 
-#: src/Api/Routes/V1/Admin/Settings.php:54
+#: src/Api/Routes/V1/Admin/Settings.php:53
 msgid "Settings"
 msgstr ""
 
-#: src/Api/Routes/V1/Admin/Settings.php:65
+#: src/Api/Routes/V1/Admin/Settings.php:64
 msgid "Setting ID"
 msgstr ""
 
@@ -985,7 +985,7 @@ msgid "Add instructions on how fulfillment will be handled. Available placeholde
 msgstr ""
 
 #. translators: %1$s table name, %2$s database user, %3$s database name.
-#: src/Installer.php:147
+#: src/Installer.php:146
 msgid "Leat %1$s table creation failed. Does the %2$s user have CREATE privileges on the %3$s database?"
 msgstr ""
 
@@ -1499,107 +1499,120 @@ msgid "Show the join program CTA on the dashboard. You must enable customer regi
 msgstr ""
 
 #: src/Settings.php:189
-msgid "Log in"
+#: dist/admin/assets/index-59d498ad.js:31998
+msgid "Loyalty Program"
 msgstr ""
 
 #: src/Settings.php:192
-msgid "Log in button"
+msgid "Loyalty Program title"
 msgstr ""
 
 #: src/Settings.php:193
-msgid "The text that will be displayed on the button that allows users to log in."
+msgid "The title for the WooCommerce My Account page that displays the loyalty program."
 msgstr ""
 
 #: src/Settings.php:198
-msgid "Your coupons"
+msgid "Log in"
 msgstr ""
 
 #: src/Settings.php:201
+msgid "Log in button"
+msgstr ""
+
+#: src/Settings.php:202
+msgid "The text that will be displayed on the button that allows users to log in."
+msgstr ""
+
+#: src/Settings.php:207
+msgid "Your coupons"
+msgstr ""
+
+#: src/Settings.php:210
 msgid "Coupons navigation item"
 msgstr ""
 
-#: src/Settings.php:206
+#: src/Settings.php:215
 msgid "You don't have any coupons yet."
 msgstr ""
 
-#: src/Settings.php:209
+#: src/Settings.php:218
 msgid "Coupons empty state"
 msgstr ""
 
-#: src/Settings.php:214
+#: src/Settings.php:223
 msgid "Loading your coupons..."
 msgstr ""
 
-#: src/Settings.php:217
+#: src/Settings.php:226
 msgid "Coupons loading state"
 msgstr ""
 
-#: src/Settings.php:222
+#: src/Settings.php:231
 msgid "Earn {{ credits_currency }}"
 msgstr ""
 
-#: src/Settings.php:225
+#: src/Settings.php:234
 msgid "Earn navigation item"
 msgstr ""
 
 #. translators: %s: a list of placeholders
-#: src/Settings.php:227
+#: src/Settings.php:236
 msgid "The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s"
 msgstr ""
 
-#: src/Settings.php:232
+#: src/Settings.php:241
 msgid "Rewards"
 msgstr ""
 
-#: src/Settings.php:235
+#: src/Settings.php:244
 msgid "Rewards navigation item"
 msgstr ""
 
-#: src/Settings.php:240
+#: src/Settings.php:249
 msgid "Your activity"
 msgstr ""
 
-#: src/Settings.php:243
+#: src/Settings.php:252
 msgid "Activity navigation item"
 msgstr ""
 
-#: src/Settings.php:248
+#: src/Settings.php:257
 msgid "Claim reward"
 msgstr ""
 
-#: src/Settings.php:251
+#: src/Settings.php:260
 msgid "Claim reward button"
 msgstr ""
 
-#: src/Settings.php:252
+#: src/Settings.php:261
 msgid "The text that will be displayed on the button that allows users to claim their reward."
 msgstr ""
 
-#: src/Settings.php:257
+#: src/Settings.php:266
 msgid "Unlock"
 msgstr ""
 
-#: src/Settings.php:260
+#: src/Settings.php:269
 msgid "Spend credits button"
 msgstr ""
 
-#: src/Settings.php:261
+#: src/Settings.php:270
 msgid "The text that will be displayed on the button that allows users to spend their credits."
 msgstr ""
 
-#: src/Settings.php:266
+#: src/Settings.php:275
 msgid "Gift Card Order Status"
 msgstr ""
 
-#: src/Settings.php:267
+#: src/Settings.php:276
 msgid "When should gift cards be created and sent to customers?"
 msgstr ""
 
-#: src/Settings.php:274
+#: src/Settings.php:283
 msgid "Gift Card Withdraw Order Statuses"
 msgstr ""
 
-#: src/Settings.php:275
+#: src/Settings.php:284
 msgid "Select which order statuses will trigger a gift card withdrawal to the customer. Gift cards will be withdrawn only once, when the order first reaches any of the selected statuses. For example, if both \"Refunded\" and \"Cancelled\" are selected, gift cards will be returned to the customer when the order is either refunded or cancelled, whichever happens first."
 msgstr ""
 
@@ -1721,10 +1734,6 @@ msgstr ""
 
 #: dist/admin/assets/index-59d498ad.js:24289
 msgid "Save and continue"
-msgstr ""
-
-#: dist/admin/assets/index-59d498ad.js:31998
-msgid "Loyalty Program"
 msgstr ""
 
 #: dist/admin/assets/index-59d498ad.js:32008
