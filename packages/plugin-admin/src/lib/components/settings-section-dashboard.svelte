@@ -29,6 +29,12 @@
 	{:else if $query.isSuccess && $settingsState}
 		<div class="divide-border w-full max-w-md divide-y">
 			<SettingsTranslateableInput
+				class="py-4"
+				{...$settingsState.dashboard_myaccount_title}
+				bind:value={$settingsState.dashboard_myaccount_title.value}
+			/>
+
+			<SettingsTranslateableInput
 				class="pb-4"
 				{...$settingsState.dashboard_title_logged_in}
 				bind:value={$settingsState.dashboard_title_logged_in.value}

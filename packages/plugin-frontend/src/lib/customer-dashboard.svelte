@@ -78,6 +78,6 @@
 		margin-right: auto;
 		height: 100%;
 		max-width: 1260px;
-		padding: 80px 40px;
+		/* padding: 80px 40px; */
 	}
 </style>

@@ -96,10 +96,10 @@
 	<!-- Call to action-->
 	{#if !isLoggedIn}
 		<div class="leat-dashboard__cta">
-			{#if window.leatWcSettings.storePages.myaccount?.permalink}
+			{#if window.leatWcSettings.storePages.leat_dashboard?.permalink}
 				{#if $pluginSettings.dashboard_show_join_program_cta === "on" && $wcSettings.canUserRegister}
 					<Button
-						href={window.leatWcSettings.storePages.myaccount?.permalink}
+						href={window.leatWcSettings.storePages.leat_dashboard?.permalink}
 						variant="primary"
 					>
 						{getTranslatedText($pluginSettings.dashboard_join_cta)}
@@ -107,7 +107,7 @@
 				{/if}
 
 				<Button
-					href={window.leatWcSettings.storePages.myaccount?.permalink}
+					href={window.leatWcSettings.storePages.leat_dashboard?.permalink}
 					variant="primary"
 				>
 					{getTranslatedText($pluginSettings.dashboard_login_cta)}

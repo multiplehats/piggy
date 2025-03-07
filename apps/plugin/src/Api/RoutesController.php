@@ -7,7 +7,7 @@ use Leat\Api\Connection;
 use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
 use Leat\Domain\Syncing\SyncPromotions;
-use Leat\Domain\Services\WebhookManager;
+use Leat\WebhookManager;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Settings;

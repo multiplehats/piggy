@@ -184,6 +184,15 @@ class Settings
 			),
 		);
 		$settings[] = array(
+			'id'          => 'dashboard_myaccount_title',
+			'default'     => array(
+				'default' => __('Loyalty Program', 'leat-crm'),
+			),
+			'type'        => 'translatable_text',
+			'label'       => __('Loyalty Program title', 'leat-crm'),
+			'description' => __('The title for the WooCommerce My Account page that displays the loyalty program.', 'leat-crm'),
+		);
+		$settings[] = array(
 			'id'          => 'dashboard_login_cta',
 			'default'     => array(
 				'default' => __('Log in', 'leat-crm'),

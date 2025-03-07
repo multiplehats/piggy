@@ -4,19 +4,18 @@ namespace Leat\Domain;
 
 use Leat\Api\Connection;
 use Leat\Assets\Api as AssetApi;
-use Leat\Assets\AssetDataRegistry;
 use Leat\AssetsController;
 use Leat\Installer;
 use Leat\Registry\Container;
 use Leat\Migration;
 use Leat\Api\Api;
+use Leat\WebhookManager;
 use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncRewards;
-use Leat\Domain\Services\WebhookManager;
 use Leat\Domain\Services\LoyaltyManager;
 use Leat\Domain\Services\Customer\CustomerAttributeSync;
 use Leat\Domain\Services\Customer\CustomerCreationHandler;
@@ -32,6 +31,7 @@ use Leat\Settings;
 use Leat\Shortcodes\CustomerDashboardShortcode;
 use Leat\Shortcodes\RewardPointsShortcode;
 use Leat\RedirectController;
+use Leat\WooCommerceAccountTab;
 use Leat\Utils\Logger;
 
 /**
@@ -126,7 +126,6 @@ class Bootstrap
 		// Load assets in admin and on the frontend.
 		if (! $is_rest) {
 			$this->add_build_notice();
-			$this->container->get(AssetDataRegistry::class);
 			$this->container->get(Installer::class)->init();
 			$this->container->get(AssetsController::class);
 			$this->container->get(PostTypeController::class);
@@ -140,6 +139,9 @@ class Bootstrap
 		$this->container->get(SyncRewards::class)->init();
 		$this->container->get(GiftcardProduct::class)->init();
 		$this->container->get(WebhookManager::class)->init();
+
+		// Initialize WooCommerce integration
+		$this->container->get(WooCommerceAccountTab::class)->init();
 
 		/**
 		 * Action triggered after Leat initialization finishes.
@@ -254,20 +256,20 @@ class Bootstrap
 	{
 		$this->container->register(
 			Logger::class,
-			function (Container $container) {
+			function () {
 				return new Logger();
 			}
 		);
 
 		$this->container->register(
 			PostTypeController::class,
-			function (Container $container) {
+			function () {
 				return new PostTypeController();
 			}
 		);
 		$this->container->register(
 			Settings::class,
-			function (Container $container) {
+			function () {
 				return new Settings();
 			}
 		);
@@ -278,26 +280,26 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
+			WooCommerceAccountTab::class,
+			function () {
+				return new WooCommerceAccountTab($this->container->get(Settings::class));
+			}
+		);
+		$this->container->register(
 			AssetApi::class,
 			function (Container $container) {
 				return new AssetApi($container->get(Package::class));
 			}
 		);
 		$this->container->register(
-			AssetDataRegistry::class,
-			function (Container $container) {
-				return new AssetDataRegistry($container->get(AssetApi::class));
-			}
-		);
-		$this->container->register(
 			Connection::class,
-			function (Container $container) {
+			function () {
 				return new Connection();
 			}
 		);
 		$this->container->register(
 			EarnRules::class,
-			function (Container $container) {
+			function () {
 				return new EarnRules();
 			}
 		);
