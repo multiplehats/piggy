@@ -73,7 +73,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
     public function init(): void
     {
         // Validate gift card coupon before it's applied
-        // add_filter('woocommerce_coupon_is_valid', [$this, 'validate_giftcard_coupon'], 10, 3);
+        add_filter('woocommerce_coupon_is_valid', [$this, 'validate_giftcard_coupon'], 10, 3);
         add_filter('rest_pre_dispatch', [$this, 'validate_giftcard_coupon_on_store_api'], 10, 3);
 
         // Update gift card balance after order is processed
@@ -112,6 +112,13 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     'hash' => $hash,
                     'coupon_id' => $existing_coupon->get_id(),
                 ], true);
+
+                // Update the balance if needed
+                $balance_in_cents = $this->check_giftcard_balance($giftcard);
+                if ($balance_in_cents !== null) {
+                    $this->repository->update_balance($existing_coupon, $balance_in_cents);
+                }
+
                 return $existing_coupon;
             }
 
@@ -157,31 +164,61 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     public function validate_giftcard_coupon_on_store_api($response, $server, $request)
     {
+        // Only process if we're not already dealing with an error
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
         $route = $request->get_route();
 
         if ($route === '/wc/store/v1/cart/apply-coupon') {
             $coupon_code = $request->get_param('code');
 
             try {
-                $coupon = new \WC_Coupon($coupon_code);
-                $is_valid = $this->validate_giftcard($coupon);
+                // First check if this is a gift card by hash in Leat
+                $giftcard = $this->leatGiftcardRepository->find_by_hash($coupon_code);
 
-                $this->logger->info('Gift card coupon is valid', [
-                    'coupon_code' => $coupon_code,
-                    'is_valid' => $is_valid,
-                ], true);
+                if ($giftcard) {
+                    // If it's a gift card in Leat, check if it exists as a coupon in WooCommerce
+                    $existing_coupon = $this->repository->find_by_hash($coupon_code);
 
-                // If it's not valid and it's a gift card, prevent it from being applied
-                if (!$is_valid && $this->repository->is_giftcard($coupon)) {
-                    $this->logger->info('Gift card coupon is invalid', [
+                    if (!$existing_coupon) {
+                        // Only create a new coupon if it doesn't exist
+                        $this->create_giftcard_coupon($giftcard);
+                    }
+
+                    // Now proceed with normal validation
+                    $coupon = new \WC_Coupon($coupon_code);
+                    $is_valid = $this->validate_giftcard($coupon);
+
+                    $this->logger->info('Gift card coupon is valid', [
                         'coupon_code' => $coupon_code,
+                        'is_valid' => $is_valid,
                     ], true);
 
-                    return new \WP_Error(
-                        'woocommerce_rest_cart_coupon_invalid',
-                        __('This gift card is invalid or has a zero balance.', 'leat-crm'),
-                        ['status' => 400]
-                    );
+                    // If it's not valid, prevent it from being applied by hooking into a later filter
+                    if (!$is_valid) {
+                        $this->logger->info('Gift card coupon is invalid', [
+                            'coupon_code' => $coupon_code,
+                        ], true);
+
+                        add_filter('woocommerce_coupon_is_valid', function ($valid, $filter_coupon) use ($coupon_code) {
+                            if (strtoupper($filter_coupon->get_code()) === strtoupper($coupon_code)) {
+                                return false;
+                            }
+                            return $valid;
+                        }, 100, 2);
+
+                        add_filter('woocommerce_coupon_error', function ($err, $err_code, $filter_coupon) use ($coupon_code) {
+                            if (
+                                strtoupper($filter_coupon->get_code()) === strtoupper($coupon_code) &&
+                                $err_code === \WC_Coupon::E_WC_COUPON_INVALID_REMOVED
+                            ) {
+                                return __('This gift card is invalid or has a zero balance.', 'leat-crm');
+                            }
+                            return $err;
+                        }, 10, 3);
+                    }
                 }
             } catch (\Exception $e) {
                 $this->logger->error('Error validating gift card coupon on store API', [
@@ -252,76 +289,50 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 return true;
             }
 
-            error_log('coupon');
-            error_log(print_r($coupon, true));
-
-            // Debug the meta data directly
-            error_log('All meta data:');
-            error_log(print_r($coupon->get_meta_data(), true));
-
-            // Try multiple ways to get the UUID
-            $uuid = null;
-
-            // Method 1: Direct meta data access
             $uuid = $coupon->get_meta(WCCoupons::GIFTCARD_UUID);
-            error_log('Method 1 UUID: ' . print_r($uuid, true));
 
-            // Method 2: Get from meta data array
-            if (empty($uuid)) {
-                $metadata = $coupon->get_meta_data();
-                foreach ($metadata as $meta) {
-                    error_log('Checking meta: ' . $meta->key . ' = ' . $meta->value);
-                    if ($meta->key === WCCoupons::GIFTCARD_UUID) {
-                        $uuid = $meta->value;
-                        break;
-                    }
-                }
-                error_log('Method 2 UUID: ' . print_r($uuid, true));
-            }
-
-            // Method 3: Direct database query
-            if (empty($uuid)) {
-                global $wpdb;
-                $coupon_id = $coupon->get_id();
-                $meta_key = WCCoupons::GIFTCARD_UUID;
-                error_log('Checking meta key: ' . $meta_key);
-
-                $db_uuid = $wpdb->get_var($wpdb->prepare(
-                    "SELECT meta_value FROM {$wpdb->postmeta}
-                    WHERE post_id = %d AND meta_key = %s",
-                    $coupon_id,
-                    $meta_key
-                ));
-                error_log('Method 3 UUID (DB): ' . print_r($db_uuid, true));
-                if (!empty($db_uuid)) {
-                    $uuid = $db_uuid;
-                }
-            }
-
-            error_log('Final UUID value: ' . print_r($uuid, true));
             if (empty($uuid) && $giftcard) {
-                $this->logger->info('Gift card found in Leat, but not in WooCommerce. Creating new coupon.', [
-                    'giftcard' => $giftcard,
-                ], true);
+                // Before creating a new coupon, double-check if it already exists by hash
+                $existing_coupon = $this->repository->find_by_hash($giftcard->getHash());
 
-                // This means the gift card was created in Leat, but not in WooCommerce.
-                // We need to create a new coupon in WooCommerce.
-                $new_coupon = $this->create_giftcard_coupon($giftcard);
+                if ($existing_coupon) {
+                    $this->logger->info('Gift card coupon already exists, using existing coupon', [
+                        'hash' => $giftcard->getHash(),
+                        'coupon_id' => $existing_coupon->get_id(),
+                    ], true);
 
-                if (!$new_coupon) {
-                    $this->logger->error('Failed to create gift card coupon', [
+                    // Use the existing coupon instead of creating a new one
+                    $uuid = $existing_coupon->get_meta(WCCoupons::GIFTCARD_UUID);
+
+                    // Update the coupon reference to use the existing one
+                    $coupon = $existing_coupon;
+                } else {
+                    $this->logger->info('Gift card found in Leat, but not in WooCommerce. Creating new coupon.', [
                         'giftcard' => $giftcard,
                     ], true);
 
-                    return false;
-                }
+                    // This means the gift card was created in Leat, but not in WooCommerce.
+                    // We need to create a new coupon in WooCommerce.
+                    $new_coupon = $this->create_giftcard_coupon($giftcard);
 
-                $uuid = $new_coupon->get_meta(WCCoupons::GIFTCARD_UUID);
-                if (empty($uuid)) {
-                    $this->logger->error('Failed to create gift card coupon', [
-                        'giftcard' => $giftcard,
-                    ], true);
-                    return false;
+                    if (!$new_coupon) {
+                        $this->logger->error('Failed to create gift card coupon', [
+                            'giftcard' => $giftcard,
+                        ], true);
+
+                        return false;
+                    }
+
+                    $uuid = $new_coupon->get_meta(WCCoupons::GIFTCARD_UUID);
+                    if (empty($uuid)) {
+                        $this->logger->error('Failed to create gift card coupon', [
+                            'giftcard' => $giftcard,
+                        ], true);
+                        return false;
+                    }
+
+                    // Update the coupon reference to use the new one
+                    $coupon = $new_coupon;
                 }
             }
 
@@ -393,6 +404,13 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
     {
         try {
             $balance = $giftcard->getAmountInCents();
+
+            // Log the balance for debugging
+            $this->logger->info('Gift card balance check', [
+                'uuid' => $giftcard->getUuid(),
+                'hash' => $giftcard->getHash(),
+                'balance' => $balance,
+            ]);
 
             return $balance;
         } catch (\Exception $e) {
@@ -859,8 +877,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         // Get the current balance
         $current_balance = (int) $coupon->get_meta(WCCoupons::GIFTCARD_CURRENT_BALANCE);
 
-        error_log(print_r($current_balance, true));
-
         echo '<mark class="yes"><span class="dashicons dashicons-yes"></span> ' . wc_price($current_balance / 100) . '</mark>';
     }
 
@@ -929,6 +945,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 return;
             }
 
+            // Update the balance in the coupon
             $this->repository->update_balance($coupon, $balance);
 
             wp_send_json_success([
