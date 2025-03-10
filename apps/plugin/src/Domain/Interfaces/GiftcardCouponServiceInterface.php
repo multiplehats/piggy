@@ -2,6 +2,8 @@
 
 namespace Leat\Domain\Interfaces;
 
+use Piggy\Api\Models\Giftcards\Giftcard;
+
 /**
  * Interface GiftcardCouponServiceInterface
  *
@@ -21,10 +23,10 @@ interface GiftcardCouponServiceInterface
     /**
      * Create a gift card coupon from a Leat gift card.
      *
-     * @param array $giftcard The gift card data.
-     * @return object|null The created coupon object or null on failure.
+     * @param Giftcard $giftcard The gift card data.
+     * @return \WC_Coupon|null The created coupon object or null on failure.
      */
-    public function create_giftcard_coupon(array $giftcard): ?object;
+    public function create_giftcard_coupon(Giftcard $giftcard): ?\WC_Coupon;
 
     /**
      * Validate a gift card coupon before it's applied.
@@ -39,10 +41,10 @@ interface GiftcardCouponServiceInterface
     /**
      * Check the balance of a gift card in Leat.
      *
-     * @param string $uuid The gift card UUID.
+     * @param Giftcard $giftcard The gift card object.
      * @return int|null The current balance in cents or null if not found.
      */
-    public function check_giftcard_balance(string $uuid): ?int;
+    public function check_giftcard_balance(Giftcard $giftcard): ?int;
 
     /**
      * Update the balance of a gift card coupon after an order is processed.

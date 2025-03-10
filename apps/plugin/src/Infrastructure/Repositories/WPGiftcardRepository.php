@@ -3,7 +3,6 @@
 namespace Leat\Infrastructure\Repositories;
 
 use Leat\Infrastructure\Constants\WCOrders;
-use Leat\Utils\OrderNotes;
 
 /**
  * Class WPGiftcardRepository

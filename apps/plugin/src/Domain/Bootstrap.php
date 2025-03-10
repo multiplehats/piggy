@@ -15,6 +15,7 @@ use Leat\Registry\Container;
 use Leat\Settings;
 use Leat\Utils\Logger;
 
+use Leat\Domain\Services\ApiService;
 use Leat\Domain\Services\Cart\CartManager;
 use Leat\Domain\Services\Customer\CustomerAttributeSync;
 use Leat\Domain\Services\Customer\CustomerCreationHandler;
@@ -40,6 +41,7 @@ use Leat\Shortcodes\RewardPointsShortcode;
 use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Domain\Syncing\SyncVouchers;
+use Leat\Infrastructure\Repositories\LeatGiftcardRepository;
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -293,13 +295,19 @@ class Bootstrap
 		);
 		$this->container->register(
 			Connection::class,
-			function (Container $container) {
+			function () {
 				return new Connection();
 			}
 		);
 		$this->container->register(
+			ApiService::class,
+			function () {
+				return new ApiService();
+			}
+		);
+		$this->container->register(
 			EarnRules::class,
-			function (Container $container) {
+			function () {
 				return new EarnRules();
 			}
 		);
@@ -482,11 +490,18 @@ class Bootstrap
 		);
 
 		$this->container->register(
+			LeatGiftcardRepository::class,
+			function (Container $container) {
+				return new LeatGiftcardRepository($container->get(ApiService::class));
+			}
+		);
+
+		$this->container->register(
 			GiftcardCouponService::class,
 			function (Container $container) {
 				return new GiftcardCouponService(
-					$container->get(Connection::class),
-					$container->get(WPGiftcardCouponRepository::class)
+					$container->get(WPGiftcardCouponRepository::class),
+					$container->get(LeatGiftcardRepository::class)
 				);
 			}
 		);

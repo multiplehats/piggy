@@ -114,7 +114,8 @@ class WPGiftcardCouponRepository implements WPGiftcardCouponRepositoryInterface
             // Set basic coupon properties
             $coupon->set_code($data['hash']);
             $coupon->set_discount_type('fixed_cart');
-            $coupon->set_amount($data['balance'] / 100); // Convert cents to currency units
+
+            $coupon->set_amount($data['balance_in_cents'] / 100);
             $coupon->set_individual_use(true);
             $coupon->set_usage_limit(0); // Unlimited usage
             $coupon->set_usage_limit_per_user(0);
@@ -123,17 +124,19 @@ class WPGiftcardCouponRepository implements WPGiftcardCouponRepositoryInterface
             $coupon->set_description(sprintf(
                 __('Gift Card %s - Initial Balance: %s', 'leat-crm'),
                 $data['hash'],
-                wc_price($data['balance'] / 100)
+                html_entity_decode(strip_tags(wc_price($data['balance_in_cents'] / 100)))
             ));
 
+            error_log(print_r($data, true));
+
             // Set gift card specific meta data
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_UUID, $data['uuid']);
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_HASH, $data['hash']);
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_PROGRAM_UUID, $data['program_uuid']);
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_INITIAL_BALANCE, $data['balance']);
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_CURRENT_BALANCE, $data['balance']);
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_LAST_CHECKED, time());
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_TYPE, 'giftcard');
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_UUID, $data['uuid']);
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_HASH, $data['hash']);
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_PROGRAM_UUID, $data['program_uuid']);
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_INITIAL_BALANCE, $data['balance_in_cents']);
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_CURRENT_BALANCE, $data['balance_in_cents']);
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_LAST_CHECKED, time());
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_TYPE, 'giftcard');
 
             $coupon->save();
 
@@ -150,23 +153,23 @@ class WPGiftcardCouponRepository implements WPGiftcardCouponRepositoryInterface
     /**
      * Update a gift card coupon.
      *
-     * @param object $coupon The coupon object.
+     * @param \WC_Coupon $coupon The coupon object.
      * @param array $data The gift card data to update.
-     * @return object The updated coupon object.
+     * @return \WC_Coupon The updated coupon object.
      */
-    public function update(object $coupon, array $data): object
+    public function update(\WC_Coupon $coupon, array $data): \WC_Coupon
     {
         try {
             if (isset($data['balance'])) {
                 $coupon->set_amount($data['balance'] / 100); // Convert cents to currency units
-                $coupon->update_meta_data(WCCoupons::GIFTCARD_CURRENT_BALANCE, $data['balance']);
+                $coupon->add_meta_data(WCCoupons::GIFTCARD_CURRENT_BALANCE, $data['balance']);
             }
 
             if (isset($data['program_uuid'])) {
-                $coupon->update_meta_data(WCCoupons::GIFTCARD_PROGRAM_UUID, $data['program_uuid']);
+                $coupon->add_meta_data(WCCoupons::GIFTCARD_PROGRAM_UUID, $data['program_uuid']);
             }
 
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_LAST_CHECKED, time());
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_LAST_CHECKED, time());
 
             $coupon->save();
 
@@ -201,16 +204,16 @@ class WPGiftcardCouponRepository implements WPGiftcardCouponRepositoryInterface
     /**
      * Update the balance of a gift card coupon.
      *
-     * @param object $coupon The coupon object.
+     * @param \WC_Coupon $coupon The coupon object.
      * @param int $balance The new balance in cents.
-     * @return object The updated coupon object.
+     * @return \WC_Coupon The updated coupon object.
      */
-    public function update_balance(object $coupon, int $balance): object
+    public function update_balance(\WC_Coupon $coupon, int $balance_in_cents): \WC_Coupon
     {
         try {
-            $coupon->set_amount($balance / 100); // Convert cents to currency units
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_CURRENT_BALANCE, $balance);
-            $coupon->update_meta_data(WCCoupons::GIFTCARD_LAST_CHECKED, time());
+            $coupon->set_amount($balance_in_cents / 100); // Convert cents to currency units
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_CURRENT_BALANCE, $balance_in_cents);
+            $coupon->add_meta_data(WCCoupons::GIFTCARD_LAST_CHECKED, time());
 
             $coupon->save();
 
@@ -218,7 +221,7 @@ class WPGiftcardCouponRepository implements WPGiftcardCouponRepositoryInterface
         } catch (\Exception $e) {
             $this->logger->error('Error updating gift card balance', [
                 'coupon_id' => $coupon->get_id(),
-                'balance' => $balance,
+                'balance' => $balance_in_cents,
                 'error' => $e->getMessage(),
             ]);
             throw $e;
@@ -228,10 +231,10 @@ class WPGiftcardCouponRepository implements WPGiftcardCouponRepositoryInterface
     /**
      * Check if a coupon is a gift card.
      *
-     * @param object $coupon The coupon object.
+     * @param \WC_Coupon $coupon The coupon object.
      * @return bool Whether the coupon is a gift card.
      */
-    public function is_giftcard(object $coupon): bool
+    public function is_giftcard(\WC_Coupon $coupon): bool
     {
         return $coupon->get_meta(WCCoupons::GIFTCARD_TYPE) === 'giftcard';
     }

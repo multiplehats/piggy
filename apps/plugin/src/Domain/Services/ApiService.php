@@ -1,6 +1,6 @@
 <?php
 
-namespace Leat\Api;
+namespace Leat\Domain\Services;
 
 use Piggy\Api\RegisterClient;
 use Piggy\Api\ApiClient;
@@ -98,6 +98,16 @@ class ApiService
         $api_key = $this->get_api_key();
 
         return null !== $api_key && '' !== $api_key;
+    }
+
+    /**
+     * Get the Leat shop UUID.
+     *
+     * @return string|null The Leat shop UUID.
+     */
+    public function get_shop_uuid()
+    {
+        return get_option('leat_shop_uuid', null);
     }
 
     /**

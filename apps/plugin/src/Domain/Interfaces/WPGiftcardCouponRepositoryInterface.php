@@ -2,6 +2,7 @@
 
 namespace Leat\Domain\Interfaces;
 
+
 /**
  * Interface WPGiftcardCouponRepositoryInterface
  *
@@ -38,11 +39,11 @@ interface WPGiftcardCouponRepositoryInterface
     /**
      * Update a gift card coupon.
      *
-     * @param object $coupon The coupon object.
+     * @param \WC_Coupon $coupon The coupon object.
      * @param array $data The gift card data to update.
-     * @return object The updated coupon object.
+     * @return \WC_Coupon The updated coupon object.
      */
-    public function update(object $coupon, array $data): object;
+    public function update(\WC_Coupon $coupon, array $data): \WC_Coupon;
 
     /**
      * Get the current balance of a gift card.
@@ -59,7 +60,7 @@ interface WPGiftcardCouponRepositoryInterface
      * @param int $balance The new balance in cents.
      * @return object The updated coupon object.
      */
-    public function update_balance(object $coupon, int $balance): object;
+    public function update_balance(\WC_Coupon $coupon, int $balance): \WC_Coupon;
 
     /**
      * Check if a coupon is a gift card.
@@ -67,5 +68,5 @@ interface WPGiftcardCouponRepositoryInterface
      * @param object $coupon The coupon object.
      * @return bool Whether the coupon is a gift card.
      */
-    public function is_giftcard(object $coupon): bool;
+    public function is_giftcard(\WC_Coupon $coupon): bool;
 }

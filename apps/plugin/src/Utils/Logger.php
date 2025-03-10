@@ -33,13 +33,18 @@ class Logger
 		$this->log('error', $message, $context);
 	}
 
-	private function log($level, $message, $context)
+	private function log($level, $message, $context, $only_in_dev = false)
 	{
 		$context['source'] = $this->source;
-		$this->logger->$level($message, $context);
+
+		// Only log if not restricted to dev mode or if we are in dev mode
+		$is_dev_mode = (defined('WP_DEBUG') && WP_DEBUG) && (defined('LEAT_DEV') && constant('LEAT_DEV') === true);
+		if (!$only_in_dev || $is_dev_mode) {
+			$this->logger->$level($message, $context);
+		}
 
 		// Add debug logging when WP_DEBUG is enabled.
-		if (defined('WP_DEBUG') && WP_DEBUG) {
+		if ((defined('WP_DEBUG') && WP_DEBUG) && (!$only_in_dev || $is_dev_mode)) {
 			$debug_message = sprintf(
 				'[%s] [%s] %s %s',
 				$this->source,

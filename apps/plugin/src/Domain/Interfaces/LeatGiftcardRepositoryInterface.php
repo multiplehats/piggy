@@ -3,6 +3,7 @@
 namespace Leat\Domain\Interfaces;
 
 use Piggy\Api\Models\Giftcards\Giftcard;
+use Piggy\Api\Models\Giftcards\GiftcardTransaction;
 
 /**
  * Interface LeatGiftcardRepositoryInterface
@@ -20,4 +21,21 @@ interface LeatGiftcardRepositoryInterface
      * @return Giftcard|null The gift card object or null if not found.
      */
     public function find_by_hash(string $hash): ?Giftcard;
+
+    /**
+     * Get the transactions for a gift card.
+     *
+     * @param string $uuid The gift card UUID.
+     * @return array|null The transactions or null if not found.
+     */
+    public function get_transactions(string $uuid): ?array;
+
+    /**
+     * Create giftcard transaction.
+     *
+     * @param string $uuid The gift card UUID.
+     * @param int $amount The amount to create the transaction for.
+     * @return GiftcardTransaction The created transaction or null on failure.
+     */
+    public function create_transaction(string $uuid, int $amount): ?GiftcardTransaction;
 }
