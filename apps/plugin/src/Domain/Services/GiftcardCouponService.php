@@ -533,7 +533,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 'uuid' => $giftcard->getUuid(),
                 'hash' => $giftcard->getHash(),
                 'balance' => $balance,
-            ]);
+            ], true);
 
             return $balance;
         } catch (\Exception $e) {
@@ -705,18 +705,36 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     public function handle_giftcard_coupon_refund(int $order_id, int $refund_id): void
     {
+        // Log that the refund handler is being called
+        $this->logger->info('Gift card refund handler called', [
+            'order_id' => $order_id,
+            'refund_id' => $refund_id,
+        ]);
+
         $order = wc_get_order($order_id);
         $refund = wc_get_order($refund_id);
 
         if (!$order || !$refund) {
+            $this->logger->error('Order or refund not found', [
+                'order_id' => $order_id,
+                'refund_id' => $refund_id,
+            ]);
             return;
         }
 
         // Get the coupons used in the order
         $coupons = $order->get_coupon_codes();
         if (empty($coupons)) {
+            $this->logger->info('No coupons found in order', [
+                'order_id' => $order_id,
+            ]);
             return;
         }
+
+        $this->logger->info('Found coupons in order', [
+            'order_id' => $order_id,
+            'coupons' => $coupons,
+        ]);
 
         // Get the refund amount
         $refund_amount = $refund->get_amount();
@@ -737,8 +755,14 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     continue;
                 }
 
-                $transaction_id = $order->get_meta(WCOrders::GIFT_CARD_TRANSACTION_ID . $coupon_code);
+                $transaction_id = $order->get_meta(WCOrders::GIFT_CARD_PROCESSED_TRANSACTION_ID_PREFIX . $coupon_code);
                 if (empty($transaction_id)) {
+                    // Log that we couldn't find the transaction ID
+                    $this->logger->error('No transaction ID found for gift card coupon during refund', [
+                        'order_id' => $order_id,
+                        'refund_id' => $refund_id,
+                        'coupon_code' => $coupon_code,
+                    ]);
                     continue;
                 }
 

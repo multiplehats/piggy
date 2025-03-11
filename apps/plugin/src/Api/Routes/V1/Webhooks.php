@@ -84,9 +84,6 @@ class Webhooks extends AbstractRoute
 		$calculated_signature = hash_hmac('sha256', $payload, $secret);
 		$is_valid = hash_equals($signature, $calculated_signature);
 
-		if (!$is_valid) {
-			$this->logger->error('Webhook signature verification failed', [], true);
-		}
 
 		return $is_valid;
 	}
