@@ -133,4 +133,29 @@ class LeatGiftcardRepository implements LeatGiftcardRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * Reverse a gift card transaction.
+     *
+     * @param string $tx_uuid The gift card transaction UUID.
+     * @return GiftcardTransaction The reversed transaction or null on failure.
+     */
+    public function reverse_transaction(string $tx_uuid): ?GiftcardTransaction
+    {
+        try {
+            $client = $this->apiService->init_client();
+
+            if (! $client) {
+                return null;
+            }
+
+            $giftcard_transaction = GiftcardTransaction::reverse($tx_uuid);
+
+            return $giftcard_transaction;
+        } catch (\Exception $e) {
+            $this->apiService->log_exception($e, 'Error reversing gift card transaction');
+
+            return null;
+        }
+    }
 }

@@ -38,4 +38,12 @@ interface LeatGiftcardRepositoryInterface
      * @return GiftcardTransaction The created transaction or null on failure.
      */
     public function create_transaction(string $uuid, int $amount): ?GiftcardTransaction;
+
+    /**
+     * Reverse a gift card transaction.
+     *
+     * @param string $tx_uuid The gift card transaction UUID.
+     * @return GiftcardTransaction The reversed transaction or null on failure.
+     */
+    public function reverse_transaction(string $tx_uuid): ?GiftcardTransaction;
 }
