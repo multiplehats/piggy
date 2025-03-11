@@ -86,6 +86,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         // Update gift card balance after order is processed
         add_action('woocommerce_payment_complete', [$this, 'update_giftcard_balance_after_order']);
         add_action('woocommerce_order_status_completed', [$this, 'update_giftcard_balance_after_order']);
+        add_action('woocommerce_order_status_processing', [$this, 'update_giftcard_balance_after_order']);
 
         // Handle gift card coupon refunds
         add_action('woocommerce_order_refunded', [$this, 'handle_giftcard_coupon_refund'], 10, 2);
@@ -100,6 +101,10 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
 
         // AJAX handler for checking gift card balance
         add_action('wp_ajax_leat_admin_check_giftcard_balance', [$this, 'ajax_check_giftcard_balance']);
+        add_action('wp_ajax_nopriv_leat_check_giftcard_balance', [$this, 'ajax_check_giftcard_balance']);
+
+        // Add gift card detection notes to the order when it's created
+        add_action('woocommerce_checkout_order_created', [$this, 'add_giftcard_detection_notes_to_order'], 10, 1);
     }
 
     /**
@@ -178,6 +183,24 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     if (!$coupon) {
                         wc_add_notice(__('This gift card could not be applied.', 'leat-crm'), 'error');
                         return false;
+                    }
+                }
+
+                // Add a notice to the user that a gift card was detected and applied
+                wc_add_notice(
+                    sprintf(
+                        __('✅ Gift card %s detected and applied to your order.', 'leat-crm'),
+                        $coupon_code
+                    ),
+                    'success'
+                );
+
+                // Store in session that this gift card was applied
+                if (WC()->session) {
+                    $applied_giftcards = WC()->session->get('applied_giftcards', []);
+                    if (!in_array($coupon_code, $applied_giftcards)) {
+                        $applied_giftcards[] = $coupon_code;
+                        WC()->session->set('applied_giftcards', $applied_giftcards);
                     }
                 }
             }
@@ -323,6 +346,55 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
     }
 
     /**
+     * Add a note to the order when a gift card is detected.
+     *
+     * @param string $coupon_code The coupon code.
+     * @return void
+     */
+    private function add_giftcard_detected_note(string $coupon_code): void
+    {
+        // Only add the note if we're in the checkout process
+        if (!is_checkout() && !defined('WOOCOMMERCE_CHECKOUT')) {
+            return;
+        }
+
+        // Get the current order ID if available
+        $order_id = get_query_var('order-received', 0);
+        if (!$order_id) {
+            // Try to get from session
+            $order_id = WC()->session ? WC()->session->get('order_awaiting_payment') : 0;
+        }
+
+        if (!$order_id) {
+            return;
+        }
+
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            return;
+        }
+
+        // Check if we've already added this note
+        $note_added = $order->get_meta('_giftcard_detected_' . $coupon_code);
+        if ($note_added) {
+            return;
+        }
+
+        // Add the note
+        OrderNotes::add_success(
+            $order,
+            sprintf(
+                __('✅ Gift card %s detected and applied to order.', 'leat-crm'),
+                $coupon_code
+            )
+        );
+
+        // Mark that we've added this note
+        $order->update_meta_data('_giftcard_detected_' . $coupon_code, true);
+        $order->save();
+    }
+
+    /**
      * Validate a gift card coupon before it's applied.
      *
      * @param bool $valid Whether the coupon is valid.
@@ -341,6 +413,9 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         if (!$this->repository->is_giftcard($coupon)) {
             return $valid;
         }
+
+        // Add a note to the order that a gift card was detected
+        $this->add_giftcard_detected_note($coupon->get_code());
 
         // Use the shared validation logic for gift cards
         return $this->validate_giftcard($coupon);
@@ -531,9 +606,15 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     continue;
                 }
 
-                $discount_amount = $order->get_discount_total();
-                $discount_amount_cents = (int) ($discount_amount * 100);
+                // Get the order total before discount
+                $order_total_before_discount = $order->get_subtotal();
+                $order_total_after_discount = $order->get_total();
+                $actual_discount_used = $order_total_before_discount - $order_total_after_discount;
 
+                // Convert to cents
+                $discount_amount_cents = (int) ($actual_discount_used * 100);
+
+                // Create a transaction for the actual amount used
                 $transaction = $this->leatGiftcardRepository->create_transaction($uuid, -$discount_amount_cents);
 
                 if (!$transaction) {
@@ -560,7 +641,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                             sprintf(
                                 __('Gift card %s used: %s. Remaining balance: %s', 'leat-crm'),
                                 $coupon_code,
-                                wc_price($discount_amount),
+                                wc_price($actual_discount_used),
                                 wc_price($new_balance / 100)
                             )
                         );
@@ -576,7 +657,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                             sprintf(
                                 __('Gift card %s used: %s. Remaining balance: %s (calculated)', 'leat-crm'),
                                 $coupon_code,
-                                wc_price($discount_amount),
+                                wc_price($actual_discount_used),
                                 wc_price($new_balance / 100)
                             )
                         );
@@ -593,7 +674,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                         sprintf(
                             __('Gift card %s used: %s. Remaining balance: %s (calculated)', 'leat-crm'),
                             $coupon_code,
-                            wc_price($discount_amount),
+                            wc_price($actual_discount_used),
                             wc_price($new_balance / 100)
                         )
                     );
@@ -661,10 +742,13 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     continue;
                 }
 
-                $discount_amount = $order->get_discount_total();
+                // Get the order total before discount and after discount
+                $order_total_before_discount = $order->get_subtotal();
+                $order_total_after_discount = $order->get_total();
+                $actual_discount_used = $order_total_before_discount - $order_total_after_discount;
 
                 // Calculate the refund amount for this gift card
-                $refund_amount_for_giftcard = $discount_amount * $refund_percentage;
+                $refund_amount_for_giftcard = $actual_discount_used * $refund_percentage;
                 $refund_amount_cents = (int) ($refund_amount_for_giftcard * 100);
 
                 // Create a transaction in Leat to refund the amount
@@ -1028,5 +1112,38 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 'error' => $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * Add gift card detection notes to the order when it's created.
+     *
+     * @param \WC_Order $order The order object.
+     * @return void
+     */
+    public function add_giftcard_detection_notes_to_order(\WC_Order $order): void
+    {
+        // Check if we have any applied gift cards in the session
+        if (!WC()->session) {
+            return;
+        }
+
+        $applied_giftcards = WC()->session->get('applied_giftcards', []);
+        if (empty($applied_giftcards)) {
+            return;
+        }
+
+        foreach ($applied_giftcards as $coupon_code) {
+            // Add the note
+            OrderNotes::add_success(
+                $order,
+                sprintf(
+                    __('✅ Gift card %s detected and applied to order.', 'leat-crm'),
+                    $coupon_code
+                )
+            );
+        }
+
+        // Clear the session data
+        WC()->session->set('applied_giftcards', []);
     }
 }
