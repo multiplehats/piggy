@@ -13,24 +13,24 @@ class Logger
 		$this->source = 'Leat ' . '[' . $source . ']';
 	}
 
-	public function debug($message, $context = [])
+	public function debug($message, $context = [], $only_in_dev = false)
 	{
-		$this->log('debug', $message, $context);
+		$this->log('debug', $message, $context, $only_in_dev);
 	}
 
-	public function info($message, $context = [])
+	public function info($message, $context = [], $only_in_dev = false)
 	{
-		$this->log('info', $message, $context);
+		$this->log('info', $message, $context, $only_in_dev);
 	}
 
-	public function warning($message, $context = [])
+	public function warning($message, $context = [], $only_in_dev = false)
 	{
-		$this->log('warning', $message, $context);
+		$this->log('warning', $message, $context, $only_in_dev);
 	}
 
-	public function error($message, $context = [])
+	public function error($message, $context = [], $only_in_dev = false)
 	{
-		$this->log('error', $message, $context);
+		$this->log('error', $message, $context, $only_in_dev);
 	}
 
 	private function log($level, $message, $context, $only_in_dev = false)
