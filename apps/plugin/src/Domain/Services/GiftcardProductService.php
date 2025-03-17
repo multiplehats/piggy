@@ -127,11 +127,17 @@ class GiftcardProductService
         }
 
         $recipient_email = $this->repository->get_recipient_email_for_order($order_id);
-        $this->logger->info("Retrieved recipient email for order {$order_id}: " . ($recipient_email ?: 'null'));
 
-        if (!$recipient_email) {
-            $this->logger->error("No recipient email found for order: {$order_id}");
-            return;
+        $disable_recipient_email = $this->settings->get_setting_value_by_id('giftcard_disable_recipient_email');
+        if ($disable_recipient_email === 'on' || empty($recipient_email)) {
+            $recipient_email = $order->get_billing_email();
+
+            // Add a note that we're using the customer's email
+            if ($disable_recipient_email === 'on') {
+                OrderNotes::add($order, __('Gift card recipient email is disabled in settings. Using customer\'s email address.', 'leat-crm'));
+            } else {
+                OrderNotes::add($order, __('No gift card recipient email provided. Using customer\'s email address.', 'leat-crm'));
+            }
         }
 
         $items = $this->repository->get_order_items($order_id);
@@ -263,23 +269,27 @@ class GiftcardProductService
     /**
      * Calculate the gift card amount.
      *
-     * @param object $product The product object.
-     * @param object $item The order item object.
-     * @param int $quantity The quantity index.
-     * @param int $order_id The order ID.
-     * @return int The gift card amount in cents.
+     * @param WC_Product            $product The product object.
+     * @param \WC_Order_Item_Product $item The order item object.
+     * @param int                   $quantity The quantity of the product.
+     * @param int                   $order_id The order ID.
+     * @return int The amount in cents.
      */
     private function calculate_giftcard_amount($product, $item, $quantity, $order_id): int
     {
-        $total = $item->get_total();
-        $tax = $item->get_total_tax();
-        $item_quantity = $item->get_quantity();
+        /**
+         * WPC Name Your Price for WooCommerce integration.
+         *
+         * @see https://wordpress.org/plugins/wpc-name-your-price/
+         */
+        if (class_exists('WPCleverWoonp') && $product->is_type('simple')) {
+            $amount_in_cents = ($item->get_total() / $quantity) * 100;
 
-        // Calculate per-item amount.
-        $amount = ($total + $tax) / $item_quantity;
-        $amount_in_cents = round($amount * 100);
+            return $amount_in_cents;
+        }
 
-        return $amount_in_cents;
+        // Default WooCommerce pricing (simple, and variable products).
+        return $product->get_price() * 100;
     }
 
     /**
@@ -540,6 +550,12 @@ class GiftcardProductService
             }
         }
 
+        $disable_recipient_email = $this->settings->get_setting_value_by_id('giftcard_disable_recipient_email');
+        if ($disable_recipient_email === 'on') {
+            return;
+        }
+
+
         if ($has_giftcard && empty($_POST['giftcard_recipient_email'])) {
             wc_add_notice(__('Please enter a recipient email address for the gift card.', 'leat-crm'), 'error');
         } elseif ($has_giftcard && !is_email($_POST['giftcard_recipient_email'])) {
@@ -645,6 +661,11 @@ class GiftcardProductService
                 $has_giftcard    = true;
                 $giftcard_count += $cart_item['quantity'];
             }
+        }
+
+        $disable_recipient_email = $this->settings->get_setting_value_by_id('giftcard_disable_recipient_email');
+        if ($disable_recipient_email === 'on') {
+            return;
         }
 
         if ($has_giftcard) {
