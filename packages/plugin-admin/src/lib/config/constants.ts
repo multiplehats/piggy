@@ -18,10 +18,16 @@ export const headerLinks = [
 		type: "link",
 	},
 	{
+		href: "/giftcards",
+		label: __("Giftcards", "leat-crm"),
+		type: "link",
+	},
+	{
 		href: "/dashboard",
 		label: __("Customer Dashboard", "leat-crm"),
 		type: "link",
 	},
+
 	{
 		href: "/webhooks",
 		label: __("Webhooks", "leat"),

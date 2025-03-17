@@ -4,7 +4,6 @@ namespace Leat\Api\Routes\V1\Admin;
 
 use Leat\Api\Routes\V1\AbstractRoute;
 use Leat\Api\Routes\V1\Middleware;
-use Leat\Api\Services\WebhookManager;
 
 /**
  * Shops class.

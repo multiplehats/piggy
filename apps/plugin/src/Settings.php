@@ -184,6 +184,15 @@ class Settings
 			),
 		);
 		$settings[] = array(
+			'id'          => 'dashboard_myaccount_title',
+			'default'     => array(
+				'default' => __('Loyalty Program', 'leat-crm'),
+			),
+			'type'        => 'translatable_text',
+			'label'       => __('Loyalty Program title', 'leat-crm'),
+			'description' => __('The title for the WooCommerce My Account page that displays the loyalty program.', 'leat-crm'),
+		);
+		$settings[] = array(
 			'id'          => 'dashboard_login_cta',
 			'default'     => array(
 				'default' => __('Log in', 'leat-crm'),
@@ -275,6 +284,13 @@ class Settings
 			'description' => __('Select which order statuses will trigger a gift card withdrawal to the customer. Gift cards will be withdrawn only once, when the order first reaches any of the selected statuses. For example, if both "Refunded" and "Cancelled" are selected, gift cards will be returned to the customer when the order is either refunded or cancelled, whichever happens first.', 'leat-crm'),
 			'default'     => array('refunded' => 'on'),
 			'options'     => $this->woocommerce_order_statuses_options(),
+		);
+		$settings[] = array(
+			'id'          => 'giftcard_disable_recipient_email',
+			'type'        => 'switch',
+			'label'       => __('Disable Gift Card Recipient Email', 'leat-crm'),
+			'description' => __('If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer\'s own email address.', 'leat-crm'),
+			'default'     => 'off',
 		);
 
 		/**

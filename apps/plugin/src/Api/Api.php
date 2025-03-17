@@ -11,7 +11,7 @@ use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
-use Leat\Domain\Services\WebhookManager;
+use Leat\WebhookManager;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Settings;
 use Leat\Utils\Logger;

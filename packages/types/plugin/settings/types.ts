@@ -70,6 +70,7 @@ export const zBasePluginOptions = z.object({
 	reward_order_parts: adminFields.zCheckboxes,
 	marketing_consent_subscription: adminFields.zSwitch,
 	earn_rules: adminFields.zEarnRules,
+	dashboard_myaccount_title: adminFields.zTranslatableText,
 	dashboard_title_logged_in: adminFields.zTranslatableText,
 	dashboard_title_logged_out: adminFields.zTranslatableText,
 	dashboard_join_cta: adminFields.zTranslatableText,
@@ -86,6 +87,7 @@ export const zBasePluginOptions = z.object({
 	dashboard_spend_cta: adminFields.zTranslatableText,
 	giftcard_order_status: adminFields.zSelect,
 	giftcard_withdraw_order_statuses: adminFields.zCheckboxes,
+	giftcard_disable_recipient_email: adminFields.zSwitch,
 });
 
 /**
@@ -235,6 +237,7 @@ export type IWooSettings = {
 		checkout: wcConfigPage;
 		privacy: wcConfigPage;
 		terms: wcConfigPage;
+		leat_dashboard: wcConfigPage;
 	};
 	wcAssetUrl: string;
 	wcVersion: string;

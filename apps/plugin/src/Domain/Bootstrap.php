@@ -5,7 +5,6 @@ namespace Leat\Domain;
 use Leat\Api\Api;
 use Leat\Api\Connection;
 use Leat\Assets\Api as AssetApi;
-use Leat\Assets\AssetDataRegistry;
 use Leat\AssetsController;
 use Leat\Installer;
 use Leat\Migration;
@@ -14,6 +13,8 @@ use Leat\RedirectController;
 use Leat\Registry\Container;
 use Leat\Settings;
 use Leat\Utils\Logger;
+use Leat\WebhookManager;
+use Leat\WooCommerceAccountTab;
 
 use Leat\Domain\Services\ApiService;
 use Leat\Domain\Services\Cart\CartManager;
@@ -28,7 +29,6 @@ use Leat\Domain\Services\Order\OrderCreditHandler;
 use Leat\Domain\Services\Order\OrderProcessor;
 use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
-use Leat\Domain\Services\WebhookManager;
 
 use Leat\Infrastructure\Repositories\WPGiftcardRepository;
 use Leat\Infrastructure\Repositories\WPGiftcardCouponRepository;
@@ -42,6 +42,7 @@ use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Infrastructure\Repositories\LeatGiftcardRepository;
+
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -128,7 +129,6 @@ class Bootstrap
 		// Load assets in admin and on the frontend.
 		if (! $is_rest) {
 			$this->add_build_notice();
-			$this->container->get(AssetDataRegistry::class);
 			$this->container->get(Installer::class)->init();
 			$this->container->get(AssetsController::class);
 			$this->container->get(PostTypeController::class);
@@ -137,7 +137,11 @@ class Bootstrap
 
 		$this->container->get(CustomerDashboardShortcode::class)->init();
 		$this->container->get(RewardPointsShortcode::class)->init();
+
+		// Services
 		$this->container->get(LoyaltyManager::class);
+
+		// Domain
 		$this->container->get(SyncVouchers::class)->init();
 		$this->container->get(SyncPromotions::class)->init();
 		$this->container->get(SyncRewards::class)->init();
@@ -259,19 +263,19 @@ class Bootstrap
 	{
 		$this->container->register(
 			Logger::class,
-			function (Container $container) {
+			function () {
 				return new Logger();
 			}
 		);
 		$this->container->register(
 			PostTypeController::class,
-			function (Container $container) {
+			function () {
 				return new PostTypeController();
 			}
 		);
 		$this->container->register(
 			Settings::class,
-			function (Container $container) {
+			function () {
 				return new Settings();
 			}
 		);
@@ -282,15 +286,15 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
-			AssetApi::class,
-			function (Container $container) {
-				return new AssetApi($container->get(Package::class));
+			WooCommerceAccountTab::class,
+			function () {
+				return new WooCommerceAccountTab($this->container->get(Settings::class));
 			}
 		);
 		$this->container->register(
-			AssetDataRegistry::class,
+			AssetApi::class,
 			function (Container $container) {
-				return new AssetDataRegistry($container->get(AssetApi::class));
+				return new AssetApi($container->get(Package::class));
 			}
 		);
 		$this->container->register(
@@ -467,7 +471,7 @@ class Bootstrap
 
 		$this->container->register(
 			WPGiftcardRepository::class,
-			function (Container $container) {
+			function () {
 				return new WPGiftcardRepository();
 			}
 		);
