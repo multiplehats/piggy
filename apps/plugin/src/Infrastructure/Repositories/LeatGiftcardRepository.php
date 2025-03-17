@@ -27,7 +27,7 @@ class LeatGiftcardRepository implements LeatGiftcardRepositoryInterface
     /**
      * Leat connection instance.
      *
-     * @var Connection
+     * @var ApiService
      */
     private ApiService $apiService;
 

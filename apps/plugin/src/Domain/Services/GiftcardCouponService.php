@@ -90,6 +90,10 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
 
         // Handle gift card coupon refunds
         add_action('woocommerce_order_refunded', [$this, 'handle_giftcard_coupon_refund'], 10, 2);
+        add_action('woocommerce_order_status_refunded', [$this, 'handle_giftcard_coupon_refund_by_status'], 10, 1);
+        add_action('woocommerce_order_status_changed', [$this, 'handle_giftcard_coupon_refund_by_status_change'], 10, 3);
+        add_action('woocommerce_order_fully_refunded', [$this, 'handle_giftcard_coupon_refund'], 10, 2);
+        add_action('woocommerce_order_partially_refunded', [$this, 'handle_giftcard_coupon_refund'], 10, 2);
 
         // Add meta box to coupon admin page
         add_action('add_meta_boxes', [$this, 'register_giftcard_coupon_meta_box']);
@@ -115,25 +119,25 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     public function maybe_create_giftcard_coupon_from_code(): void
     {
-        // Get applied coupons from the cart
+        //
         $applied_coupons = WC()->cart ? WC()->cart->get_applied_coupons() : [];
 
         foreach ($applied_coupons as $coupon_code) {
-            // Skip if not a potential gift card (9 chars)
+
             if (strlen($coupon_code) !== 9) {
                 continue;
             }
 
             try {
-                // Check if this is a gift card by hash in Leat
+
                 $giftcard = $this->leatGiftcardRepository->find_by_hash($coupon_code);
 
                 if ($giftcard) {
-                    // If it's a gift card in Leat, check if it exists as a coupon in WooCommerce
+
                     $existing_coupon = $this->repository->find_by_hash($coupon_code);
 
                     if (!$existing_coupon) {
-                        // Only create a new coupon if it doesn't exist
+
                         $this->create_giftcard_coupon($giftcard);
                         $this->logger->info('Pre-emptively created gift card coupon', [
                             'coupon_code' => $coupon_code,
@@ -159,34 +163,34 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     public function maybe_create_giftcard_coupon_before_apply(bool $apply, string $coupon_code): bool
     {
-        // Skip if not a potential gift card (9 chars) or if we're not applying the coupon
+
         if (strlen($coupon_code) !== 9 || !$apply) {
             return $apply;
         }
 
         try {
-            // Check if this is a gift card by hash in Leat
+
             $giftcard = $this->leatGiftcardRepository->find_by_hash($coupon_code);
 
             if ($giftcard) {
-                // If it's a gift card in Leat, check if it exists as a coupon in WooCommerce
+
                 $existing_coupon = $this->repository->find_by_hash($coupon_code);
 
                 if (!$existing_coupon) {
-                    // Only create a new coupon if it doesn't exist
+
                     $coupon = $this->create_giftcard_coupon($giftcard);
                     $this->logger->info('Created gift card coupon during application', [
                         'coupon_code' => $coupon_code,
                     ]);
 
-                    // If we couldn't create the coupon, don't apply it
+
                     if (!$coupon) {
                         wc_add_notice(__('This gift card could not be applied.', 'leat-crm'), 'error');
                         return false;
                     }
                 }
 
-                // Add a notice to the user that a gift card was detected and applied
+
                 wc_add_notice(
                     sprintf(
                         __('✅ Gift card %s detected and applied to your order.', 'leat-crm'),
@@ -195,7 +199,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     'success'
                 );
 
-                // Store in session that this gift card was applied
+
                 if (WC()->session) {
                     $applied_giftcards = WC()->session->get('applied_giftcards', []);
                     if (!in_array($coupon_code, $applied_giftcards)) {
@@ -224,7 +228,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
     {
         try {
             $hash = $giftcard->getHash();
-            // Check if a coupon with this hash already exists
+
             $existing_coupon = $this->repository->find_by_hash($hash);
             if ($existing_coupon) {
                 $this->logger->info('Gift card coupon already exists', [
@@ -232,7 +236,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     'coupon_id' => $existing_coupon->get_id(),
                 ], true);
 
-                // Update the balance if needed
+
                 $balance_in_cents = $this->check_giftcard_balance($giftcard);
                 if ($balance_in_cents !== null) {
                     $this->repository->update_balance($existing_coupon, $balance_in_cents);
@@ -283,7 +287,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     public function validate_giftcard_coupon_on_store_api($response, $server, $request)
     {
-        // Only process if we're not already dealing with an error
+
         if (is_wp_error($response)) {
             return $response;
         }
@@ -294,19 +298,19 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
             $coupon_code = $request->get_param('code');
 
             try {
-                // First check if this is a gift card by hash in Leat
+
                 $giftcard = $this->leatGiftcardRepository->find_by_hash($coupon_code);
 
                 if ($giftcard) {
-                    // If it's a gift card in Leat, check if it exists as a coupon in WooCommerce
+
                     $existing_coupon = $this->repository->find_by_hash($coupon_code);
 
                     if (!$existing_coupon) {
-                        // Only create a new coupon if it doesn't exist
+
                         $coupon = $this->create_giftcard_coupon($giftcard);
 
                         if (!$coupon) {
-                            // If we couldn't create the coupon, return an error
+
                             return new \WP_Error(
                                 'leat_giftcard_error',
                                 __('This gift card could not be applied.', 'leat-crm'),
@@ -317,7 +321,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                         $coupon = $existing_coupon;
                     }
 
-                    // Now validate the gift card
+
                     $is_valid = $this->validate_giftcard($coupon);
 
                     $this->logger->info('Gift card coupon validation result', [
@@ -325,7 +329,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                         'is_valid' => $is_valid,
                     ], true);
 
-                    // If it's not valid, prevent it from being applied
+
                     if (!$is_valid) {
                         return new \WP_Error(
                             'leat_giftcard_invalid',
@@ -353,15 +357,15 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     private function add_giftcard_detected_note(string $coupon_code): void
     {
-        // Only add the note if we're in the checkout process
+
         if (!is_checkout() && !defined('WOOCOMMERCE_CHECKOUT')) {
             return;
         }
 
-        // Get the current order ID if available
+
         $order_id = get_query_var('order-received', 0);
         if (!$order_id) {
-            // Try to get from session
+
             $order_id = WC()->session ? WC()->session->get('order_awaiting_payment') : 0;
         }
 
@@ -374,13 +378,11 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
             return;
         }
 
-        // Check if we've already added this note
         $note_added = $order->get_meta('_giftcard_detected_' . $coupon_code);
         if ($note_added) {
             return;
         }
 
-        // Add the note
         OrderNotes::add_success(
             $order,
             sprintf(
@@ -389,7 +391,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
             )
         );
 
-        // Mark that we've added this note
         $order->update_meta_data('_giftcard_detected_' . $coupon_code, true);
         $order->save();
     }
@@ -404,20 +405,16 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     public function validate_giftcard_coupon(bool $valid, \WC_Coupon $coupon, \WC_Discounts $discounts): bool
     {
-        // If the coupon is already invalid, return the original value
         if (!$valid) {
             return $valid;
         }
 
-        // Only validate gift card coupons
         if (!$this->repository->is_giftcard($coupon)) {
             return $valid;
         }
 
-        // Add a note to the order that a gift card was detected
         $this->add_giftcard_detected_note($coupon->get_code());
 
-        // Use the shared validation logic for gift cards
         return $this->validate_giftcard($coupon);
     }
 
@@ -436,7 +433,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
 
             $uuid = $coupon->get_meta(WCCoupons::GIFTCARD_UUID);
 
-            // If no UUID, this is not a properly set up gift card coupon
             if (empty($uuid)) {
                 $this->logger->info('Gift card coupon has no UUID', [
                     'coupon_code' => $coupon->get_code(),
@@ -444,13 +440,11 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 return false;
             }
 
-            // Check when the balance was last checked
             $last_checked = (int) $coupon->get_meta(WCCoupons::GIFTCARD_LAST_CHECKED);
             $current_time = time();
 
             $balance = 0;
 
-            // If the balance was checked recently, use the cached value
             if ($current_time - $last_checked < self::BALANCE_CHECK_CACHE_TIME) {
                 $balance = (int) $coupon->get_meta(WCCoupons::GIFTCARD_CURRENT_BALANCE);
                 $this->logger->info('Using cached gift card balance', [
@@ -459,11 +453,9 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     'balance' => $balance,
                 ], true);
             } else {
-                // Otherwise, check the balance from Leat
-                // First get the Giftcard hash from the coupon code
+
                 $hash = $coupon->get_code();
 
-                // Then get the Giftcard object from Leat using the hash
                 $giftcard = $this->leatGiftcardRepository->find_by_hash($hash);
 
                 if (!$giftcard) {
@@ -489,7 +481,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 }
             }
 
-            // If we couldn't get the balance, invalidate the coupon
+
             if ($balance === null) {
                 $this->logger->error('Failed to validate gift card balance', [
                     'uuid' => $uuid,
@@ -498,7 +490,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 return false;
             }
 
-            // If the balance is zero, invalidate the coupon
+
             if ($balance <= 0) {
                 $this->logger->info('Gift card has zero balance', [
                     'uuid' => $uuid,
@@ -528,7 +520,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         try {
             $balance = $giftcard->getAmountInCents();
 
-            // Log the balance for debugging
+
             $this->logger->info('Gift card balance check', [
                 'uuid' => $giftcard->getUuid(),
                 'hash' => $giftcard->getHash(),
@@ -558,12 +550,10 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
             return;
         }
 
-        // Check if the order has already been processed for gift cards
         if ($order->get_meta(WCOrders::GIFT_CARD_PROCESSED)) {
             return;
         }
 
-        // Get the coupons used in the order
         $coupons = $order->get_coupon_codes();
         if (empty($coupons)) {
             return;
@@ -697,6 +687,93 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
     }
 
     /**
+     * Handle gift card coupon refunds when order status changes to refunded.
+     *
+     * @param int $order_id The order ID.
+     * @return void
+     */
+    public function handle_giftcard_coupon_refund_by_status(int $order_id): void
+    {
+        // Log that the refund handler is being called via status change
+        $this->logger->info('Gift card refund handler called via status change', [
+            'order_id' => $order_id,
+        ]);
+
+        // Get refund IDs for this order
+        $refunds = wc_get_orders([
+            'type' => 'shop_order_refund',
+            'parent' => $order_id,
+            'limit' => 1,
+        ]);
+
+        if (!empty($refunds)) {
+            $refund_id = $refunds[0]->get_id();
+            $this->handle_giftcard_coupon_refund($order_id, $refund_id);
+        } else {
+            // No refund object found, handle without refund ID
+            $this->handle_giftcard_coupon_refund_without_refund_id($order_id);
+        }
+    }
+
+    /**
+     * Handle gift card coupon refunds when order status changes.
+     *
+     * @param int $order_id The order ID.
+     * @param string $from_status The previous status.
+     * @param string $to_status The new status.
+     * @return void
+     */
+    public function handle_giftcard_coupon_refund_by_status_change(int $order_id, string $from_status, string $to_status): void
+    {
+        if ($to_status === 'refunded') {
+            $this->handle_giftcard_coupon_refund_by_status($order_id);
+        }
+    }
+
+    /**
+     * Handle gift card coupon refunds without a refund ID.
+     *
+     * @param int $order_id The order ID.
+     * @return void
+     */
+    private function handle_giftcard_coupon_refund_without_refund_id(int $order_id): void
+    {
+        $this->logger->info('Handling gift card refund without refund ID', [
+            'order_id' => $order_id,
+        ]);
+
+        $order = wc_get_order($order_id);
+
+        if (!$order) {
+            $this->logger->error('Order not found', [
+                'order_id' => $order_id,
+            ]);
+            return;
+        }
+
+        // Get the coupons used in the order
+        $coupons = $order->get_coupon_codes();
+        if (empty($coupons)) {
+            $this->logger->info('No coupons found in order', [
+                'order_id' => $order_id,
+            ]);
+            return;
+        }
+
+        $this->logger->info('Found coupons in order', [
+            'order_id' => $order_id,
+            'coupons' => $coupons,
+        ]);
+
+        // Full refund - refund 100% of the gift card amount
+        $refund_percentage = 1.0;
+
+        foreach ($coupons as $coupon_code) {
+            $this->process_giftcard_refund($order, $coupon_code, $refund_percentage);
+        }
+    }
+
+    /**
      * Handle gift card coupon refunds.
      *
      * @param int $order_id The order ID.
@@ -743,48 +820,94 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         $refund_percentage = $refund_amount / $order_total;
 
         foreach ($coupons as $coupon_code) {
+            $this->process_giftcard_refund($order, $coupon_code, $refund_percentage, $refund_id);
+        }
+    }
+
+    /**
+     * Process gift card refund for a specific coupon.
+     *
+     * @param \WC_Order $order The order object.
+     * @param string $coupon_code The coupon code.
+     * @param float $refund_percentage The refund percentage.
+     * @param int|null $refund_id The refund ID (optional).
+     * @return void
+     */
+    private function process_giftcard_refund(\WC_Order $order, string $coupon_code, float $refund_percentage, ?int $refund_id = null): void
+    {
+        try {
+            $coupon = new \WC_Coupon($coupon_code);
+
+            if (!$this->repository->is_giftcard($coupon)) {
+                return;
+            }
+
+            $uuid = $coupon->get_meta(WCCoupons::GIFTCARD_UUID);
+            if (empty($uuid)) {
+                return;
+            }
+
+            $transaction_id = $order->get_meta(WCOrders::GIFT_CARD_PROCESSED_TRANSACTION_ID_PREFIX . $coupon_code);
+            if (empty($transaction_id)) {
+                // Log that we couldn't find the transaction ID
+                $this->logger->error('No transaction ID found for gift card coupon during refund', [
+                    'order_id' => $order->get_id(),
+                    'refund_id' => $refund_id,
+                    'coupon_code' => $coupon_code,
+                ]);
+                return;
+            }
+
+            // Check if this transaction has already been refunded
+            $refund_transaction_id = $order->get_meta(WCOrders::GIFT_CARD_REFUND_TRANSACTION_ID_PREFIX . $coupon_code);
+            if (!empty($refund_transaction_id)) {
+                $this->logger->info('Gift card transaction already refunded', [
+                    'order_id' => $order->get_id(),
+                    'refund_id' => $refund_id,
+                    'coupon_code' => $coupon_code,
+                    'transaction_id' => $transaction_id,
+                    'refund_transaction_id' => $refund_transaction_id,
+                ]);
+
+                // Get the current balance from the gift card
+                $hash = $coupon->get_meta(WCCoupons::GIFTCARD_HASH);
+                $giftcard = $this->leatGiftcardRepository->find_by_hash($hash);
+
+                if ($giftcard) {
+                    $new_balance = $this->check_giftcard_balance($giftcard);
+                    if ($new_balance !== null) {
+                        $this->repository->update_balance($coupon, $new_balance);
+
+                        // Add a note to the order about the already refunded transaction
+                        OrderNotes::add_success(
+                            $order,
+                            sprintf(
+                                __('Gift card %s was already refunded. Current balance: %s', 'leat-crm'),
+                                $coupon_code,
+                                wc_price($new_balance / 100)
+                            )
+                        );
+                    }
+                }
+
+                return;
+            }
+
+            // Get the order total before discount and after discount
+            $order_total_before_discount = $order->get_subtotal();
+            $order_total_after_discount = $order->get_total();
+            $actual_discount_used = $order_total_before_discount - $order_total_after_discount;
+
+            // Calculate the refund amount for this gift card
+            $refund_amount_for_giftcard = $actual_discount_used * $refund_percentage;
+            $refund_amount_cents = (int) ($refund_amount_for_giftcard * 100);
+
+            // Try to reverse the transaction
             try {
-                $coupon = new \WC_Coupon($coupon_code);
+                $transaction = $this->leatGiftcardRepository->reverse_transaction($transaction_id);
 
-                if (!$this->repository->is_giftcard($coupon)) {
-                    continue;
-                }
-
-                $uuid = $coupon->get_meta(WCCoupons::GIFTCARD_UUID);
-                if (empty($uuid)) {
-                    continue;
-                }
-
-                $transaction_id = $order->get_meta(WCOrders::GIFT_CARD_PROCESSED_TRANSACTION_ID_PREFIX . $coupon_code);
-                if (empty($transaction_id)) {
-                    // Log that we couldn't find the transaction ID
-                    $this->logger->error('No transaction ID found for gift card coupon during refund', [
-                        'order_id' => $order_id,
-                        'refund_id' => $refund_id,
-                        'coupon_code' => $coupon_code,
-                    ]);
-                    continue;
-                }
-
-                // Get the order total before discount and after discount
-                $order_total_before_discount = $order->get_subtotal();
-                $order_total_after_discount = $order->get_total();
-                $actual_discount_used = $order_total_before_discount - $order_total_after_discount;
-
-                // Calculate the refund amount for this gift card
-                $refund_amount_for_giftcard = $actual_discount_used * $refund_percentage;
-                $refund_amount_cents = (int) ($refund_amount_for_giftcard * 100);
-
-                // Create a transaction in Leat to refund the amount
-                $transaction = $this->leatGiftcardRepository->create_transaction($uuid, $refund_amount_cents);
                 if (!$transaction) {
-                    $this->logger->error('Failed to create gift card refund transaction', [
-                        'uuid' => $uuid,
-                        'order_id' => $order_id,
-                        'refund_id' => $refund_id,
-                        'amount' => $refund_amount_cents,
-                    ]);
-                    continue;
+                    throw new \Exception('Failed to reverse transaction');
                 }
 
                 // Update the coupon balance
@@ -796,7 +919,51 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 OrderNotes::add_success(
                     $order,
                     sprintf(
-                        __('Gift card %s refunded: %s. New balance: %s', 'leat-crm'),
+                        __('Gift card %s refunded: %s. New balance: %s (Transaction reversed: %s)', 'leat-crm'),
+                        $coupon_code,
+                        wc_price($refund_amount_for_giftcard),
+                        wc_price($new_balance / 100),
+                        $transaction_id
+                    )
+                );
+
+                // Store the refund transaction ID in the order meta
+                if ($transaction && method_exists($transaction, 'getUuid')) {
+                    $order->add_meta_data(WCOrders::GIFT_CARD_REFUND_TRANSACTION_ID_PREFIX . $coupon_code, $transaction->getUuid());
+                    $order->save();
+                }
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to reverse gift card transaction, trying to create a new transaction', [
+                    'uuid' => $uuid,
+                    'order_id' => $order->get_id(),
+                    'refund_id' => $refund_id,
+                    'transaction_id' => $transaction_id,
+                    'error' => $e->getMessage(),
+                ]);
+
+                // If reversing fails, try to create a new positive transaction instead
+                $transaction = $this->leatGiftcardRepository->create_transaction($uuid, $refund_amount_cents);
+
+                if (!$transaction) {
+                    $this->logger->error('Failed to create gift card refund transaction', [
+                        'uuid' => $uuid,
+                        'order_id' => $order->get_id(),
+                        'refund_id' => $refund_id,
+                        'amount' => $refund_amount_cents,
+                    ]);
+                    return;
+                }
+
+                // Update the coupon balance
+                $current_balance = (int) $coupon->get_meta(WCCoupons::GIFTCARD_CURRENT_BALANCE);
+                $new_balance = $current_balance + $refund_amount_cents;
+                $this->repository->update_balance($coupon, $new_balance);
+
+                // Add a note to the order
+                OrderNotes::add_success(
+                    $order,
+                    sprintf(
+                        __('Gift card %s refunded: %s. New balance: %s (New transaction created)', 'leat-crm'),
                         $coupon_code,
                         wc_price($refund_amount_for_giftcard),
                         wc_price($new_balance / 100)
@@ -804,16 +971,18 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 );
 
                 // Store the refund transaction ID in the order meta
-                $order->add_meta_data(WCOrders::GIFT_CARD_REFUND_TRANSACTION_ID_PREFIX . $coupon_code, $transaction['uuid']);
-                $order->save();
-            } catch (\Exception $e) {
-                $this->logger->error('Error processing gift card refund', [
-                    'order_id' => $order_id,
-                    'refund_id' => $refund_id,
-                    'coupon_code' => $coupon_code,
-                    'error' => $e->getMessage(),
-                ]);
+                if ($transaction && method_exists($transaction, 'getUuid')) {
+                    $order->add_meta_data(WCOrders::GIFT_CARD_REFUND_TRANSACTION_ID_PREFIX . $coupon_code, $transaction->getUuid());
+                    $order->save();
+                }
             }
+        } catch (\Exception $e) {
+            $this->logger->error('Error processing gift card refund', [
+                'order_id' => $order->get_id(),
+                'refund_id' => $refund_id,
+                'coupon_code' => $coupon_code,
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -1000,7 +1169,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         foreach ($columns as $key => $value) {
             $new_columns[$key] = $value;
 
-            // Add our column after the coupon code column
             if ($key === 'coupon_code') {
                 $new_columns['giftcard'] = __('Gift Card', 'leat-crm');
             }
@@ -1043,7 +1211,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     public function ajax_check_giftcard_balance(): void
     {
-        // Check nonce
         if (!check_ajax_referer('leat_admin_check_giftcard_balance', 'nonce', false)) {
             wp_send_json_error([
                 'message' => __('Invalid nonce.', 'leat-crm')
@@ -1051,7 +1218,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
             return;
         }
 
-        // Check if user has permission
         if (!current_user_can('manage_woocommerce')) {
             wp_send_json_error([
                 'message' => __('You do not have permission to do this.', 'leat-crm')
