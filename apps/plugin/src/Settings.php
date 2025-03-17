@@ -285,6 +285,13 @@ class Settings
 			'default'     => array('refunded' => 'on'),
 			'options'     => $this->woocommerce_order_statuses_options(),
 		);
+		$settings[] = array(
+			'id'          => 'giftcard_disable_recipient_email',
+			'type'        => 'switch',
+			'label'       => __('Disable Gift Card Recipient Email', 'leat-crm'),
+			'description' => __('If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer\'s own email address.', 'leat-crm'),
+			'default'     => 'off',
+		);
 
 		/**
 		 * Filter the default settings.

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Leat CRM 0.9.1\n"
+"Project-Id-Version: Leat CRM 0.9.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/leat-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-07T12:15:38+00:00\n"
+"POT-Creation-Date: 2025-03-17T14:19:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: leat-crm\n"
@@ -657,113 +657,121 @@ msgstr ""
 msgid "Select the giftcard program this product is connected to"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:202
+#: src/Domain/Services/GiftcardProduct.php:207
 msgid "Gift Card Recipient Email"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:203
+#: src/Domain/Services/GiftcardProduct.php:208
 msgid "Enter recipient email address"
 msgstr ""
 
 #. translators: %d: number of gift cards
-#: src/Domain/Services/GiftcardProduct.php:214
+#: src/Domain/Services/GiftcardProduct.php:219
 msgid "Important: You are purchasing %d gift cards. All gift cards will be sent to the same recipient email address entered above. If you want to send gift cards to different recipients, please place separate orders."
 msgstr ""
 
+#: src/Domain/Services/GiftcardProduct.php:325
+msgid "Gift card recipient email is disabled in settings. Using customer's email address."
+msgstr ""
+
+#: src/Domain/Services/GiftcardProduct.php:327
+msgid "No gift card recipient email provided. Using customer's email address."
+msgstr ""
+
 #. translators: 1: quantity of gift cards, 2: amount in cents, 3: product name.
-#: src/Domain/Services/GiftcardProduct.php:335
+#: src/Domain/Services/GiftcardProduct.php:352
 msgid "Starting to create %1$d gift card(s) with amount %2$s for %3$s."
 msgstr ""
 
 #. translators: 1: giftcard hash.
-#: src/Domain/Services/GiftcardProduct.php:375
+#: src/Domain/Services/GiftcardProduct.php:392
 msgid "Gift Card Code: %s"
 msgstr ""
 
 #. translators: 1: giftcard id, 2: amount in cents.
-#: src/Domain/Services/GiftcardProduct.php:385
+#: src/Domain/Services/GiftcardProduct.php:402
 msgid "Gift card #%1$s created with amount %2$s successfully."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: recipient email.
-#: src/Domain/Services/GiftcardProduct.php:400
+#: src/Domain/Services/GiftcardProduct.php:417
 msgid "Gift card #%1$s email sent to %2$s."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: recipient email.
-#: src/Domain/Services/GiftcardProduct.php:410
+#: src/Domain/Services/GiftcardProduct.php:427
 msgid "Failed to send gift card #%1$s email to %2$s."
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:419
+#: src/Domain/Services/GiftcardProduct.php:436
 msgid "No recipient email found for gift card."
 msgstr ""
 
 #. translators: 1: error message.
-#: src/Domain/Services/GiftcardProduct.php:441
+#: src/Domain/Services/GiftcardProduct.php:458
 msgid "Error creating gift card: %1$s"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:459
+#: src/Domain/Services/GiftcardProduct.php:476
 msgid "Gift card processing completed."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:500
+#: src/Domain/Services/GiftcardProduct.php:517
 msgid "<a href=\"%1$s\" target=\"_blank\">View Giftcard #%2$s</a>"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:527
+#: src/Domain/Services/GiftcardProduct.php:549
 msgid "Gift Card Recipient Email is required."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:593
-#: src/Domain/Services/GiftcardProduct.php:730
+#: src/Domain/Services/GiftcardProduct.php:615
+#: src/Domain/Services/GiftcardProduct.php:752
 msgid "Gift card #%1$s has already been reversed."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:605
+#: src/Domain/Services/GiftcardProduct.php:627
 msgid "Could not process refund for gift card #%1$s - missing transaction data."
 msgstr ""
 
 #. translators: 1: refund percentage, 2: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:635
+#: src/Domain/Services/GiftcardProduct.php:657
 msgid "Deducted %1$s%% from gift card #%2$s."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:661
+#: src/Domain/Services/GiftcardProduct.php:683
 msgid "Failed to process refund for gift card #%1$s."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: error message.
-#: src/Domain/Services/GiftcardProduct.php:671
+#: src/Domain/Services/GiftcardProduct.php:693
 msgid "Error processing refund for gift card #%1$s: %2$s"
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:742
+#: src/Domain/Services/GiftcardProduct.php:764
 msgid "Could not process withdrawal for gift card #%1$s - missing transaction data."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:763
+#: src/Domain/Services/GiftcardProduct.php:785
 msgid "Gift card #%1$s withdrawn successfully."
 msgstr ""
 
 #. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:786
+#: src/Domain/Services/GiftcardProduct.php:808
 msgid "Failed to process withdrawal for gift card #%1$s."
 msgstr ""
 
 #. translators: 1: giftcard id, 2: error message.
-#: src/Domain/Services/GiftcardProduct.php:796
+#: src/Domain/Services/GiftcardProduct.php:818
 msgid "Error processing withdrawal for gift card #%1$s: %2$s"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:867
+#: src/Domain/Services/GiftcardProduct.php:889
 msgid "This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards."
 msgstr ""
 
@@ -1614,6 +1622,14 @@ msgstr ""
 
 #: src/Settings.php:284
 msgid "Select which order statuses will trigger a gift card withdrawal to the customer. Gift cards will be withdrawn only once, when the order first reaches any of the selected statuses. For example, if both \"Refunded\" and \"Cancelled\" are selected, gift cards will be returned to the customer when the order is either refunded or cancelled, whichever happens first."
+msgstr ""
+
+#: src/Settings.php:291
+msgid "Disable Gift Card Recipient Email"
+msgstr ""
+
+#: src/Settings.php:292
+msgid "If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer's own email address."
 msgstr ""
 
 #: src/Shortcodes/AbstractShortcode.php:57

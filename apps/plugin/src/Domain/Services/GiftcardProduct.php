@@ -191,6 +191,11 @@ class GiftcardProduct
 			}
 		}
 
+		$disable_recipient_email = $this->settings->get_setting_value_by_id('giftcard_disable_recipient_email');
+		if ($disable_recipient_email === 'on') {
+			return;
+		}
+
 		if ($has_giftcard) {
 			wp_nonce_field('leat_giftcard_recipient', 'leat_giftcard_recipient_nonce');
 
@@ -289,7 +294,7 @@ class GiftcardProduct
 		 * @see https://wordpress.org/plugins/wpc-name-your-price/
 		 */
 		if (class_exists('WPCleverWoonp') && $product->is_type('simple')) {
-			$amount_in_cents = ($item->get_total() / $quantity) * 100;
+			$amount_in_cents = ($item->get_line_total() / $quantity) * 100;
 
 			return $amount_in_cents;
 		}
@@ -310,6 +315,18 @@ class GiftcardProduct
 		}
 
 		$recipient_email = get_post_meta($order_id, '_giftcard_recipient_email', true);
+
+		$disable_recipient_email = $this->settings->get_setting_value_by_id('giftcard_disable_recipient_email');
+		if ($disable_recipient_email === 'on' || empty($recipient_email)) {
+			$recipient_email = $order->get_billing_email();
+
+			// Add a note that we're using the customer's email
+			if ($disable_recipient_email === 'on') {
+				OrderNotes::add($order, __('Gift card recipient email is disabled in settings. Using customer\'s email address.', 'leat-crm'));
+			} else {
+				OrderNotes::add($order, __('No gift card recipient email provided. Using customer\'s email address.', 'leat-crm'));
+			}
+		}
 
 		$has_giftcards = false;
 
@@ -512,6 +529,11 @@ class GiftcardProduct
 				$has_giftcard = true;
 				break;
 			}
+		}
+
+		$disable_recipient_email = $this->settings->get_setting_value_by_id('giftcard_disable_recipient_email');
+		if ($disable_recipient_email === 'on') {
+			return;
 		}
 
 		// Validate recipient email if cart has giftcard.
