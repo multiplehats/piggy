@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.9.2
+Stable tag: 0.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -170,3 +170,7 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 = 0.9.2 =
 
 * Enhancement: Added option to disable gift card recipient email field in checkout, allowing gift cards to be sent directly to the customer's email address
+
+= 0.9.3 =
+
+* Bug fix: Missing setting value for disable gift card recipient email field

@@ -7,6 +7,7 @@
 	import PagePromotions from "./routes/page-promotions.svelte";
 	import PageOnboarding from "./routes/page-onboarding.svelte";
 	import PageSpendRulesId from "./routes/page-spend-rules-id.svelte";
+	import PageGiftcardSettings from "./routes/page-giftcard-settings.svelte";
 	import PagePromotionRulesId from "./routes/page-promotion-rules-id.svelte";
 	import PageWebhooks from "./routes/page-webhooks.svelte";
 	import { history } from "$lib/utils/custom-history";
@@ -38,8 +39,8 @@
 			<!-- Render the Dashboard Settings component at /dashboard -->
 			<Route path="dashboard" component={PageDashboardSettings} />
 
-			<!-- Render the Onboarding component at /onboarding -->
-			<Route path="onboarding" component={PageOnboarding} />
+			<!-- Render the Giftcard Settings component at /giftcards -->
+			<Route path="giftcards" component={PageGiftcardSettings} />
 
 			<!-- Render the Loyalty Program component at / -->
 			<Route path="loyalty-program/*">
@@ -62,6 +63,9 @@
 
 			<!-- Render the Webhooks component at /webhooks -->
 			<Route path="webhooks" component={PageWebhooks} />
+
+			<!-- Render the Onboarding component at /onboarding -->
+			<Route path="onboarding" component={PageOnboarding} />
 		</Layout>
 	</Router>
 </QueryClientProvider>
