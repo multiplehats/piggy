@@ -19,7 +19,10 @@ const config = {
 	},
 	plugins: [
 		v4wp({
-			input: "ts/frontend/index.ts",
+			input: {
+				main: "ts/frontend/index.ts",
+				extra: "ts/frontend/giftcard-coupon-block.ts",
+			},
 			outDir: "dist/frontend",
 		}),
 		license({

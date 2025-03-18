@@ -148,6 +148,7 @@ class Bootstrap
 		$this->container->get(WebhookManager::class)->init();
 
 		$this->container->get(GiftcardProductService::class)->init();
+		$this->container->get(WooCommerceAccountTab::class)->init();
 
 		$settings = $this->container->get(Settings::class);
 		if ($settings->get_setting_value_by_id('giftcard_coupon_allow_acceptance') === 'on') {
