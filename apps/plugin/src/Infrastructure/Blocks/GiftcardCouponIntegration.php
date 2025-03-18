@@ -3,6 +3,7 @@
 namespace Leat\Infrastructure\Blocks;
 
 use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
+use Leat\Domain\Package;
 
 /**
  * Class GiftcardCouponIntegration
@@ -11,6 +12,23 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
  */
 class GiftcardCouponIntegration implements IntegrationInterface
 {
+    /**
+     * Package instance for accessing plugin metadata.
+     *
+     * @var Package
+     */
+    private $package;
+
+    /**
+     * Constructor.
+     *
+     * @param Package $package The package instance.
+     */
+    public function __construct(Package $package)
+    {
+        $this->package = $package;
+    }
+
     /**
      * The name of the integration.
      *
@@ -44,13 +62,14 @@ class GiftcardCouponIntegration implements IntegrationInterface
         }
 
         // Register the giftcard checkout integration script
-        $asset_file = include(dirname(dirname(dirname(__DIR__))) . '/assets/js/frontend/giftcard-checkout-integration.asset.php');
+        $asset_file_path = $this->package->get_path('assets/js/frontend/giftcard-checkout-integration.asset.php');
+        $asset = file_exists($asset_file_path) ? include($asset_file_path) : ['dependencies' => [], 'version' => '1.0.0'];
 
         wp_register_script(
             'leat-giftcard-checkout-integration',
-            plugins_url('assets/js/frontend/giftcard-checkout-integration.js', dirname(dirname(dirname(__DIR__))) . '/leat-crm.php'),
-            $asset_file['dependencies'] ?? ['wp-element', 'wp-plugins', 'wc-blocks-checkout'],
-            $asset_file['version'] ?? LEAT_VERSION,
+            $this->package->get_url('assets/js/frontend/giftcard-checkout-integration.js'),
+            $asset['dependencies'] ?? [],
+            $asset['version'] ?? $this->package->get_version(),
             true
         );
 
@@ -61,31 +80,13 @@ class GiftcardCouponIntegration implements IntegrationInterface
             $this->get_script_data()
         );
 
-        // Add inline styles for both classic and block checkout
-        wp_add_inline_style('woocommerce-inline', '
-            .leat-giftcard-balance {
-                margin-top: 5px;
-                font-size: 0.9em;
-                display: none;
-            }
-            .leat-giftcard-balance.success {
-                color: green;
-                display: block;
-            }
-            .leat-giftcard-balance.error {
-                color: red;
-            }
-            .wc-block-components-totals-coupon__content .leat-giftcard-balance {
-                margin-top: 0;
-                margin-bottom: 8px;
-            }
-            .leat-giftcard-balances {
-                margin-top: 10px;
-                padding: 8px;
-                background-color: #f8f8f8;
-                border-radius: 4px;
-            }
-        ');
+        // Enqueue the CSS
+        wp_enqueue_style(
+            'leat-giftcard-styles',
+            $this->package->get_url('assets/css/gift-card-styles.css'),
+            ['woocommerce-inline'],
+            $this->package->get_version()
+        );
     }
 
     /**

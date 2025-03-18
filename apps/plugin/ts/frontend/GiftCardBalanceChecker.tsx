@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { __ } from "@wordpress/i18n";
 import { registerPlugin } from "@wordpress/plugins";
+import "./scss/giftcard-balance-checker.scss";
 
 type GiftCardBalanceCheckerProps = {
 	couponCode?: string;

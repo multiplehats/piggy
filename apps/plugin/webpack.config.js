@@ -8,11 +8,12 @@ export default {
 	mode: process.env?.NODE_ENV || "development",
 	entry: {
 		"giftcard-checkout-integration": "./ts/frontend/giftcard-checkout-integration.ts",
-		"gift-card-styles": "./scss/gift-card-balance.scss",
+		"gift-card-styles": "./ts/frontend/scss/giftcard-balance-checker.scss",
 	},
 	output: {
 		path: path.resolve(__dirname, "assets/js/frontend"),
 		filename: "[name].js",
+		assetModuleFilename: "../css/[name][ext]",
 	},
 	resolve: {
 		extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"],
@@ -29,8 +30,29 @@ export default {
 				use: "babel-loader",
 				exclude: /node_modules/,
 			},
+			{
+				test: /\.scss$/,
+				use: [
+					MiniCssExtractPlugin.loader,
+					"css-loader",
+					"postcss-loader",
+					{
+						loader: "sass-loader",
+						options: {
+							sassOptions: {
+								outputStyle: "compressed",
+							},
+						},
+					},
+				],
+			},
 		],
 	},
+	plugins: [
+		new MiniCssExtractPlugin({
+			filename: "../css/[name].css",
+		}),
+	],
 	optimization: {
 		minimizer: [
 			new TerserPlugin({

@@ -30,6 +30,7 @@ use Leat\Domain\Services\Order\OrderProcessor;
 use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
 
+use Leat\Infrastructure\Blocks\GiftcardCouponIntegration;
 use Leat\Infrastructure\Repositories\WPGiftcardRepository;
 use Leat\Infrastructure\Repositories\WPGiftcardCouponRepository;
 use Leat\Infrastructure\Repositories\WPPromotionRuleRepository;
@@ -154,6 +155,8 @@ class Bootstrap
 		if ($settings->get_setting_value_by_id('giftcard_coupon_allow_acceptance') === 'on') {
 			$this->container->get(GiftcardCouponService::class)->init();
 		}
+
+		$this->register_blocks_integration();
 
 		/**
 		 * Action triggered after Leat initialization finishes.
@@ -532,6 +535,35 @@ class Bootstrap
 				);
 			}
 		);
+	}
+
+	/**
+	 * Register integration with WooCommerce Blocks
+	 */
+	public function register_blocks_integration(): void
+	{
+		// Check if WooCommerce Blocks classes exist, using a class that should be available if Blocks is active
+		if (!class_exists('Automattic\WooCommerce\Blocks\Package')) {
+			return;
+		}
+
+		$settings = $this->container->get(Settings::class);
+
+		if ($settings->get_setting_value_by_id('giftcard_coupon_allow_acceptance') === 'on') {
+			add_action(
+				'woocommerce_blocks_cart_block_registration',
+				function ($integration_registry) {
+					$integration_registry->register(new GiftcardCouponIntegration($this->container->get(Package::class)));
+				}
+			);
+
+			add_action(
+				'woocommerce_blocks_checkout_block_registration',
+				function ($integration_registry) {
+					$integration_registry->register(new GiftcardCouponIntegration($this->container->get(Package::class)));
+				}
+			);
+		}
 	}
 
 	/**
