@@ -190,13 +190,13 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         add_action('wp_enqueue_scripts', function () {
 
             // Register React component script for WooCommerce Blocks
-            wp_register_script(
-                'leat-giftcard-react-components',
-                plugin_dir_url(dirname(dirname(dirname(__FILE__)))) . 'assets/js/frontend/giftcard-checkout-integration.js',
-                ['wp-element', 'wp-i18n', 'wp-plugins', 'wp-hooks', 'jquery'],
-                '1.0.0',
-                true
-            );
+            // wp_register_script(
+            //     'leat-giftcard-react-components',
+            //     plugin_dir_url(dirname(dirname(dirname(__FILE__)))) . 'assets/js/frontend/giftcard-checkout-integration.js',
+            //     ['wp-element', 'wp-i18n', 'wp-plugins', 'wp-hooks', 'jquery'],
+            //     '1.0.0',
+            //     true
+            // );
 
             // Add script data to window.leatGiftCardConfig
             wp_localize_script('leat-giftcard-coupon', 'leatGiftCardConfig', [

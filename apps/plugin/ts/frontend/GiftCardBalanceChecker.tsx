@@ -5,9 +5,6 @@ import { registerPlugin } from "@wordpress/plugins";
 type GiftCardBalanceCheckerProps = {
 	couponCode?: string;
 	cart?: {
-		coupons?: Array<{
-			code: string;
-		}>;
 		cartCoupons?: Array<{
 			code: string;
 		}>;
@@ -92,6 +89,8 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 	const [balance, setBalance] = useState<string>("");
 	const [giftCardBalances, setGiftCardBalances] = useState<Record<string, string>>({});
 
+	console.info("cart", cart);
+
 	// Function to check the balance
 	const checkBalance = async (code: string): Promise<void> => {
 		if (!code || code.length < 9) {
@@ -120,7 +119,6 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 
 	// Check balance when the component mounts or when coupon code changes
 	useEffect(() => {
-		console.log("couponCode", couponCode);
 		if (couponCode && couponCode.length >= 9) {
 			const timer = setTimeout(() => {
 				checkBalance(couponCode);
@@ -134,20 +132,91 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 
 	// Check all coupons in the cart
 	useEffect(() => {
-		if (!cart?.cartCoupons?.length) return;
+		if (!cart?.cartCoupons?.length) {
+			// If cart is updated and has no coupons, clear the balances
+			if (Object.keys(giftCardBalances).length > 0) {
+				setGiftCardBalances({});
+				setBalance("");
+				setStatus(CheckStatus.IDLE);
+			}
+			return;
+		}
 
 		const checkCoupons = async () => {
 			if (!cart.cartCoupons) return;
 
+			// Create a new balances object to track current coupons
+			const newBalances: Record<string, string> = {};
+			let balancesChanged = false;
+
 			for (const coupon of cart.cartCoupons) {
 				if (coupon.code && coupon.code.length >= 9) {
-					await checkBalance(coupon.code);
+					// If we already have a balance for this code, keep it
+					if (giftCardBalances[coupon.code]) {
+						newBalances[coupon.code] = giftCardBalances[coupon.code];
+					} else {
+						// Otherwise check the balance
+						await checkBalance(coupon.code);
+						// The checkBalance function will update giftCardBalances directly
+						balancesChanged = true;
+					}
 				}
+			}
+
+			// Only update if we didn't already update through checkBalance
+			// and the available coupons have changed
+			if (
+				!balancesChanged &&
+				Object.keys(newBalances).length !== Object.keys(giftCardBalances).length
+			) {
+				setGiftCardBalances(newBalances);
 			}
 		};
 
 		checkCoupons();
 	}, [cart?.cartCoupons]);
+
+	// Listen for coupon removal events
+	useEffect(() => {
+		const handleCouponRemoved = (_event: Event) => {
+			// Don't reset all balances immediately
+			// We'll rely on the cart prop updates to reflect the current state
+			// This provides a more granular update than resetting everything
+
+			// If we don't have cart data, we can check on next cart update
+			if (!cart?.cartCoupons?.length) {
+				// Only reset if we actually have balances to show and no coupons left
+				setGiftCardBalances({});
+				setBalance("");
+				setStatus(CheckStatus.IDLE);
+			}
+		};
+
+		// Add event listener for coupon removal
+		document.addEventListener("wc-blocks_removed_from_cart", handleCouponRemoved);
+
+		// Clean up
+		return () => {
+			document.removeEventListener("wc-blocks_removed_from_cart", handleCouponRemoved);
+		};
+	}, [cart?.cartCoupons]);
+
+	// Add event listener for added_to_cart events to update balances
+	useEffect(() => {
+		const handleAddedToCart = (_event: Event) => {
+			// The cart prop will be updated after this event
+			// Just ensure we're in a state that allows showing balances
+			if (status === CheckStatus.ERROR) {
+				setStatus(CheckStatus.IDLE);
+			}
+		};
+
+		document.addEventListener("wc-blocks_added_to_cart", handleAddedToCart);
+
+		return () => {
+			document.removeEventListener("wc-blocks_added_to_cart", handleAddedToCart);
+		};
+	}, [status]);
 
 	// Don't render anything if there's no valid gift card applied
 	if (Object.keys(giftCardBalances).length === 0 && status === CheckStatus.IDLE) {
@@ -157,9 +226,7 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 	// Render balance information for a single coupon being checked
 	if (couponCode && status !== CheckStatus.IDLE) {
 		return (
-			<div
-				className={`leat-giftcard-balance ${status === CheckStatus.SUCCESS ? "success" : ""}`}
-			>
+			<div className={`leat-giftcard-balance ${status.toLowerCase()}`}>
 				{status === CheckStatus.CHECKING && window.leatGiftCardConfig.checkingText}
 				{status === CheckStatus.SUCCESS && (
 					<>
@@ -175,8 +242,13 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 		<div className="leat-giftcard-balances">
 			{Object.entries(giftCardBalances).map(([code, balance]) => (
 				<div key={code} className="leat-giftcard-balance success">
-					<strong>{code}:</strong> {window.leatGiftCardConfig.balanceText}{" "}
-					<span dangerouslySetInnerHTML={{ __html: balance }} />
+					<div className="gift-card-code-container">
+						<span className="gift-card-code">{code}</span>
+						<span
+							className="gift-card-balance"
+							dangerouslySetInnerHTML={{ __html: balance }}
+						/>
+					</div>
 				</div>
 			))}
 		</div>

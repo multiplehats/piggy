@@ -1,19 +1,21 @@
 import path from "node:path";
 import process from "node:process";
 import TerserPlugin from "terser-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 const __dirname = path.resolve();
 
 export default {
 	mode: process.env?.NODE_ENV || "development",
 	entry: {
 		"giftcard-checkout-integration": "./ts/frontend/giftcard-checkout-integration.ts",
+		"gift-card-styles": "./scss/gift-card-balance.scss",
 	},
 	output: {
 		path: path.resolve(__dirname, "assets/js/frontend"),
 		filename: "[name].js",
 	},
 	resolve: {
-		extensions: [".ts", ".tsx", ".js", ".jsx"],
+		extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"],
 	},
 	module: {
 		rules: [
