@@ -280,8 +280,8 @@ class Settings
 		$settings[] = array(
 			'id'          => 'giftcard_withdraw_order_statuses',
 			'type'        => 'checkboxes',
-			'label'       => __('Gift Card Withdraw Order Statuses', 'leat-crm'),
-			'description' => __('Select which order statuses will trigger a gift card withdrawal to the customer. Gift cards will be withdrawn only once, when the order first reaches any of the selected statuses. For example, if both "Refunded" and "Cancelled" are selected, gift cards will be returned to the customer when the order is either refunded or cancelled, whichever happens first.', 'leat-crm'),
+			'label'       => __('Cancel gift cards on these order statuses', 'leat-crm'),
+			'description' => __('Select which order statuses will invalidate previously issued gift cards. When an order containing a gift card purchase changes to any of these statuses, the gift card will be canceled. This happens only once, when the order first reaches any selected status.', 'leat-crm'),
 			'default'     => array('refunded' => 'on'),
 			'options'     => $this->woocommerce_order_statuses_options(),
 		);
@@ -289,10 +289,18 @@ class Settings
 		$settings[] = array(
 			'id'          => 'giftcard_coupon_balance_update_order_statuses',
 			'type'        => 'checkboxes',
-			'label'       => __('Gift Card Coupon Balance Update Order Statuses', 'leat-crm'),
-			'description' => __('Select which order statuses will trigger a gift card coupon balance update. Gift cards will be updated each time the order reaches any of the selected statuses. The method includes a safeguard to prevent duplicate processing, but selecting multiple statuses means the system will attempt to update the balance at each status change.', 'leat-crm'),
+			'label'       => __('Update gift card balance on these order statuses', 'leat-crm'),
+			'description' => __('Select which order statuses will update a purchased gift card\'s balance in the system. For example, if both "Processing" and "Completed" are selected, the gift card balance will be updated when the order reaches either status. The system prevents duplicate processing.', 'leat-crm'),
 			'default'     => array('processing' => 'on', 'completed' => 'on'),
 			'options'     => $this->woocommerce_order_statuses_options(),
+		);
+
+		$settings[] = array(
+			'id'          => 'giftcard_coupon_allow_acceptance',
+			'type'        => 'switch',
+			'label'       => __('Accept Gift Cards', 'leat-crm'),
+			'description' => __('If enabled, customers will be able to redeem Leat gift cards.', 'leat-crm'),
+			'default'     => 'on',
 		);
 
 		$settings[] = array(

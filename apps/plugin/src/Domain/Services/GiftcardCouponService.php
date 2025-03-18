@@ -11,6 +11,7 @@ use Leat\Settings;
 use Leat\Utils\Logger;
 use Leat\Utils\OrderNotes;
 use Piggy\Api\Models\Giftcards\Giftcard;
+use WP_Query;
 
 /**
  * Class GiftcardCouponService
@@ -123,6 +124,10 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
 
         // Add gift card detection notes to the order when it's created
         add_action('woocommerce_checkout_order_created', [$this, 'add_giftcard_detection_notes_to_order'], 10, 1);
+
+        // Add filter for gift card coupons in admin
+        add_action('restrict_manage_posts', [$this, 'add_giftcard_filter_to_coupon_list']);
+        add_filter('parse_query', [$this, 'filter_coupon_list_by_giftcard']);
     }
 
     /**
@@ -1184,7 +1189,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
             $new_columns[$key] = $value;
 
             if ($key === 'coupon_code') {
-                $new_columns['giftcard'] = __('Gift Card', 'leat-crm');
+                $new_columns['giftcard'] = __('Leat - Gift Card', 'leat-crm');
             }
         }
 
@@ -1349,5 +1354,55 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
 
         // Clear the session data
         WC()->session->set('applied_giftcards', []);
+    }
+
+    /**
+     * Adds a filter button to the coupon list page in admin
+     *
+     * @return void
+     */
+    public function add_giftcard_filter_to_coupon_list(): void
+    {
+        global $typenow;
+
+        // Only on the coupon list page
+        if ($typenow !== 'shop_coupon') {
+            return;
+        }
+
+        $current = isset($_GET['leat_giftcards']) ? $_GET['leat_giftcards'] : '';
+
+        echo '<select name="leat_giftcards" id="filter-by-leat-giftcards">';
+        echo '<option value="">' . esc_html__('All coupons', 'leat') . '</option>';
+        echo '<option value="true" ' . selected($current, 'true', false) . '>' .
+            esc_html__('Gift card coupons only', 'leat') . '</option>';
+        echo '</select>';
+    }
+
+    /**
+     * Filters the coupon list query to show only gift card coupons
+     *
+     * @param WP_Query $query
+     * @return WP_Query
+     */
+    public function filter_coupon_list_by_giftcard(WP_Query $query): WP_Query
+    {
+        global $pagenow, $typenow;
+
+        // Only on the coupon list page when our filter is active
+        if ($pagenow !== 'edit.php' || $typenow !== 'shop_coupon' || !isset($_GET['leat_giftcards']) || $_GET['leat_giftcards'] !== 'true') {
+            return $query;
+        }
+
+        // Add meta query to only show gift card coupons
+        $meta_query = $query->get('meta_query') ?: [];
+        $meta_query[] = [
+            'key'     => WCCoupons::GIFTCARD_UUID,
+            'compare' => 'EXISTS',
+        ];
+
+        $query->set('meta_query', $meta_query);
+
+        return $query;
     }
 }
