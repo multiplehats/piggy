@@ -133,14 +133,14 @@ final class Api
 	 * @return Container
 	 */
 	public static function container(
-		Connection $connection = null,
-		Settings $settings = null,
-		PromotionRulesService $promotion_rules_service = null,
-		SpendRulesService $spend_rules_service = null,
-		SyncVouchers $sync_vouchers = null,
-		SyncPromotions $sync_promotions = null,
-		SyncRewards $sync_rewards = null,
-		WebhookManager $webhook_manager = null,
+		Connection $connection,
+		Settings $settings,
+		PromotionRulesService $promotion_rules_service,
+		SpendRulesService $spend_rules_service,
+		SyncVouchers $sync_vouchers,
+		SyncPromotions $sync_promotions,
+		SyncRewards $sync_rewards,
+		WebhookManager $webhook_manager,
 		$reset = false
 	) {
 		static $container;
