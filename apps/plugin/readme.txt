@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.9.3
+Stable tag: 0.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,3 +174,7 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 = 0.9.3 =
 
 * Bug fix: Missing setting value for disable gift card recipient email field
+
+= 0.9.4 =
+
+* Bug fix: Fixed an issue where a voucher wouldn't sync because of certain checks

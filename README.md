@@ -166,7 +166,8 @@ Add your changelog entries to `apps/plugin/readme.txt` in the Changelog section.
 Update the version number in the following files:
 
 - `apps/plugin/package.json`: Update the `"version"` field
-- `apps/plugin/leat-crm.php`: Update both the `Version:` and `Stable tag:` fields in the plugin header
+- `apps/plugin/leat-crm.php`: Update both the `Version:` and the `LEAT_VERSION` constant
+- `apps/plugin/readme.txt`: Update the `Stable tag:` field in the readme header
 
 ### 3. Generate Translation Files
 

@@ -33,7 +33,7 @@ class SyncVouchers extends BackgroundProcess
 	private const BATCH_SIZE = 100;
 
 	/**
-	 * @var PromotionRules
+	 * @var PromotionRulesService
 	 */
 	private $promotion_rules_service;
 
@@ -286,12 +286,23 @@ class SyncVouchers extends BackgroundProcess
 		try {
 			$voucher_data = $this->format_voucher_webhook($voucher);
 
-			$formatted_promotion_rule = $this->promotion_rules_service->get_promotion_rule_by_leat_uuid($voucher_data['promotion']['uuid']);
+			$promotion_rule_uuid = isset($voucher_data['promotion']['uuid']) ? $voucher_data['promotion']['uuid'] : null;
+
+			if (!$promotion_rule_uuid) {
+				$this->logger->error('Promotion rule not found for voucher ' . $voucher_data['code'], [
+					'voucher' => $voucher_data
+				]);
+
+				return;
+			}
+
+			$formatted_promotion_rule = $this->promotion_rules_service->get_by_uuid($promotion_rule_uuid);
 
 			if (!$formatted_promotion_rule) {
 				$this->logger->error('Promotion rule not found for voucher ' . $voucher_data['code'], [
 					'voucher' => $voucher_data
 				]);
+
 				return;
 			}
 
@@ -314,14 +325,14 @@ class SyncVouchers extends BackgroundProcess
 
 			$coupon = Coupons::find_or_create_coupon_by_code($voucher_data['code']);
 
-			$promotion_rule = $coupon->get_meta('_leat_promotion_uuid');
+			$promotion_rule_uuid = $coupon->get_meta('_leat_promotion_uuid');
 
-			if (! $promotion_rule) {
+			if (! $promotion_rule_uuid) {
 				$this->logger->error('Promotion rule not found for voucher ' . $voucher_data['code']);
 				return;
 			}
 
-			$formatted_promotion_rule = $this->promotion_rules_service->get_promotion_rule_by_leat_uuid($promotion_rule);
+			$formatted_promotion_rule = $this->promotion_rules_service->get_by_uuid($promotion_rule_uuid);
 			$voucher_data = $this->format_voucher_webhook($voucher_data);
 
 			$this->upsert_coupon_for_promotion_rule($formatted_promotion_rule, $voucher_data);
@@ -457,13 +468,20 @@ class SyncVouchers extends BackgroundProcess
 				$coupon->update_meta_data('_leat_contact_uuid', $contact_uuid);
 				$contact      = $this->connection->get_contact_by_uuid($contact_uuid);
 
+				if (!$contact) {
+					$this->logger->error('Contact not found for voucher ' . $voucher_data['code'], [
+						'voucher' => $voucher_data
+					]);
+
+					return;
+				}
+
 				/**
 				 * Silently create a new user, without sending notification emails.
 				 *
 				 * @var \WP_User|WP_Error
 				 */
-				$user = $this->connection->find_or_create_wp_user_by_uuid($contact_uuid);
-
+				$user = $this->connection->find_or_create_wp_user_by_uuid($contact['uuid']);
 
 				if (!$user) {
 					$this->logger->error('Failed to create user for voucher ' . $voucher_data['code']);
@@ -473,7 +491,7 @@ class SyncVouchers extends BackgroundProcess
 
 				$coupon->set_email_restrictions([$user->user_email]);
 
-				// If we have a wp user and the voucher is redeemed, set the coupon status to trash.
+				// If we have a wp user and the voucher is redeemed
 				if ($is_redeemed) {
 					$email = $user->user_email;
 
