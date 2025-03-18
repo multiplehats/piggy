@@ -83,7 +83,7 @@ class GiftcardCouponIntegration implements IntegrationInterface
         // Enqueue the CSS
         wp_enqueue_style(
             'leat-giftcard-styles',
-            $this->package->get_url('assets/css/gift-card-styles.css'),
+            $this->package->get_url('assets/js/css/giftcard-checkout-integration.css'),
             ['woocommerce-inline'],
             $this->package->get_version()
         );
