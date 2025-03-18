@@ -504,8 +504,9 @@ class Bootstrap
 			GiftcardCouponService::class,
 			function (Container $container) {
 				return new GiftcardCouponService(
+					$container->get(Settings::class),
 					$container->get(WPGiftcardCouponRepository::class),
-					$container->get(LeatGiftcardRepository::class)
+					$container->get(LeatGiftcardRepository::class),
 				);
 			}
 		);

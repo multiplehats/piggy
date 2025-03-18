@@ -285,6 +285,16 @@ class Settings
 			'default'     => array('refunded' => 'on'),
 			'options'     => $this->woocommerce_order_statuses_options(),
 		);
+
+		$settings[] = array(
+			'id'          => 'giftcard_coupon_balance_update_order_statuses',
+			'type'        => 'checkboxes',
+			'label'       => __('Gift Card Coupon Balance Update Order Statuses', 'leat-crm'),
+			'description' => __('Select which order statuses will trigger a gift card coupon balance update. Gift cards will be updated each time the order reaches any of the selected statuses. The method includes a safeguard to prevent duplicate processing, but selecting multiple statuses means the system will attempt to update the balance at each status change.', 'leat-crm'),
+			'default'     => array('processing' => 'on', 'completed' => 'on'),
+			'options'     => $this->woocommerce_order_statuses_options(),
+		);
+
 		$settings[] = array(
 			'id'          => 'giftcard_disable_recipient_email',
 			'type'        => 'switch',

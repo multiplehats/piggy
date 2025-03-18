@@ -7,6 +7,7 @@ use Leat\Domain\Interfaces\GiftcardCouponServiceInterface;
 use Leat\Domain\Interfaces\LeatGiftcardRepositoryInterface;
 use Leat\Infrastructure\Constants\WCCoupons;
 use Leat\Infrastructure\Constants\WCOrders;
+use Leat\Settings;
 use Leat\Utils\Logger;
 use Leat\Utils\OrderNotes;
 use Piggy\Api\Models\Giftcards\Giftcard;
@@ -20,6 +21,13 @@ use Piggy\Api\Models\Giftcards\Giftcard;
  */
 class GiftcardCouponService implements GiftcardCouponServiceInterface
 {
+    /**
+     * Settings instance.
+     *
+     * @var Settings
+     */
+    private $settings;
+
     /**
      * Gift card coupon repository instance.
      *
@@ -56,9 +64,11 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      * @param LeatGiftcardRepositoryInterface $leatGiftcardRepository Leat giftcard repository instance.
      */
     public function __construct(
+        Settings $settings,
         WPGiftcardCouponRepositoryInterface $repository,
-        LeatGiftcardRepositoryInterface $leatGiftcardRepository
+        LeatGiftcardRepositoryInterface $leatGiftcardRepository,
     ) {
+        $this->settings = $settings;
         $this->repository = $repository;
         $this->leatGiftcardRepository = $leatGiftcardRepository;
 
@@ -85,10 +95,14 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
 
         // Update gift card balance after order is processed
         add_action('woocommerce_payment_complete', [$this, 'update_giftcard_balance_after_order']);
-        add_action('woocommerce_order_status_completed', [$this, 'update_giftcard_balance_after_order']);
-        add_action('woocommerce_order_status_processing', [$this, 'update_giftcard_balance_after_order']);
 
-        // Handle gift card coupon refunds
+        $balance_update_order_statuses = $this->settings->get_setting_value_by_id('giftcard_coupon_balance_update_order_statuses') ?? ['refunded' => 'on'];
+        foreach ($balance_update_order_statuses as $status => $enabled) {
+            if ('on' === $enabled) {
+                add_action('woocommerce_order_status_' . $status, [$this, 'update_giftcard_balance_after_order'], 10, 1);
+            }
+        }
+
         add_action('woocommerce_order_refunded', [$this, 'handle_giftcard_coupon_refund'], 10, 2);
         add_action('woocommerce_order_status_refunded', [$this, 'handle_giftcard_coupon_refund_by_status'], 10, 1);
         add_action('woocommerce_order_status_changed', [$this, 'handle_giftcard_coupon_refund_by_status_change'], 10, 3);
@@ -662,7 +676,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     OrderNotes::add_success(
                         $order,
                         sprintf(
-                            __('Gift card %s used: %s. Remaining balance: %s (calculated)', 'leat-crm'),
+                            __('No gift card found in Leat. Deducting balance from WooCommerce coupon %s used: %s. Remaining balance: %s (calculated)', 'leat-crm'),
                             $coupon_code,
                             wc_price($actual_discount_used),
                             wc_price($new_balance / 100)

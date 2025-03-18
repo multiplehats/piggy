@@ -87,6 +87,7 @@ export const zBasePluginOptions = z.object({
 	dashboard_spend_cta: adminFields.zTranslatableText,
 	giftcard_order_status: adminFields.zSelect,
 	giftcard_withdraw_order_statuses: adminFields.zCheckboxes,
+	giftcard_coupon_balance_update_order_statuses: adminFields.zCheckboxes,
 	giftcard_disable_recipient_email: adminFields.zSwitch,
 });
 

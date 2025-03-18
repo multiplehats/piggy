@@ -52,6 +52,12 @@
 				/>
 			</div>
 
+			<SettingsCheckboxes
+				class="py-4"
+				{...$settingsState.giftcard_coupon_balance_update_order_statuses}
+				bind:value={$settingsState.giftcard_coupon_balance_update_order_statuses.value}
+			/>
+
 			<SettingsSwitch
 				class="py-4"
 				{...$settingsState.giftcard_disable_recipient_email}
