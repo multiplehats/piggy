@@ -43,7 +43,10 @@
 		"env:reset": "wp-env reset",
 		"env:clean": "wp-env clean all && wp-env start",
 		"env:destroy": "wp-env destroy",
-		"env:restart": "wp-env start --update"
+		"env:restart": "wp-env start --update",
+		"build:react": "webpack --mode=production",
+		"dev:react": "webpack --mode=development --watch",
+		"build:all": "npm run build && npm run build:react"
 	},
 	"devDependencies": {
 		"@codemirror/autocomplete": "^6.18.4",
@@ -71,11 +74,15 @@
 		"@types/lodash-es": "^4.17.12",
 		"@types/node": "^18.19.70",
 		"@types/qs": "^6.9.17",
+		"@types/react": "^18.3.18",
+		"@types/react-dom": "^18.0.0",
 		"@wordpress/env": "^9.10.0",
 		"@wordpress/hooks": "^3.58.0",
 		"@wordpress/i18n": "^4.58.0",
 		"@wordpress/keycodes": "^3.58.0",
+		"@wordpress/plugins": "^7.20.0",
 		"autoprefixer": "^10.4.20",
+		"babel-loader": "^10.0.0",
 		"bits-ui": "^0.5.7",
 		"codemirror": "^6.0.1",
 		"concurrently": "^8.2.2",
@@ -100,14 +107,18 @@
 		"svelte-transition": "^0.0.10",
 		"svelte-writable-derived": "^3.1.1",
 		"tailwindcss": "^3.4.17",
+		"terser-webpack-plugin": "^5.3.6",
 		"tippy.js": "^6.3.7",
+		"ts-loader": "^9.4.2",
 		"tslib": "^2.8.1",
 		"typescript": "^5.7.3",
 		"vanilla-colorful": "^0.7.2",
 		"vite": "^4.5.5",
 		"vite-imagetools": "^6.2.9",
 		"vite-plugin-banner": "^0.7.1",
-		"vite-plugin-external": "^4.3.1"
+		"vite-plugin-external": "^4.3.1",
+		"webpack": "^5.75.0",
+		"webpack-cli": "^5.0.1"
 	},
 	"dependencies": {
 		"@splidejs/svelte-splide": "^0.2.9",
@@ -115,6 +126,7 @@
 		"@wordpress/a11y": "^3.58.0",
 		"@wordpress/html-entities": "^3.58.0",
 		"history": "^5.3.0",
+		"react": "^19.0.0",
 		"slugify": "^1.6.6",
 		"svelte-local-storage-store": "^0.6.4",
 		"svelte-navigator": "^3.2.2"

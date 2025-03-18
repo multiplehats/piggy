@@ -86,7 +86,7 @@ final class AssetsController
 	{
 		add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend'], 80);
 		add_action('admin_enqueue_scripts', [$this, 'enqueue_admin'], 100);
-		add_action('wp_enqueue_scripts', [$this, 'register_giftcard_script'], 90);
+		// add_action('wp_enqueue_scripts', [$this, 'register_giftcard_script'], 90);
 
 		// phpcs:ignore -- this is a base64 encoded SVG icon for the WP admin menu.
 		$icon_svg = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(plugin_dir_path(__FILE__) . 'leat-wp-icon.svg'));
@@ -440,38 +440,5 @@ final class AssetsController
 			'title'     => $page->post_title,
 			'permalink' => get_permalink($page->ID),
 		];
-	}
-
-	/**
-	 * Register the gift card coupon script
-	 */
-	public function register_giftcard_script()
-	{
-		$this->assets_api->register_script(
-			'leat-giftcard-coupon',
-			'ts/frontend/giftcard-coupon-block.ts',
-			'frontend',
-			['wp-element', 'wp-blocks', 'wp-components', 'wp-i18n', 'wc-blocks-checkout']
-		);
-
-		// Add config to the script
-		if (wp_script_is('leat-giftcard-coupon', 'registered')) {
-			$config = [
-				'nonce' => wp_create_nonce('leat_check_giftcard_balance'),
-				'ajaxUrl' => admin_url('admin-ajax.php'),
-				'checkingText' => __('Checking gift card balance...', 'leat-crm'),
-				'balanceText' => __('Gift card balance: ', 'leat-crm'),
-				'errorText' => __('Not a valid gift card or error checking balance.', 'leat-crm'),
-			];
-
-			wp_add_inline_script(
-				'leat-giftcard-coupon',
-				sprintf(
-					'window.leatGiftCardConfig = %s;',
-					wp_json_encode($config)
-				),
-				'before'
-			);
-		}
 	}
 }
