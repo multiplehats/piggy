@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.9.4
+Stable tag: 0.9.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -178,3 +178,8 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 = 0.9.4 =
 
 * Bug fix: Fixed an issue where a voucher wouldn't sync because of certain checks
+
+= 0.9.5 =
+
+* Bug fix: Fixed an issue where having no value in instructions would cause an error
+
