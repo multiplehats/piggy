@@ -10,6 +10,7 @@ use Leat\Domain\Syncing\SyncPromotions;
 use Leat\WebhookManager;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Domain\Syncing\SyncVouchers;
+use Leat\Domain\Services\TierService;
 use Leat\Settings;
 use Leat\Utils\Logger;
 
@@ -89,6 +90,13 @@ class RoutesController
 	protected $spend_rules_service;
 
 	/**
+	 * Tier service.
+	 *
+	 * @var TierService
+	 */
+	protected $tier_service;
+
+	/**
 	 * Leat routes.
 	 *
 	 * @var array
@@ -110,7 +118,8 @@ class RoutesController
 		SyncRewards $sync_rewards,
 		WebhookManager $webhook_manager,
 		PromotionRulesService $promotion_rules_service,
-		SpendRulesService $spend_rules_service
+		SpendRulesService $spend_rules_service,
+		TierService $tier_service
 	) {
 		$this->schema_controller = $schema_controller;
 		$this->logger            = $logger;
@@ -122,6 +131,7 @@ class RoutesController
 		$this->webhook_manager   = $webhook_manager;
 		$this->promotion_rules_service   = $promotion_rules_service;
 		$this->spend_rules_service   = $spend_rules_service;
+		$this->tier_service   = $tier_service;
 
 		$this->routes = [
 			'v1'      => [
@@ -188,7 +198,8 @@ class RoutesController
 			$this->sync_rewards,
 			$this->webhook_manager,
 			$this->promotion_rules_service,
-			$this->spend_rules_service
+			$this->spend_rules_service,
+			$this->tier_service
 		);
 	}
 

@@ -2,37 +2,47 @@
 
 namespace Leat\Domain;
 
+namespace Leat\Domain;
+
+use Leat\Api\Api;
 use Leat\Api\Connection;
 use Leat\Assets\Api as AssetApi;
 use Leat\AssetsController;
 use Leat\Installer;
-use Leat\Registry\Container;
 use Leat\Migration;
-use Leat\Api\Api;
+use Leat\PostTypeController;
+use Leat\RedirectController;
+use Leat\Registry\Container;
+use Leat\Settings;
+use Leat\Utils\Logger;
 use Leat\WebhookManager;
-use Leat\Domain\Services\EarnRules;
-use Leat\Domain\Services\PromotionRulesService;
-use Leat\Domain\Services\SpendRulesService;
-use Leat\Domain\Syncing\SyncVouchers;
-use Leat\Domain\Syncing\SyncPromotions;
-use Leat\Domain\Syncing\SyncRewards;
-use Leat\Domain\Services\LoyaltyManager;
+use Leat\WooCommerceAccountTab;
+
+use Leat\Domain\Services\ApiService;
+use Leat\Domain\Services\Cart\CartManager;
 use Leat\Domain\Services\Customer\CustomerAttributeSync;
 use Leat\Domain\Services\Customer\CustomerCreationHandler;
 use Leat\Domain\Services\Customer\CustomerProfileDisplay;
-use Leat\Domain\Services\Order\OrderProcessor;
-use Leat\Domain\Services\Order\OrderCreditHandler;
-use Leat\Domain\Services\Cart\CartManager;
+use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\GiftcardProduct;
+use Leat\Domain\Services\LoyaltyManager;
+use Leat\Domain\Services\Order\OrderCreditHandler;
+use Leat\Domain\Services\Order\OrderProcessor;
+use Leat\Domain\Services\PromotionRulesService;
+use Leat\Domain\Services\SpendRulesService;
+use Leat\Domain\Services\TierService;
+
 use Leat\Infrastructure\Repositories\WPPromotionRuleRepository;
 use Leat\Infrastructure\Repositories\WPSpendRuleRepository;
-use Leat\PostTypeController;
-use Leat\Settings;
+use Leat\Infrastructure\Repositories\LeatTierRepository;
+
 use Leat\Shortcodes\CustomerDashboardShortcode;
 use Leat\Shortcodes\RewardPointsShortcode;
-use Leat\RedirectController;
-use Leat\WooCommerceAccountTab;
-use Leat\Utils\Logger;
+
+use Leat\Domain\Syncing\SyncPromotions;
+use Leat\Domain\Syncing\SyncRewards;
+use Leat\Domain\Syncing\SyncVouchers;
+
 
 /**
  * Takes care of bootstrapping the plugin.
@@ -296,6 +306,12 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
+			ApiService::class,
+			function () {
+				return new ApiService();
+			}
+		);
+		$this->container->register(
 			EarnRules::class,
 			function () {
 				return new EarnRules();
@@ -329,6 +345,20 @@ class Bootstrap
 				);
 			}
 		);
+
+		$this->container->register(
+			LeatTierRepository::class,
+			function (Container $container) {
+				return new LeatTierRepository($container->get(ApiService::class));
+			}
+		);
+		$this->container->register(
+			TierService::class,
+			function (Container $container) {
+				return new TierService($container->get(LeatTierRepository::class));
+			}
+		);
+
 		$this->container->register(
 			SyncVouchers::class,
 			function (Container $container) {
@@ -471,7 +501,8 @@ class Bootstrap
 					$container->get(SyncVouchers::class),
 					$container->get(SyncPromotions::class),
 					$container->get(SyncRewards::class),
-					$container->get(WebhookManager::class)
+					$container->get(WebhookManager::class),
+					$container->get(TierService::class)
 				);
 			}
 		);

@@ -50,9 +50,9 @@ export class LeatFrontendService {
 		return data;
 	}
 
-	async getContact(userId: number | null) {
+	async getContact(userId: number) {
 		const endpoint = "/leat/v1/contact";
-		const url = userId !== null ? `${endpoint}?userId=${userId}` : endpoint;
+		const url = `${endpoint}?userId=${userId}`;
 
 		const { data, error } = await api.get<GetContactResponse>(url);
 

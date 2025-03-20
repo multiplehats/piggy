@@ -74,13 +74,22 @@ class Contact extends AbstractRoute
 			throw new RouteException('no_user_id', 'User ID is required', 400);
 		}
 
-		$contact         = $this->connection->get_contact_by_wp_id($user_id);
-		$claimed_rewards = $this->connection->get_user_reward_logs($user_id);
+		$contact = $this->connection->get_contact_by_wp_id($user_id);
 
+		if (!isset($contact['uuid'])) {
+			throw new RouteException('no_contact_uuid', 'Contact UUID is required', 400);
+		}
+
+		$contact_uuid = $contact['uuid'];
+
+		$claimed_rewards = $this->connection->get_user_reward_logs($user_id);
+		$tier            = $this->tier_service->get_tier_by_contact_uuid($contact_uuid);
+		error_log(print_r($tier, true));
 		$response = rest_ensure_response(
 			array(
 				'contact'        => $contact,
 				'claimedRewards' => $claimed_rewards,
+				'tier'           => $tier,
 			)
 		);
 

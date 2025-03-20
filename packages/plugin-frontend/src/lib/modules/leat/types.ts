@@ -111,9 +111,16 @@ export type ClaimedReward = {
 	timestamp: string;
 };
 
+export type Tier = {
+	id: string;
+	name: string;
+	position: number;
+};
+
 export type GetContactResponse = {
 	contact: Contact | null;
 	claimedRewards: ClaimedReward[];
+	tier: Tier | null;
 };
 
 export type EarnRule = EarnRuleValueItem;
