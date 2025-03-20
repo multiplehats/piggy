@@ -11,6 +11,7 @@ use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
+use Leat\Domain\Services\TierService;
 use Leat\WebhookManager;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Settings;
@@ -62,6 +63,11 @@ final class Api
 	private $webhook_manager;
 
 	/**
+	 * @var TierService
+	 */
+	private $tier_service;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Connection     $connection      The Connection instance.
@@ -73,6 +79,7 @@ final class Api
 	 * @param SyncPromotions $sync_promotions The SyncPromotions instance.
 	 * @param SyncRewards $sync_rewards The SyncRewards instance.
 	 * @param WebhookManager $webhook_manager The WebhookManager instance.
+	 * @param TierService $tier_service The TierService instance.
 	 */
 	public function __construct(
 		Connection $connection,
@@ -82,7 +89,8 @@ final class Api
 		SyncVouchers $sync_vouchers,
 		SyncPromotions $sync_promotions,
 		SyncRewards $sync_rewards,
-		WebhookManager $webhook_manager
+		WebhookManager $webhook_manager,
+		TierService $tier_service
 	) {
 		$this->connection = $connection;
 		$this->settings = $settings;
@@ -92,6 +100,7 @@ final class Api
 		$this->sync_promotions = $sync_promotions;
 		$this->sync_rewards = $sync_rewards;
 		$this->webhook_manager = $webhook_manager;
+		$this->tier_service = $tier_service;
 	}
 
 	/**
@@ -110,7 +119,8 @@ final class Api
 					$this->sync_vouchers,
 					$this->sync_promotions,
 					$this->sync_rewards,
-					$this->webhook_manager
+					$this->webhook_manager,
+					$this->tier_service
 				)
 					->get(RoutesController::class)
 					->register_all_routes();
@@ -129,18 +139,20 @@ final class Api
 	 * @param SyncPromotions $sync_promotions The SyncPromotions instance.
 	 * @param SyncRewards $sync_rewards The SyncRewards instance.
 	 * @param WebhookManager $webhook_manager The WebhookManager instance.
+	 * @param TierService $tier_service The TierService instance.
 	 * @param boolean       $reset          Used to reset the container to a fresh instance.
 	 * @return Container
 	 */
 	public static function container(
-		Connection $connection = null,
-		Settings $settings = null,
-		PromotionRulesService $promotion_rules_service = null,
-		SpendRulesService $spend_rules_service = null,
-		SyncVouchers $sync_vouchers = null,
-		SyncPromotions $sync_promotions = null,
-		SyncRewards $sync_rewards = null,
-		WebhookManager $webhook_manager = null,
+		Connection $connection,
+		Settings $settings,
+		PromotionRulesService $promotion_rules_service,
+		SpendRulesService $spend_rules_service,
+		SyncVouchers $sync_vouchers,
+		SyncPromotions $sync_promotions,
+		SyncRewards $sync_rewards,
+		WebhookManager $webhook_manager,
+		TierService $tier_service,
 		$reset = false
 	) {
 		static $container;
@@ -208,6 +220,12 @@ final class Api
 			});
 		}
 
+		if ($tier_service) {
+			$container->register(TierService::class, function () use ($tier_service) {
+				return $tier_service;
+			});
+		}
+
 		// Register remaining dependencies
 		$container->register(
 			RoutesController::class,
@@ -222,7 +240,8 @@ final class Api
 					$container->get(SyncRewards::class),
 					$container->get(WebhookManager::class),
 					$container->get(PromotionRulesService::class),
-					$container->get(SpendRulesService::class)
+					$container->get(SpendRulesService::class),
+					$container->get(TierService::class)
 				);
 			}
 		);
@@ -235,7 +254,8 @@ final class Api
 					$container->get(Logger::class),
 					$container->get(Settings::class),
 					$container->get(PromotionRulesService::class),
-					$container->get(SpendRulesService::class)
+					$container->get(SpendRulesService::class),
+					$container->get(TierService::class)
 				);
 			}
 		);

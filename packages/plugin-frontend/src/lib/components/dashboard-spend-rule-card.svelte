@@ -143,6 +143,7 @@
 
 <style>
 	.leat-dashboard-reward-card {
+		border-radius: 0.375rem;
 		position: relative;
 		display: flex;
 		flex-direction: column;

@@ -77,6 +77,19 @@
 				bind:value={$settingsState.dashboard_login_cta.value}
 			/>
 
+			<div class="py-4">
+				<SettingsSwitch
+					{...$settingsState.dashboard_show_tiers}
+					bind:value={$settingsState.dashboard_show_tiers.value}
+				/>
+			</div>
+
+			<SettingsTranslateableInput
+				class="py-4"
+				{...$settingsState.dashboard_nav_tiers}
+				bind:value={$settingsState.dashboard_nav_tiers.value}
+			/>
+
 			<SettingsTranslateableInput
 				class="py-4"
 				{...$settingsState.dashboard_nav_coupons}
