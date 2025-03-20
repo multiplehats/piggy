@@ -5,6 +5,7 @@ import type {
 	GetEarnRulesResponse,
 	GetShopsResponse,
 	GetSpendRulesResponse,
+	GetTiersResponse,
 } from "./types";
 
 export class LeatApiError extends Error {
@@ -55,6 +56,16 @@ export class LeatFrontendService {
 		const url = `${endpoint}?userId=${userId}`;
 
 		const { data, error } = await api.get<GetContactResponse>(url);
+
+		if (error) {
+			throw new LeatApiError(error.status, error.statusText, error.data);
+		}
+
+		return data;
+	}
+
+	async getTiers() {
+		const { data, error } = await api.get<GetTiersResponse>("/leat/v1/tiers");
 
 		if (error) {
 			throw new LeatApiError(error.status, error.statusText, error.data);

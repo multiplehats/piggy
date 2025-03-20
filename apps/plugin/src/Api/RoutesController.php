@@ -143,6 +143,7 @@ class RoutesController
 				Routes\V1\Coupons::IDENTIFIER            => Routes\V1\Coupons::class,
 				Routes\V1\JoinProgram::IDENTIFIER        => Routes\V1\JoinProgram::class,
 				Routes\V1\Contact::IDENTIFIER            => Routes\V1\Contact::class,
+				Routes\V1\Tiers::IDENTIFIER             => Routes\V1\Tiers::class,
 				Routes\V1\WCCategoriesSearch::IDENTIFIER => Routes\V1\WCCategoriesSearch::class,
 			],
 			'private' => [

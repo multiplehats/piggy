@@ -123,6 +123,7 @@
 
 <style>
 	.leat-dashboard-earn-card {
+		border-radius: 0.375rem;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;

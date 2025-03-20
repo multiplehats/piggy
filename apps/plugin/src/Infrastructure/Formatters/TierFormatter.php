@@ -8,17 +8,17 @@ class TierFormatter
 {
     public function format(Tier $tier)
     {
-        // TODO: Missing getMedia() in SDK.
-        // $media_obj = $promotion->getMedia();
-        // $media     = $media_obj ? [
-        // 	'type'  => $media_obj->getType(),
-        // 	'value' => $media_obj->getValue(),
-        // ] : null;
+        $media = $tier->getMedia();
 
         return [
             'id' => $tier->getUuid(),
             'name' => $tier->getName(),
             'position' => $tier->getPosition(),
+            'media' => isset($media) ? array(
+                'type' => $media['type'],
+                'value' => $media['value'],
+            ) : null,
+            'description' => $tier->getDescription() ?? null,
         ];
     }
 }

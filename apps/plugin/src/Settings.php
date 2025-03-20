@@ -184,6 +184,13 @@ class Settings
 			),
 		);
 		$settings[] = array(
+			'id'          => 'dashboard_show_tiers',
+			'default'     => 'on',
+			'type'        => 'switch',
+			'label'       => __('Show tiers', 'leat-crm'),
+			'description' => __('Show the tiers on the dashboard.', 'leat-crm'),
+		);
+		$settings[] = array(
 			'id'          => 'dashboard_myaccount_title',
 			'default'     => array(
 				'default' => __('Loyalty Program', 'leat-crm'),
@@ -216,6 +223,14 @@ class Settings
 			),
 			'type'    => 'translatable_text',
 			'label'   => __('Coupons empty state', 'leat-crm'),
+		);
+		$settings[] = array(
+			'id'      => 'dashboard_nav_tiers',
+			'default' => array(
+				'default' => __('Tiers', 'leat-crm'),
+			),
+			'type'    => 'translatable_text',
+			'label'   => __('Tiers navigation item', 'leat-crm'),
 		);
 		$settings[] = array(
 			'id'      => 'dashboard_coupons_loading_state',

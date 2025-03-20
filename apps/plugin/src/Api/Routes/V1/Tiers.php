@@ -11,21 +11,21 @@ use Leat\Api\Routes\V1\Middleware;
  *
  * @internal
  */
-class Contact extends AbstractRoute
+class Tiers extends AbstractRoute
 {
 	/**
 	 * The route identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'contact';
+	const IDENTIFIER = 'tiers';
 
 	/**
 	 * The schema item identifier.
 	 *
 	 * @var string
 	 */
-	const SCHEMA_TYPE = 'contact';
+	const SCHEMA_TYPE = 'tiers';
 
 	/**
 	 * Get the path of this REST route.
@@ -34,7 +34,7 @@ class Contact extends AbstractRoute
 	 */
 	public function get_path()
 	{
-		return '/contact';
+		return '/tiers';
 	}
 
 	/**
@@ -48,10 +48,7 @@ class Contact extends AbstractRoute
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [$this, 'get_response'],
-				'permission_callback' => function ($request) {
-					$user_id = $request->get_param('userId');
-					return Middleware::is_valid_user(intval($user_id));
-				},
+				'permission_callback' => [Middleware::class, 'is_authorized'],
 			],
 			'schema' => [$this->schema, 'get_public_item_schema'],
 		];
@@ -68,28 +65,11 @@ class Contact extends AbstractRoute
 	 */
 	public function get_route_response(\WP_REST_Request $request)
 	{
-		$user_id = $request->get_param('userId');
-
-		if (! $user_id) {
-			throw new RouteException('no_user_id', 'User ID is required', 400);
-		}
-
-		$contact = $this->connection->get_contact_by_wp_id($user_id);
-
-		if (!isset($contact['uuid'])) {
-			throw new RouteException('no_contact_uuid', 'Contact UUID is required', 400);
-		}
-
-		$contact_uuid = $contact['uuid'];
-
-		$claimed_rewards = $this->connection->get_user_reward_logs($user_id);
-		$tier            = $this->tier_service->get_tier_by_contact_uuid($contact_uuid);
+		$tiers = $this->tier_service->get_tiers();
 
 		$response = rest_ensure_response(
 			array(
-				'contact'        => $contact,
-				'claimedRewards' => $claimed_rewards,
-				'tier'           => $tier,
+				'tiers' => $tiers,
 			)
 		);
 

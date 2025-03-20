@@ -62,6 +62,7 @@ class LeatTierRepository implements LeatTierRepositoryInterface
             }
 
             $tier = Tier::findBy($contact_uuid);
+
             return $tier;
         } catch (\Exception $e) {
             $this->apiService->log_exception($e, 'Error finding tier by contact UUID');
