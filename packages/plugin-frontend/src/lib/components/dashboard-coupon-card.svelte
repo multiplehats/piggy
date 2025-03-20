@@ -5,9 +5,9 @@
 	import { onMount } from "svelte";
 	import { getSpendRuleLabel, getTranslatedText } from "$lib/utils/translated-text";
 	import { creditsName } from "$lib/modules/settings";
-	import type { Tier } from "$lib/modules/leat/types";
+	import type { Coupon } from "$lib/modules/leat/types";
 
-	export let coupon: Tier;
+	export let coupon: Coupon;
 
 	let isCopied = false;
 	let timeoutId: NodeJS.Timeout;
@@ -94,7 +94,6 @@
 
 <style>
 	.leat-dashboard-coupon-card {
-		border-radius: 0.375rem;
 		position: relative;
 		display: flex;
 		flex-direction: column;
