@@ -11,36 +11,42 @@
 	import DashboardTiers from "./dashboard-tiers.svelte";
 	import { QueryKeys } from "$lib/utils/query-keys";
 	import { contactStore } from "$lib/stores";
-	import { apiService } from "$lib/modules/leat";
+	import {
+		getContact,
+		getCoupons,
+		getEarnRules,
+		getSpendRules,
+		getTiers,
+	} from "$lib/modules/leat";
 	import { isLoggedIn, pluginSettings } from "$lib/modules/settings";
 	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	const contactQuery = createQuery({
 		queryKey: [QueryKeys.contact],
-		queryFn: async () => await apiService.getContact(window.leatMiddlewareConfig.userId!),
+		queryFn: async () => await getContact(window.leatMiddlewareConfig.userId!),
 		enabled: window.leatMiddlewareConfig.userId !== null,
 	});
 
 	const couponsQuery = createQuery({
 		queryKey: [QueryKeys.coupons],
-		queryFn: async () => await apiService.getCoupons(window.leatMiddlewareConfig.userId),
+		queryFn: async () => await getCoupons(window.leatMiddlewareConfig.userId),
 		enabled: isLoggedIn,
 	});
 
 	const earnRulesQuery = createQuery({
 		queryKey: [QueryKeys.earnRules],
-		queryFn: async () => await apiService.getEarnRules(),
+		queryFn: async () => await getEarnRules(),
 	});
 
 	const spendRulesQuery = createQuery({
 		queryKey: [QueryKeys.spendRules],
-		queryFn: async () => await apiService.getSpendRules(window.leatMiddlewareConfig.userId),
+		queryFn: async () => await getSpendRules(window.leatMiddlewareConfig.userId),
 		enabled: isLoggedIn,
 	});
 
 	const tiersQuery = createQuery({
 		queryKey: [QueryKeys.tiers],
-		queryFn: async () => await apiService.getTiers(),
+		queryFn: async () => await getTiers(),
 	});
 
 	$: contactStore.set($contactQuery.data ?? null);

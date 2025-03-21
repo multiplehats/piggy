@@ -263,15 +263,7 @@ class SpendRulesService
                     $coupon->set_discount_type('percent');
                 }
 
-                // Set product IDs for product restrictions.
-                // Note: For 100% discounts, we intentionally skip setting product IDs due to
-                // a WooCommerce Store API limitation where product restrictions aren't applied.
-                if (
-                    !empty($formatted_spend_rule['selectedProducts']['value']) &&
-                    intval($rule_amount) !== 100
-                ) {
-                    $coupon->set_product_ids($formatted_spend_rule['selectedProducts']['value']);
-                }
+                $coupon->set_product_ids($formatted_spend_rule['selectedProducts']['value']);
 
                 break;
             case 'ORDER_DISCOUNT':
