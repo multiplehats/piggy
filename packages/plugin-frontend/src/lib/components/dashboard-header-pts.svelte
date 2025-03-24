@@ -7,12 +7,13 @@
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { MutationKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
+	import { joinProgram } from "$lib/modules/leat";
 
 	export let navItems: { icon: any; id: string; text: string; show: boolean }[];
 
 	const joinProgramMutation = createMutation({
 		mutationKey: [MutationKeys.joinProgram],
-		mutationFn: () => leatService.joinProgram(window.leatMiddlewareConfig.userId),
+		mutationFn: () => joinProgram(window.leatMiddlewareConfig.userId),
 		onSuccess: () => {
 			location.reload();
 		},

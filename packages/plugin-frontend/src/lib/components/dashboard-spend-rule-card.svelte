@@ -12,6 +12,7 @@
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
 	import { leatService } from "$lib/config/services";
+	import { claimSpendRule } from "$lib/modules/leat";
 
 	export let rule: SpendRuleValueItem;
 
@@ -37,7 +38,7 @@
 	});
 
 	function handleClaim(id: number) {
-		return leatService.claimSpendRule(id, window.leatMiddlewareConfig.userId);
+		return claimSpendRule(id, window.leatMiddlewareConfig.userId);
 	}
 
 	$: creditsAccumulated = $contactStore?.contact?.balance?.credits ?? 0;

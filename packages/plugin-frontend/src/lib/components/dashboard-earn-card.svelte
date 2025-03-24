@@ -4,11 +4,11 @@
 	import { replaceStrings } from "@leat/lib";
 	import type { EarnRuleType, EarnRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
 	import Button from "./button/button.svelte";
-	import { leatService } from "$lib/config/services";
 	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 	import { getTranslatedText } from "$lib/utils/translated-text";
+	import { claimReward } from "$lib/modules/leat";
 
 	export let earnRule: EarnRuleValueItem;
 
@@ -24,7 +24,7 @@
 	const queryClient = useQueryClient();
 	const claimRewardMutation = createMutation({
 		mutationKey: [MutationKeys.claimReward],
-		mutationFn: () => leatService.claimReward(earnRule.id, window.leatMiddlewareConfig.userId),
+		mutationFn: () => claimReward(earnRule.id, window.leatMiddlewareConfig.userId),
 		onSuccess: () => {
 			const handle = earnRule.socialHandle.value;
 			if (handle) {
