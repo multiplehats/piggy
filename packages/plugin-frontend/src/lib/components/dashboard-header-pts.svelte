@@ -2,7 +2,6 @@
 	import { createMutation } from "@tanstack/svelte-query";
 	import { replaceStrings } from "@leat/lib";
 	import { Button } from "$lib/components/button/index.js";
-	import { leatService } from "$lib/config/services";
 	import { isLoggedIn, pluginSettings, wcSettings } from "$lib/modules/settings";
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { MutationKeys } from "$lib/utils/query-keys";
