@@ -314,9 +314,31 @@ class GiftcardProduct
 			return;
 		}
 
-		$recipient_email = get_post_meta($order_id, '_giftcard_recipient_email', true);
+		// First check if order contains any gift cards
+		$has_giftcards = false;
+		foreach ($order->get_items() as $item) {
+			/**
+			 * WooCommerce order item object.
+			 *
+			 * @var \WC_Order_Item $item
+			 */
+			$product = $item->get_product();
 
+			$product_id = $product->get_parent_id() ?: $product->get_id();
+			if (get_post_meta($product_id, '_leat_giftcard_program_uuid', true)) {
+				$has_giftcards = true;
+				break;
+			}
+		}
+
+		// Only proceed if order contains gift cards
+		if (!$has_giftcards) {
+			return;
+		}
+
+		$recipient_email = get_post_meta($order_id, '_giftcard_recipient_email', true);
 		$disable_recipient_email = $this->settings->get_setting_value_by_id('giftcard_disable_recipient_email');
+
 		if ($disable_recipient_email === 'on' || empty($recipient_email)) {
 			$recipient_email = $order->get_billing_email();
 
@@ -327,8 +349,6 @@ class GiftcardProduct
 				OrderNotes::add($order, __('No gift card recipient email provided. Using customer\'s email address.', 'leat-crm'));
 			}
 		}
-
-		$has_giftcards = false;
 
 		foreach ($order->get_items() as $item) {
 			/**
@@ -341,7 +361,6 @@ class GiftcardProduct
 			$program_uuid = get_post_meta($product_id, '_leat_giftcard_program_uuid', true);
 
 			if ($program_uuid) {
-				$has_giftcards = true;
 				$quantity       = $item->get_quantity();
 				$amount_in_cents = $this->calculate_giftcard_amount($product, $item, $quantity, $order_id);
 
