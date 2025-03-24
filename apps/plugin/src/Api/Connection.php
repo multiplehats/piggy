@@ -230,6 +230,35 @@ class Connection
 	}
 
 	/**
+	 * Get a contact by email.
+	 *
+	 * @param string $email The contact's email address.
+	 * @return array|null
+	 */
+	public function get_contact_by_email(string $email)
+	{
+		try {
+			$client = $this->init_client();
+
+			if (! $client) {
+				return null;
+			}
+
+			$contact = Contact::findOneBy(['email' => $email]);
+
+			if (! $contact) {
+				$this->logger->error('Contact not found', ['email' => $email]);
+				return null;
+			}
+
+			return $this->format_contact($contact);
+		} catch (\Throwable $th) {
+			$this->log_exception($th, 'Get Contact By Email Error');
+			return null;
+		}
+	}
+
+	/**
 	 * Get a contact by UUID.
 	 *
 	 * @param string $uuid The contact UUID.

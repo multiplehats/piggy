@@ -187,3 +187,7 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 
 * Bug fix: Fixed an issue where custom orders statuses by guest customers would still create contacts.
 * Feature: Added support for loyalty program tiers system
+
+= 0.9.7 =
+
+* Feature: Added new "Only Reward Known Contacts" setting to control credit attribution. When enabled, credits will only be awarded to contacts that already exist in Leat.

@@ -69,6 +69,12 @@
 				{/if}
 			</div>
 
+			<SettingsSwitch
+				class="py-4"
+				{...$settingsState.only_reward_known_contacts}
+				bind:value={$settingsState.only_reward_known_contacts.value}
+			/>
+
 			<div class="py-4">
 				<SettingsSelect
 					class="pb-4"

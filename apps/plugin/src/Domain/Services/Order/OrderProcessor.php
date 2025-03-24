@@ -136,7 +136,6 @@ class OrderProcessor
             $user_id = $order->get_user_id();
             $guest_checkout = empty($user_id);
 
-            // Skip processing if it's a guest checkout and include_guests is off
             if ($guest_checkout && !$this->include_guests) {
                 return;
             }
@@ -283,6 +282,18 @@ class OrderProcessor
             if (!$email) {
                 $this->logger->error('No email provided for guest order: ' . $order->get_id());
                 return null;
+            }
+
+            if ($this->settings->get_setting_value_by_id('only_reward_known_contacts') === 'on') {
+                $contact = $this->connection->get_contact_by_email($email);
+                if (!$contact) {
+                    $this->logger->info('Skipping credit attribution for unknown guest contact: ' . $email);
+                    return null;
+                }
+                $uuid = $contact['uuid'];
+                $order->update_meta_data('_leat_contact_uuid', $uuid);
+                $order->save();
+                return $uuid;
             }
 
             $contact = $this->connection->create_contact($email);

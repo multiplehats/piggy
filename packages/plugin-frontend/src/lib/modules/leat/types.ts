@@ -4,13 +4,6 @@ import type {
 	SpendRuleValueItem,
 } from "@leat/types/plugin/settings/adminTypes";
 
-export type Shop = {
-	uuid: string;
-	name: string;
-};
-
-export type GetShopsResponse = Shop[];
-
 export type Rewards = {
 	uuid: string;
 	title: string;
