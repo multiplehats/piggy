@@ -307,6 +307,13 @@ class Settings
 			'description' => __('If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer\'s own email address.', 'leat-crm'),
 			'default'     => 'off',
 		);
+		$settings[] = array(
+			'id'          => 'only_reward_known_contacts',
+			'type'        => 'switch',
+			'label'       => __('Only Reward Known Contacts', 'leat-crm'),
+			'description' => __('If enabled, credits will only be attributed to contacts that already exist in Leat. New contacts will not be created automatically.', 'leat-crm'),
+			'default'     => 'off',
+		);
 
 		/**
 		 * Filter the default settings.

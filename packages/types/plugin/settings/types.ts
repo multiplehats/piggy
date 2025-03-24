@@ -90,6 +90,7 @@ export const zBasePluginOptions = z.object({
 	giftcard_order_status: adminFields.zSelect,
 	giftcard_withdraw_order_statuses: adminFields.zCheckboxes,
 	giftcard_disable_recipient_email: adminFields.zSwitch,
+	only_reward_known_contacts: adminFields.zSwitch,
 });
 
 /**
