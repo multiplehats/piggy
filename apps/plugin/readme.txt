@@ -186,3 +186,4 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 = 0.9.6 =
 
 * Bug fix: Fixed an issue where custom orders statuses by guest customers would still create contacts.
+* Feature: Added support for loyalty program tiers system
