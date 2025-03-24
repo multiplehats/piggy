@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.9.5
+Stable tag: 0.9.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -183,3 +183,7 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 
 * Bug fix: Fixed an issue where having no value in instructions would cause an error
 
+= 0.9.6 =
+
+* Bug fix: Fixed an issue where custom orders statuses by guest customers would still create contacts.
+* Feature: Added support for loyalty program tiers system
