@@ -11,7 +11,6 @@
 	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
-	import { leatService } from "$lib/config/services";
 	import { claimSpendRule } from "$lib/modules/leat";
 
 	export let rule: SpendRuleValueItem;
