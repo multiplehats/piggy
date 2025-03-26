@@ -3,6 +3,7 @@ export const QueryKeys = {
 	spendRules: "spendRules",
 	coupons: "coupons",
 	contact: "contact",
+	tiers: "tiers",
 } as const;
 
 export const MutationKeys = {

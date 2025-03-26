@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.9.4
+Stable tag: 0.9.71
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -178,3 +178,16 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 = 0.9.4 =
 
 * Bug fix: Fixed an issue where a voucher wouldn't sync because of certain checks
+
+= 0.9.5 =
+
+* Bug fix: Fixed an issue where having no value in instructions would cause an error
+
+= 0.9.6 =
+
+* Bug fix: Fixed an issue where custom orders statuses by guest customers would still create contacts.
+* Feature: Added support for loyalty program tiers system
+
+= 0.9.7 =
+
+* Feature: Added new "Only Reward Known Contacts" setting to control credit attribution. When enabled, credits will only be awarded to contacts that already exist in Leat.

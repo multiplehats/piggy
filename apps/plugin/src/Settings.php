@@ -184,6 +184,13 @@ class Settings
 			),
 		);
 		$settings[] = array(
+			'id'          => 'dashboard_show_tiers',
+			'default'     => 'on',
+			'type'        => 'switch',
+			'label'       => __('Show tiers', 'leat-crm'),
+			'description' => __('Show the tiers on the dashboard.', 'leat-crm'),
+		);
+		$settings[] = array(
 			'id'          => 'dashboard_myaccount_title',
 			'default'     => array(
 				'default' => __('Loyalty Program', 'leat-crm'),
@@ -216,6 +223,14 @@ class Settings
 			),
 			'type'    => 'translatable_text',
 			'label'   => __('Coupons empty state', 'leat-crm'),
+		);
+		$settings[] = array(
+			'id'      => 'dashboard_nav_tiers',
+			'default' => array(
+				'default' => __('Tiers', 'leat-crm'),
+			),
+			'type'    => 'translatable_text',
+			'label'   => __('Tiers navigation item', 'leat-crm'),
 		);
 		$settings[] = array(
 			'id'      => 'dashboard_coupons_loading_state',
@@ -308,6 +323,13 @@ class Settings
 			'type'        => 'switch',
 			'label'       => __('Disable Gift Card Recipient Email', 'leat-crm'),
 			'description' => __('If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer\'s own email address.', 'leat-crm'),
+			'default'     => 'off',
+		);
+		$settings[] = array(
+			'id'          => 'only_reward_known_contacts',
+			'type'        => 'switch',
+			'label'       => __('Only Reward Known Contacts', 'leat-crm'),
+			'description' => __('If enabled, credits will only be attributed to contacts that already exist in Leat. New contacts will not be created automatically.', 'leat-crm'),
 			'default'     => 'off',
 		);
 

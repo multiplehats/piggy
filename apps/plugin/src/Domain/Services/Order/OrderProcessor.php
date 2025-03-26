@@ -53,9 +53,14 @@ class OrderProcessor
     private $settings;
 
     /**
-     * Constructor.
+     * Include guests
      *
+     * @var bool
+     */
+    private $include_guests;
 
+    /**
+     * Constructor.
      *
      * @param Connection $connection API connection instance.
      * @param EarnRules $earn_rules  Earn rules service instance.
@@ -66,6 +71,8 @@ class OrderProcessor
         $this->earn_rules = $earn_rules;
         $this->settings = $settings;
         $this->logger = new Logger();
+
+        $this->include_guests = $this->settings->get_setting_value_by_id('include_guests') === 'on';
     }
 
     /**
@@ -86,6 +93,10 @@ class OrderProcessor
             $user_id = $order->get_user_id();
             $guest_checkout = empty($user_id);
 
+            if ($guest_checkout && !$this->include_guests) {
+                return;
+            }
+
             $uuid = $this->get_order_uuid($order, $guest_checkout);
 
             if (!$uuid) {
@@ -97,7 +108,6 @@ class OrderProcessor
                 return;
             }
 
-            // Sync attributes
             if ($guest_checkout) {
                 $this->connection->sync_guest_attributes($order, $uuid);
             } else {
@@ -114,9 +124,7 @@ class OrderProcessor
     /**
      * Processes an order during checkout.
      *
-     * Creates or links loyalty accounts and syncs basic attributes during the checkout process.
-     *
-
+     * Creates or links loyalty accounts and syncs basic attributes during the checkout process.*
      *
      * @param int $order_id WooCommerce order ID.
      * @return void
@@ -127,6 +135,10 @@ class OrderProcessor
             $order = $this->get_order($order_id);
             $user_id = $order->get_user_id();
             $guest_checkout = empty($user_id);
+
+            if ($guest_checkout && !$this->include_guests) {
+                return;
+            }
 
             $uuid = $this->process_checkout_contact($order, $guest_checkout);
 
@@ -156,6 +168,10 @@ class OrderProcessor
             $order = $context->order;
             $user_id = $order->get_user_id();
             $guest_checkout = empty($user_id);
+
+            if ($guest_checkout && !$this->include_guests) {
+                return;
+            }
 
             $uuid = $this->process_checkout_contact($order, $guest_checkout);
 
@@ -266,6 +282,18 @@ class OrderProcessor
             if (!$email) {
                 $this->logger->error('No email provided for guest order: ' . $order->get_id());
                 return null;
+            }
+
+            if ($this->settings->get_setting_value_by_id('only_reward_known_contacts') === 'on') {
+                $contact = $this->connection->get_contact_by_email($email);
+                if (!$contact) {
+                    $this->logger->info('Skipping credit attribution for unknown guest contact: ' . $email);
+                    return null;
+                }
+                $uuid = $contact['uuid'];
+                $order->update_meta_data('_leat_contact_uuid', $uuid);
+                $order->save();
+                return $uuid;
             }
 
             $contact = $this->connection->create_contact($email);

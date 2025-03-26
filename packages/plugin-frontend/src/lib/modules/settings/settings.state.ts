@@ -53,6 +53,7 @@ const initialWcSettingsState: IWooSettings = {
 		privacy: defaultStorePage,
 		shop: defaultStorePage,
 		terms: defaultStorePage,
+		leat_dashboard: defaultStorePage,
 	},
 	wcAssetUrl: "",
 	wcVersion: "",

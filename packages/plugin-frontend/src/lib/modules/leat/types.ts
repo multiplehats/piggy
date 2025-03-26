@@ -4,13 +4,6 @@ import type {
 	SpendRuleValueItem,
 } from "@leat/types/plugin/settings/adminTypes";
 
-export type Shop = {
-	uuid: string;
-	name: string;
-};
-
-export type GetShopsResponse = Shop[];
-
 export type Rewards = {
 	uuid: string;
 	title: string;
@@ -111,9 +104,25 @@ export type ClaimedReward = {
 	timestamp: string;
 };
 
+export type Tier = {
+	id: string;
+	name: string;
+	position: number;
+	media: {
+		type: string;
+		value: string;
+	} | null;
+	description: string | null;
+};
+
 export type GetContactResponse = {
 	contact: Contact | null;
 	claimedRewards: ClaimedReward[];
+	tier: Tier | null;
+};
+
+export type GetTiersResponse = {
+	tiers: Tier[];
 };
 
 export type EarnRule = EarnRuleValueItem;

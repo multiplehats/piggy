@@ -6,6 +6,7 @@ use Leat\Api\SchemaController;
 use Leat\Api\Schemas\ExtendSchema;
 use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
+use Leat\Domain\Services\TierService;
 use Leat\Settings;
 use Leat\Utils\Logger;
 

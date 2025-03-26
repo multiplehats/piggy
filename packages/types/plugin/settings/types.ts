@@ -79,6 +79,8 @@ export const zBasePluginOptions = z.object({
 	dashboard_login_cta: adminFields.zTranslatableText,
 	dashboard_nav_coupons: adminFields.zTranslatableText,
 	dashboard_nav_coupons_empty_state: adminFields.zTranslatableText,
+	dashboard_nav_tiers: adminFields.zTranslatableText,
+	dashboard_show_tiers: adminFields.zSwitch,
 	dashboard_coupons_loading_state: adminFields.zTranslatableText,
 	dashboard_nav_earn: adminFields.zTranslatableText,
 	dashboard_nav_rewards: adminFields.zTranslatableText,
@@ -90,6 +92,7 @@ export const zBasePluginOptions = z.object({
 	giftcard_coupon_balance_update_order_statuses: adminFields.zCheckboxes,
 	giftcard_disable_recipient_email: adminFields.zSwitch,
 	giftcard_coupon_allow_acceptance: adminFields.zSwitch,
+	only_reward_known_contacts: adminFields.zSwitch,
 });
 
 /**

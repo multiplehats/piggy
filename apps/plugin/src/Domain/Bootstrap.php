@@ -29,12 +29,14 @@ use Leat\Domain\Services\Order\OrderCreditHandler;
 use Leat\Domain\Services\Order\OrderProcessor;
 use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
+use Leat\Domain\Services\TierService;
 
 use Leat\Infrastructure\Blocks\GiftcardCouponIntegration;
 use Leat\Infrastructure\Repositories\WPGiftcardRepository;
 use Leat\Infrastructure\Repositories\WPGiftcardCouponRepository;
 use Leat\Infrastructure\Repositories\WPPromotionRuleRepository;
 use Leat\Infrastructure\Repositories\WPSpendRuleRepository;
+use Leat\Infrastructure\Repositories\LeatTierRepository;
 
 use Leat\Shortcodes\CustomerDashboardShortcode;
 use Leat\Shortcodes\RewardPointsShortcode;
@@ -351,6 +353,20 @@ class Bootstrap
 				);
 			}
 		);
+
+		$this->container->register(
+			LeatTierRepository::class,
+			function (Container $container) {
+				return new LeatTierRepository($container->get(ApiService::class));
+			}
+		);
+		$this->container->register(
+			TierService::class,
+			function (Container $container) {
+				return new TierService($container->get(LeatTierRepository::class));
+			}
+		);
+
 		$this->container->register(
 			SyncVouchers::class,
 			function (Container $container) {
@@ -531,7 +547,8 @@ class Bootstrap
 					$container->get(SyncPromotions::class),
 					$container->get(SyncRewards::class),
 					$container->get(WebhookManager::class),
-					$container->get(WPGiftcardCouponRepository::class)
+					$container->get(WPGiftcardCouponRepository::class),
+					$container->get(TierService::class)
 				);
 			}
 		);

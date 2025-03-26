@@ -12,6 +12,7 @@ use Leat\Domain\Syncing\SyncVouchers;
 use Leat\WebhookManager;
 use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
+use Leat\Domain\Services\TierService;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Settings;
 use Leat\Utils\Logger;
@@ -107,6 +108,13 @@ abstract class AbstractRoute implements RouteInterface
 	protected $spend_rules_service;
 
 	/**
+	 * Tier service.
+	 *
+	 * @var TierService
+	 */
+	protected $tier_service;
+
+	/**
 	 * The routes schema.
 	 *
 	 * @var string
@@ -137,7 +145,8 @@ abstract class AbstractRoute implements RouteInterface
 		SyncRewards $sync_rewards,
 		WebhookManager $webhook_manager,
 		PromotionRulesService $promotion_rules_service,
-		SpendRulesService $spend_rules_service
+		SpendRulesService $spend_rules_service,
+		TierService $tier_service
 	) {
 		$this->schema_controller = $schema_controller;
 		$this->logger            = $logger;
@@ -150,6 +159,7 @@ abstract class AbstractRoute implements RouteInterface
 		$this->webhook_manager   = $webhook_manager;
 		$this->promotion_rules_service = $promotion_rules_service;
 		$this->spend_rules_service = $spend_rules_service;
+		$this->tier_service      = $tier_service;
 	}
 
 	/**

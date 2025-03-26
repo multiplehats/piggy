@@ -9,8 +9,6 @@
 
 	export let coupon: Coupon;
 
-	$: ({ rule, type } = coupon);
-
 	let isCopied = false;
 	let timeoutId: NodeJS.Timeout;
 	let isClipboardSupported: boolean;
@@ -49,23 +47,22 @@
 	</div>
 
 	<h4 class="leat-dashboard-coupon-card__header">
-		{#if type === "spend_rule"}
+		{#if coupon.type === "spend_rule"}
 			{getSpendRuleLabel(
-				getTranslatedText(rule.label.value),
-				// @ts-expect-error -- This does exist, but we need to separate the types
-				rule.creditCost.value,
+				getTranslatedText(coupon.rule.label.value),
+				coupon.rule.creditCost.value,
 				$creditsName,
-				rule.discountValue?.value,
-				rule.discountType.value
+				coupon.rule.discountValue?.value,
+				coupon.rule.discountType.value
 			)}
-		{:else if type === "promotion_rule"}
-			{getTranslatedText(rule.label.value)}
+		{:else if coupon.type === "promotion_rule"}
+			{getTranslatedText(coupon.rule.label.value)}
 		{/if}
 	</h4>
 
-	{#if rule.instructions.value}
+	{#if coupon.type === "spend_rule" && coupon.rule.instructions?.value}
 		<p class="leat-dashboard-coupon-card__description">
-			{getTranslatedText(rule.instructions.value)}
+			{getTranslatedText(coupon.rule.instructions.value)}
 		</p>
 	{/if}
 
