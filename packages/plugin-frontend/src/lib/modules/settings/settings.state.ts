@@ -1,6 +1,6 @@
 import { derived, writable } from "svelte/store";
 import type { IWooSettings, PluginOptionsFrontend } from "@leat/types/plugin";
-import { getTranslatedText } from "$lib/utils/translated-text";
+import { getTranslatedText } from "@leat/i18n";
 
 export const currentLanguage = window?.leatMiddlewareConfig?.currentLanguage || "en_US";
 

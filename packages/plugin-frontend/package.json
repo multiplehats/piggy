@@ -43,6 +43,7 @@
 		"@leat/lib": "workspace:^",
 		"@leat/tailwind-config": "workspace:^",
 		"@leat/types": "workspace:*",
+		"@leat/i18n": "workspace:*",
 		"@popperjs/core": "^2.11.8",
 		"@rgossiaux/svelte-headlessui": "^2.0.0",
 		"@sveltejs/kit": "^2.15.2",

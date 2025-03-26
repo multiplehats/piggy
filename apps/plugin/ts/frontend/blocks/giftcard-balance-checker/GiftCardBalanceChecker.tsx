@@ -15,19 +15,10 @@ type GiftCardBalanceCheckerProps = {
 	context?: string;
 };
 
-type GiftCardConfig = {
-	nonce: string;
-	ajaxUrl: string;
-	checkingText: string;
-	balanceText: string;
-	errorText: string;
-};
-
 // Add typings for window object
 declare global {
 	// eslint-disable-next-line ts/consistent-type-definitions
 	interface Window {
-		leatGiftCardConfig: GiftCardConfig;
 		wc: {
 			blocksCheckout: {
 				registerCheckoutFilters: (

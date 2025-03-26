@@ -1,0 +1,25 @@
+{
+	"name": "@leat/i18n",
+	"version": "0.0.0",
+	"type": "module",
+	"main": "./src/index.ts",
+	"types": "./src/index.ts",
+	"license": "MIT",
+	"scripts": {
+		"lint": "prettier --check --ignore-path=../../.prettierignore . && eslint \".\"",
+		"format": "prettier --write --ignore-path=../../.prettierignore ."
+	},
+	"devDependencies": {
+		"@leat/tsconfig": "workspace:*",
+		"@leat/types": "workspace:*",
+		"@types/qs": "^6.9.17",
+		"qs": "^6.13.1",
+		"svelte": "^4.2.19",
+		"zod": "^3.24.1"
+	},
+	"dependencies": {
+		"clsx": "^2.1.1",
+		"tailwind-merge": "^1.14.0",
+		"tailwind-variants": "^0.1.20"
+	}
+}

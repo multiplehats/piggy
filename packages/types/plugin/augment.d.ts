@@ -10,7 +10,13 @@ declare global {
 		// WooCommerce settings
 		leatWcSettings: IWooSettings;
 		leatSpentRules: SpendRuleValueItem[] | null;
-
+		leatGiftCardConfig: {
+			nonce: string;
+			ajaxUrl: string;
+			checkingText: string;
+			balanceText: string;
+			errorText: string;
+		};
 		// WP Fetch middleware config
 		leatMiddlewareConfig: {
 			apiKeySet: boolean;

@@ -6,8 +6,8 @@
 	import { claimSpendRule, replaceStrings } from "@leat/lib";
 	import type { SpendRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
 	import { __ } from "@wordpress/i18n";
-	import Button from "./button/button.svelte";
-	import { getSpendRuleLabel, getTranslatedText } from "$lib/utils/translated-text";
+	import { getSpendRuleLabel, getTranslatedText } from "@leat/i18n";
+	import { Button } from "$lib/components/button/index.js";
 	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";

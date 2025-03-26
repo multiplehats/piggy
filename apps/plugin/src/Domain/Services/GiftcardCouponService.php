@@ -144,20 +144,8 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
     {
         // Hook script registration to the proper WordPress hook
         add_action('wp_enqueue_scripts', function () {
-
-            // Register React component script for WooCommerce Blocks
-            // wp_register_script(
-            //     'leat-giftcard-react-components',
-            //     plugin_dir_url(dirname(dirname(dirname(__FILE__)))) . 'assets/js/frontend/giftcard-checkout-integration.js',
-            //     ['wp-element', 'wp-i18n', 'wp-plugins', 'wp-hooks', 'jquery'],
-            //     '1.0.0',
-            //     true
-            // );
-
-            // Add script data to window.leatGiftCardConfig
             wp_localize_script('leat-giftcard-coupon', 'leatGiftCardConfig', [
                 'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('leat_check_giftcard_balance'),
                 'checkingText' => __('Checking gift card balance...', 'leat-crm'),
                 'balanceText' => __('Gift card balance: ', 'leat-crm'),
                 'errorText' => __('Not a valid gift card or error checking balance.', 'leat-crm'),
@@ -166,14 +154,10 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
             // Use the same config for React component
             wp_localize_script('leat-giftcard-react-components', 'leatGiftCardConfig', [
                 'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('leat_check_giftcard_balance'),
                 'checkingText' => __('Checking gift card balance...', 'leat-crm'),
                 'balanceText' => __('Gift card balance: ', 'leat-crm'),
                 'errorText' => __('Not a valid gift card or error checking balance.', 'leat-crm'),
             ]);
-
-            // Don't automatically enqueue - let the block registration handle it
-            // Integration will enqueue them when needed
         }, 20); // Higher priority to ensure WooCommerce Blocks has loaded
     }
 

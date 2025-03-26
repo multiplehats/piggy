@@ -5,6 +5,7 @@
 	import Layers from "lucide-svelte/icons/layers";
 	import Tag from "lucide-svelte/icons/tag";
 	import { getContact, getCoupons, getEarnRules, getSpendRules, getTiers } from "@leat/lib";
+	import { getTranslatedText } from "@leat/i18n";
 	import DashboardCoupons from "./dashboard-coupons.svelte";
 	import DashboardEarn from "./dashboard-earn.svelte";
 	import DashboardHeaderPts from "./dashboard-header-pts.svelte";
@@ -13,7 +14,6 @@
 	import { QueryKeys } from "$lib/utils/query-keys";
 	import { contactStore } from "$lib/stores";
 	import { isLoggedIn, pluginSettings } from "$lib/modules/settings";
-	import { getTranslatedText } from "$lib/utils/translated-text";
 
 	const contactQuery = createQuery({
 		queryKey: [QueryKeys.contact],
