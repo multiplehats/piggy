@@ -2,6 +2,7 @@ import { getGiftcardBalance } from "@leat/lib";
 import React, { useEffect, useState } from "react";
 import { __ } from "@wordpress/i18n";
 import { registerPlugin } from "@wordpress/plugins";
+import { getTranslatedText } from "@leat/i18n";
 import "./giftcard-balance-checker.scss";
 import type { GetGiftcardBalanceResponse } from "@leat/lib/src/queries/types";
 
@@ -68,8 +69,6 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 	const [status, setStatus] = useState<CheckStatus>(CheckStatus.IDLE);
 	const [balance, setBalance] = useState<string | null>(null);
 	const [giftCardBalances, setGiftCardBalances] = useState<Record<string, string>>({});
-
-	console.info("cart", cart);
 
 	const checkBalance = async (code: string): Promise<void> => {
 		if (!code || code.length < 9) {
@@ -206,10 +205,12 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 	if (couponCode && status !== CheckStatus.IDLE) {
 		return (
 			<div className={`leat-giftcard-balance ${status.toLowerCase()}`}>
-				{status === CheckStatus.CHECKING && window.leatGiftCardConfig.checkingText}
+				{status === CheckStatus.CHECKING &&
+					getTranslatedText(window.leatGiftCardConfig.checkingText)}
 				{status === CheckStatus.SUCCESS && (
 					<>
-						{window.leatGiftCardConfig.balanceText} <strong>{balance}</strong>
+						{getTranslatedText(window.leatGiftCardConfig.balanceText)}{" "}
+						<strong>{balance}</strong>
 					</>
 				)}
 			</div>
@@ -222,6 +223,7 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 			{Object.entries(giftCardBalances).map(([code, balance]) => (
 				<div key={code} className="leat-giftcard-balance success">
 					<div className="gift-card-code-container">
+						<span>{getTranslatedText(window.leatGiftCardConfig.balanceText)}</span>
 						<span className="gift-card-code">{code}</span>
 						<span
 							className="gift-card-balance"

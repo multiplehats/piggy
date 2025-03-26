@@ -97,8 +97,11 @@ importers:
       '@kucrut/vite-for-wp':
         specifier: ^0.10.0
         version: 0.10.0(rollup-plugin-external-globals@0.13.0(rollup@4.30.1))(vite-plugin-external@4.3.1)(vite@4.5.5(@types/node@18.19.70)(sass@1.86.0)(terser@5.39.0))
+      '@leat/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@leat/lib':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/lib
       '@leat/plugin-admin':
         specifier: workspace:^

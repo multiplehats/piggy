@@ -325,6 +325,27 @@ class Settings
 			'description' => __('If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer\'s own email address.', 'leat-crm'),
 			'default'     => 'off',
 		);
+
+		$settings[] = array(
+			'id'          => 'giftcard_checking_balance_text',
+			'type'        => 'translatable_text',
+			'label'       => __('Checking Balance Text', 'leat-crm'),
+			'description' => __('The text shown while checking a gift card balance.', 'leat-crm'),
+			'default'     => array(
+				'default' => __('Checking gift card balance...', 'leat-crm'),
+			),
+		);
+
+		$settings[] = array(
+			'id'          => 'giftcard_balance_text',
+			'type'        => 'translatable_text',
+			'label'       => __('Balance Text', 'leat-crm'),
+			'description' => __('The text shown before displaying the gift card balance.', 'leat-crm'),
+			'default'     => array(
+				'default' => __('Gift card balance: ', 'leat-crm'),
+			),
+		);
+
 		$settings[] = array(
 			'id'          => 'only_reward_known_contacts',
 			'type'        => 'switch',

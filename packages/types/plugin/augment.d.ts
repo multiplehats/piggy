@@ -1,6 +1,6 @@
 import type { Hooks } from "@wordpress/hooks";
 import type { IWooSettings, PluginOptionsFrontend } from "./settings";
-import type { SpendRuleValueItem } from "./settings/adminTypes";
+import type { SpendRuleValueItem, TranslatableText } from "./settings/adminTypes";
 
 declare global {
 	// eslint-disable-next-line ts/consistent-type-definitions
@@ -13,8 +13,8 @@ declare global {
 		leatGiftCardConfig: {
 			nonce: string;
 			ajaxUrl: string;
-			checkingText: string;
-			balanceText: string;
+			checkingText: TranslatableText["value"];
+			balanceText: TranslatableText["value"];
 			errorText: string;
 		};
 		// WP Fetch middleware config

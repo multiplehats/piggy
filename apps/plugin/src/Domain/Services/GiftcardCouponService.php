@@ -134,7 +134,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         add_filter('parse_query', [$this, 'filter_coupon_list_by_giftcard']);
 
         // Register and enqueue scripts for the gift card coupon functionality
-        $this->register_scripts();
+        // $this->register_scripts();
     }
 
     /**
@@ -146,16 +146,18 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         add_action('wp_enqueue_scripts', function () {
             wp_localize_script('leat-giftcard-coupon', 'leatGiftCardConfig', [
                 'ajaxUrl' => admin_url('admin-ajax.php'),
-                'checkingText' => __('Checking gift card balance...', 'leat-crm'),
-                'balanceText' => __('Gift card balance: ', 'leat-crm'),
+                'nonce' => wp_create_nonce('leat_check_giftcard_balance'),
+                'checkingText' => $this->settings->get_setting_value_by_id('giftcard_checking_balance_text'),
+                'balanceText' => $this->settings->get_setting_value_by_id('giftcard_balance_text'),
                 'errorText' => __('Not a valid gift card or error checking balance.', 'leat-crm'),
             ]);
 
             // Use the same config for React component
             wp_localize_script('leat-giftcard-react-components', 'leatGiftCardConfig', [
                 'ajaxUrl' => admin_url('admin-ajax.php'),
-                'checkingText' => __('Checking gift card balance...', 'leat-crm'),
-                'balanceText' => __('Gift card balance: ', 'leat-crm'),
+                'nonce' => wp_create_nonce('leat_check_giftcard_balance'),
+                'checkingText' => $this->settings->get_setting_value_by_id('giftcard_checking_balance_text'),
+                'balanceText' => $this->settings->get_setting_value_by_id('giftcard_balance_text'),
                 'errorText' => __('Not a valid gift card or error checking balance.', 'leat-crm'),
             ]);
         }, 20); // Higher priority to ensure WooCommerce Blocks has loaded

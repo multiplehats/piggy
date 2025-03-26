@@ -133,8 +133,6 @@ export async function getGiftcardBalance(couponCode: string) {
 		couponCode,
 	});
 
-	console.log(data);
-
 	if (error || !data) {
 		if (error) {
 			throw new LeatApiError(error.status, error.statusText, error.data);

@@ -570,14 +570,14 @@ class Bootstrap
 			add_action(
 				'woocommerce_blocks_cart_block_registration',
 				function ($integration_registry) {
-					$integration_registry->register(new GiftcardCouponIntegration($this->container->get(Package::class)));
+					$integration_registry->register(new GiftcardCouponIntegration($this->container->get(Package::class), $this->container->get(Settings::class)));
 				}
 			);
 
 			add_action(
 				'woocommerce_blocks_checkout_block_registration',
 				function ($integration_registry) {
-					$integration_registry->register(new GiftcardCouponIntegration($this->container->get(Package::class)));
+					$integration_registry->register(new GiftcardCouponIntegration($this->container->get(Package::class), $this->container->get(Settings::class)));
 				}
 			);
 		}

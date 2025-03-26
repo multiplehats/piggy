@@ -4,6 +4,7 @@ namespace Leat\Infrastructure\Blocks;
 
 use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 use Leat\Domain\Package;
+use Leat\Settings;
 
 /**
  * Class GiftcardCouponIntegration
@@ -20,13 +21,22 @@ class GiftcardCouponIntegration implements IntegrationInterface
     private $package;
 
     /**
+     * Settings instance for accessing plugin settings.
+     *
+     * @var Settings
+     */
+    private $settings;
+
+    /**
      * Constructor.
      *
      * @param Package $package The package instance.
+     * @param Settings $settings The settings instance.
      */
-    public function __construct(Package $package)
+    public function __construct(Package $package, Settings $settings)
     {
         $this->package = $package;
+        $this->settings = $settings;
     }
 
     /**
@@ -139,8 +149,8 @@ class GiftcardCouponIntegration implements IntegrationInterface
         return [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('leat_check_giftcard_balance'),
-            'checkingText' => __('Checking gift card balance...', 'leat-crm'),
-            'balanceText' => __('Gift card balance: ', 'leat-crm'),
+            'checkingText' => $this->settings->get_setting_value_by_id('giftcard_checking_balance_text'),
+            'balanceText' => $this->settings->get_setting_value_by_id('giftcard_balance_text'),
             'errorText' => __('Not a valid gift card or error checking balance.', 'leat-crm'),
         ];
     }
