@@ -251,6 +251,11 @@ class WPGiftcardCouponRepository implements WPGiftcardCouponRepositoryInterface
      */
     public function is_giftcard(\WC_Coupon $coupon): bool
     {
+        if (!$coupon || !$coupon->get_id()) {
+            $this->logger->error('Invalid coupon object passed to is_giftcard');
+            return false;
+        }
+
         return $coupon->get_meta(WCCoupons::GIFTCARD_TYPE) === 'giftcard';
     }
 }

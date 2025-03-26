@@ -14,6 +14,7 @@ use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
 use Leat\Domain\Services\TierService;
 use Leat\Domain\Syncing\SyncRewards;
+use Leat\Infrastructure\Repositories\WPGiftcardCouponRepository;
 use Leat\Settings;
 use Leat\Utils\Logger;
 use WP_Error;
@@ -108,6 +109,13 @@ abstract class AbstractRoute implements RouteInterface
 	protected $spend_rules_service;
 
 	/**
+	 * WPGiftcardCouponRepository.
+	 *
+	 * @var WPGiftcardCouponRepository
+	 */
+	protected $wp_giftcard_coupon_repository;
+
+	/**
 	 * Tier service.
 	 *
 	 * @var TierService
@@ -146,6 +154,7 @@ abstract class AbstractRoute implements RouteInterface
 		WebhookManager $webhook_manager,
 		PromotionRulesService $promotion_rules_service,
 		SpendRulesService $spend_rules_service,
+		WPGiftcardCouponRepository $wp_giftcard_coupon_repository,
 		TierService $tier_service
 	) {
 		$this->schema_controller = $schema_controller;
@@ -159,6 +168,7 @@ abstract class AbstractRoute implements RouteInterface
 		$this->webhook_manager   = $webhook_manager;
 		$this->promotion_rules_service = $promotion_rules_service;
 		$this->spend_rules_service = $spend_rules_service;
+		$this->wp_giftcard_coupon_repository = $wp_giftcard_coupon_repository;
 		$this->tier_service      = $tier_service;
 	}
 

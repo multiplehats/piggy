@@ -120,6 +120,28 @@ class GiftcardProductService
 
         // Check if we've already processed this order
         $giftcards_created = get_post_meta($order_id, WCOrders::GIFT_CARD_CREATED, true);
+
+        $has_giftcards = false;
+        foreach ($order->get_items() as $item) {
+            /**
+             * WooCommerce order item object.
+             *
+             * @var \WC_Order_Item $item
+             */
+            $product = $item->get_product();
+
+            $product_id = $product->get_parent_id() ?: $product->get_id();
+            if (get_post_meta($product_id, '_leat_giftcard_program_uuid', true)) {
+                $has_giftcards = true;
+                break;
+            }
+        }
+
+        // Only proceed if order contains gift cards
+        if (!$has_giftcards) {
+            return;
+        }
+
         if ($giftcards_created) {
             $this->logger->info('Giftcards already created for order', ['order_id' => $order_id]);
             OrderNotes::add_warning($order, 'Attempted to process gift cards again, but they were already created.');
@@ -146,8 +168,6 @@ class GiftcardProductService
             return;
         }
 
-        $has_giftcards = false;
-
         foreach ($items as $item) {
             $product_id = wc_get_order_item_meta($item->get_id(), '_product_id', true);
             if (!$product_id) {
@@ -159,7 +179,6 @@ class GiftcardProductService
                 continue;
             }
 
-            $has_giftcards = true;
             $quantity = $item->get_quantity();
             $product = wc_get_product($product_id);
             if (!$product) {

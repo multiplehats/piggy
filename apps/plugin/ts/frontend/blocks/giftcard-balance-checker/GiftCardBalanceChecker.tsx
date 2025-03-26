@@ -1,8 +1,9 @@
-import { api } from "@leat/lib";
+import { getGiftcardBalance } from "@leat/lib";
 import React, { useEffect, useState } from "react";
 import { __ } from "@wordpress/i18n";
 import { registerPlugin } from "@wordpress/plugins";
 import "./giftcard-balance-checker.scss";
+import type { GetGiftcardBalanceResponse } from "@leat/lib/src/queries/types";
 
 type GiftCardBalanceCheckerProps = {
 	couponCode?: string;
@@ -54,26 +55,14 @@ enum CheckStatus {
 
 type GiftCardResponse = {
 	success: boolean;
-	data?: {
-		is_giftcard: boolean;
-		balance: string;
-	};
+	data?: GetGiftcardBalanceResponse;
 };
 
 async function checkGiftcardBalance(couponCode: string): Promise<GiftCardResponse> {
 	try {
-		const formData = new FormData();
-		formData.append("action", "leat_check_giftcard_balance");
-		formData.append("coupon_code", couponCode);
-		formData.append("nonce", window.leatGiftCardConfig.nonce);
+		const res = await getGiftcardBalance(couponCode);
 
-		const response = await fetch(window.leatGiftCardConfig.ajaxUrl, {
-			method: "POST",
-			body: formData,
-		});
-
-		const data = await response.json();
-		return data;
+		return { success: true, data: res };
 	} catch (error) {
 		console.error("Error checking gift card balance", error);
 		return { success: false };
@@ -86,7 +75,7 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 	cart,
 }) => {
 	const [status, setStatus] = useState<CheckStatus>(CheckStatus.IDLE);
-	const [balance, setBalance] = useState<string>("");
+	const [balance, setBalance] = useState<string | null>(null);
 	const [giftCardBalances, setGiftCardBalances] = useState<Record<string, string>>({});
 
 	console.info("cart", cart);
@@ -99,8 +88,8 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 		setStatus(CheckStatus.CHECKING);
 		const response = await checkGiftcardBalance(code);
 
-		if (response.success && response.data?.is_giftcard) {
-			const balanceValue = response.data?.balance || "";
+		if (response.success && response.data?.balance) {
+			const balanceValue = response.data?.balance || 0;
 			if (balanceValue) {
 				setBalance(balanceValue);
 
