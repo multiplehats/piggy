@@ -1,7 +1,8 @@
+import { api } from "@leat/lib";
 import React, { useEffect, useState } from "react";
 import { __ } from "@wordpress/i18n";
 import { registerPlugin } from "@wordpress/plugins";
-import "./scss/giftcard-balance-checker.scss";
+import "./giftcard-balance-checker.scss";
 
 type GiftCardBalanceCheckerProps = {
 	couponCode?: string;
@@ -44,7 +45,6 @@ declare global {
 	}
 }
 
-// Status enum for the balance checking process
 enum CheckStatus {
 	IDLE = "idle",
 	CHECKING = "checking",
@@ -60,7 +60,6 @@ type GiftCardResponse = {
 	};
 };
 
-// Function to check gift card balance (same as original)
 async function checkGiftcardBalance(couponCode: string): Promise<GiftCardResponse> {
 	try {
 		const formData = new FormData();
@@ -92,7 +91,6 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 
 	console.info("cart", cart);
 
-	// Function to check the balance
 	const checkBalance = async (code: string): Promise<void> => {
 		if (!code || code.length < 9) {
 			return;

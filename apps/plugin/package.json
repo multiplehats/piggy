@@ -20,12 +20,15 @@
 	"type": "module",
 	"scripts": {
 		"clean": "rm -rf .turbo node_modules",
-		"dev": "concurrently \"pnpm dev:frontend\" \"pnpm dev:admin\"",
+		"dev": "concurrently \"pnpm dev:frontend\" \"pnpm dev:admin\" \"pnpm dev:react\"",
 		"dev:frontend": "NODE_ENV=development vite --config vite-frontend.config.ts --port 4001",
 		"dev:admin": "NODE_ENV=development vite --config vite-admin.config.ts --port 4002",
+		"dev:react": "webpack --mode=development --watch",
 		"build": "pnpm build:frontend && pnpm build:admin",
 		"build:frontend": "NODE_ENV=production vite build --config vite-frontend.config.ts",
 		"build:admin": "NODE_ENV=production vite build --config vite-admin.config.ts",
+		"build:react": "webpack --mode=production",
+		"build:all": "pnpm run build && pnpm run build:react",
 		"analyze": "ANALYZE=true pnpm build",
 		"i18n": "php -d memory_limit=4096M $(which wp) i18n --allow-root make-pot . languages/leat.pot --slug=leat-crm --domain=leat-crm --include=src,dist/admin/assets,dist/frontend/assets --exclude=bin,node_modules,tests,vendor,dist/admin/assets/codemirror-*.js,dist/admin/assets/vendor-*.js,dist/admin/assets/*.js.map",
 		"typecheck": "svelte-check --tsconfig ./tsconfig.json",
@@ -43,10 +46,7 @@
 		"env:reset": "wp-env reset",
 		"env:clean": "wp-env clean all && wp-env start",
 		"env:destroy": "wp-env destroy",
-		"env:restart": "wp-env start --update",
-		"build:react": "webpack --mode=production",
-		"dev:react": "webpack --mode=development --watch",
-		"build:all": "npm run build && npm run build:react"
+		"env:restart": "wp-env start --update"
 	},
 	"devDependencies": {
 		"@codemirror/autocomplete": "^6.18.4",

@@ -27,9 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		// Initialize the gift card balance checker component
 		initGiftCardIntegration();
-		console.log("Gift card integration initialized successfully");
 	} catch (error) {
 		console.error("Error initializing gift card integration:", error);
 	}

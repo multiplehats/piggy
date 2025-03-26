@@ -7,8 +7,10 @@ const __dirname = path.resolve();
 export default {
 	mode: process.env?.NODE_ENV || "development",
 	entry: {
-		"giftcard-checkout-integration": "./ts/frontend/giftcard-checkout-integration.ts",
-		"gift-card-styles": "./ts/frontend/scss/giftcard-balance-checker.scss",
+		"giftcard-checkout-integration":
+			"./ts/frontend/blocks/giftcard-balance-checker/giftcard-checkout-integration.ts",
+		"gift-card-styles":
+			"./ts/frontend/blocks/giftcard-balance-checker/giftcard-balance-checker.scss",
 	},
 	output: {
 		path: path.resolve(__dirname, "assets/js/frontend"),

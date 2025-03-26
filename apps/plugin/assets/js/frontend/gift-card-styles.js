@@ -10,13 +10,13 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./ts/frontend/scss/giftcard-balance-checker.scss":
-/*!********************************************************!*\
-  !*** ./ts/frontend/scss/giftcard-balance-checker.scss ***!
-  \********************************************************/
+/***/ "./ts/frontend/blocks/giftcard-balance-checker/giftcard-balance-checker.scss":
+/*!***********************************************************************************!*\
+  !*** ./ts/frontend/blocks/giftcard-balance-checker/giftcard-balance-checker.scss ***!
+  \***********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://@leat/plugin/./ts/frontend/scss/giftcard-balance-checker.scss?");
+eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://@leat/plugin/./ts/frontend/blocks/giftcard-balance-checker/giftcard-balance-checker.scss?");
 
 /***/ })
 
@@ -43,7 +43,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extr
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
 /******/ 	var __webpack_exports__ = {};
-/******/ 	__webpack_modules__["./ts/frontend/scss/giftcard-balance-checker.scss"](0, __webpack_exports__, __webpack_require__);
+/******/ 	__webpack_modules__["./ts/frontend/blocks/giftcard-balance-checker/giftcard-balance-checker.scss"](0, __webpack_exports__, __webpack_require__);
 /******/ 	
 /******/ })()
 ;
