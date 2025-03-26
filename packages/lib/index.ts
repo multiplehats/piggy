@@ -3,3 +3,4 @@ export * from "./replace-strings";
 export * from "./svelte-actions";
 export * from "./src/api";
 export * from "./src/queries";
+export * from "./src/queries/types";

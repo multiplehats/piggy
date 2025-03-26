@@ -3,7 +3,7 @@
 	import Gift from "lucide-svelte/icons/gift";
 	import { cubicOut } from "svelte/easing";
 	import { tweened } from "svelte/motion";
-	import { replaceStrings } from "@leat/lib";
+	import { claimSpendRule, replaceStrings } from "@leat/lib";
 	import type { SpendRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
 	import { __ } from "@wordpress/i18n";
 	import Button from "./button/button.svelte";
@@ -11,7 +11,6 @@
 	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
-	import { claimSpendRule } from "$lib/modules/leat";
 
 	export let rule: SpendRuleValueItem;
 

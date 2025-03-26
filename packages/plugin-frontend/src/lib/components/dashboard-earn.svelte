@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { replaceStrings } from "@leat/lib";
+	import type { GetEarnRulesResponse } from "@leat/lib";
 	import DashboardEarnCard from "./dashboard-earn-card.svelte";
 	import { creditsName, pluginSettings } from "$lib/modules/settings";
 	import { getTranslatedText } from "$lib/utils/translated-text";
-	import type { GetEarnRulesResponse } from "$lib/modules/leat/types";
 
 	export let earnRules: GetEarnRulesResponse | null | undefined = undefined;
 

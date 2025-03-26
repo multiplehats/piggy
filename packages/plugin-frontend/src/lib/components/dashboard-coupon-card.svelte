@@ -3,9 +3,9 @@
 	import Copy from "lucide-svelte/icons/copy";
 	import Gift from "lucide-svelte/icons/gift";
 	import { onMount } from "svelte";
+	import type { Coupon } from "@leat/lib";
 	import { getSpendRuleLabel, getTranslatedText } from "$lib/utils/translated-text";
 	import { creditsName } from "$lib/modules/settings";
-	import type { Coupon } from "$lib/modules/leat/types";
 
 	export let coupon: Coupon;
 

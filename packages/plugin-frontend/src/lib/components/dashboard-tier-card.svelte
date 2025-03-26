@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { __ } from "@wordpress/i18n";
-	import type { Tier } from "$lib/modules/leat/types";
+	import type { Tier } from "@leat/lib";
 	import { cn } from "$lib/utils/cn";
 
 	export let tier: Tier;

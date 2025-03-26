@@ -1,5 +1,5 @@
 import { derived, writable } from "svelte/store";
-import type { GetContactResponse } from "$lib/modules/leat/types";
+import type { GetContactResponse } from "@leat/lib";
 
 export const contactStore = writable<GetContactResponse | null>(null);
 
