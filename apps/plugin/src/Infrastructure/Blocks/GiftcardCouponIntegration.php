@@ -72,12 +72,12 @@ class GiftcardCouponIntegration implements IntegrationInterface
         }
 
         // Register the giftcard checkout integration script
-        $asset_file_path = $this->package->get_path('assets/js/frontend/giftcard-checkout-integration.asset.php');
+        $asset_file_path = $this->package->get_path('dist/frontend/blocks/giftcard-checkout-integration.asset.php');
         $asset = file_exists($asset_file_path) ? include($asset_file_path) : ['dependencies' => [], 'version' => '1.0.0'];
 
         wp_register_script(
             'leat-giftcard-checkout-integration',
-            $this->package->get_url('assets/js/frontend/giftcard-checkout-integration.js'),
+            $this->package->get_url('dist/frontend/blocks/giftcard-checkout-integration.js'),
             $asset['dependencies'] ?? [],
             $asset['version'] ?? $this->package->get_version(),
             true

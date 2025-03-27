@@ -13,7 +13,7 @@ export default {
 			"./ts/frontend/blocks/giftcard-balance-checker/giftcard-balance-checker.scss",
 	},
 	output: {
-		path: path.resolve(__dirname, "assets/js/frontend"),
+		path: path.resolve(__dirname, "dist/frontend/blocks"),
 		filename: "[name].js",
 		assetModuleFilename: "../css/[name][ext]",
 	},
