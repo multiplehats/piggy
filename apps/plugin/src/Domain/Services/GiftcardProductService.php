@@ -112,6 +112,8 @@ class GiftcardProductService
      */
     public function process_giftcard_order($order_id): void
     {
+        $this->logger->info("Starting to process gift card order: {$order_id}", ['order_id' => $order_id], true);
+
         $order = $this->repository->get_order($order_id);
         if (!$order) {
             $this->logger->error("Order not found: {$order_id}");
@@ -120,6 +122,7 @@ class GiftcardProductService
 
         // Check if we've already processed this order
         $giftcards_created = get_post_meta($order_id, WCOrders::GIFT_CARD_CREATED, true);
+        $this->logger->info("Gift cards already created for order {$order_id}: " . ($giftcards_created ? 'yes' : 'no'), [], true);
 
         $has_giftcards = false;
         foreach ($order->get_items() as $item) {
@@ -133,33 +136,44 @@ class GiftcardProductService
             $product_id = $product->get_parent_id() ?: $product->get_id();
             if (get_post_meta($product_id, '_leat_giftcard_program_uuid', true)) {
                 $has_giftcards = true;
+                $this->logger->info("Found gift card product in order: {$product_id}", [
+                    'product_id' => $product_id,
+                    'order_id' => $order_id,
+                ], true);
                 break;
             }
         }
 
         // Only proceed if order contains gift cards
         if (!$has_giftcards) {
+            $this->logger->info("No gift cards found in order {$order_id}, skipping processing", [
+                'order_id' => $order_id,
+            ], true);
             return;
         }
 
         if ($giftcards_created) {
-            $this->logger->info('Giftcards already created for order', ['order_id' => $order_id]);
+            $this->logger->info('Giftcards already created for order', [
+                'order_id' => $order_id,
+            ], true);
             OrderNotes::add_warning($order, 'Attempted to process gift cards again, but they were already created.');
             return;
         }
 
         $recipient_email = $this->repository->get_recipient_email_for_order($order_id);
+        $this->logger->info("Retrieved recipient email for order {$order_id}: " . ($recipient_email ?: 'null'), [
+            'order_id' => $order_id,
+        ], true);
 
         $disable_recipient_email = $this->settings->get_setting_value_by_id('giftcard_disable_recipient_email');
-        if ($disable_recipient_email === 'on' || empty($recipient_email)) {
-            $recipient_email = $order->get_billing_email();
+        $this->logger->info("Gift card recipient email disabled setting: " . ($disable_recipient_email === 'on' ? 'yes' : 'no'), [
+            'order_id' => $order_id,
+        ], true);
 
-            // Add a note that we're using the customer's email
-            if ($disable_recipient_email === 'on') {
-                OrderNotes::add($order, __('Gift card recipient email is disabled in settings. Using customer\'s email address.', 'leat-crm'));
-            } else {
-                OrderNotes::add($order, __('No gift card recipient email provided. Using customer\'s email address.', 'leat-crm'));
-            }
+        if ($disable_recipient_email === 'on') {
+            OrderNotes::add($order, __('Gift card recipient email is disabled in settings. No email will be sent.', 'leat-crm'));
+        } else if (empty($recipient_email)) {
+            OrderNotes::add_warning($order, __('No gift card recipient email was found. This could mean that something went wrong with the checkout process.', 'leat-crm'));
         }
 
         $items = $this->repository->get_order_items($order_id);
@@ -252,29 +266,49 @@ class GiftcardProductService
                 wc_add_order_item_meta($item->get_id(), WCOrders::GIFT_CARD_UUID . '_' . $i, $giftcard_uuid);
                 wc_add_order_item_meta($item->get_id(), WCOrders::GIFT_CARD_UUID, $giftcard_uuid);
 
-                // Send the giftcard email.
-                $email_sent = $this->send_giftcard_email($giftcard_uuid, $recipient_email);
-
-                if ($email_sent) {
-                    OrderNotes::add_success(
+                // Send the giftcard email only if recipient email is set and email sending is enabled
+                if ($disable_recipient_email === 'on') {
+                    OrderNotes::add(
                         $order,
                         sprintf(
-                            // translators: 1: gift card UUID, 2: recipient email.
-                            __('Gift card %1$s email sent to %2$s.', 'leat-crm'),
-                            $giftcard_uuid,
-                            $recipient_email
+                            // translators: 1: gift card UUID
+                            __('Gift card %1$s created. Gift Card input field is disabled in settings, so no email will be sent.', 'leat-crm'),
+                            $giftcard_uuid
+                        )
+                    );
+                } else if (empty($recipient_email)) {
+                    OrderNotes::add_warning(
+                        $order,
+                        sprintf(
+                            // translators: 1: gift card UUID
+                            __('Gift card %1$s created but no recipient email was found to send it to.', 'leat-crm'),
+                            $giftcard_uuid
                         )
                     );
                 } else {
-                    OrderNotes::add_error(
-                        $order,
-                        sprintf(
-                            // translators: 1: gift card UUID, 2: recipient email.
-                            __('Failed to send gift card %1$s email to %2$s.', 'leat-crm'),
-                            $giftcard_uuid,
-                            $recipient_email
-                        )
-                    );
+                    $email_sent = $this->send_giftcard_email($giftcard_uuid, $recipient_email);
+
+                    if ($email_sent) {
+                        OrderNotes::add_success(
+                            $order,
+                            sprintf(
+                                // translators: 1: gift card UUID, 2: recipient email.
+                                __('Gift card %1$s email sent to %2$s.', 'leat-crm'),
+                                $giftcard_uuid,
+                                $recipient_email
+                            )
+                        );
+                    } else {
+                        OrderNotes::add_error(
+                            $order,
+                            sprintf(
+                                // translators: 1: gift card UUID, 2: recipient email.
+                                __('Failed to send gift card %1$s email to %2$s.', 'leat-crm'),
+                                $giftcard_uuid,
+                                $recipient_email
+                            )
+                        );
+                    }
                 }
             }
         }
@@ -354,8 +388,14 @@ class GiftcardProductService
      */
     private function send_giftcard_email($giftcard_uuid, $recipient_email): bool
     {
+        $this->logger->info("Attempting to send gift card email", [
+            'giftcard_uuid' => $giftcard_uuid,
+            'recipient_email' => $recipient_email
+        ]);
+
         try {
             // Sending a giftcard email requires a Leat contact.
+            $this->logger->info("Creating contact for recipient email: {$recipient_email}");
             $contact = $this->connection->create_contact($recipient_email);
 
             if (!$contact || !isset($contact['uuid'])) {
@@ -365,19 +405,29 @@ class GiftcardProductService
 
             $this->logger->info("Created contact for recipient email: {$recipient_email}, UUID: {$contact['uuid']}");
 
+            $this->logger->info("Sending gift card email to contact", [
+                'giftcard_uuid' => $giftcard_uuid,
+                'contact_uuid' => $contact['uuid']
+            ]);
+
             $response = $this->connection->send_giftcard_email($giftcard_uuid, $contact['uuid']);
+
+            // Log the raw response for debugging
+            $this->logger->info("Raw response from send_giftcard_email: " . json_encode($response));
 
             // The response is a Response object, not an array
             // Just check if it's not false (which would indicate an error)
             if ($response !== false) {
                 $this->logger->info("Gift card email sent successfully to {$recipient_email}");
                 return true;
+            } else {
+                $this->logger->error("Failed to send gift card email - response was false");
+                return false;
             }
         } catch (\Exception $e) {
             $this->logger->error("Error sending giftcard email: " . $e->getMessage());
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -747,8 +797,8 @@ class GiftcardProductService
             $this->logger->warning("No nonce found for gift card recipient email");
         }
 
-        // Remove the permission check as regular customers don't have edit_shop_orders capability
-        // This check is only needed for admin-side operations, not during checkout
+        // Log whether the email field exists in POST data
+        $this->logger->info("Checking if giftcard_recipient_email exists in POST data: " . (isset($_POST['giftcard_recipient_email']) ? 'yes' : 'no'));
 
         if (! empty($_POST['giftcard_recipient_email'])) {
             $email = sanitize_email(wp_unslash($_POST['giftcard_recipient_email']));
