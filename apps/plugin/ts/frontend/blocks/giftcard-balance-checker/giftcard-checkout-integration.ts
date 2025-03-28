@@ -5,19 +5,17 @@
  */
 import { initGiftCardIntegration } from "./GiftCardBalanceChecker";
 
-// Initialize the integration when the DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
+// Initialize the integration when WordPress is ready
+function init() {
 	try {
 		// Verify required dependencies are available
 		if (
-			typeof window.wp === "undefined" ||
 			typeof window.wc === "undefined" ||
 			typeof window.wc.blocksCheckout === "undefined" ||
 			(typeof window.wc.blocksCheckout.ExperimentalOrderMeta === "undefined" &&
-				typeof window.wc.blocksCheckout.ExperimentalDiscountsMeta === "undefined") ||
-			typeof window.wp.plugins === "undefined"
+				typeof window.wc.blocksCheckout.ExperimentalDiscountsMeta === "undefined")
 		) {
-			console.error("Required WordPress or WooCommerce Blocks components not found");
+			console.error("Required WooCommerce Blocks components not found");
 			return;
 		}
 
@@ -31,4 +29,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	} catch (error) {
 		console.error("Error initializing gift card integration:", error);
 	}
-});
+}
+
+// Try to initialize when DOM is ready
+document.addEventListener("DOMContentLoaded", init);
+
+// Also try to initialize when WordPress is ready
+if (typeof window.wp !== "undefined" && typeof window.wp.domReady === "function") {
+	window.wp.domReady(init);
+} else {
+	// Fallback to DOMContentLoaded if wp.domReady is not available
+	document.addEventListener("DOMContentLoaded", init);
+}

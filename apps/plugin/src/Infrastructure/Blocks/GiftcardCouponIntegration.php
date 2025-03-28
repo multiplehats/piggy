@@ -66,34 +66,47 @@ class GiftcardCouponIntegration implements IntegrationInterface
      */
     public function register_scripts_and_styles(): void
     {
-        // Only add styles on cart/checkout pages, with proper function checks
         if (function_exists('is_cart') && function_exists('is_checkout') && (!is_cart() && !is_checkout()) && !has_block('woocommerce/checkout') && !has_block('woocommerce/cart')) {
             return;
         }
 
-        // Register the giftcard checkout integration script
         $asset_file_path = $this->package->get_path('dist/frontend/blocks/giftcard-checkout-integration.asset.php');
         $asset = file_exists($asset_file_path) ? include($asset_file_path) : ['dependencies' => [], 'version' => '1.0.0'];
 
+        $js_files = glob($this->package->get_path('dist/frontend/blocks/giftcard-checkout-integration.*.js'));
+        $latest_js = !empty($js_files) ? basename(end($js_files)) : 'giftcard-checkout-integration.js';
+
+        // Ensure we have the required WordPress dependencies
+        $dependencies = array_merge(['wp-element', 'wp-plugins', 'wp-i18n'], $asset['dependencies'] ?? []);
+
         wp_register_script(
             'leat-giftcard-checkout-integration',
-            $this->package->get_url('dist/frontend/blocks/giftcard-checkout-integration.js'),
-            $asset['dependencies'] ?? [],
+            $this->package->get_url('dist/frontend/blocks/' . $latest_js),
+            $dependencies,
             $asset['version'] ?? $this->package->get_version(),
             true
         );
 
-        // Localize the script with required data
+        // Add a check to ensure wp.plugins is available
+        wp_add_inline_script(
+            'leat-giftcard-checkout-integration',
+            'if (typeof wp === "undefined" || typeof wp.plugins === "undefined") { console.error("wp.plugins is not available"); }',
+            'before'
+        );
+
         wp_localize_script(
             'leat-giftcard-checkout-integration',
             'leatGiftCardConfig',
             $this->get_script_data()
         );
 
-        // Enqueue the CSS
+        $css_files = glob($this->package->get_path('dist/frontend/blocks/gift-card-styles.*.css'));
+        $latest_css = !empty($css_files) ? basename(end($css_files)) : 'gift-card-styles.css';
+
+        // Enqueue the styles
         wp_enqueue_style(
             'leat-giftcard-styles',
-            $this->package->get_url('assets/js/css/giftcard-checkout-integration.css'),
+            $this->package->get_url('dist/frontend/blocks/' . $latest_css),
             ['woocommerce-inline'],
             $this->package->get_version()
         );

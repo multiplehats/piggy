@@ -2,6 +2,7 @@ import path from "node:path";
 import process from "node:process";
 import TerserPlugin from "terser-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import DependenciesPlugin from "@wordpress/dependency-extraction-webpack-plugin";
 const __dirname = path.resolve();
 
 export default {
@@ -14,8 +15,13 @@ export default {
 	},
 	output: {
 		path: path.resolve(__dirname, "dist/frontend/blocks"),
-		filename: "[name].js",
-		assetModuleFilename: "../css/[name][ext]",
+		filename: (pathData) => {
+			return pathData.chunk.name === "gift-card-styles"
+				? "[name].[contenthash].css"
+				: "[name].[contenthash].js";
+		},
+		assetModuleFilename: "[name].[contenthash][ext]",
+		clean: true,
 	},
 	resolve: {
 		extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"],
@@ -52,7 +58,41 @@ export default {
 	},
 	plugins: [
 		new MiniCssExtractPlugin({
-			filename: "../css/[name].css",
+			filename: "[name].[contenthash].css",
+		}),
+		new DependenciesPlugin({
+			outputFilename: "[name].asset.php",
+			combineAssets: true,
+			// requestToExternal: (request) => {
+			// 	const externals = {
+			// 		react: "React",
+			// 		"react-dom": "ReactDOM",
+			// 		"@wordpress/element": "wp.element",
+			// 		"@wordpress/i18n": "wp.i18n",
+			// 		"@wordpress/components": "wp.components",
+			// 		"@wordpress/data": "wp.data",
+			// 		"@wordpress/hooks": "wp.hooks",
+			// 		"@wordpress/plugins": "wp.plugins",
+			// 		"@woocommerce/blocks-checkout": "wc.blocksCheckout",
+			// 		jquery: "jQuery",
+			// 	};
+			// 	return externals[request];
+			// },
+			// requestToHandle: (request) => {
+			// 	const handles = {
+			// 		react: "react",
+			// 		"react-dom": "react-dom",
+			// 		"@wordpress/element": "wp-element",
+			// 		"@wordpress/i18n": "wp-i18n",
+			// 		"@wordpress/components": "wp-components",
+			// 		"@wordpress/data": "wp-data",
+			// 		"@wordpress/hooks": "wp-hooks",
+			// 		"@wordpress/plugins": "wp-plugins",
+			// 		"@woocommerce/blocks-checkout": "wc-blocks-checkout",
+			// 		jquery: "jquery",
+			// 	};
+			// 	return handles[request];
+			// },
 		}),
 	],
 	optimization: {

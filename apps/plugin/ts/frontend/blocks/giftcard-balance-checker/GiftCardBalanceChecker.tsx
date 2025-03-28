@@ -33,7 +33,6 @@ declare global {
 				ExperimentalDiscountsMeta: React.ComponentType<React.PropsWithChildren<unknown>>;
 			};
 		};
-
 		jQuery: unknown;
 	}
 }
@@ -279,15 +278,9 @@ export function initGiftCardIntegration(): void {
 		);
 	};
 
-	// Register the plugin for both cart and checkout contexts
 	registerPlugin("leat-giftcard-balance-checker", {
 		render,
 		scope: "woocommerce-checkout",
-	});
-
-	registerPlugin("leat-giftcard-balance-checker-cart", {
-		render,
-		scope: "woocommerce-cart",
 	});
 }
 
