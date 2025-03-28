@@ -100,16 +100,20 @@ class GiftcardCouponIntegration implements IntegrationInterface
             $this->get_script_data()
         );
 
+        // Register and enqueue the styles
         $css_files = glob($this->package->get_path('dist/frontend/blocks/gift-card-styles.*.css'));
         $latest_css = !empty($css_files) ? basename(end($css_files)) : 'gift-card-styles.css';
 
-        // Enqueue the styles
-        wp_enqueue_style(
+        // Register the style first
+        wp_register_style(
             'leat-giftcard-styles',
             $this->package->get_url('dist/frontend/blocks/' . $latest_css),
-            ['woocommerce-inline'],
+            ['woocommerce-inline', 'wp-components'],
             $this->package->get_version()
         );
+
+        // Then enqueue it
+        wp_enqueue_style('leat-giftcard-styles');
     }
 
     /**
@@ -119,6 +123,7 @@ class GiftcardCouponIntegration implements IntegrationInterface
     {
         if (has_block('woocommerce/checkout') || has_block('woocommerce/cart')) {
             wp_enqueue_script('leat-giftcard-checkout-integration');
+            wp_enqueue_style('leat-giftcard-styles');
         }
     }
 

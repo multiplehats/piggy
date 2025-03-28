@@ -7,6 +7,7 @@ const __dirname = path.resolve();
 
 export default {
 	mode: process.env?.NODE_ENV || "development",
+	devtool: process.env?.NODE_ENV === "production" ? false : "source-map",
 	entry: {
 		"giftcard-checkout-integration":
 			"./ts/frontend/blocks/giftcard-balance-checker/giftcard-checkout-integration.ts",
@@ -41,7 +42,12 @@ export default {
 			{
 				test: /\.scss$/,
 				use: [
-					MiniCssExtractPlugin.loader,
+					{
+						loader: MiniCssExtractPlugin.loader,
+						options: {
+							publicPath: "../",
+						},
+					},
 					"css-loader",
 					"postcss-loader",
 					{
@@ -60,40 +66,7 @@ export default {
 		new MiniCssExtractPlugin({
 			filename: "[name].[contenthash].css",
 		}),
-		new DependenciesPlugin({
-			outputFilename: "[name].asset.php",
-			combineAssets: true,
-			// requestToExternal: (request) => {
-			// 	const externals = {
-			// 		react: "React",
-			// 		"react-dom": "ReactDOM",
-			// 		"@wordpress/element": "wp.element",
-			// 		"@wordpress/i18n": "wp.i18n",
-			// 		"@wordpress/components": "wp.components",
-			// 		"@wordpress/data": "wp.data",
-			// 		"@wordpress/hooks": "wp.hooks",
-			// 		"@wordpress/plugins": "wp.plugins",
-			// 		"@woocommerce/blocks-checkout": "wc.blocksCheckout",
-			// 		jquery: "jQuery",
-			// 	};
-			// 	return externals[request];
-			// },
-			// requestToHandle: (request) => {
-			// 	const handles = {
-			// 		react: "react",
-			// 		"react-dom": "react-dom",
-			// 		"@wordpress/element": "wp-element",
-			// 		"@wordpress/i18n": "wp-i18n",
-			// 		"@wordpress/components": "wp-components",
-			// 		"@wordpress/data": "wp-data",
-			// 		"@wordpress/hooks": "wp-hooks",
-			// 		"@wordpress/plugins": "wp-plugins",
-			// 		"@woocommerce/blocks-checkout": "wc-blocks-checkout",
-			// 		jquery: "jquery",
-			// 	};
-			// 	return handles[request];
-			// },
-		}),
+		new DependenciesPlugin(),
 	],
 	optimization: {
 		minimizer: [
@@ -103,7 +76,6 @@ export default {
 						comments: false,
 					},
 				},
-				extractComments: false,
 			}),
 		],
 	},
