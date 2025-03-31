@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { createMutation, useQueryClient } from "@tanstack/svelte-query";
 	import CheckCircle from "lucide-svelte/icons/badge-check";
-	import { replaceStrings } from "@leat/lib";
+	import { claimReward, replaceStrings } from "@leat/lib";
 	import type { EarnRuleType, EarnRuleValueItem } from "@leat/types/plugin/settings/adminTypes";
-	import Button from "./button/button.svelte";
+	import { getTranslatedText } from "@leat/i18n";
+	import { Button } from "$lib/components/button/index.js";
 	import { creditsName, isLoggedIn, pluginSettings } from "$lib/modules/settings";
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
-	import { getTranslatedText } from "$lib/utils/translated-text";
-	import { claimReward } from "$lib/modules/leat";
 
 	export let earnRule: EarnRuleValueItem;
 

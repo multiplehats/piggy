@@ -86,6 +86,7 @@ final class AssetsController
 	{
 		add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend'], 80);
 		add_action('admin_enqueue_scripts', [$this, 'enqueue_admin'], 100);
+		// add_action('wp_enqueue_scripts', [$this, 'register_giftcard_script'], 90);
 
 		// phpcs:ignore -- this is a base64 encoded SVG icon for the WP admin menu.
 		$icon_svg = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(plugin_dir_path(__FILE__) . 'leat-wp-icon.svg'));

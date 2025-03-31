@@ -89,6 +89,7 @@ class SchemaController
 				Schemas\V1\TiersSchema::IDENTIFIER       => Schemas\V1\TiersSchema::class,
 				Schemas\V1\WCCategoriesSearchSchema::IDENTIFIER => Schemas\V1\WCCategoriesSearchSchema::class,
 				Schemas\V1\SyncWebhooksSchema::IDENTIFIER => Schemas\V1\SyncWebhooksSchema::class,
+				Schemas\V1\GiftcardsSchema::IDENTIFIER => Schemas\V1\GiftcardsSchema::class,
 				/**
 				 * Admin Schemas
 				 */

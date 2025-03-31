@@ -23,40 +23,58 @@
 	}
 </script>
 
-<SettingsSection title={__("General settings")}>
-	<div class="divide-border w-full divide-y">
-		{#if $query.isLoading}
-			<p>{__("Loading settings")}</p>
-		{:else if $query.isError}
-			<p>Error: {$query.error.message}</p>
-		{:else if $query.isSuccess && $settingsState}
-			<div>
-				<SettingsSelect
+{#if $query.isLoading}
+	<p>{__("Loading settings")}</p>
+{:else if $query.isError}
+	<p>Error: {$query.error.message}</p>
+{:else if $query.isSuccess && $settingsState}
+	<div class="grid grid-cols-2 gap-4">
+		<SettingsSection title={__("Selling settings")}>
+			<div class="divide-border w-full divide-y">
+				<div>
+					<SettingsSelect
+						class="pb-4"
+						{...$settingsState.giftcard_order_status}
+						bind:value={$settingsState.giftcard_order_status.value}
+						items={Object.entries($settingsState.giftcard_order_status.options).map(
+							([value, { label: name }]) => {
+								return {
+									value,
+									name,
+								};
+							}
+						)}
+					/>
+
+					<SettingsCheckboxes
+						class="pb-4"
+						{...$settingsState.giftcard_withdraw_order_statuses}
+						bind:value={$settingsState.giftcard_withdraw_order_statuses.value}
+					/>
+				</div>
+
+				<SettingsSwitch
+					class="py-4"
+					{...$settingsState.giftcard_disable_recipient_email}
+					bind:value={$settingsState.giftcard_disable_recipient_email.value}
+				/>
+			</div>
+		</SettingsSection>
+
+		<SettingsSection title={__("Redemption settings")}>
+			<div class="divide-border w-full divide-y">
+				<SettingsSwitch
 					class="pb-4"
-					{...$settingsState.giftcard_order_status}
-					bind:value={$settingsState.giftcard_order_status.value}
-					items={Object.entries($settingsState.giftcard_order_status.options).map(
-						([value, { label: name }]) => {
-							return {
-								value,
-								name,
-							};
-						}
-					)}
+					{...$settingsState.giftcard_coupon_allow_acceptance}
+					bind:value={$settingsState.giftcard_coupon_allow_acceptance.value}
 				/>
 
 				<SettingsCheckboxes
-					class="pb-4"
-					{...$settingsState.giftcard_withdraw_order_statuses}
-					bind:value={$settingsState.giftcard_withdraw_order_statuses.value}
+					class="py-4"
+					{...$settingsState.giftcard_coupon_balance_update_order_statuses}
+					bind:value={$settingsState.giftcard_coupon_balance_update_order_statuses.value}
 				/>
 			</div>
-
-			<SettingsSwitch
-				class="py-4"
-				{...$settingsState.giftcard_disable_recipient_email}
-				bind:value={$settingsState.giftcard_disable_recipient_email.value}
-			/>
-		{/if}
+		</SettingsSection>
 	</div>
-</SettingsSection>
+{/if}

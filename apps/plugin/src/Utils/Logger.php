@@ -13,33 +13,38 @@ class Logger
 		$this->source = 'Leat ' . '[' . $source . ']';
 	}
 
-	public function debug($message, $context = [])
+	public function debug($message, $context = [], $only_in_dev = false)
 	{
-		$this->log('debug', $message, $context);
+		$this->log('debug', $message, $context, $only_in_dev);
 	}
 
-	public function info($message, $context = [])
+	public function info($message, $context = [], $only_in_dev = false)
 	{
-		$this->log('info', $message, $context);
+		$this->log('info', $message, $context, $only_in_dev);
 	}
 
-	public function warning($message, $context = [])
+	public function warning($message, $context = [], $only_in_dev = false)
 	{
-		$this->log('warning', $message, $context);
+		$this->log('warning', $message, $context, $only_in_dev);
 	}
 
-	public function error($message, $context = [])
+	public function error($message, $context = [], $only_in_dev = false)
 	{
-		$this->log('error', $message, $context);
+		$this->log('error', $message, $context, $only_in_dev);
 	}
 
-	private function log($level, $message, $context)
+	private function log($level, $message, $context, $only_in_dev = false)
 	{
 		$context['source'] = $this->source;
-		$this->logger->$level($message, $context);
+
+		// Only log if not restricted to dev mode or if we are in dev mode
+		$is_dev_mode = (defined('WP_DEBUG') && WP_DEBUG) && (defined('LEAT_DEV') && constant('LEAT_DEV') === true);
+		if (!$only_in_dev || $is_dev_mode) {
+			$this->logger->$level($message, $context);
+		}
 
 		// Add debug logging when WP_DEBUG is enabled.
-		if (defined('WP_DEBUG') && WP_DEBUG) {
+		if ((defined('WP_DEBUG') && WP_DEBUG) && (!$only_in_dev || $is_dev_mode)) {
 			$debug_message = sprintf(
 				'[%s] [%s] %s %s',
 				$this->source,

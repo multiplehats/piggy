@@ -11,6 +11,7 @@ use Leat\WebhookManager;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Domain\Services\TierService;
+use Leat\Infrastructure\Repositories\WPGiftcardCouponRepository;
 use Leat\Settings;
 use Leat\Utils\Logger;
 
@@ -90,6 +91,13 @@ class RoutesController
 	protected $spend_rules_service;
 
 	/**
+	 * WPGiftcardCouponRepository.
+	 *
+	 * @var WPGiftcardCouponRepository
+	 */
+	protected $wp_giftcard_coupon_repository;
+
+	/**
 	 * Tier service.
 	 *
 	 * @var TierService
@@ -119,6 +127,7 @@ class RoutesController
 		WebhookManager $webhook_manager,
 		PromotionRulesService $promotion_rules_service,
 		SpendRulesService $spend_rules_service,
+		WPGiftcardCouponRepository $wp_giftcard_coupon_repository,
 		TierService $tier_service
 	) {
 		$this->schema_controller = $schema_controller;
@@ -131,6 +140,7 @@ class RoutesController
 		$this->webhook_manager   = $webhook_manager;
 		$this->promotion_rules_service   = $promotion_rules_service;
 		$this->spend_rules_service   = $spend_rules_service;
+		$this->wp_giftcard_coupon_repository   = $wp_giftcard_coupon_repository;
 		$this->tier_service   = $tier_service;
 
 		$this->routes = [
@@ -145,6 +155,7 @@ class RoutesController
 				Routes\V1\Contact::IDENTIFIER            => Routes\V1\Contact::class,
 				Routes\V1\Tiers::IDENTIFIER             => Routes\V1\Tiers::class,
 				Routes\V1\WCCategoriesSearch::IDENTIFIER => Routes\V1\WCCategoriesSearch::class,
+				Routes\V1\Giftcards::IDENTIFIER         => Routes\V1\Giftcards::class,
 			],
 			'private' => [
 				Routes\V1\Webhooks::IDENTIFIER => Routes\V1\Webhooks::class,
@@ -200,6 +211,7 @@ class RoutesController
 			$this->webhook_manager,
 			$this->promotion_rules_service,
 			$this->spend_rules_service,
+			$this->wp_giftcard_coupon_repository,
 			$this->tier_service
 		);
 	}

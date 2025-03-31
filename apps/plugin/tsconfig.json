@@ -1,7 +1,7 @@
 {
 	"extends": "@tsconfig/svelte/tsconfig.json",
 	"compilerOptions": {
-		"target": "ESNext",
+		"target": "ES2015",
 		"useDefineForClassFields": true,
 		"module": "ESNext",
 		"resolveJsonModule": true,
@@ -17,7 +17,22 @@
 		"allowJs": true,
 		"checkJs": true,
 		"isolatedModules": true,
-		"types": ["jquery"]
+		"types": [
+			"jquery"
+		],
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
+		"jsx": "react",
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"esnext"
+		],
+		"outDir": "./assets/js/",
+		"noImplicitAny": true,
+		"sourceMap": true
 	},
 	"include": [
 		"../../packages/types/plugin/augment.d.ts",
@@ -25,7 +40,10 @@
 		"./ts/**/*.js",
 		"./ts/**/*.svelte"
 	],
-	"exclude": ["./bin/**/*.ts"],
+	"exclude": [
+		"./bin/**/*.ts",
+		"node_modules"
+	],
 	"references": [
 		{
 			"path": "./tsconfig.node.json"

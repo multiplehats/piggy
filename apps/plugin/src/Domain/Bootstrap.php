@@ -2,8 +2,6 @@
 
 namespace Leat\Domain;
 
-namespace Leat\Domain;
-
 use Leat\Api\Api;
 use Leat\Api\Connection;
 use Leat\Assets\Api as AssetApi;
@@ -24,7 +22,8 @@ use Leat\Domain\Services\Customer\CustomerAttributeSync;
 use Leat\Domain\Services\Customer\CustomerCreationHandler;
 use Leat\Domain\Services\Customer\CustomerProfileDisplay;
 use Leat\Domain\Services\EarnRules;
-use Leat\Domain\Services\GiftcardProduct;
+use Leat\Domain\Services\GiftcardProductService;
+use Leat\Domain\Services\GiftcardCouponService;
 use Leat\Domain\Services\LoyaltyManager;
 use Leat\Domain\Services\Order\OrderCreditHandler;
 use Leat\Domain\Services\Order\OrderProcessor;
@@ -32,6 +31,9 @@ use Leat\Domain\Services\PromotionRulesService;
 use Leat\Domain\Services\SpendRulesService;
 use Leat\Domain\Services\TierService;
 
+use Leat\Infrastructure\Blocks\GiftcardCouponIntegration;
+use Leat\Infrastructure\Repositories\WPGiftcardRepository;
+use Leat\Infrastructure\Repositories\WPGiftcardCouponRepository;
 use Leat\Infrastructure\Repositories\WPPromotionRuleRepository;
 use Leat\Infrastructure\Repositories\WPSpendRuleRepository;
 use Leat\Infrastructure\Repositories\LeatTierRepository;
@@ -42,6 +44,7 @@ use Leat\Shortcodes\RewardPointsShortcode;
 use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Domain\Syncing\SyncVouchers;
+use Leat\Infrastructure\Repositories\LeatGiftcardRepository;
 
 
 /**
@@ -135,21 +138,27 @@ class Bootstrap
 			// $this->container->get(RedirectController::class)->init();
 		}
 
-		$this->container->get(WebhookManager::class)->init();
-		$this->container->get(WooCommerceAccountTab::class)->init();
-
-		// Shortcodes
 		$this->container->get(CustomerDashboardShortcode::class)->init();
 		$this->container->get(RewardPointsShortcode::class)->init();
 
 		// Services
 		$this->container->get(LoyaltyManager::class);
-		$this->container->get(GiftcardProduct::class)->init();
 
 		// Domain
 		$this->container->get(SyncVouchers::class)->init();
 		$this->container->get(SyncPromotions::class)->init();
 		$this->container->get(SyncRewards::class)->init();
+		$this->container->get(WebhookManager::class)->init();
+
+		$this->container->get(GiftcardProductService::class)->init();
+		$this->container->get(WooCommerceAccountTab::class)->init();
+
+		$settings = $this->container->get(Settings::class);
+		if ($settings->get_setting_value_by_id('giftcard_coupon_allow_acceptance') === 'on') {
+			$this->container->get(GiftcardCouponService::class)->init();
+		}
+
+		$this->register_blocks_integration();
 
 		/**
 		 * Action triggered after Leat initialization finishes.
@@ -268,7 +277,6 @@ class Bootstrap
 				return new Logger();
 			}
 		);
-
 		$this->container->register(
 			PostTypeController::class,
 			function () {
@@ -454,12 +462,6 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
-			GiftcardProduct::class,
-			function (Container $container) {
-				return new GiftcardProduct($container->get(Connection::class), $container->get(Settings::class));
-			}
-		);
-		$this->container->register(
 			Installer::class,
 			function (Container $container) {
 				return new Installer(
@@ -490,6 +492,49 @@ class Bootstrap
 				);
 			}
 		);
+
+		$this->container->register(
+			WPGiftcardRepository::class,
+			function () {
+				return new WPGiftcardRepository();
+			}
+		);
+		$this->container->register(
+			GiftcardProductService::class,
+			function (Container $container) {
+				return new GiftcardProductService(
+					$container->get(Connection::class),
+					$container->get(Settings::class),
+					$container->get(WPGiftcardRepository::class)
+				);
+			}
+		);
+
+		$this->container->register(
+			WPGiftcardCouponRepository::class,
+			function () {
+				return new WPGiftcardCouponRepository();
+			}
+		);
+
+		$this->container->register(
+			LeatGiftcardRepository::class,
+			function (Container $container) {
+				return new LeatGiftcardRepository($container->get(ApiService::class));
+			}
+		);
+
+		$this->container->register(
+			GiftcardCouponService::class,
+			function (Container $container) {
+				return new GiftcardCouponService(
+					$container->get(Settings::class),
+					$container->get(WPGiftcardCouponRepository::class),
+					$container->get(LeatGiftcardRepository::class),
+				);
+			}
+		);
+
 		$this->container->register(
 			Api::class,
 			function (Container $container) {
@@ -502,10 +547,40 @@ class Bootstrap
 					$container->get(SyncPromotions::class),
 					$container->get(SyncRewards::class),
 					$container->get(WebhookManager::class),
+					$container->get(WPGiftcardCouponRepository::class),
 					$container->get(TierService::class)
 				);
 			}
 		);
+	}
+
+	/**
+	 * Register integration with WooCommerce Blocks
+	 */
+	public function register_blocks_integration(): void
+	{
+		// Check if WooCommerce Blocks classes exist, using a class that should be available if Blocks is active
+		if (!class_exists('Automattic\WooCommerce\Blocks\Package')) {
+			return;
+		}
+
+		$settings = $this->container->get(Settings::class);
+
+		if ($settings->get_setting_value_by_id('giftcard_coupon_allow_acceptance') === 'on') {
+			add_action(
+				'woocommerce_blocks_cart_block_registration',
+				function ($integration_registry) {
+					$integration_registry->register(new GiftcardCouponIntegration($this->container->get(Package::class), $this->container->get(Settings::class)));
+				}
+			);
+
+			add_action(
+				'woocommerce_blocks_checkout_block_registration',
+				function ($integration_registry) {
+					$integration_registry->register(new GiftcardCouponIntegration($this->container->get(Package::class), $this->container->get(Settings::class)));
+				}
+			);
+		}
 	}
 
 	/**

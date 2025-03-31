@@ -14,6 +14,7 @@
     "dev": "turbo run dev --parallel",
     "dev:admin": "turbo run dev:admin",
     "dev:frontend": "turbo run dev:frontend",
+    "dev:react": "turbo run dev:react",
     "package-plugin": "turbo run package-plugin",
     "package-plugin:ci": "turbo run package-plugin:ci",
     "lint-staged": "lint-staged",

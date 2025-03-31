@@ -1,8 +1,8 @@
 <script lang="ts">
+	import type { Tier } from "@leat/lib";
+	import { getTranslatedText } from "@leat/i18n";
 	import DashboardTierCard from "./dashboard-tier-card.svelte";
 	import { pluginSettings } from "$lib/modules/settings";
-	import { getTranslatedText } from "$lib/utils/translated-text";
-	import type { Tier } from "$lib/modules/leat/types";
 
 	export let tiers: Tier[] = [];
 	export let currentTier: Tier | null | undefined = undefined;

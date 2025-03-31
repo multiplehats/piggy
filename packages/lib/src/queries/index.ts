@@ -1,8 +1,9 @@
-import { api } from "@leat/lib";
+import { api } from "../api";
 import type {
 	GetContactResponse,
 	GetCouponsResponse,
 	GetEarnRulesResponse,
+	GetGiftcardBalanceResponse,
 	GetSpendRulesResponse,
 	GetTiersResponse,
 } from "./types";
@@ -116,7 +117,23 @@ export async function claimSpendRule(spendRuleId: number, userId: number | null)
 		id: spendRuleId,
 	});
 
-	if (error) {
+	if (error || !data) {
+		if (error) {
+			throw new LeatApiError(error.status, error.statusText, error.data);
+		}
+
+		throw new Error("No data returned");
+	}
+
+	return data;
+}
+
+export async function getGiftcardBalance(couponCode: string) {
+	const { data, error } = await api.post<GetGiftcardBalanceResponse>(`/leat/v1/giftcards`, {
+		couponCode,
+	});
+
+	if (error || !data) {
 		if (error) {
 			throw new LeatApiError(error.status, error.statusText, error.data);
 		}

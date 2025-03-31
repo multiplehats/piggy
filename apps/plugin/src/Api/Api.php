@@ -14,6 +14,7 @@ use Leat\Domain\Services\SpendRulesService;
 use Leat\Domain\Services\TierService;
 use Leat\WebhookManager;
 use Leat\Domain\Syncing\SyncRewards;
+use Leat\Infrastructure\Repositories\WPGiftcardCouponRepository;
 use Leat\Settings;
 use Leat\Utils\Logger;
 
@@ -63,6 +64,11 @@ final class Api
 	private $webhook_manager;
 
 	/**
+	 * @var WPGiftcardCouponRepository
+	 */
+	private $wp_giftcard_coupon_repository;
+
+	/**
 	 * @var TierService
 	 */
 	private $tier_service;
@@ -90,6 +96,7 @@ final class Api
 		SyncPromotions $sync_promotions,
 		SyncRewards $sync_rewards,
 		WebhookManager $webhook_manager,
+		WPGiftcardCouponRepository $wp_giftcard_coupon_repository,
 		TierService $tier_service
 	) {
 		$this->connection = $connection;
@@ -100,6 +107,7 @@ final class Api
 		$this->sync_promotions = $sync_promotions;
 		$this->sync_rewards = $sync_rewards;
 		$this->webhook_manager = $webhook_manager;
+		$this->wp_giftcard_coupon_repository = $wp_giftcard_coupon_repository;
 		$this->tier_service = $tier_service;
 	}
 
@@ -120,6 +128,7 @@ final class Api
 					$this->sync_promotions,
 					$this->sync_rewards,
 					$this->webhook_manager,
+					$this->wp_giftcard_coupon_repository,
 					$this->tier_service
 				)
 					->get(RoutesController::class)
@@ -152,6 +161,7 @@ final class Api
 		SyncPromotions $sync_promotions,
 		SyncRewards $sync_rewards,
 		WebhookManager $webhook_manager,
+		WPGiftcardCouponRepository $wp_giftcard_coupon_repository,
 		TierService $tier_service,
 		$reset = false
 	) {
@@ -220,6 +230,12 @@ final class Api
 			});
 		}
 
+		if ($wp_giftcard_coupon_repository) {
+			$container->register(WPGiftcardCouponRepository::class, function () use ($wp_giftcard_coupon_repository) {
+				return $wp_giftcard_coupon_repository;
+			});
+		}
+
 		if ($tier_service) {
 			$container->register(TierService::class, function () use ($tier_service) {
 				return $tier_service;
@@ -241,7 +257,8 @@ final class Api
 					$container->get(WebhookManager::class),
 					$container->get(PromotionRulesService::class),
 					$container->get(SpendRulesService::class),
-					$container->get(TierService::class)
+					$container->get(WPGiftcardCouponRepository::class),
+					$container->get(TierService::class),
 				);
 			}
 		);

@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { createMutation } from "@tanstack/svelte-query";
-	import { replaceStrings } from "@leat/lib";
+	import { joinProgram, replaceStrings } from "@leat/lib";
+	import { getTranslatedText } from "@leat/i18n";
 	import { Button } from "$lib/components/button/index.js";
 	import { isLoggedIn, pluginSettings, wcSettings } from "$lib/modules/settings";
 	import { contactStore, hasLeatAccount } from "$lib/stores";
 	import { MutationKeys } from "$lib/utils/query-keys";
-	import { getTranslatedText } from "$lib/utils/translated-text";
-	import { joinProgram } from "$lib/modules/leat";
 
 	export let navItems: { icon: any; id: string; text: string; show: boolean }[];
 

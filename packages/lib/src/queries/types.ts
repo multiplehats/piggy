@@ -132,3 +132,8 @@ export type GetEarnRulesResponse = EarnRule[];
 export type SpendRule = SpendRuleValueItem;
 
 export type GetSpendRulesResponse = SpendRule[];
+
+export type GetGiftcardBalanceResponse = {
+	balance: string;
+	balance_raw: number;
+};

@@ -295,11 +295,29 @@ class Settings
 		$settings[] = array(
 			'id'          => 'giftcard_withdraw_order_statuses',
 			'type'        => 'checkboxes',
-			'label'       => __('Gift Card Withdraw Order Statuses', 'leat-crm'),
-			'description' => __('Select which order statuses will trigger a gift card withdrawal to the customer. Gift cards will be withdrawn only once, when the order first reaches any of the selected statuses. For example, if both "Refunded" and "Cancelled" are selected, gift cards will be returned to the customer when the order is either refunded or cancelled, whichever happens first.', 'leat-crm'),
+			'label'       => __('Cancel gift cards on these order statuses', 'leat-crm'),
+			'description' => __('Select which order statuses will invalidate previously issued gift cards. When an order containing a gift card purchase changes to any of these statuses, the gift card will be canceled. This happens only once, when the order first reaches any selected status.', 'leat-crm'),
 			'default'     => array('refunded' => 'on'),
 			'options'     => $this->woocommerce_order_statuses_options(),
 		);
+
+		$settings[] = array(
+			'id'          => 'giftcard_coupon_balance_update_order_statuses',
+			'type'        => 'checkboxes',
+			'label'       => __('Update gift card balance on these order statuses', 'leat-crm'),
+			'description' => __('Select which order statuses will update a purchased gift card\'s balance in the system. For example, if both "Processing" and "Completed" are selected, the gift card balance will be updated when the order reaches either status. The system prevents duplicate processing.', 'leat-crm'),
+			'default'     => array('processing' => 'on', 'completed' => 'on'),
+			'options'     => $this->woocommerce_order_statuses_options(),
+		);
+
+		$settings[] = array(
+			'id'          => 'giftcard_coupon_allow_acceptance',
+			'type'        => 'switch',
+			'label'       => __('Accept Gift Cards', 'leat-crm'),
+			'description' => __('If enabled, customers will be able to redeem Leat gift cards.', 'leat-crm'),
+			'default'     => 'on',
+		);
+
 		$settings[] = array(
 			'id'          => 'giftcard_disable_recipient_email',
 			'type'        => 'switch',
@@ -307,6 +325,27 @@ class Settings
 			'description' => __('If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer\'s own email address.', 'leat-crm'),
 			'default'     => 'off',
 		);
+
+		$settings[] = array(
+			'id'          => 'giftcard_checking_balance_text',
+			'type'        => 'translatable_text',
+			'label'       => __('Checking Balance Text', 'leat-crm'),
+			'description' => __('The text shown while checking a gift card balance.', 'leat-crm'),
+			'default'     => array(
+				'default' => __('Checking gift card balance...', 'leat-crm'),
+			),
+		);
+
+		$settings[] = array(
+			'id'          => 'giftcard_balance_text',
+			'type'        => 'translatable_text',
+			'label'       => __('Balance Text', 'leat-crm'),
+			'description' => __('The text shown before displaying the gift card balance.', 'leat-crm'),
+			'default'     => array(
+				'default' => __('Gift card balance: ', 'leat-crm'),
+			),
+		);
+
 		$settings[] = array(
 			'id'          => 'only_reward_known_contacts',
 			'type'        => 'switch',

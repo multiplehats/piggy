@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { replaceStrings } from "@leat/lib";
+	import type { GetCouponsResponse } from "@leat/lib";
+	import { getTranslatedText } from "@leat/i18n";
 	import DashboardCouponCard from "./dashboard-coupon-card.svelte";
 	import { currentLanguage, isLoggedIn, pluginSettings } from "$lib/modules/settings";
-	import { getTranslatedText } from "$lib/utils/translated-text";
-	import type { GetCouponsResponse } from "$lib/modules/leat/types";
 
 	export let coupons: GetCouponsResponse | undefined | null = undefined;
 	export let isLoading: boolean;

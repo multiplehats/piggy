@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { replaceStrings } from "@leat/lib";
+	import type { SpendRule } from "@leat/lib";
+	import { getTranslatedText } from "@leat/i18n";
 	import DashboardSpendRuleCard from "./dashboard-spend-rule-card.svelte";
 	import { creditsName, pluginSettings } from "$lib/modules/settings";
-	import { getTranslatedText } from "$lib/utils/translated-text";
-	import type { SpendRule } from "$lib/modules/leat/types";
 
 	export let spendRules: SpendRule[] | null | undefined = undefined;
 
