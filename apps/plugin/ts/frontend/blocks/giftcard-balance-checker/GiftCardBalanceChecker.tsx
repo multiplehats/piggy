@@ -1,6 +1,5 @@
 import { getGiftcardBalance } from "@leat/lib";
 import React, { useEffect, useState } from "react";
-import { __ } from "@wordpress/i18n";
 import { registerPlugin } from "@wordpress/plugins";
 import { getTranslatedText } from "@leat/i18n";
 import "./giftcard-balance-checker.scss";

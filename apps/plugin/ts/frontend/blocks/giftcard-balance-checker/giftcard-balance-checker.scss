@@ -1,91 +1,91 @@
 .leat-giftcard-balance {
-    padding: 14px 18px;
-    border-radius: 6px;
-    font-size: 16px;
-    line-height: 1.5;
-    display: flex;
-    align-items: center;
-    background: #ffffff;
+	padding: 14px 18px;
+	border-radius: 6px;
+	font-size: 16px;
+	line-height: 1.5;
+	display: flex;
+	align-items: center;
+	background: #ffffff;
 }
 
 .leat-giftcard-balances {
-    padding: 0 !important;
+	padding: 0 !important;
 
-    .leat-giftcard-balance {
-        margin-bottom: 12px;
+	.leat-giftcard-balance {
+		margin-bottom: 12px;
 
-        .gift-card-code-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
+		.gift-card-code-container {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
 
-            .gift-card-code {
-                font-family: monospace;
-                background: #ececec;
-                padding: 4px 10px;
-                border-radius: 100px;
-                font-size: 16px;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                font-weight: 500;
-                color: #333;
-            }
+			.gift-card-code {
+				font-family: monospace;
+				background: #ececec;
+				padding: 4px 10px;
+				border-radius: 100px;
+				font-size: 16px;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+				font-weight: 500;
+				color: #333;
+			}
 
-            .gift-card-balance {
-                font-weight: 600;
-                font-size: 17px;
-                color: #333;
-            }
-        }
-    }
+			.gift-card-balance {
+				font-weight: 600;
+				font-size: 17px;
+				color: #333;
+			}
+		}
+	}
 }
 
 @media (max-width: 1024px) {
-    .leat-giftcard-balances .leat-giftcard-balance .gift-card-code-container {
-        flex-direction: column;
-        align-items: flex-start;
-        text-align: left;
-    }
+	.leat-giftcard-balances .leat-giftcard-balance .gift-card-code-container {
+		flex-direction: column;
+		align-items: flex-start;
+		text-align: left;
+	}
 }
 
 .gift-card-coupon-input-container {
-    margin-bottom: 16px;
+	margin-bottom: 16px;
 
-    input {
-        width: 100%;
-        padding: 12px 16px;
-        border: 1px solid #eaeaea;
-        border-radius: 4px;
-        font-size: 16px;
-        background: #ffffff;
+	input {
+		width: 100%;
+		padding: 12px 16px;
+		border: 1px solid #eaeaea;
+		border-radius: 4px;
+		font-size: 16px;
+		background: #ffffff;
 
-        &:focus {
-            border-color: #999;
-            outline: none;
-        }
-    }
+		&:focus {
+			border-color: #999;
+			outline: none;
+		}
+	}
 }
 
 // Special styling for the gift card area in the order summary
 .wp-block-woocommerce-checkout-order-summary-block,
 .wp-block-woocommerce-cart-order-summary-block {
-    // Style for the applied gift card in the green background
-    .wp-block-woocommerce-checkout-order-summary-coupon-form-block + div {
-        .leat-giftcard-balance {
-            background: #ffffff;
-            border: 1px solid #eaeaea;
-            font-size: 16px;
+	// Style for the applied gift card in the green background
+	.wp-block-woocommerce-checkout-order-summary-coupon-form-block + div {
+		.leat-giftcard-balance {
+			background: #ffffff;
+			border: 1px solid #eaeaea;
+			font-size: 16px;
 
-            .gift-card-code {
-                color: #333;
-            }
+			.gift-card-code {
+				color: #333;
+			}
 
-            .gift-card-balance {
-                color: #333;
-                font-weight: 600;
-                font-size: 17px;
-            }
-        }
-    }
+			.gift-card-balance {
+				color: #333;
+				font-weight: 600;
+				font-size: 17px;
+			}
+		}
+	}
 }

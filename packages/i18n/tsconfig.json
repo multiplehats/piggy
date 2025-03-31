@@ -1,11 +1,5 @@
 {
 	"extends": "@leat/tsconfig/base.json",
-	"include": [
-		"../types/plugin/augment.d.ts",
-		"src/**/*.ts"
-	],
-	"exclude": [
-		"node_modules",
-		"dist"
-	]
+	"include": ["../types/plugin/augment.d.ts", "src/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
 }

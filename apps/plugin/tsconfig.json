@@ -17,19 +17,13 @@
 		"allowJs": true,
 		"checkJs": true,
 		"isolatedModules": true,
-		"types": [
-			"jquery"
-		],
+		"types": ["jquery"],
 		"moduleResolution": "node",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true,
 		"jsx": "react",
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"esnext"
-		],
+		"lib": ["dom", "dom.iterable", "esnext"],
 		"outDir": "./assets/js/",
 		"noImplicitAny": true,
 		"sourceMap": true
@@ -40,10 +34,7 @@
 		"./ts/**/*.js",
 		"./ts/**/*.svelte"
 	],
-	"exclude": [
-		"./bin/**/*.ts",
-		"node_modules"
-	],
+	"exclude": ["./bin/**/*.ts", "node_modules"],
 	"references": [
 		{
 			"path": "./tsconfig.node.json"
