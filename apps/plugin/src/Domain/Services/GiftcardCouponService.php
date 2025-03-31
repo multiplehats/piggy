@@ -1624,16 +1624,28 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     public function maybe_show_giftcard_success_message(string $coupon_code): void
     {
-        // Check if this is a gift card coupon
+
         $giftcard = $this->leatGiftcardRepository->find_by_hash($coupon_code);
+
         if ($giftcard) {
-            // Try a more direct approach to ensure the notice is shown
             global $woocommerce;
 
-            // Use a more prominent message for the classic checkout
+            $balance_in_cents = $this->check_giftcard_balance($giftcard);
+            $formatted_balance = ($balance_in_cents !== null) ? wc_price($balance_in_cents / 100) : __('N/A', 'leat-crm');
+
+            // Get the balance text setting and ensure it's a string
+            $raw_template = $this->settings->get_setting_value_by_id('giftcard_balance_text');
+            if (is_string($raw_template) && !empty($raw_template)) {
+                $balance_text_template = $raw_template;
+            } else {
+                $balance_text_template = __('Balance: %s', 'leat-crm'); // Default fallback
+            }
+
+            // Construct the message using the balance text setting
             $message = sprintf(
-                __('✅ Gift card %s detected and applied to your order.', 'leat-crm'),
-                $coupon_code
+                __('✅ Gift card %s applied. %s', 'leat-crm'), // Added placeholder for balance text
+                $coupon_code,
+                sprintf($balance_text_template, $formatted_balance) // Insert balance into the balance text template
             );
 
             // Add the message with high priority
@@ -1666,10 +1678,23 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         foreach ($applied_coupons as $coupon_code) {
             $giftcard = $this->leatGiftcardRepository->find_by_hash($coupon_code);
             if ($giftcard) {
-                // Use a prominent message for the classic checkout
+                // Get the current balance
+                $balance_in_cents = $this->check_giftcard_balance($giftcard);
+                $formatted_balance = ($balance_in_cents !== null) ? wc_price($balance_in_cents / 100) : __('N/A', 'leat-crm');
+
+                // Get the balance text setting and ensure it's a string
+                $raw_template = $this->settings->get_setting_value_by_id('giftcard_balance_text');
+                if (is_string($raw_template) && !empty($raw_template)) {
+                    $balance_text_template = $raw_template;
+                } else {
+                    $balance_text_template = __('Balance: %s', 'leat-crm'); // Default fallback
+                }
+
+                // Construct the message using the balance text setting
                 $message = sprintf(
-                    __('✅ Gift card %s detected and applied to your order.', 'leat-crm'),
-                    $coupon_code
+                    __('✅ Gift card %s applied. %s', 'leat-crm'), // Added placeholder for balance text
+                    $coupon_code,
+                    sprintf($balance_text_template, $formatted_balance) // Insert balance into the balance text template
                 );
 
                 // Add the message with high priority
