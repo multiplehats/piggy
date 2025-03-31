@@ -46,12 +46,12 @@ class Giftcards extends AbstractRoute
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [$this, 'get_response'],
-				'permission_callback' => [Middleware::class, 'is_authorized'],
+				'permission_callback' => [Middleware::class, 'is_public'],
 			],
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [$this, 'get_response'],
-				'permission_callback' => [Middleware::class, 'is_authorized'],
+				'permission_callback' => [Middleware::class, 'is_public'],
 				'args'                => [
 					'coupon_code' => [
 						'description' => __('Coupon code', 'leat-crm'),
@@ -86,7 +86,6 @@ class Giftcards extends AbstractRoute
 			}
 
 			if (!$this->wp_giftcard_coupon_repository->is_giftcard($coupon)) {
-				error_log('Invalid coupon code: ' . $coupon_code);
 				throw new RouteException('invalid_coupon_code', 'Invalid coupon code', 400);
 			}
 
