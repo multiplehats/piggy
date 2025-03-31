@@ -7,7 +7,8 @@ class WCCoupons
     public const PROMOTION_RULE_ID = '_leat_promotion_rule_id';
     public const SPEND_RULE_ID = '_leat_spend_rule_id';
 
-    // Gift card coupon constants
+    // Gift card coupons
+    public const GIFTCARD_COUPON_ID = '_leat_giftcard_coupon_id';
     public const GIFTCARD_UUID = '_leat_giftcard_uuid';
     public const GIFTCARD_HASH = '_leat_giftcard_hash';
     public const GIFTCARD_PROGRAM_UUID = '_leat_giftcard_program_uuid';

@@ -127,9 +127,8 @@ class WPGiftcardCouponRepository implements WPGiftcardCouponRepositoryInterface
                 html_entity_decode(strip_tags(wc_price($data['balance_in_cents'] / 100)))
             ));
 
-            error_log(print_r($data, true));
-
             // Set gift card specific meta data
+            $coupon->update_meta_data(WCCoupons::GIFTCARD_COUPON_ID, $data['id']);
             $coupon->update_meta_data(WCCoupons::GIFTCARD_UUID, $data['uuid']);
             $coupon->update_meta_data(WCCoupons::GIFTCARD_HASH, $data['hash']);
             $coupon->update_meta_data(WCCoupons::GIFTCARD_PROGRAM_UUID, $data['program_uuid']);
@@ -251,11 +250,6 @@ class WPGiftcardCouponRepository implements WPGiftcardCouponRepositoryInterface
      */
     public function is_giftcard(\WC_Coupon $coupon): bool
     {
-        if (!$coupon || !$coupon->get_id()) {
-            $this->logger->error('Invalid coupon object passed to is_giftcard');
-            return false;
-        }
-
         return $coupon->get_meta(WCCoupons::GIFTCARD_TYPE) === 'giftcard';
     }
 }

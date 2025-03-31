@@ -165,7 +165,7 @@ class GiftcardCouponIntegration implements IntegrationInterface
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('leat_check_giftcard_balance'),
             'checkingText' => $this->settings->get_setting_value_by_id('giftcard_checking_balance_text'),
-            'balanceText' => $this->settings->get_setting_value_by_id('giftcard_balance_text'),
+            'giftcardAppliedSuccessMessage' => $this->settings->get_setting_value_by_id('giftcard_applied_success_message'),
             'errorText' => __('Not a valid gift card or error checking balance.', 'leat-crm'),
         ];
     }

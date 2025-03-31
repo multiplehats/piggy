@@ -14,7 +14,7 @@ declare global {
 			nonce: string;
 			ajaxUrl: string;
 			checkingText: TranslatableText["value"];
-			balanceText: TranslatableText["value"];
+			giftcardAppliedSuccessMessage: TranslatableText["value"];
 			errorText: string;
 		};
 		// WP Fetch middleware config
