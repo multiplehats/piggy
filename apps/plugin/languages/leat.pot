@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Leat CRM 0.9.4\n"
+"Project-Id-Version: Leat CRM 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/leat-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-18T08:45:14+00:00\n"
+"POT-Creation-Date: 2025-03-31T13:33:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: leat-crm\n"
@@ -39,27 +39,27 @@ msgstr ""
 msgid "https://leat.com"
 msgstr ""
 
-#: src/Api/Connection.php:445
+#: src/Api/Connection.php:474
 msgid "The API key is invalid or has expired."
 msgstr ""
 
-#: src/Api/Connection.php:452
+#: src/Api/Connection.php:481
 msgid "An unexpected error occurred while fetching shops."
 msgstr ""
 
-#: src/Api/Routes/V1/AbstractRoute.php:167
-#: src/Api/Routes/V1/AbstractRoute.php:172
+#: src/Api/Routes/V1/AbstractRoute.php:187
+#: src/Api/Routes/V1/AbstractRoute.php:192
 msgid "Invalid API Key"
 msgstr ""
 
-#: src/Api/Routes/V1/AbstractRoute.php:289
-#: src/Api/Routes/V1/AbstractRoute.php:303
-#: src/Api/Routes/V1/AbstractRoute.php:317
-#: src/Api/Routes/V1/AbstractRoute.php:331
+#: src/Api/Routes/V1/AbstractRoute.php:309
+#: src/Api/Routes/V1/AbstractRoute.php:323
+#: src/Api/Routes/V1/AbstractRoute.php:337
+#: src/Api/Routes/V1/AbstractRoute.php:351
 msgid "Method not implemented"
 msgstr ""
 
-#: src/Api/Routes/V1/AbstractRoute.php:390
+#: src/Api/Routes/V1/AbstractRoute.php:410
 msgid "Scope under which the request is made; determines fields present in response."
 msgstr ""
 
@@ -110,6 +110,10 @@ msgstr ""
 
 #: src/Api/Routes/V1/EarnRules.php:127
 msgid "Failed to save earn rule"
+msgstr ""
+
+#: src/Api/Routes/V1/Giftcards.php:57
+msgid "Coupon code"
 msgstr ""
 
 #: src/Api/Routes/V1/Middleware.php:22
@@ -169,28 +173,28 @@ msgstr ""
 msgid "Extension data registered by %s"
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:380
+#: src/Api/Schemas/V1/AbstractSchema.php:381
 msgid "Currency code (in ISO format) for returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:386
+#: src/Api/Schemas/V1/AbstractSchema.php:387
 msgid "Currency symbol for the currency which can be used to format returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:392
+#: src/Api/Schemas/V1/AbstractSchema.php:393
 msgid "Currency minor unit (number of digits after the decimal separator) for returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:398
+#: src/Api/Schemas/V1/AbstractSchema.php:399
 msgid "Decimal separator for the currency which can be used to format returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:404
+#: src/Api/Schemas/V1/AbstractSchema.php:405
 msgid "Thousand separator for the currency which can be used to format returned prices."
 msgstr ""
 
-#: src/Api/Schemas/V1/AbstractSchema.php:410
-#: src/Api/Schemas/V1/AbstractSchema.php:416
+#: src/Api/Schemas/V1/AbstractSchema.php:411
+#: src/Api/Schemas/V1/AbstractSchema.php:417
 msgid "Price prefix for the currency which can be used to format returned prices."
 msgstr ""
 
@@ -420,12 +424,12 @@ msgid "Webhook signature for verification"
 msgstr ""
 
 #. translators: %s: Required WooCommerce version
-#: src/Domain/Bootstrap.php:178
+#: src/Domain/Bootstrap.php:197
 msgid "The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce."
 msgstr ""
 
 #. translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command.
-#: src/Domain/Bootstrap.php:240
+#: src/Domain/Bootstrap.php:259
 msgid "Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes."
 msgstr ""
 
@@ -464,22 +468,22 @@ msgstr ""
 #: src/Domain/Services/EarnRules.php:98
 #: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:27
 #: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:29
-#: dist/admin/assets/index-59d498ad.js:13461
-#: dist/admin/assets/index-59d498ad.js:14740
+#: dist/admin/assets/index-f67ae016.js:14108
+#: dist/admin/assets/index-f67ae016.js:16814
 msgid "Status"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:102
 #: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:31
 #: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:33
-#: dist/admin/assets/index-59d498ad.js:8747
+#: dist/admin/assets/index-f67ae016.js:9394
 msgid "Active"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:103
 #: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:32
 #: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:34
-#: dist/admin/assets/index-59d498ad.js:8749
+#: dist/admin/assets/index-f67ae016.js:9396
 msgid "Inactive"
 msgstr ""
 
@@ -490,8 +494,8 @@ msgstr ""
 #: src/Domain/Services/EarnRules.php:110
 #: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:59
 #: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:41
-#: dist/admin/assets/index-59d498ad.js:13425
-#: dist/admin/assets/index-59d498ad.js:14704
+#: dist/admin/assets/index-f67ae016.js:14072
+#: dist/admin/assets/index-f67ae016.js:16778
 msgid "Title"
 msgstr ""
 
@@ -505,27 +509,27 @@ msgid "Type"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:123
-#: dist/admin/assets/index-59d498ad.js:14269
+#: dist/admin/assets/index-f67ae016.js:14916
 msgid "Like on Facebook"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:124
-#: dist/admin/assets/index-59d498ad.js:14273
+#: dist/admin/assets/index-f67ae016.js:14920
 msgid "Follow on TikTok"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:125
-#: dist/admin/assets/index-59d498ad.js:14277
+#: dist/admin/assets/index-f67ae016.js:14924
 msgid "Follow on Instagram"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:126
-#: dist/admin/assets/index-59d498ad.js:14281
+#: dist/admin/assets/index-f67ae016.js:14928
 msgid "Place an order"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:128
-#: dist/admin/assets/index-59d498ad.js:14286
+#: dist/admin/assets/index-f67ae016.js:14933
 msgid "Create an account"
 msgstr ""
 
@@ -641,143 +645,211 @@ msgstr ""
 msgid "The handle of the social network account that the user must like or follow"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:121
+#: src/Domain/Services/GiftcardCouponService.php:218
+#: src/Domain/Services/GiftcardCouponService.php:339
+msgid "This gift card could not be applied."
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:359
+msgid "This gift card is invalid or has a zero balance."
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:412
+#: src/Domain/Services/GiftcardCouponService.php:1191
+msgid "✅ Gift card %s detected and applied to order."
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:655
+msgid "Gift card %s used: %s. Remaining balance: %s"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:671
+msgid "Gift card %s used: %s. Remaining balance: %s (calculated)"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:688
+msgid "No gift card found in Leat. Deducting balance from WooCommerce coupon %s used: %s. Remaining balance: %s (calculated)"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:908
+msgid "Gift card %s was already refunded. Current balance: %s"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:945
+msgid "Gift card %s refunded: %s. New balance: %s (Transaction reversed: %s)"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:989
+msgid "Gift card %s refunded: %s. New balance: %s (New transaction created)"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:1021
+msgid "Leat - Gift Card Information"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:1041
+msgid "This is not a gift card coupon, so the balance cannot be checked."
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:1060
+msgid "View card in Leat"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:1066
+msgid "Gift Card code"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:1073
+msgid "Initial Balance"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:1080
+msgid "Current Balance"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:1134
+msgid "Leat - Gift Card"
+msgstr ""
+
+#: src/Domain/Services/GiftcardCouponService.php:1355
+#: src/Domain/Services/GiftcardCouponService.php:1394
+#: src/Utils/GiftcardDisplay.php:44
+#: src/Utils/GiftcardDisplay.php:55
+#: src/Utils/GiftcardDisplay.php:62
+msgid "N/A"
+msgstr ""
+
+#: src/Domain/Services/GiftcardProductService.php:174
+msgid "Gift card recipient email is disabled in settings. No email will be sent."
+msgstr ""
+
+#: src/Domain/Services/GiftcardProductService.php:176
+msgid "No gift card recipient email was found. This could mean that something went wrong with the checkout process."
+msgstr ""
+
+#. translators: 1: quantity of gift cards, 2: product name.
+#: src/Domain/Services/GiftcardProductService.php:207
+msgid "Starting to create %1$d gift card(s) for %2$s."
+msgstr ""
+
+#. translators: 1: product name.
+#: src/Domain/Services/GiftcardProductService.php:220
+msgid "Invalid amount (0 or negative) for gift card for %1$s."
+msgstr ""
+
+#. translators: 1: product name.
+#: src/Domain/Services/GiftcardProductService.php:233
+msgid "Failed to create gift card for %1$s."
+msgstr ""
+
+#. translators: 1: gift card code.
+#: src/Domain/Services/GiftcardProductService.php:247
+msgid "Gift Card Code: %s"
+msgstr ""
+
+#. translators: 1: gift card UUID, 2: amount.
+#: src/Domain/Services/GiftcardProductService.php:259
+msgid "Gift card %1$s created with amount %2$s successfully."
+msgstr ""
+
+#. translators: 1: gift card UUID
+#: src/Domain/Services/GiftcardProductService.php:275
+msgid "Gift card %1$s created. Gift Card input field is disabled in settings, so no email will be sent."
+msgstr ""
+
+#. translators: 1: gift card UUID
+#: src/Domain/Services/GiftcardProductService.php:284
+msgid "Gift card %1$s created but no recipient email was found to send it to."
+msgstr ""
+
+#. translators: 1: gift card UUID, 2: recipient email.
+#: src/Domain/Services/GiftcardProductService.php:296
+msgid "Gift card %1$s email sent to %2$s."
+msgstr ""
+
+#. translators: 1: gift card UUID, 2: recipient email.
+#: src/Domain/Services/GiftcardProductService.php:306
+msgid "Failed to send gift card %1$s email to %2$s."
+msgstr ""
+
+#: src/Domain/Services/GiftcardProductService.php:318
+msgid "Gift card processing completed."
+msgstr ""
+
+#. translators: %s: gift card UUID
+#: src/Domain/Services/GiftcardProductService.php:492
+msgid "Gift card %s has been withdrawn due to refund."
+msgstr ""
+
+#. translators: %s: gift card UUID
+#: src/Domain/Services/GiftcardProductService.php:499
+#: src/Domain/Services/GiftcardProductService.php:588
+msgid "Failed to withdraw gift card %s."
+msgstr ""
+
+#. translators: 1: gift card UUID, 2: error message
+#: src/Domain/Services/GiftcardProductService.php:507
+#: src/Domain/Services/GiftcardProductService.php:596
+msgid "Error withdrawing gift card %1$s: %2$s"
+msgstr ""
+
+#. translators: %s: gift card UUID
+#: src/Domain/Services/GiftcardProductService.php:581
+msgid "Gift card %s has been withdrawn due to order status change."
+msgstr ""
+
+#: src/Domain/Services/GiftcardProductService.php:629
+msgid "Please enter a recipient email address for the gift card."
+msgstr ""
+
+#: src/Domain/Services/GiftcardProductService.php:631
+msgid "Please enter a valid recipient email address for the gift card."
+msgstr ""
+
+#: src/Domain/Services/GiftcardProductService.php:644
 msgid "Giftcard Settings"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:142
+#: src/Domain/Services/GiftcardProductService.php:670
 msgid "Select a program"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:152
+#: src/Domain/Services/GiftcardProductService.php:680
 msgid "Giftcard Program"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:153
+#: src/Domain/Services/GiftcardProductService.php:681
 msgid "Select the giftcard program this product is connected to"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:207
+#: src/Domain/Services/GiftcardProductService.php:751
 msgid "Gift Card Recipient Email"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:208
+#: src/Domain/Services/GiftcardProductService.php:752
 msgid "Enter recipient email address"
 msgstr ""
 
 #. translators: %d: number of gift cards
-#: src/Domain/Services/GiftcardProduct.php:219
+#: src/Domain/Services/GiftcardProductService.php:763
 msgid "Important: You are purchasing %d gift cards. All gift cards will be sent to the same recipient email address entered above. If you want to send gift cards to different recipients, please place separate orders."
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:325
-msgid "Gift card recipient email is disabled in settings. Using customer's email address."
+#: src/Domain/Services/GiftcardProductService.php:867
+msgid "Note:"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProduct.php:327
-msgid "No gift card recipient email provided. Using customer's email address."
-msgstr ""
-
-#. translators: 1: quantity of gift cards, 2: amount in cents, 3: product name.
-#: src/Domain/Services/GiftcardProduct.php:352
-msgid "Starting to create %1$d gift card(s) with amount %2$s for %3$s."
-msgstr ""
-
-#. translators: 1: giftcard hash.
-#: src/Domain/Services/GiftcardProduct.php:392
-msgid "Gift Card Code: %s"
-msgstr ""
-
-#. translators: 1: giftcard id, 2: amount in cents.
-#: src/Domain/Services/GiftcardProduct.php:402
-msgid "Gift card #%1$s created with amount %2$s successfully."
-msgstr ""
-
-#. translators: 1: giftcard id, 2: recipient email.
-#: src/Domain/Services/GiftcardProduct.php:417
-msgid "Gift card #%1$s email sent to %2$s."
-msgstr ""
-
-#. translators: 1: giftcard id, 2: recipient email.
-#: src/Domain/Services/GiftcardProduct.php:427
-msgid "Failed to send gift card #%1$s email to %2$s."
-msgstr ""
-
-#: src/Domain/Services/GiftcardProduct.php:436
-msgid "No recipient email found for gift card."
-msgstr ""
-
-#. translators: 1: error message.
-#: src/Domain/Services/GiftcardProduct.php:458
-msgid "Error creating gift card: %1$s"
-msgstr ""
-
-#: src/Domain/Services/GiftcardProduct.php:476
-msgid "Gift card processing completed."
-msgstr ""
-
-#. translators: 1: giftcard id, 2: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:517
-msgid "<a href=\"%1$s\" target=\"_blank\">View Giftcard #%2$s</a>"
-msgstr ""
-
-#: src/Domain/Services/GiftcardProduct.php:549
-msgid "Gift Card Recipient Email is required."
-msgstr ""
-
-#. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:615
-#: src/Domain/Services/GiftcardProduct.php:752
-msgid "Gift card #%1$s has already been reversed."
-msgstr ""
-
-#. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:627
-msgid "Could not process refund for gift card #%1$s - missing transaction data."
-msgstr ""
-
-#. translators: 1: refund percentage, 2: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:657
-msgid "Deducted %1$s%% from gift card #%2$s."
-msgstr ""
-
-#. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:683
-msgid "Failed to process refund for gift card #%1$s."
-msgstr ""
-
-#. translators: 1: giftcard id, 2: error message.
-#: src/Domain/Services/GiftcardProduct.php:693
-msgid "Error processing refund for gift card #%1$s: %2$s"
-msgstr ""
-
-#. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:764
-msgid "Could not process withdrawal for gift card #%1$s - missing transaction data."
-msgstr ""
-
-#. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:785
-msgid "Gift card #%1$s withdrawn successfully."
-msgstr ""
-
-#. translators: 1: giftcard id.
-#: src/Domain/Services/GiftcardProduct.php:808
-msgid "Failed to process withdrawal for gift card #%1$s."
-msgstr ""
-
-#. translators: 1: giftcard id, 2: error message.
-#: src/Domain/Services/GiftcardProduct.php:818
-msgid "Error processing withdrawal for gift card #%1$s: %2$s"
-msgstr ""
-
-#: src/Domain/Services/GiftcardProduct.php:889
-msgid "This order contains a gift card. Gift card orders must be refunded at the line item level. Please use the quantity and amount fields above to process refunds for individual gift cards."
+#: src/Domain/Services/GiftcardProductService.php:867
+msgid "This order contains gift cards. Refunding will withdraw the gift card balance if possible."
 msgstr ""
 
 #. translators: %s: The promotion rule name
 #: src/Domain/Syncing/SyncVouchers.php:399
 msgid "Leat Promotion Voucher: %s"
+msgstr ""
+
+#: src/Infrastructure/Blocks/GiftcardCouponIntegration.php:169
+msgid "Not a valid gift card or error checking balance."
 msgstr ""
 
 #: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:35
@@ -990,6 +1062,10 @@ msgstr ""
 #. translators: %s: List of available placeholders that can be used in the fulfillment text.
 #: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:261
 msgid "Add instructions on how fulfillment will be handled. Available placeholders: %s"
+msgstr ""
+
+#: src/Infrastructure/Repositories/WPGiftcardCouponRepository.php:125
+msgid "Gift Card %s - Initial Balance: %s"
 msgstr ""
 
 #. translators: %1$s table name, %2$s database user, %3$s database name.
@@ -1506,261 +1582,356 @@ msgstr ""
 msgid "Show the join program CTA on the dashboard. You must enable customer registration in %1$sWooCommerce Account Settings%2$s to use this feature."
 msgstr ""
 
-#: src/Settings.php:189
-#: dist/admin/assets/index-59d498ad.js:31998
+#: src/Settings.php:190
+msgid "Show tiers"
+msgstr ""
+
+#: src/Settings.php:191
+msgid "Show the tiers on the dashboard."
+msgstr ""
+
+#: src/Settings.php:196
+#: dist/admin/assets/index-f67ae016.js:34437
 msgid "Loyalty Program"
 msgstr ""
 
-#: src/Settings.php:192
+#: src/Settings.php:199
 msgid "Loyalty Program title"
 msgstr ""
 
-#: src/Settings.php:193
+#: src/Settings.php:200
 msgid "The title for the WooCommerce My Account page that displays the loyalty program."
 msgstr ""
 
-#: src/Settings.php:198
+#: src/Settings.php:205
 msgid "Log in"
 msgstr ""
 
-#: src/Settings.php:201
+#: src/Settings.php:208
 msgid "Log in button"
 msgstr ""
 
-#: src/Settings.php:202
+#: src/Settings.php:209
 msgid "The text that will be displayed on the button that allows users to log in."
 msgstr ""
 
-#: src/Settings.php:207
+#: src/Settings.php:214
 msgid "Your coupons"
 msgstr ""
 
-#: src/Settings.php:210
+#: src/Settings.php:217
 msgid "Coupons navigation item"
 msgstr ""
 
-#: src/Settings.php:215
+#: src/Settings.php:222
 msgid "You don't have any coupons yet."
 msgstr ""
 
-#: src/Settings.php:218
+#: src/Settings.php:225
 msgid "Coupons empty state"
 msgstr ""
 
-#: src/Settings.php:223
+#: src/Settings.php:230
+msgid "Tiers"
+msgstr ""
+
+#: src/Settings.php:233
+msgid "Tiers navigation item"
+msgstr ""
+
+#: src/Settings.php:238
 msgid "Loading your coupons..."
 msgstr ""
 
-#: src/Settings.php:226
+#: src/Settings.php:241
 msgid "Coupons loading state"
 msgstr ""
 
-#: src/Settings.php:231
+#: src/Settings.php:246
 msgid "Earn {{ credits_currency }}"
 msgstr ""
 
-#: src/Settings.php:234
+#: src/Settings.php:249
 msgid "Earn navigation item"
 msgstr ""
 
 #. translators: %s: a list of placeholders
-#: src/Settings.php:236
+#: src/Settings.php:251
 msgid "The text that will be displayed on the navigation item that allows users to earn credits. You can use the following placeholders: %s"
 msgstr ""
 
-#: src/Settings.php:241
+#: src/Settings.php:256
 msgid "Rewards"
 msgstr ""
 
-#: src/Settings.php:244
+#: src/Settings.php:259
 msgid "Rewards navigation item"
 msgstr ""
 
-#: src/Settings.php:249
+#: src/Settings.php:264
 msgid "Your activity"
 msgstr ""
 
-#: src/Settings.php:252
+#: src/Settings.php:267
 msgid "Activity navigation item"
 msgstr ""
 
-#: src/Settings.php:257
+#: src/Settings.php:272
 msgid "Claim reward"
 msgstr ""
 
-#: src/Settings.php:260
+#: src/Settings.php:275
 msgid "Claim reward button"
 msgstr ""
 
-#: src/Settings.php:261
+#: src/Settings.php:276
 msgid "The text that will be displayed on the button that allows users to claim their reward."
 msgstr ""
 
-#: src/Settings.php:266
+#: src/Settings.php:281
 msgid "Unlock"
 msgstr ""
 
-#: src/Settings.php:269
+#: src/Settings.php:284
 msgid "Spend credits button"
 msgstr ""
 
-#: src/Settings.php:270
+#: src/Settings.php:285
 msgid "The text that will be displayed on the button that allows users to spend their credits."
 msgstr ""
 
-#: src/Settings.php:275
+#: src/Settings.php:290
 msgid "Gift Card Order Status"
 msgstr ""
 
-#: src/Settings.php:276
+#: src/Settings.php:291
 msgid "When should gift cards be created and sent to customers?"
 msgstr ""
 
-#: src/Settings.php:283
-msgid "Gift Card Withdraw Order Statuses"
+#: src/Settings.php:298
+msgid "Cancel gift cards on these order statuses"
 msgstr ""
 
-#: src/Settings.php:284
-msgid "Select which order statuses will trigger a gift card withdrawal to the customer. Gift cards will be withdrawn only once, when the order first reaches any of the selected statuses. For example, if both \"Refunded\" and \"Cancelled\" are selected, gift cards will be returned to the customer when the order is either refunded or cancelled, whichever happens first."
+#: src/Settings.php:299
+msgid "Select which order statuses will invalidate previously issued gift cards. When an order containing a gift card purchase changes to any of these statuses, the gift card will be canceled. This happens only once, when the order first reaches any selected status."
 msgstr ""
 
-#: src/Settings.php:291
+#: src/Settings.php:307
+msgid "Update gift card balance on these order statuses"
+msgstr ""
+
+#: src/Settings.php:308
+msgid "Select which order statuses will update a purchased gift card's balance in the system. For example, if both \"Processing\" and \"Completed\" are selected, the gift card balance will be updated when the order reaches either status. The system prevents duplicate processing."
+msgstr ""
+
+#: src/Settings.php:316
+msgid "Accept Gift Cards"
+msgstr ""
+
+#: src/Settings.php:317
+msgid "If enabled, customers will be able to redeem Leat gift cards."
+msgstr ""
+
+#: src/Settings.php:324
 msgid "Disable Gift Card Recipient Email"
 msgstr ""
 
-#: src/Settings.php:292
+#: src/Settings.php:325
 msgid "If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer's own email address."
+msgstr ""
+
+#: src/Settings.php:332
+msgid "Checking Balance Text"
+msgstr ""
+
+#: src/Settings.php:333
+msgid "The text shown while checking a gift card balance."
+msgstr ""
+
+#: src/Settings.php:335
+msgid "Checking gift card balance..."
+msgstr ""
+
+#: src/Settings.php:342
+msgid "Gift Card Applied Success Message"
+msgstr ""
+
+#. translators: %s: a list of placeholders
+#: src/Settings.php:344
+msgid "The success message shown when a gift card is applied. Use placeholders: %s"
+msgstr ""
+
+#. translators: %1$s: gift card code, %2$s: gift card balance
+#: src/Settings.php:347
+msgid "Gift card {{ code }} applied. Balance: {{ balance }}"
+msgstr ""
+
+#: src/Settings.php:354
+msgid "Only Reward Known Contacts"
+msgstr ""
+
+#: src/Settings.php:355
+msgid "If enabled, credits will only be attributed to contacts that already exist in Leat. New contacts will not be created automatically."
 msgstr ""
 
 #: src/Shortcodes/AbstractShortcode.php:57
 msgid "Shortcode name is required."
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:614
-msgid "Save"
+#. translators: %1$s: gift card code, %2$s: gift card balance
+#: src/Utils/GiftcardDisplay.php:43
+msgid "✅ Gift card %1$s applied. Balance: %2$s"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:2410
+#. translators: %1$s: gift card code, %2$s: gift card balance
+#: src/Utils/GiftcardDisplay.php:52
+msgid "✅ Gift card {{ code }} applied. Balance: {{ balance }}"
+msgstr ""
+
+#: dist/admin/assets/index-f67ae016.js:614
+msgid "Save settings"
+msgstr ""
+
+#: dist/admin/assets/index-f67ae016.js:632
+msgid "Go to Leat dashboard"
+msgstr ""
+
+#: dist/admin/assets/index-f67ae016.js:2802
 msgid "Select a language"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:2438
+#: dist/admin/assets/index-f67ae016.js:2830
 msgid "Languages"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:7376
-#: dist/admin/assets/index-59d498ad.js:7699
+#: dist/admin/assets/index-f67ae016.js:8023
+#: dist/admin/assets/index-f67ae016.js:8346
 msgid "Rule settings"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:7399
+#: dist/admin/assets/index-f67ae016.js:8046
 msgid "The amount of credits customers will earn will be calculated based on the rules you have set up in the Leat Dashboard."
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:7959
+#: dist/admin/assets/index-f67ae016.js:8606
 msgid "Select an option"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:9247
-#: dist/admin/assets/index-59d498ad.js:10072
-#: dist/admin/assets/index-59d498ad.js:27999
-#: dist/admin/assets/index-59d498ad.js:29201
-#: dist/admin/assets/index-59d498ad.js:30243
-#: dist/admin/assets/index-59d498ad.js:30989
+#: dist/admin/assets/index-f67ae016.js:9894
+#: dist/admin/assets/index-f67ae016.js:10719
+#: dist/admin/assets/index-f67ae016.js:28397
+#: dist/admin/assets/index-f67ae016.js:29599
+#: dist/admin/assets/index-f67ae016.js:31384
+#: dist/admin/assets/index-f67ae016.js:32177
 msgid "Save rule"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:9265
-#: dist/admin/assets/index-59d498ad.js:28017
-#: dist/admin/assets/index-59d498ad.js:31993
+#: dist/admin/assets/index-f67ae016.js:9912
+#: dist/admin/assets/index-f67ae016.js:28415
+#: dist/admin/assets/index-f67ae016.js:34432
 msgid "General"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:9327
+#: dist/admin/assets/index-f67ae016.js:9974
 msgid "Credit Calculation"
 msgstr ""
 
 #. translators: %s: Link to the Leat Dashboard
-#: dist/admin/assets/index-59d498ad.js:9359
+#: dist/admin/assets/index-f67ae016.js:10006
 msgid "These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href=\"%s\" class=\"underline\" target=\"_blank\" rel=\"noopener noreferrer\">Leat Dashboard</a>."
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:9806
-#: dist/admin/assets/index-59d498ad.js:28935
+#: dist/admin/assets/index-f67ae016.js:10453
+#: dist/admin/assets/index-f67ae016.js:29333
 msgid "Details"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:10201
-#: dist/admin/assets/index-59d498ad.js:29342
+#: dist/admin/assets/index-f67ae016.js:10848
+#: dist/admin/assets/index-f67ae016.js:29740
 msgid "New rule"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:13443
-#: dist/admin/assets/index-59d498ad.js:14722
+#: dist/admin/assets/index-f67ae016.js:14090
+#: dist/admin/assets/index-f67ae016.js:16796
 msgid "Created at"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:14197
+#: dist/admin/assets/index-f67ae016.js:14844
 msgid "Create rules that reward customers with credits when they perform certain actions. For example, you can reward customers with credits when they create an account or place an order."
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:15476
-msgid "Create and manage spend rules to allow customers to spend their credits."
-msgstr ""
-
-#: dist/admin/assets/index-59d498ad.js:18922
+#: dist/admin/assets/index-f67ae016.js:19440
 msgid "Existing Leat user?"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:18923
+#: dist/admin/assets/index-f67ae016.js:19441
 msgid "Connect your account to get started."
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:18933
+#: dist/admin/assets/index-f67ae016.js:19451
 msgid "New to Leat?"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:18934
+#: dist/admin/assets/index-f67ae016.js:19452
 msgid "Create a new account to get started."
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:21292
-msgid "Loading your shops..."
+#: dist/admin/assets/index-f67ae016.js:21566
+msgid "Show"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:21308
+#: dist/admin/assets/index-f67ae016.js:21583
+msgid "Hide"
+msgstr ""
+
+#: dist/admin/assets/index-f67ae016.js:21690
+msgid "Save API Key"
+msgstr ""
+
+#: dist/admin/assets/index-f67ae016.js:21699
+msgid "Save your API key to connect to a shop"
+msgstr ""
+
+#: dist/admin/assets/index-f67ae016.js:21927
 msgid "There was an error loading your shops. Please try again later."
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:21325
-msgid "Your API key is invalid. Please check your API key and try again."
+#: dist/admin/assets/index-f67ae016.js:21969
+msgid "Loading your shops..."
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:21604
+#: dist/admin/assets/index-f67ae016.js:22207
+msgid "API key must be exactly 53 characters long"
+msgstr ""
+
+#: dist/admin/assets/index-f67ae016.js:22339
 msgid "Connect to Leat"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:23871
+#: dist/admin/assets/index-f67ae016.js:24261
 msgid "Only customers who have an account on your store will be included in the loyalty program."
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:24271
+#: dist/admin/assets/index-f67ae016.js:24668
 msgid "Back"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:24289
+#: dist/admin/assets/index-f67ae016.js:24686
 msgid "Save and continue"
 msgstr ""
 
-#: dist/admin/assets/index-59d498ad.js:32008
+#: dist/admin/assets/index-f67ae016.js:34447
+msgid "Giftcards"
+msgstr ""
+
+#: dist/admin/assets/index-f67ae016.js:34452
 msgid "Customer Dashboard"
 msgstr ""
 
-#: dist/frontend/assets/index-8b5bdfa1.js:3632
+#: dist/frontend/assets/index-574026e9.js:3935
 msgid "Reward image"
 msgstr ""
 
-#: src/Blocks/GiftcardRecipientBlock/build/block.json
-msgctxt "block title"
-msgid "Gift Card Recipient"
+#: dist/frontend/assets/index-574026e9.js:4910
+msgid "Tier image"
 msgstr ""
