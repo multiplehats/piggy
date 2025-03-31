@@ -93,6 +93,7 @@ export const zBasePluginOptions = z.object({
 	giftcard_disable_recipient_email: adminFields.zSwitch,
 	giftcard_coupon_allow_acceptance: adminFields.zSwitch,
 	only_reward_known_contacts: adminFields.zSwitch,
+	giftcard_applied_success_message: adminFields.zTranslatableText,
 });
 
 /**

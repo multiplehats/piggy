@@ -1,7 +1,7 @@
 import { getGiftcardBalance } from "@leat/lib";
 import React, { useEffect, useState } from "react";
 import { registerPlugin } from "@wordpress/plugins";
-import { getTranslatedText } from "@leat/i18n";
+import { getTranslatedText, replaceStrings } from "@leat/i18n";
 import "./giftcard-balance-checker.scss";
 import type { GetGiftcardBalanceResponse } from "@leat/lib/src/queries/types";
 
@@ -15,7 +15,6 @@ type GiftCardBalanceCheckerProps = {
 	context?: string;
 };
 
-// Add typings for window object
 declare global {
 	// eslint-disable-next-line ts/consistent-type-definitions
 	interface Window {
@@ -33,6 +32,8 @@ declare global {
 			};
 		};
 		jQuery: unknown;
+
+		// Add other relevant window properties if needed
 	}
 }
 
@@ -201,35 +202,50 @@ export const GiftCardBalanceChecker: React.FC<GiftCardBalanceCheckerProps> = ({
 
 	// Render balance information for a single coupon being checked
 	if (couponCode && status !== CheckStatus.IDLE) {
-		return (
-			<div className={`leat-giftcard-balance ${status.toLowerCase()}`}>
-				{status === CheckStatus.CHECKING &&
-					getTranslatedText(window.leatGiftCardConfig.checkingText)}
-				{status === CheckStatus.SUCCESS && (
-					<>
-						{getTranslatedText(window.leatGiftCardConfig.balanceText)}{" "}
-						<strong>{balance}</strong>
-					</>
-				)}
-			</div>
-		);
+		let messageContent = null;
+		if (status === CheckStatus.CHECKING) {
+			messageContent = getTranslatedText(window.leatGiftCardConfig.checkingText);
+		} else if (status === CheckStatus.SUCCESS && balance) {
+			const successTemplate = getTranslatedText(
+				window.leatGiftCardConfig.giftcardAppliedSuccessMessage
+			);
+			messageContent = replaceStrings(successTemplate, [
+				{ "{{code}}": couponCode },
+				{ "{{balance}}": balance },
+			]);
+		}
+
+		// Only render the div if there is content to show
+		return messageContent ? (
+			<div
+				className={`leat-giftcard-balance ${status.toLowerCase()}`}
+				// Use dangerouslySetInnerHTML for potential HTML in balance (e.g., wc_price)
+				dangerouslySetInnerHTML={{ __html: messageContent }}
+			/>
+		) : null;
 	}
 
 	// Render balances for all gift cards in the cart
 	return (
 		<div className="leat-giftcard-balances">
-			{Object.entries(giftCardBalances).map(([code, balance]) => (
-				<div key={code} className="leat-giftcard-balance success">
-					<div className="gift-card-code-container">
-						<span>{getTranslatedText(window.leatGiftCardConfig.balanceText)}</span>
-						<span className="gift-card-code">{code}</span>
-						<span
-							className="gift-card-balance"
-							dangerouslySetInnerHTML={{ __html: balance }}
-						/>
-					</div>
-				</div>
-			))}
+			{Object.entries(giftCardBalances).map(([code, balance]) => {
+				const successTemplate = getTranslatedText(
+					window.leatGiftCardConfig.giftcardAppliedSuccessMessage
+				);
+				const message = replaceStrings(successTemplate, [
+					{ "{{code}}": code },
+					{ "{{balance}}": balance },
+				]);
+
+				return (
+					<div
+						key={code}
+						className="leat-giftcard-balance success"
+						// Use dangerouslySetInnerHTML for potential HTML in balance (e.g., wc_price)
+						dangerouslySetInnerHTML={{ __html: message }}
+					/>
+				);
+			})}
 		</div>
 	);
 };
@@ -256,7 +272,6 @@ export const GiftCardCouponInput: React.FC = () => {
 	);
 };
 
-// Initialize WooCommerce Blocks integration
 export function initGiftCardIntegration(): void {
 	// Try to get the appropriate component (OrderMeta is preferred, DiscountsMeta as fallback)
 	const { ExperimentalOrderMeta, ExperimentalDiscountsMeta } = window.wc.blocksCheckout;

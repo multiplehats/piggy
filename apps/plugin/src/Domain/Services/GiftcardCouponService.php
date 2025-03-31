@@ -10,6 +10,7 @@ use Leat\Infrastructure\Constants\WCOrders;
 use Leat\Settings;
 use Leat\Utils\Logger;
 use Leat\Utils\OrderNotes;
+use Leat\Utils\GiftcardDisplay;
 use Piggy\Api\Models\Giftcards\Giftcard;
 use WP_Query;
 
@@ -50,6 +51,12 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     private $leatGiftcardRepository;
 
+    /**
+     * Giftcard display utility instance.
+     *
+     * @var GiftcardDisplay
+     */
+    private $giftcardDisplay;
 
     /**
      * Balance check cache time in seconds (2 minutes).
@@ -72,6 +79,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         $this->settings = $settings;
         $this->repository = $repository;
         $this->leatGiftcardRepository = $leatGiftcardRepository;
+        $this->giftcardDisplay = new GiftcardDisplay($settings);
 
         $this->logger = new Logger('giftcard-coupon-service');
     }
@@ -139,35 +147,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         // Add filter for gift card coupons in admin
         add_action('restrict_manage_posts', [$this, 'add_giftcard_filter_to_coupon_list']);
         add_filter('parse_query', [$this, 'filter_coupon_list_by_giftcard']);
-
-        // Register and enqueue scripts for the gift card coupon functionality
-        // $this->register_scripts();
-    }
-
-    /**
-     * Register and enqueue scripts for the gift card coupon functionality
-     */
-    public function register_scripts(): void
-    {
-        // Hook script registration to the proper WordPress hook
-        add_action('wp_enqueue_scripts', function () {
-            wp_localize_script('leat-giftcard-coupon', 'leatGiftCardConfig', [
-                'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('leat_check_giftcard_balance'),
-                'checkingText' => $this->settings->get_setting_value_by_id('giftcard_checking_balance_text'),
-                'balanceText' => $this->settings->get_setting_value_by_id('giftcard_balance_text'),
-                'errorText' => __('Not a valid gift card or error checking balance.', 'leat-crm'),
-            ]);
-
-            // Use the same config for React component
-            wp_localize_script('leat-giftcard-react-components', 'leatGiftCardConfig', [
-                'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('leat_check_giftcard_balance'),
-                'checkingText' => $this->settings->get_setting_value_by_id('giftcard_checking_balance_text'),
-                'balanceText' => $this->settings->get_setting_value_by_id('giftcard_balance_text'),
-                'errorText' => __('Not a valid gift card or error checking balance.', 'leat-crm'),
-            ]);
-        }, 20); // Higher priority to ensure WooCommerce Blocks has loaded
     }
 
     /**
@@ -1633,23 +1612,13 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
             $balance_in_cents = $this->check_giftcard_balance($giftcard);
             $formatted_balance = ($balance_in_cents !== null) ? wc_price($balance_in_cents / 100) : __('N/A', 'leat-crm');
 
-            // Get the balance text setting and ensure it's a string
-            $raw_template = $this->settings->get_setting_value_by_id('giftcard_balance_text');
-            if (is_string($raw_template) && !empty($raw_template)) {
-                $balance_text_template = $raw_template;
-            } else {
-                $balance_text_template = __('Balance: %s', 'leat-crm'); // Default fallback
+            // Use GiftcardDisplay to get the formatted message
+            $message = $this->giftcardDisplay->get_formatted_success_message($coupon_code, $formatted_balance);
+
+            // Add the message with high priority if it's not null
+            if ($message) {
+                wc_add_notice($message, 'success');
             }
-
-            // Construct the message using the balance text setting
-            $message = sprintf(
-                __('✅ Gift card %s applied. %s', 'leat-crm'), // Added placeholder for balance text
-                $coupon_code,
-                sprintf($balance_text_template, $formatted_balance) // Insert balance into the balance text template
-            );
-
-            // Add the message with high priority
-            wc_add_notice($message, 'success');
 
             // Track in session
             if ($woocommerce && $woocommerce->session) {
@@ -1682,23 +1651,13 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 $balance_in_cents = $this->check_giftcard_balance($giftcard);
                 $formatted_balance = ($balance_in_cents !== null) ? wc_price($balance_in_cents / 100) : __('N/A', 'leat-crm');
 
-                // Get the balance text setting and ensure it's a string
-                $raw_template = $this->settings->get_setting_value_by_id('giftcard_balance_text');
-                if (is_string($raw_template) && !empty($raw_template)) {
-                    $balance_text_template = $raw_template;
-                } else {
-                    $balance_text_template = __('Balance: %s', 'leat-crm'); // Default fallback
+                // Use GiftcardDisplay to get the formatted message
+                $message = $this->giftcardDisplay->get_formatted_success_message($coupon_code, $formatted_balance);
+
+                // Add the message with high priority if it's not null
+                if ($message) {
+                    wc_add_notice($message, 'success');
                 }
-
-                // Construct the message using the balance text setting
-                $message = sprintf(
-                    __('✅ Gift card %s applied. %s', 'leat-crm'), // Added placeholder for balance text
-                    $coupon_code,
-                    sprintf($balance_text_template, $formatted_balance) // Insert balance into the balance text template
-                );
-
-                // Add the message with high priority
-                wc_add_notice($message, 'success');
 
                 // Track in session
                 if (WC()->session) {

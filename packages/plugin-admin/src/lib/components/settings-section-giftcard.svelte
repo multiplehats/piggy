@@ -5,6 +5,7 @@
 	import SettingsCheckboxes from "./settings-checkboxes.svelte";
 	import SettingsSwitch from "./settings-switch.svelte";
 
+	import SettingsTranslateableInput from "./settings-translateable-input.svelte";
 	import { SettingsSection } from "$lib/components/ui/settings-section";
 	import { SettingsAdminService } from "$lib/modules/settings";
 	import { settingsState } from "$lib/stores/settings";
@@ -73,6 +74,12 @@
 					class="py-4"
 					{...$settingsState.giftcard_coupon_balance_update_order_statuses}
 					bind:value={$settingsState.giftcard_coupon_balance_update_order_statuses.value}
+				/>
+
+				<SettingsTranslateableInput
+					class="pt-4"
+					{...$settingsState.giftcard_applied_success_message}
+					bind:value={$settingsState.giftcard_applied_success_message.value}
 				/>
 			</div>
 		</SettingsSection>

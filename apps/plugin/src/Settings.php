@@ -337,12 +337,14 @@ class Settings
 		);
 
 		$settings[] = array(
-			'id'          => 'giftcard_balance_text',
+			'id'          => 'giftcard_applied_success_message',
 			'type'        => 'translatable_text',
-			'label'       => __('Balance Text', 'leat-crm'),
-			'description' => __('The text shown before displaying the gift card balance.', 'leat-crm'),
+			'label'       => __('Gift Card Applied Success Message', 'leat-crm'),
+			/* translators: %s: a list of placeholders */
+			'description' => sprintf(__('The success message shown when a gift card is applied. Use placeholders: %s', 'leat-crm'), '<code>{{ code }}</code>, <code>{{ balance }}</code>'),
 			'default'     => array(
-				'default' => __('Gift card balance: ', 'leat-crm'),
+				/* translators: %1$s: gift card code, %2$s: gift card balance */
+				'default' => __('Gift card {{ code }} applied. Balance: {{ balance }}', 'leat-crm'),
 			),
 		);
 
