@@ -133,14 +133,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         add_filter('manage_edit-shop_coupon_columns', [$this, 'add_giftcard_coupon_column']);
         add_action('manage_shop_coupon_posts_custom_column', [$this, 'render_giftcard_coupon_column'], 10, 2);
 
-        // AJAX handler for checking gift card balance
-        add_action('wp_ajax_leat_admin_check_giftcard_balance', [$this, 'ajax_check_giftcard_balance']);
-        add_action('wp_ajax_nopriv_leat_check_giftcard_balance', [$this, 'ajax_check_giftcard_balance']);
-
-        // Frontend AJAX handler for checking gift card balance
-        add_action('wp_ajax_leat_check_giftcard_balance', [$this, 'ajax_check_frontend_giftcard_balance']);
-        add_action('wp_ajax_nopriv_leat_check_giftcard_balance', [$this, 'ajax_check_frontend_giftcard_balance']);
-
         // Add gift card detection notes to the order when it's created
         add_action('woocommerce_checkout_order_created', [$this, 'add_giftcard_detection_notes_to_order'], 10, 1);
 
@@ -285,8 +277,8 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 return null;
             }
 
-            // Create the coupon
             $coupon_data = [
+                'id' => $giftcard->getId(),
                 'uuid' => $giftcard->getUuid(),
                 'hash' => $hash,
                 'balance_in_cents' => $balance_in_cents,
@@ -1051,12 +1043,10 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         }
 
         // Get gift card data
-        $uuid = $coupon->get_meta(WCCoupons::GIFTCARD_UUID);
+        $id = $coupon->get_meta(WCCoupons::GIFTCARD_COUPON_ID);
         $hash = $coupon->get_meta(WCCoupons::GIFTCARD_HASH);
-        $program_uuid = $coupon->get_meta(WCCoupons::GIFTCARD_PROGRAM_UUID);
         $initial_balance = (int) $coupon->get_meta(WCCoupons::GIFTCARD_INITIAL_BALANCE);
         $current_balance = (int) $coupon->get_meta(WCCoupons::GIFTCARD_CURRENT_BALANCE);
-        $last_checked = (int) $coupon->get_meta(WCCoupons::GIFTCARD_LAST_CHECKED);
 
         // Add nonce for security
         wp_nonce_field('leat_giftcard_coupon_meta_box', 'leat_giftcard_coupon_meta_box_nonce');
@@ -1064,95 +1054,35 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
 ?>
         <table class="form-table">
             <tr>
-                <th><?php _e('Gift Card UUID', 'leat-crm'); ?></th>
+                <th></th>
                 <td>
-                    <input type="text" name="leat_giftcard_uuid" value="<?php echo esc_attr($uuid); ?>" class="regular-text" readonly />
+                    <a href="<?php echo esc_url('https://business.leat.com/store/giftcards/program/cards?card_id=' . $id); ?>" target="_blank">
+                        <?php _e('View card in Leat', 'leat-crm'); ?>
+                    </a>
                 </td>
             </tr>
+
             <tr>
-                <th><?php _e('Gift Card Hash', 'leat-crm'); ?></th>
+                <th><?php _e('Gift Card code', 'leat-crm'); ?></th>
                 <td>
                     <input type="text" name="leat_giftcard_hash" value="<?php echo esc_attr($hash); ?>" class="regular-text" readonly />
                 </td>
             </tr>
-            <tr>
-                <th><?php _e('Program UUID', 'leat-crm'); ?></th>
-                <td>
-                    <input type="text" name="leat_giftcard_program_uuid" value="<?php echo esc_attr($program_uuid); ?>" class="regular-text" readonly />
-                </td>
-            </tr>
+
             <tr>
                 <th><?php _e('Initial Balance', 'leat-crm'); ?></th>
                 <td>
                     <?php echo wc_price($initial_balance / 100); ?>
                 </td>
             </tr>
+
             <tr>
                 <th><?php _e('Current Balance', 'leat-crm'); ?></th>
                 <td>
                     <?php echo wc_price($current_balance / 100); ?>
-                    <p class="description">
-                        <?php
-                        printf(
-                            __('Last checked: %s', 'leat-crm'),
-                            date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $last_checked)
-                        );
-                        ?>
-                    </p>
-                </td>
-            </tr>
-            <tr>
-                <th></th>
-                <td>
-                    <button type="button" class="button" id="leat-check-giftcard-balance" data-uuid="<?php echo esc_attr($uuid); ?>">
-                        <?php _e('Check balance', 'leat-crm'); ?>
-                    </button>
-                    <span class="spinner" style="float: none; margin-top: 0;"></span>
-                    <span id="leat-giftcard-balance-result"></span>
                 </td>
             </tr>
         </table>
-        <script>
-            jQuery(document).ready(function($) {
-                $('#leat-check-giftcard-balance').on('click', function() {
-                    var button = $(this);
-                    var spinner = button.next('.spinner');
-                    var result = $('#leat-giftcard-balance-result');
-                    var uuid = button.data('uuid');
-
-                    button.prop('disabled', true);
-                    spinner.css('visibility', 'visible');
-                    result.html('');
-
-                    $.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        data: {
-                            action: 'leat_admin_check_giftcard_balance',
-                            uuid: uuid,
-                            nonce: '<?php echo wp_create_nonce('leat_admin_check_giftcard_balance'); ?>'
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                result.html('<span style="color: green;">' + response.data.message + '</span>');
-                                setTimeout(function() {
-                                    window.location.reload();
-                                }, 1500);
-                            } else {
-                                result.html('<span style="color: red;">' + response.data.message + '</span>');
-                            }
-                        },
-                        error: function() {
-                            result.html('<span style="color: red;"><?php _e('Error checking balance', 'leat-crm'); ?></span>');
-                        },
-                        complete: function() {
-                            button.prop('disabled', false);
-                            spinner.css('visibility', 'hidden');
-                        }
-                    });
-                });
-            });
-        </script>
 <?php
     }
 
@@ -1236,106 +1166,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
     }
 
     /**
-     * AJAX handler for checking gift card balance.
-     *
-     * @return void
-     */
-    public function ajax_check_giftcard_balance(): void
-    {
-        if (!check_ajax_referer('leat_admin_check_giftcard_balance', 'nonce', false)) {
-            wp_send_json_error([
-                'message' => __('Invalid nonce.', 'leat-crm')
-            ]);
-            return;
-        }
-
-        if (!current_user_can('manage_woocommerce')) {
-            wp_send_json_error([
-                'message' => __('You do not have permission to do this.', 'leat-crm')
-            ]);
-            return;
-        }
-
-        $uuid = sanitize_text_field($_POST['uuid']);
-
-        try {
-            // Find all coupons
-            $args = [
-                'post_type' => 'shop_coupon',
-                'post_status' => 'any',
-                'posts_per_page' => 1,
-                'meta_query' => [
-                    [
-                        'key' => WCCoupons::GIFTCARD_UUID,
-                        'value' => $uuid,
-                        'compare' => '='
-                    ]
-                ]
-            ];
-
-            $query = new \WP_Query($args);
-
-            if (!$query->have_posts()) {
-                wp_send_json_error([
-                    'message' => __('Gift card coupon not found.', 'leat-crm')
-                ]);
-                return;
-            }
-
-            $post = $query->posts[0];
-            $coupon = new \WC_Coupon($post->ID);
-
-            // Get the hash from the coupon
-            $hash = $coupon->get_meta(WCCoupons::GIFTCARD_HASH);
-
-            if (empty($hash)) {
-                wp_send_json_error([
-                    'message' => __('Gift card hash not found.', 'leat-crm')
-                ]);
-                return;
-            }
-
-            // Get the gift card from Leat
-            $giftcard = $this->leatGiftcardRepository->find_by_hash($hash);
-
-            if (!$giftcard) {
-                wp_send_json_error([
-                    'message' => __('Gift card not found in Leat.', 'leat-crm')
-                ]);
-                return;
-            }
-
-            // Check the balance
-            $balance = $this->check_giftcard_balance($giftcard);
-
-            if ($balance === null) {
-                wp_send_json_error([
-                    'message' => __('Failed to check gift card balance.', 'leat-crm')
-                ]);
-                return;
-            }
-
-            // Update the coupon with the new balance
-            $this->repository->update_balance($coupon, $balance);
-
-            wp_send_json_success([
-                'balance' => wc_price($balance / 100),
-                'balance_raw' => $balance,
-            ]);
-        } catch (\Exception $e) {
-            $this->logger->error('Error checking gift card balance via AJAX', [
-                'uuid' => $uuid,
-                'error' => $e->getMessage(),
-            ]);
-
-            wp_send_json_error([
-                'message' => __('An error occurred while checking the gift card balance.', 'leat-crm'),
-                'error' => $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
      * Add gift card detection notes to the order when it's created.
      *
      * @param \WC_Order $order The order object.
@@ -1416,94 +1246,6 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         $query->set('meta_query', $meta_query);
 
         return $query;
-    }
-
-    /**
-     * AJAX handler for checking gift card balance from the frontend.
-     *
-     * @return void
-     */
-    public function ajax_check_frontend_giftcard_balance(): void
-    {
-        // Verify nonce
-        if (!check_ajax_referer('leat_check_giftcard_balance', 'nonce', false)) {
-            wp_send_json_error([
-                'message' => __('Security check failed.', 'leat-crm')
-            ]);
-            return;
-        }
-
-        $coupon_code = sanitize_text_field($_POST['coupon_code']);
-
-        if (empty($coupon_code)) {
-            wp_send_json_error([
-                'message' => __('No coupon code provided.', 'leat-crm')
-            ]);
-            return;
-        }
-
-        try {
-            // Try to get the coupon
-            try {
-                $coupon = new \WC_Coupon($coupon_code);
-            } catch (\Exception $e) {
-                wp_send_json_error([
-                    'message' => __('Coupon not found.', 'leat-crm'),
-                    'is_giftcard' => false
-                ]);
-                return;
-            }
-
-            // Check if this is a gift card coupon
-            if (!$this->repository->is_giftcard($coupon)) {
-                wp_send_json_error([
-                    'message' => __('Not a gift card.', 'leat-crm'),
-                    'is_giftcard' => false
-                ]);
-                return;
-            }
-
-            // Try to get the gift card from Leat first
-            $hash = $coupon->get_code();
-            $giftcard = $this->leatGiftcardRepository->find_by_hash($hash);
-
-            if ($giftcard) {
-                // Check the balance
-                $balance = $this->check_giftcard_balance($giftcard);
-
-                if ($balance !== null) {
-                    // Update the coupon with the new balance
-                    $this->repository->update_balance($coupon, $balance);
-
-                    wp_send_json_success([
-                        'is_giftcard' => true,
-                        'balance' => wc_price($balance / 100),
-                        'balance_raw' => $balance,
-                    ]);
-                    return;
-                }
-            }
-
-            // Fallback to the stored balance if we couldn't get it from Leat
-            $current_balance = (int) $coupon->get_meta(WCCoupons::GIFTCARD_CURRENT_BALANCE);
-
-            wp_send_json_success([
-                'is_giftcard' => true,
-                'balance' => wc_price($current_balance / 100),
-                'balance_raw' => $current_balance,
-                'fallback' => true
-            ]);
-        } catch (\Exception $e) {
-            $this->logger->error('Error checking gift card balance via frontend AJAX', [
-                'coupon_code' => $coupon_code,
-                'error' => $e->getMessage(),
-            ]);
-
-            wp_send_json_error([
-                'message' => __('An error occurred while checking the gift card balance.', 'leat-crm'),
-                'error' => $e->getMessage()
-            ]);
-        }
     }
 
     /**
