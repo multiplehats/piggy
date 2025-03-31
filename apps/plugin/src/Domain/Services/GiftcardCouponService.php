@@ -83,6 +83,13 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
      */
     public function init(): void
     {
+        // Hook for the classic WooCommerce coupon system - runs before coupon existence is checked
+        add_filter('woocommerce_get_shop_coupon_data', [$this, 'maybe_create_giftcard_coupon_on_get_data'], 10, 2);
+
+        // Add hooks to display success message after coupon is applied
+        add_action('woocommerce_applied_coupon', [$this, 'maybe_show_giftcard_success_message'], 10, 1);
+        add_action('woocommerce_add_to_cart', [$this, 'show_giftcard_notices_on_cart_update'], 20);
+
         // Pre-emptive coupon creation for gift cards
         add_action('woocommerce_before_checkout_form', [$this, 'maybe_create_giftcard_coupon_from_code']);
         add_action('woocommerce_before_cart', [$this, 'maybe_create_giftcard_coupon_from_code']);
@@ -242,15 +249,8 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                     }
                 }
 
-
-                wc_add_notice(
-                    sprintf(
-                        __('✅ Gift card %s detected and applied to your order.', 'leat-crm'),
-                        $coupon_code
-                    ),
-                    'success'
-                );
-
+                // We handle the success message in maybe_show_giftcard_success_message
+                // to ensure consistent messaging across both checkout types
 
                 if (WC()->session) {
                     $applied_giftcards = WC()->session->get('applied_giftcards', []);
@@ -1524,6 +1524,166 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
                 'message' => __('An error occurred while checking the gift card balance.', 'leat-crm'),
                 'error' => $e->getMessage()
             ]);
+        }
+    }
+
+    /**
+     * Check if a coupon code is actually a gift card and create it if needed.
+     * This runs when WooCommerce first checks if a coupon exists.
+     *
+     * @param mixed $data The coupon data (false if it doesn't exist yet)
+     * @param string $coupon_code The coupon code being checked
+     * @return mixed The coupon data or false
+     */
+    public function maybe_create_giftcard_coupon_on_get_data($data, string $coupon_code)
+    {
+        // If the coupon data is already found, return it
+        if ($data !== false) {
+            return $data;
+        }
+
+        // Check if this might be a gift card (hash is 9 characters)
+        if (strlen($coupon_code) !== 9) {
+            return $data;
+        }
+
+        try {
+            // Check if this is a gift card in Leat
+            $giftcard = $this->leatGiftcardRepository->find_by_hash($coupon_code);
+
+            if (!$giftcard) {
+                // Not a gift card, return the original data
+                return $data;
+            }
+
+            // Check if we already have a coupon for this gift card
+            $existing_coupon = $this->repository->find_by_hash($coupon_code);
+
+            if ($existing_coupon) {
+                // Return coupon data instead of just true
+                return [
+                    'id' => $existing_coupon->get_id(),
+                    'code' => $existing_coupon->get_code(),
+                    'discount_type' => $existing_coupon->get_discount_type(),
+                    'amount' => $existing_coupon->get_amount(),
+                    'date_created' => $existing_coupon->get_date_created(),
+                    'date_modified' => $existing_coupon->get_date_modified(),
+                    'date_expires' => $existing_coupon->get_date_expires(),
+                ];
+            }
+
+            // Create the gift card coupon
+            $coupon = $this->create_giftcard_coupon($giftcard);
+
+            if (!$coupon) {
+                $this->logger->error('Failed to create gift card coupon during lookup', [
+                    'coupon_code' => $coupon_code,
+                ]);
+                return $data;
+            }
+
+            $this->logger->info('Created gift card coupon during lookup', [
+                'coupon_code' => $coupon_code,
+                'coupon_id' => $coupon->get_id(),
+            ]);
+
+            // Track applied gift cards in session
+            if (WC()->session) {
+                $applied_giftcards = WC()->session->get('applied_giftcards', []);
+                if (!in_array($coupon_code, $applied_giftcards)) {
+                    $applied_giftcards[] = $coupon_code;
+                    WC()->session->set('applied_giftcards', $applied_giftcards);
+                }
+            }
+
+            // Return coupon data instead of just true
+            return [
+                'id' => $coupon->get_id(),
+                'code' => $coupon->get_code(),
+                'discount_type' => $coupon->get_discount_type(),
+                'amount' => $coupon->get_amount(),
+                'date_created' => $coupon->get_date_created(),
+                'date_modified' => $coupon->get_date_modified(),
+                'date_expires' => $coupon->get_date_expires(),
+            ];
+        } catch (\Exception $e) {
+            $this->logger->error('Error checking/creating gift card coupon during lookup', [
+                'coupon_code' => $coupon_code,
+                'error' => $e->getMessage(),
+            ]);
+
+            return $data;
+        }
+    }
+
+    /**
+     * Add a hook to display success message after coupon is applied
+     *
+     * @param string $coupon_code The coupon code being applied
+     * @return void
+     */
+    public function maybe_show_giftcard_success_message(string $coupon_code): void
+    {
+        // Check if this is a gift card coupon
+        $giftcard = $this->leatGiftcardRepository->find_by_hash($coupon_code);
+        if ($giftcard) {
+            // Try a more direct approach to ensure the notice is shown
+            global $woocommerce;
+
+            // Use a more prominent message for the classic checkout
+            $message = sprintf(
+                __('✅ Gift card %s detected and applied to your order.', 'leat-crm'),
+                $coupon_code
+            );
+
+            // Add the message with high priority
+            wc_add_notice($message, 'success');
+
+            // Track in session
+            if ($woocommerce && $woocommerce->session) {
+                $applied_giftcards = $woocommerce->session->get('applied_giftcards', []);
+                if (!in_array($coupon_code, $applied_giftcards)) {
+                    $applied_giftcards[] = $coupon_code;
+                    $woocommerce->session->set('applied_giftcards', $applied_giftcards);
+                }
+            }
+        }
+    }
+
+    /**
+     * Show gift card notices when cart is updated
+     *
+     * @return void
+     */
+    public function show_giftcard_notices_on_cart_update(): void
+    {
+        if (!WC()->cart) {
+            return;
+        }
+
+        $applied_coupons = WC()->cart->get_applied_coupons();
+
+        foreach ($applied_coupons as $coupon_code) {
+            $giftcard = $this->leatGiftcardRepository->find_by_hash($coupon_code);
+            if ($giftcard) {
+                // Use a prominent message for the classic checkout
+                $message = sprintf(
+                    __('✅ Gift card %s detected and applied to your order.', 'leat-crm'),
+                    $coupon_code
+                );
+
+                // Add the message with high priority
+                wc_add_notice($message, 'success');
+
+                // Track in session
+                if (WC()->session) {
+                    $applied_giftcards = WC()->session->get('applied_giftcards', []);
+                    if (!in_array($coupon_code, $applied_giftcards)) {
+                        $applied_giftcards[] = $coupon_code;
+                        WC()->session->set('applied_giftcards', $applied_giftcards);
+                    }
+                }
+            }
         }
     }
 }
