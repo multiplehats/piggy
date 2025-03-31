@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 0.9.71
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -191,3 +191,7 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 = 0.9.7 =
 
 * Feature: Added new "Only Reward Known Contacts" setting to control credit attribution. When enabled, credits will only be awarded to contacts that already exist in Leat.
+
+= 1.0.0 =
+
+* Feature: Accept physical and digital Giftcards in your store
