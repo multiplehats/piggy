@@ -14,4 +14,9 @@ class WCOrders
     public const GIFT_CARD_PROCESSED = '_leat_processed_giftcard';
     public const GIFT_CARD_PROCESSED_TRANSACTION_ID_PREFIX = '_leat_processed_giftcard_transaction_id_';
     public const GIFT_CARD_REFUND_TRANSACTION_ID_PREFIX = '_leat_giftcard_refund_transaction_id_';
+
+    // Related to selling prepaid credit
+    public const IS_PREPAID_PRODUCT = '_leat_is_prepaid_product';
+    public const PREPAID_TRANSACTION_UUID = '_leat_prepaid_transaction_uuid';
+    public const PREPAID_TRANSACTIONS_CREATED = '_leat_prepaid_transactions_created';
 }

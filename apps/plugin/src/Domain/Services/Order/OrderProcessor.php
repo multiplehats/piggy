@@ -296,7 +296,7 @@ class OrderProcessor
                 return $uuid;
             }
 
-            $contact = $this->connection->create_contact($email);
+            $contact = $this->connection->find_or_create_contact($email);
             if (!$contact) {
                 $this->logger->error('Failed to create contact for guest order: ' . $order->get_id());
                 return null;
