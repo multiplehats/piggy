@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -196,3 +196,9 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 = 1.0.0 =
 
 * Feature: Accept physical and digital Giftcards in your store
+
+= 1.1.0 =
+
+* Feature: Sell prepaid balance top-ups directly through WooCommerce products.
+* Feature: Automatically reverse prepaid top-ups for specific order statuses (e.g., 'refunded', 'cancelled').
+* Feature: Supports 'WPC Name Your Price for WooCommerce' for selling variable prepaid amounts.
