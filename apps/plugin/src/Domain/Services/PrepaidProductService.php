@@ -46,11 +46,6 @@ class PrepaidProductService
 
     public function init(): void
     {
-        // Add prepaid product setting checkbox.
-        add_filter('woocommerce_product_data_tabs', [$this, 'add_prepaid_product_tab']);
-        add_action('woocommerce_product_data_panels', [$this, 'add_prepaid_product_settings']);
-        add_action('woocommerce_process_product_meta', [$this, 'save_prepaid_product_settings']);
-
         // Process prepaid top-ups after order status changes.
         $trigger_status = $this->settings->get_setting_value_by_id('prepaid_order_status', 'completed'); // Default to completed
         add_action("woocommerce_order_status_{$trigger_status}", [$this, 'process_prepaid_order'], 10, 1);
@@ -69,6 +64,10 @@ class PrepaidProductService
                 }
             }
         }
+
+        // Add prepaid product setting checkbox to variations.
+        add_action('woocommerce_variation_options_pricing', [$this, 'add_variation_prepaid_settings'], 10, 3);
+        add_action('woocommerce_save_product_variation', [$this, 'save_variation_prepaid_settings'], 10, 2);
     }
 
     /**
@@ -208,6 +207,7 @@ class PrepaidProductService
         if ($has_prepaid_items) {
             $this->wpRepository->mark_prepaid_transactions_created($order_id);
         }
+
         $this->logger->info("Finished processing prepaid order: {$order_id}", ['order_id' => $order_id], true);
     }
 
@@ -233,7 +233,7 @@ class PrepaidProductService
 
             if ($item_quantity > 0) {
                 $amount_per_unit = $item_total / $item_quantity;
-                $this->logger->info("Calculated WPC Name Your Price amount per unit: " . ($amount_per_unit / 100), ['order_id' => $order_id, 'item_id' => $item->get_id()]);
+                $this->logger->info("Calculated WPC Name Your Price amount per unit: " . ($amount_per_unit / 100), ['order_id' => $order_id, 'item_id' => $item->get_id()], true);
                 return (int) round($amount_per_unit * 100);
             } else {
                 $this->logger->warning("WPC Name Your Price: Item quantity is zero for item ID {$item->get_id()} in order {$order_id}", ['order_id' => $order_id]);
@@ -270,56 +270,90 @@ class PrepaidProductService
     {
         $this->logger->info("Handling prepaid withdrawal for refund. Order: {$order_id}, Refund: {$refund_id}", ['order_id' => $order_id, 'refund_id' => $refund_id], true);
         $order = $this->wpRepository->get_order($order_id);
-        $refund = $this->wpRepository->get_order($refund_id); // Refunds are orders
+        $refund = wc_get_order($refund_id); // Refunds are post types, use wc_get_order
 
         if (! $order || ! $refund) {
-            $this->logger->error("Could not find order or refund object for prepaid withdrawal.", ['order_id' => $order_id, 'refund_id' => $refund_id]);
+            $this->logger->error("Could not find original order or refund object for prepaid withdrawal.", ['order_id' => $order_id, 'refund_id' => $refund_id]);
             return;
         }
 
+        // Get items directly from the refund object
         $refund_items = $refund->get_items();
         if (empty($refund_items)) {
-            $this->logger->info("No items in refund {$refund_id}, skipping prepaid withdrawal.", ['refund_id' => $refund_id]);
+            // This might happen for refunds not associated with specific items, log and exit.
+            $this->logger->info("No line items found in refund object {$refund_id}. Skipping prepaid withdrawal. Was this a manual refund amount without item selection?", ['order_id' => $order_id, 'refund_id' => $refund_id]);
             return;
         }
 
-        foreach ($refund_items as $refund_item) {
+        foreach ($refund_items as $refund_item_id => $refund_item) {
             /** @var WC_Order_Item_Product $refund_item */
-            $original_item_id = wc_get_order_item_meta($refund_item->get_id(), '_refunded_item_id', true);
+
+            // Get the ID of the item in the original order that this refund item corresponds to
+            $original_item_id = wc_get_order_item_meta($refund_item_id, '_refunded_item_id', true);
+
             if (! $original_item_id) {
+                $this->logger->warning("Could not find original item ID (_refunded_item_id) for refund item #{$refund_item_id}.", ['order_id' => $order_id, 'refund_id' => $refund_id]);
                 continue;
             }
 
+            // Get the original order item object
             $original_item = $order->get_item($original_item_id);
-            if (! $original_item instanceof WC_Order_Item_Product) {
+            if (! $original_item instanceof \WC_Order_Item_Product) {
+                $this->logger->warning("Could not retrieve original order item object for ID #{$original_item_id} from order #{$order_id}.", ['order_id' => $order_id, 'refund_id' => $refund_id, 'original_item_id' => $original_item_id]);
                 continue;
             }
 
+            // Now check if the *original* item was a prepaid product
             $product_id = $original_item->get_product_id();
             $variation_id = $original_item->get_variation_id();
             $effective_product_id = $variation_id ?: $product_id;
 
-            if (! $effective_product_id || ! $this->wpRepository->is_prepaid_product($effective_product_id)) {
-                continue; // Not a prepaid product
+            $is_prepaid = $this->wpRepository->is_prepaid_product($effective_product_id);
+            // Get quantity directly from the refund item (it's negative, so use abs)
+            $refunded_qty = abs($refund_item->get_quantity());
+
+            $this->logger->debug(
+                "Checking refund item",
+                [
+                    'order_id' => $order_id,
+                    'refund_id' => $refund_id,
+                    'refund_item_id' => $refund_item_id,
+                    'original_item_id' => $original_item_id,
+                    'effective_product_id' => $effective_product_id,
+                    'is_prepaid_original' => $is_prepaid,
+                    'refunded_qty' => $refunded_qty,
+                ],
+                true
+            );
+
+            if (! $effective_product_id || ! $is_prepaid) {
+                continue; // Original item wasn't prepaid
             }
 
-            $refunded_qty = abs($refund_item->get_quantity()); // Qty is negative in refund item
+            if ($refunded_qty <= 0) {
+                $this->logger->warning("Refund item #{$refund_item_id} has non-positive quantity ({$refunded_qty}). Skipping.", ['order_id' => $order_id, 'refund_id' => $refund_id]);
+                continue; // Should not happen for line item refunds
+            }
+
             $original_qty = $original_item->get_quantity();
+            $this->logger->info("Found refunded prepaid item via refund object. Original Item ID: {$original_item_id}, Original Qty: {$original_qty}, Refunded Qty: {$refunded_qty}", ['order_id' => $order_id, 'refund_id' => $refund_id]);
 
             // Identify which specific transaction UUIDs correspond to the refunded quantity.
             // Assume transactions are linked 1-to-1 with quantity index (e.g., _leat_prepaid_transaction_uuid_1, _2, etc.)
             // We need to reverse the *last* N transactions, where N is the refunded quantity.
             for ($i = $original_qty; $i > ($original_qty - $refunded_qty); $i--) {
-                $transaction_uuid = $this->wpRepository->get_transaction_uuid_for_item($original_item->get_id(), $i);
+                if ($i <= 0) break; // Safety check if refunded_qty > original_qty somehow
+
+                $transaction_uuid = $this->wpRepository->get_transaction_uuid_for_item($original_item_id, $i);
                 if (! $transaction_uuid) {
-                    $this->logger->warning("Could not find prepaid transaction UUID for item #{$original_item->get_id()}, index {$i} during refund.", ['order_id' => $order_id, 'refund_id' => $refund_id]);
+                    $this->logger->warning("Could not find prepaid transaction UUID for original item #{$original_item_id}, index {$i} during refund.", ['order_id' => $order_id, 'refund_id' => $refund_id]);
                     continue;
                 }
 
                 $this->reverse_prepaid_transaction($transaction_uuid, $order);
             }
         }
-        $this->logger->info("Finished prepaid withdrawal for refund. Order: {$order_id}, Refund: {$refund_id}", ['order_id' => $order_id, 'refund_id' => $refund_id], true);
+        $this->logger->info("Finished prepaid withdrawal processing based on refund object items. Order: {$order_id}, Refund: {$refund_id}", ['order_id' => $order_id, 'refund_id' => $refund_id], true);
     }
 
     /**
@@ -417,66 +451,53 @@ class PrepaidProductService
     }
 
     /**
-     * Add prepaid product tab to WooCommerce product data tabs.
+     * Add prepaid product settings checkbox to variation options.
      *
-     * @param array $tabs The existing tabs.
-     * @return array The modified tabs.
-     */
-    public function add_prepaid_product_tab(array $tabs): array
-    {
-        $tabs['leat_prepaid'] = [
-            'label'  => __('Leat: Prepaid', 'leat-crm'),
-            'target' => 'leat_prepaid_product_data',
-            'class'  => ['show_if_simple', 'show_if_variable'], // Show for simple and variable products
-        ];
-        return $tabs;
-    }
-
-    /**
-     * Add prepaid product settings to WooCommerce product data panels.
-     *
+     * @param int     $loop           The loop index.
+     * @param array   $variation_data The variation data.
+     * @param WP_Post $variation      The variation post object.
      * @return void
      */
-    public function add_prepaid_product_settings(): void
+    public function add_variation_prepaid_settings(int $loop, array $variation_data, \WP_Post $variation): void
     {
-        global $post;
-        $product_id = $post->ID;
-
-        // Verify user permissions.
-        if (! current_user_can('edit_product', $product_id)) {
+        // Verify user permissions (check for parent product edit capability).
+        $parent_product_id = $variation->post_parent;
+        if (! $parent_product_id || ! current_user_can('edit_product', $parent_product_id)) {
             return;
         }
 
-        echo '<div id="leat_prepaid_product_data" class="panel woocommerce_options_panel">';
+        $variation_id = $variation->ID;
+        $is_prepaid = $this->wpRepository->is_prepaid_product($variation_id);
 
         woocommerce_wp_checkbox(
             [
-                'id'          => WCOrders::IS_PREPAID_PRODUCT,
-                'label'       => __('Is Prepaid Top-up Product?', 'leat-crm'),
-                'description' => __('Enable this to make purchasing this product add value to the customer\'s Leat prepaid balance.', 'leat-crm'),
-                'desc_tip'    => true,
-                'value'       => $this->wpRepository->is_prepaid_product($product_id) ? 'yes' : 'no',
+                'id'            => WCOrders::IS_PREPAID_PRODUCT . '[' . $loop . ']', // Name format required by WC for variations
+                'label'         => __('Leat: Prepaid Top-up?', 'leat-crm'),
+                'description'   => __('Enable this to make purchasing this variation add value to the customer\'s Leat prepaid balance.', 'leat-crm'),
+                'desc_tip'      => true,
+                'value'         => $is_prepaid ? 'yes' : 'no', // 'yes' or 'no'
+                'cbvalue'       => 'yes', // The value saved when checked
+                // 'name' is automatically generated by woocommerce_wp_checkbox from 'id'
             ]
         );
-
-        echo '</div>';
     }
 
     /**
-     * Save prepaid product settings from WooCommerce product meta.
+     * Save prepaid product settings for a variation.
      *
-     * @param int $product_id The product ID.
+     * @param int $variation_id The variation ID.
+     * @param int $i            The loop index.
      * @return void
      */
-    public function save_prepaid_product_settings(int $product_id): void
+    public function save_variation_prepaid_settings(int $variation_id, int $i): void
     {
-        // No nonce needed here as WC handles it via woocommerce_process_product_meta
-
-        if (! current_user_can('edit_product', $product_id)) {
+        // Verify user permissions (check for parent product edit capability).
+        $variation_post = get_post($variation_id);
+        if (!$variation_post || !isset($variation_post->post_parent) || !current_user_can('edit_product', $variation_post->post_parent)) {
             return;
         }
 
-        $is_prepaid = isset($_POST[WCOrders::IS_PREPAID_PRODUCT]);
-        $this->wpRepository->save_is_prepaid_product($product_id, $is_prepaid);
+        $is_prepaid = isset($_POST[WCOrders::IS_PREPAID_PRODUCT][$i]);
+        $this->wpRepository->save_is_prepaid_product($variation_id, $is_prepaid);
     }
 }

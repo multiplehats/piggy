@@ -5,8 +5,11 @@ namespace Leat\Infrastructure\Repositories;
 use Leat\Domain\Interfaces\LeatPrepaidRepositoryInterface;
 use Leat\Domain\Services\ApiService;
 use Leat\Utils\Logger;
+use Piggy\Api\ApiClient;
 use Piggy\Api\Models\Prepaid\PrepaidTransaction;
 use Piggy\Api\Exceptions\PiggyRequestException;
+use Piggy\Api\Models\Prepaid\PrepaidBalance;
+use DateTime;
 
 /**
  * Class LeatPrepaidRepository
@@ -55,7 +58,7 @@ class LeatPrepaidRepository implements LeatPrepaidRepositoryInterface
         try {
             $client = $this->apiService->init_client();
             if (! $client) {
-                $this->logger->error("Failed to initialize API client for creating prepaid transaction.");
+                $this->logger->error("Failed to initialize API client for creating prepaid transaction.",);
                 return null;
             }
 
@@ -76,8 +79,9 @@ class LeatPrepaidRepository implements LeatPrepaidRepositoryInterface
             return $transaction;
         } catch (PiggyRequestException $e) {
             // Log specific Piggy exceptions
+            $errorBag = $e->getErrorBag();
             $this->logger->error("Piggy API request error creating prepaid transaction: " . $e->getMessage(), [
-                'response_body' => $e->getResponseBody(), // Linter might complain, but method likely exists
+                'error_details' => $errorBag ? $errorBag->all() : 'No details available',
                 'status_code' => $e->getStatusCode(),
             ]);
             $this->apiService->log_exception($e, 'Error creating prepaid transaction');
@@ -105,36 +109,55 @@ class LeatPrepaidRepository implements LeatPrepaidRepositoryInterface
 
             $this->logger->info("Reversing prepaid transaction", ['transaction_uuid' => $transaction_uuid]);
 
-            // Construct the API endpoint
-            $endpoint = "/prepaid-transactions/{$transaction_uuid}/reverse";
+            $endpoint = "/api/v3/oauth/clients/prepaid-transactions/{$transaction_uuid}/reverse";
+            $response = ApiClient::post($endpoint, []);
 
-            // Use the initialized client's POST method
-            // Assuming the client has a method like `post(endpoint, body)` and returns decoded JSON array
-            $response = $client->post($endpoint); // Send POST request
+            if ($response) {
+                $response_data = $response->getData();
 
-            if ($response && isset($response['data']) && is_array($response['data'])) {
-                // Manually create a PrepaidTransaction object from the response data
-                // Need to ensure constructor parameters match the actual SDK class
-                $reversedTransaction = new PrepaidTransaction(
-                    $response['data']['uuid'] ?? null,
-                    $response['data']['amount_in_cents'] ?? null,
-                    $response['data']['prepaid_balance'] ?? null, // This structure might differ slightly
-                    $response['data']['created_at'] ?? null,
-                    $response['data']['shop'] ?? null,
-                    $response['data']['contact_identifier'] ?? null
-                    // Potentially add contact details if returned and needed by constructor
-                    // $response['data']['contact'] ?? null
-                );
+                if (is_object($response_data)) {
+                    try {
+                        // Extract data from stdClass object
+                        $uuid = $response_data->uuid ?? null;
+                        $amountInCents = $response_data->amount_in_cents ?? null;
+                        $balanceInCents = $response_data->prepaid_balance->balance_in_cents ?? null;
+                        $createdAtString = $response_data->created_at ?? null;
 
-                // Check if UUID was successfully populated
-                if ($reversedTransaction->getUuid()) {
-                    $this->logger->info("Prepaid transaction reversed successfully via API call", [
-                        'original_transaction_uuid' => $transaction_uuid,
-                        'reversal_transaction_uuid' => $reversedTransaction->getUuid()
-                    ]);
-                    return $reversedTransaction;
+                        if ($uuid === null || $amountInCents === null || $balanceInCents === null || $createdAtString === null) {
+                            throw new \Exception("Missing required fields in API response for reversing transaction.");
+                        }
+
+                        $prepaidBalance = new PrepaidBalance((int)$balanceInCents);
+                        $createdAt = new DateTime($createdAtString);
+
+                        $reversedTransaction = new PrepaidTransaction(
+                            (int)$amountInCents,
+                            $prepaidBalance,
+                            (string)$uuid,
+                            $createdAt
+                        );
+                    } catch (\Exception $instantiationError) {
+                        $errorMessage = "Failed to instantiate PrepaidTransaction from API response: " . $instantiationError->getMessage();
+                        $context = ['transaction_uuid' => $transaction_uuid, 'response' => $response];
+                        $this->logger->error($errorMessage, $context);
+                        return null;
+                    }
+
+                    // Check if UUID was successfully populated
+                    if ($reversedTransaction->getUuid()) {
+                        $this->logger->info("Prepaid transaction reversed successfully via API call", [
+                            'original_transaction_uuid' => $transaction_uuid,
+                            'reversal_transaction_uuid' => $reversedTransaction->getUuid()
+                        ]);
+                        return $reversedTransaction;
+                    } else {
+                        $errorMessage = "Failed to reverse prepaid transaction: Could not instantiate transaction from API response.";
+                        $context = ['transaction_uuid' => $transaction_uuid, 'response' => $response];
+                        $this->logger->error($errorMessage, $context);
+                        return null;
+                    }
                 } else {
-                    $errorMessage = "Failed to reverse prepaid transaction: Could not instantiate transaction from API response.";
+                    $errorMessage = "Failed to reverse prepaid transaction via API call. Invalid or empty response.";
                     $context = ['transaction_uuid' => $transaction_uuid, 'response' => $response];
                     $this->logger->error($errorMessage, $context);
                     return null;
@@ -147,9 +170,10 @@ class LeatPrepaidRepository implements LeatPrepaidRepositoryInterface
             }
         } catch (PiggyRequestException $e) {
             // Log specific Piggy exceptions
+            $errorBag = $e->getErrorBag();
             $this->logger->error("Piggy API request error reversing prepaid transaction: " . $e->getMessage(), [
                 'transaction_uuid' => $transaction_uuid,
-                'response_body' => $e->getResponseBody(), // Linter might complain, but method likely exists
+                'error_details' => $errorBag ? $errorBag->all() : 'No details available',
                 'status_code' => $e->getStatusCode(),
             ]);
             $this->apiService->log_exception($e, 'Error reversing prepaid transaction');
