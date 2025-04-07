@@ -31,7 +31,7 @@
 
 				<nav
 					aria-label="Global"
-					class="hidden xl:ml-6 xl:flex xl:items-center xl:space-x-4"
+					class="hidden xl:ml-6 xl:flex xl:items-center xl:space-x-2"
 				>
 					{#each headerLinks as { href, label, target, type }, index (index)}
 						<NavigationLink {href} {target} {type} active={$location.pathname === href}>

@@ -30,6 +30,7 @@ Leat's all-in-one platform empowers you to:
 * **Real-time Analytics** - Track program performance and customer engagement
 * **WooCommerce Integration** - Seamlessly works with your existing store
 * **Multi-channel Support** - Works both online and in physical stores
+* **Compatibility with WPC Name Your Price:** Works seamlessly with the WPC Name Your Price for WooCommerce plugin, allowing customers to set their own price for prepaid top-ups and gift card products.
 
 = External Services =
 
