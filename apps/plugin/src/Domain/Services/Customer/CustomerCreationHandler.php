@@ -88,7 +88,7 @@ class CustomerCreationHandler
             return;
         }
 
-        $contact = $this->connection->create_contact($email);
+        $contact = $this->connection->find_or_create_contact($email);
 
         if (!$contact) {
             $this->logger->error("Failed to create contact for user ID: $wp_user_id, email: $email");

@@ -45,6 +45,10 @@ use Leat\Domain\Syncing\SyncPromotions;
 use Leat\Domain\Syncing\SyncRewards;
 use Leat\Domain\Syncing\SyncVouchers;
 use Leat\Infrastructure\Repositories\LeatGiftcardRepository;
+use Leat\Infrastructure\Repositories\LeatPrepaidRepository;
+use Leat\Infrastructure\Repositories\WPPrepaidRepository;
+use Leat\Domain\Interfaces\LeatPrepaidRepositoryInterface;
+use Leat\Domain\Services\PrepaidProductService;
 
 
 /**
@@ -151,6 +155,7 @@ class Bootstrap
 		$this->container->get(WebhookManager::class)->init();
 
 		$this->container->get(GiftcardProductService::class)->init();
+		$this->container->get(PrepaidProductService::class)->init();
 		$this->container->get(WooCommerceAccountTab::class)->init();
 
 		$settings = $this->container->get(Settings::class);
@@ -525,12 +530,38 @@ class Bootstrap
 		);
 
 		$this->container->register(
+			WPPrepaidRepository::class,
+			function () {
+				return new WPPrepaidRepository();
+			}
+		);
+		$this->container->register(
+			LeatPrepaidRepositoryInterface::class,
+			function (Container $container) {
+				return new LeatPrepaidRepository($container->get(ApiService::class));
+			}
+		);
+
+		$this->container->register(
 			GiftcardCouponService::class,
 			function (Container $container) {
 				return new GiftcardCouponService(
 					$container->get(Settings::class),
 					$container->get(WPGiftcardCouponRepository::class),
 					$container->get(LeatGiftcardRepository::class),
+				);
+			}
+		);
+
+		$this->container->register(
+			PrepaidProductService::class,
+			function (Container $container) {
+				return new PrepaidProductService(
+					$container->get(LeatPrepaidRepositoryInterface::class),
+					$container->get(WPPrepaidRepository::class),
+					$container->get(Settings::class),
+					$container->get(ApiService::class),
+					$container->get(Connection::class)
 				);
 			}
 		);

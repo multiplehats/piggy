@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Leat CRM 1.0.0\n"
+"Project-Id-Version: Leat CRM 1.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/leat-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-31T13:33:54+00:00\n"
+"POT-Creation-Date: 2025-04-07T12:18:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: leat-crm\n"
@@ -424,12 +424,12 @@ msgid "Webhook signature for verification"
 msgstr ""
 
 #. translators: %s: Required WooCommerce version
-#: src/Domain/Bootstrap.php:197
+#: src/Domain/Bootstrap.php:202
 msgid "The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce."
 msgstr ""
 
 #. translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command.
-#: src/Domain/Bootstrap.php:259
+#: src/Domain/Bootstrap.php:264
 msgid "Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes."
 msgstr ""
 
@@ -719,128 +719,187 @@ msgstr ""
 msgid "N/A"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:174
+#: src/Domain/Services/GiftcardProductService.php:176
 msgid "Gift card recipient email is disabled in settings. No email will be sent."
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:176
+#: src/Domain/Services/GiftcardProductService.php:178
 msgid "No gift card recipient email was found. This could mean that something went wrong with the checkout process."
 msgstr ""
 
 #. translators: 1: quantity of gift cards, 2: product name.
-#: src/Domain/Services/GiftcardProductService.php:207
+#: src/Domain/Services/GiftcardProductService.php:209
 msgid "Starting to create %1$d gift card(s) for %2$s."
 msgstr ""
 
 #. translators: 1: product name.
-#: src/Domain/Services/GiftcardProductService.php:220
+#: src/Domain/Services/GiftcardProductService.php:222
 msgid "Invalid amount (0 or negative) for gift card for %1$s."
 msgstr ""
 
 #. translators: 1: product name.
-#: src/Domain/Services/GiftcardProductService.php:233
+#: src/Domain/Services/GiftcardProductService.php:235
 msgid "Failed to create gift card for %1$s."
 msgstr ""
 
 #. translators: 1: gift card code.
-#: src/Domain/Services/GiftcardProductService.php:247
+#: src/Domain/Services/GiftcardProductService.php:249
 msgid "Gift Card Code: %s"
 msgstr ""
 
 #. translators: 1: gift card UUID, 2: amount.
-#: src/Domain/Services/GiftcardProductService.php:259
+#: src/Domain/Services/GiftcardProductService.php:261
 msgid "Gift card %1$s created with amount %2$s successfully."
 msgstr ""
 
 #. translators: 1: gift card UUID
-#: src/Domain/Services/GiftcardProductService.php:275
+#: src/Domain/Services/GiftcardProductService.php:277
 msgid "Gift card %1$s created. Gift Card input field is disabled in settings, so no email will be sent."
 msgstr ""
 
 #. translators: 1: gift card UUID
-#: src/Domain/Services/GiftcardProductService.php:284
+#: src/Domain/Services/GiftcardProductService.php:286
 msgid "Gift card %1$s created but no recipient email was found to send it to."
 msgstr ""
 
 #. translators: 1: gift card UUID, 2: recipient email.
-#: src/Domain/Services/GiftcardProductService.php:296
+#: src/Domain/Services/GiftcardProductService.php:298
 msgid "Gift card %1$s email sent to %2$s."
 msgstr ""
 
 #. translators: 1: gift card UUID, 2: recipient email.
-#: src/Domain/Services/GiftcardProductService.php:306
+#: src/Domain/Services/GiftcardProductService.php:308
 msgid "Failed to send gift card %1$s email to %2$s."
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:318
+#: src/Domain/Services/GiftcardProductService.php:320
 msgid "Gift card processing completed."
 msgstr ""
 
 #. translators: %s: gift card UUID
-#: src/Domain/Services/GiftcardProductService.php:492
+#: src/Domain/Services/GiftcardProductService.php:494
 msgid "Gift card %s has been withdrawn due to refund."
 msgstr ""
 
 #. translators: %s: gift card UUID
-#: src/Domain/Services/GiftcardProductService.php:499
-#: src/Domain/Services/GiftcardProductService.php:588
+#: src/Domain/Services/GiftcardProductService.php:501
+#: src/Domain/Services/GiftcardProductService.php:590
 msgid "Failed to withdraw gift card %s."
 msgstr ""
 
 #. translators: 1: gift card UUID, 2: error message
-#: src/Domain/Services/GiftcardProductService.php:507
-#: src/Domain/Services/GiftcardProductService.php:596
+#: src/Domain/Services/GiftcardProductService.php:509
+#: src/Domain/Services/GiftcardProductService.php:598
 msgid "Error withdrawing gift card %1$s: %2$s"
 msgstr ""
 
 #. translators: %s: gift card UUID
-#: src/Domain/Services/GiftcardProductService.php:581
+#: src/Domain/Services/GiftcardProductService.php:583
 msgid "Gift card %s has been withdrawn due to order status change."
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:629
+#: src/Domain/Services/GiftcardProductService.php:631
 msgid "Please enter a recipient email address for the gift card."
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:631
+#: src/Domain/Services/GiftcardProductService.php:633
 msgid "Please enter a valid recipient email address for the gift card."
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:644
-msgid "Giftcard Settings"
+#: src/Domain/Services/GiftcardProductService.php:646
+msgid "Leat: Giftcard Settings"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:670
+#: src/Domain/Services/GiftcardProductService.php:672
 msgid "Select a program"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:680
+#: src/Domain/Services/GiftcardProductService.php:682
 msgid "Giftcard Program"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:681
+#: src/Domain/Services/GiftcardProductService.php:683
 msgid "Select the giftcard program this product is connected to"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:751
+#: src/Domain/Services/GiftcardProductService.php:753
 msgid "Gift Card Recipient Email"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:752
+#: src/Domain/Services/GiftcardProductService.php:754
 msgid "Enter recipient email address"
 msgstr ""
 
 #. translators: %d: number of gift cards
-#: src/Domain/Services/GiftcardProductService.php:763
+#: src/Domain/Services/GiftcardProductService.php:765
 msgid "Important: You are purchasing %d gift cards. All gift cards will be sent to the same recipient email address entered above. If you want to send gift cards to different recipients, please place separate orders."
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:867
+#: src/Domain/Services/GiftcardProductService.php:869
 msgid "Note:"
 msgstr ""
 
-#: src/Domain/Services/GiftcardProductService.php:867
+#: src/Domain/Services/GiftcardProductService.php:869
 msgid "This order contains gift cards. Refunding will withdraw the gift card balance if possible."
+msgstr ""
+
+#: src/Domain/Services/PrepaidProductService.php:105
+msgid "Could not process prepaid top-up: Billing email is missing from the order."
+msgstr ""
+
+#: src/Domain/Services/PrepaidProductService.php:116
+msgid "Could not process prepaid top-up: Error communicating with Leat API for email %s."
+msgstr ""
+
+#: src/Domain/Services/PrepaidProductService.php:124
+msgid "Could not process prepaid top-up: Buyer is not linked to a Leat contact."
+msgstr ""
+
+#: src/Domain/Services/PrepaidProductService.php:130
+msgid "Could not process prepaid top-up: Shop is not configured correctly in Leat settings."
+msgstr ""
+
+#. translators: 1: quantity, 2: product name.
+#: src/Domain/Services/PrepaidProductService.php:160
+msgid "Starting to process %1$d prepaid top-up(s) for %2$s."
+msgstr ""
+
+#. translators: 1: product name.
+#: src/Domain/Services/PrepaidProductService.php:173
+msgid "Invalid amount (0 or negative) for prepaid top-up for %1$s."
+msgstr ""
+
+#. translators: 1: amount, 2: Transaction UUID
+#: src/Domain/Services/PrepaidProductService.php:189
+msgid "Successfully processed prepaid top-up of %1$s. Transaction ID: %2$s"
+msgstr ""
+
+#. translators: 1: product name.
+#: src/Domain/Services/PrepaidProductService.php:199
+msgid "Failed to create prepaid transaction via API for %1$s."
+msgstr ""
+
+#. translators: 1: Original Transaction UUID, 2: Reversal Transaction UUID
+#: src/Domain/Services/PrepaidProductService.php:424
+msgid "Prepaid transaction %1$s reversed due to order status change/refund. Reversal Transaction ID: %2$s"
+msgstr ""
+
+#. translators: %s: Original Transaction UUID
+#: src/Domain/Services/PrepaidProductService.php:434
+msgid "Failed to reverse prepaid transaction %s via API."
+msgstr ""
+
+#. translators: 1: Original Transaction UUID, 2: Error message
+#: src/Domain/Services/PrepaidProductService.php:445
+msgid "Error reversing prepaid transaction %1$s: %2$s"
+msgstr ""
+
+#: src/Domain/Services/PrepaidProductService.php:475
+msgid "Leat: Prepaid Top-up?"
+msgstr ""
+
+#: src/Domain/Services/PrepaidProductService.php:476
+msgid "Enable this to make purchasing this variation add value to the customer's Leat prepaid balance."
 msgstr ""
 
 #. translators: %s: The promotion rule name
@@ -1772,6 +1831,22 @@ msgstr ""
 
 #: src/Settings.php:355
 msgid "If enabled, credits will only be attributed to contacts that already exist in Leat. New contacts will not be created automatically."
+msgstr ""
+
+#: src/Settings.php:363
+msgid "Prepaid Top-up Order Status"
+msgstr ""
+
+#: src/Settings.php:364
+msgid "Select the order status that triggers adding value to the customer's prepaid balance."
+msgstr ""
+
+#: src/Settings.php:371
+msgid "Reverse Prepaid Top-up Statuses"
+msgstr ""
+
+#: src/Settings.php:372
+msgid "Select order statuses that should reverse a previously completed prepaid top-up transaction."
 msgstr ""
 
 #: src/Shortcodes/AbstractShortcode.php:57

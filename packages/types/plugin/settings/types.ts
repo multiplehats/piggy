@@ -94,6 +94,9 @@ export const zBasePluginOptions = z.object({
 	giftcard_coupon_allow_acceptance: adminFields.zSwitch,
 	only_reward_known_contacts: adminFields.zSwitch,
 	giftcard_applied_success_message: adminFields.zTranslatableText,
+	// Prepaid
+	prepaid_order_status: adminFields.zSelect,
+	prepaid_withdraw_order_statuses: adminFields.zCheckboxes,
 });
 
 /**

@@ -23,6 +23,11 @@ export const headerLinks = [
 		type: "link",
 	},
 	{
+		href: "/prepaid",
+		label: __("Prepaid", "leat-crm"),
+		type: "link",
+	},
+	{
 		href: "/dashboard",
 		label: __("Customer Dashboard", "leat-crm"),
 		type: "link",

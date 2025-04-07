@@ -720,7 +720,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         // Log that the refund handler is being called via status change
         $this->logger->info('Gift card refund handler called via status change', [
             'order_id' => $order_id,
-        ]);
+        ], true);
 
         // Get refund IDs for this order
         $refunds = wc_get_orders([
@@ -809,7 +809,7 @@ class GiftcardCouponService implements GiftcardCouponServiceInterface
         $this->logger->info('Gift card refund handler called', [
             'order_id' => $order_id,
             'refund_id' => $refund_id,
-        ]);
+        ], true);
 
         $order = wc_get_order($order_id);
         $refund = wc_get_order($refund_id);

@@ -356,6 +356,24 @@ class Settings
 			'default'     => 'off',
 		);
 
+		// Prepaid Settings
+		$settings[] = array(
+			'id'          => 'prepaid_order_status',
+			'type'        => 'select',
+			'label'       => __('Prepaid Top-up Order Status', 'leat-crm'),
+			'description' => __('Select the order status that triggers adding value to the customer\'s prepaid balance.', 'leat-crm'),
+			'default'     => 'completed',
+			'options'     => $this->woocommerce_order_statuses_options(),
+		);
+		$settings[] = array(
+			'id'          => 'prepaid_withdraw_order_statuses',
+			'type'        => 'checkboxes',
+			'label'       => __('Reverse Prepaid Top-up Statuses', 'leat-crm'),
+			'description' => __('Select order statuses that should reverse a previously completed prepaid top-up transaction.', 'leat-crm'),
+			'default'     => array('refunded' => 'on', 'cancelled' => 'on'), // Default to refunded and cancelled
+			'options'     => $this->woocommerce_order_statuses_options(),
+		);
+
 		/**
 		 * Filter the default settings.
 		 *

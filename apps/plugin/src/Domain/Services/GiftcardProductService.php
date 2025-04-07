@@ -112,24 +112,19 @@ class GiftcardProductService
      */
     public function process_giftcard_order($order_id): void
     {
-        $this->logger->info("Starting to process gift card order: {$order_id}", ['order_id' => $order_id], true);
-
         $order = $this->repository->get_order($order_id);
         if (!$order) {
             $this->logger->error("Order not found: {$order_id}");
             return;
         }
 
-        // Check if we've already processed this order
-        $giftcards_created = get_post_meta($order_id, WCOrders::GIFT_CARD_CREATED, true);
-        $this->logger->info("Gift cards already created for order {$order_id}: " . ($giftcards_created ? 'yes' : 'no'), [], true);
-
+        // Check if order contains gift cards *before* logging
         $has_giftcards = false;
         foreach ($order->get_items() as $item) {
             /**
              * WooCommerce order item object.
              *
-             * @var \WC_Order_Item $item
+             * @var \WC_Order_Item_Product $item
              */
             $product = $item->get_product();
 
@@ -144,13 +139,20 @@ class GiftcardProductService
             }
         }
 
-        // Only proceed if order contains gift cards
+        // Only proceed and log if order contains gift cards
         if (!$has_giftcards) {
             $this->logger->info("No gift cards found in order {$order_id}, skipping processing", [
                 'order_id' => $order_id,
             ], true);
             return;
         }
+
+        // Now log the start and check if already processed
+        $this->logger->info("Starting to process gift card order: {$order_id}", ['order_id' => $order_id], true);
+
+        // Check if we've already processed this order
+        $giftcards_created = get_post_meta($order_id, WCOrders::GIFT_CARD_CREATED, true);
+        $this->logger->info("Gift cards already created for order {$order_id}: " . ($giftcards_created ? 'yes' : 'no'), [], true);
 
         if ($giftcards_created) {
             $this->logger->info('Giftcards already created for order', [
@@ -396,7 +398,7 @@ class GiftcardProductService
         try {
             // Sending a giftcard email requires a Leat contact.
             $this->logger->info("Creating contact for recipient email: {$recipient_email}");
-            $contact = $this->connection->create_contact($recipient_email);
+            $contact = $this->connection->find_or_create_contact($recipient_email);
 
             if (!$contact || !isset($contact['uuid'])) {
                 $this->logger->error("Failed to create contact for recipient email: {$recipient_email}");
@@ -641,7 +643,7 @@ class GiftcardProductService
     public function add_giftcard_product_tab($tabs): array
     {
         $tabs['leat_giftcard'] = [
-            'label'  => __('Giftcard Settings', 'leat-crm'),
+            'label'  => __('Leat: Giftcard Settings', 'leat-crm'),
             'target' => 'leat_giftcard_product_data',
             'class'  => [],
         ];

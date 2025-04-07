@@ -14,6 +14,7 @@
 	import Layout from "$lib/components/layout-wrapper.svelte";
 	import PageGeneralSettings from "$lib/routes/page-general-settings.svelte";
 	import "@leat/tailwind-config/global.postcss";
+	import PagePrepaidSettings from "./routes/page-prepaid-settings.svelte";
 
 	const mutationCache = new MutationCache();
 
@@ -38,6 +39,8 @@
 			<Route path="dashboard" component={PageDashboardSettings} />
 
 			<Route path="giftcards" component={PageGiftcardSettings} />
+
+			<Route path="prepaid" component={PagePrepaidSettings} />
 
 			<Route path="loyalty-program/*">
 				<Route path="earn-rules/:id" component={PageEarnRulesId} />

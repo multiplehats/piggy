@@ -9,7 +9,7 @@
 	export let type: LinkTypes = "link";
 
 	$: classes = cn(
-		"flex items-center overflow-hidden  rounded-full px-2.5 py-1 text-sm font-medium hover:bg-white/15",
+		"text-[13px]] flex items-center  overflow-hidden rounded-full px-2.5 py-1 font-medium hover:bg-white/15",
 		active
 			? "bg-white/20 text-white hover:text-white"
 			: "bg-transparent text-white hover:bg-white/20 hover:text-white"

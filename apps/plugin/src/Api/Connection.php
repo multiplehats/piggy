@@ -356,7 +356,7 @@ class Connection
 	 * @throws \Exception If the contact creation fails.
 	 * @throws \Throwable If an unexpected error occurs.
 	 */
-	public function create_contact(string $email)
+	public function find_or_create_contact(string $email)
 	{
 		$client = $this->init_client();
 
@@ -757,7 +757,7 @@ class Connection
 
 		if (! $uuid && $create) {
 			try {
-				$contact = $this->create_contact(get_the_author_meta('email', $wp_id));
+				$contact = $this->find_or_create_contact(get_the_author_meta('email', $wp_id));
 				$uuid    = $contact['uuid'];
 
 				$this->sync_user_attributes($wp_id, $uuid);

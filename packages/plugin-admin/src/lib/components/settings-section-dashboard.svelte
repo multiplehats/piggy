@@ -7,6 +7,7 @@
 	import { SettingsAdminService } from "$lib/modules/settings";
 	import { settingsState } from "$lib/stores/settings";
 	import { QueryKeys } from "$lib/utils/query-keys";
+	import { Alert } from "$lib/components/ui/alert";
 
 	const service = new SettingsAdminService();
 	const query = createQuery({
@@ -21,12 +22,23 @@
 	}
 </script>
 
-<SettingsSection title={__("General settings")}>
+<SettingsSection title={__("Dashboard settings")}>
 	{#if $query.isLoading}
 		<p>{__("Loading settings")}</p>
 	{:else if $query.isError}
 		<p>Error: {$query.error.message}</p>
 	{:else if $query.isSuccess && $settingsState}
+		<Alert type="info" class="mb-4 max-w-md" title={__("How to display the dashboard")}>
+			{__(
+				"To display the customer dashboard on any page, use the following WordPress shortcode:"
+			)}
+			<code
+				class="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-normal"
+			>
+				[leat_dashboard]
+			</code>
+		</Alert>
+
 		<div class="divide-border w-full max-w-md divide-y">
 			<SettingsTranslateableInput
 				class="py-4"
