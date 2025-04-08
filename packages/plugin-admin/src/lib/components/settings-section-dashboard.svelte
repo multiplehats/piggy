@@ -145,6 +145,12 @@
 
 			<SettingsTranslateableInput
 				class="py-4"
+				{...$settingsState.dashboard_coupon_cta}
+				bind:value={$settingsState.dashboard_coupon_cta.value}
+			/>
+
+			<SettingsTranslateableInput
+				class="py-4"
 				{...$settingsState.dashboard_spend_cta}
 				bind:value={$settingsState.dashboard_spend_cta.value}
 			/>

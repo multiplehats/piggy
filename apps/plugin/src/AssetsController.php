@@ -236,6 +236,7 @@ final class AssetsController
 			'storeApiNonce'            => wp_create_nonce('wc_store_api'),
 			'wcStoreApiNonceTimestamp' => time(),
 			'wpApiNonce'               => wp_create_nonce('wp_rest'),
+			'wcStoreApiUrl'            => get_rest_url(null, 'wc/store/v1'),
 		];
 
 		return $config;

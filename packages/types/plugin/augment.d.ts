@@ -28,6 +28,8 @@ declare global {
 			storeApiNonce: string;
 			wcStoreApiNonceTimestamp: string;
 			wpApiNonce: string;
+			wcStoreApiUrl: string;
+			wcStoreApiNonceTimestamp: string;
 		};
 		wp: {
 			hooks: Hooks;

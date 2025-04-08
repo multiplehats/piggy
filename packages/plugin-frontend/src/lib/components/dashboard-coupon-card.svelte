@@ -1,40 +1,89 @@
 <script lang="ts">
-	import Check from "lucide-svelte/icons/check";
-	import Copy from "lucide-svelte/icons/copy";
 	import Gift from "lucide-svelte/icons/gift";
-	import { onMount } from "svelte";
+	import Check from "lucide-svelte/icons/check";
 	import type { Coupon } from "@leat/lib";
 	import { getSpendRuleLabel, getTranslatedText } from "@leat/i18n";
-	import { creditsName } from "$lib/modules/settings";
+	import { LeatApiError, addCartItems, applyCoupon, removeAllCoupons } from "@leat/lib";
+	import { createMutation } from "@tanstack/svelte-query";
+	import Button from "./button/button.svelte";
+	import { creditsName, pluginSettings } from "$lib/modules/settings";
+	import { triggerFragmentRefresh } from "$lib/utils/legacyEvents";
 
 	export let coupon: Coupon;
+	let couponApplied = false;
 
-	let isCopied = false;
-	let timeoutId: NodeJS.Timeout;
-	let isClipboardSupported: boolean;
-
-	$: isClipboardSupported = !!navigator.clipboard && !!navigator.clipboard.writeText;
-
-	onMount(() => {
-		return () => {
-			if (timeoutId) clearTimeout(timeoutId);
-		};
+	const applyCouponMutation = createMutation({
+		mutationFn: applyCoupon,
+		onSuccess: () => {
+			couponApplied = true;
+			triggerFragmentRefresh();
+		},
+		onError: (error) => {
+			couponApplied = false;
+			console.info("[Apply Coupon Error]:", error);
+			triggerFragmentRefresh();
+		},
 	});
 
-	function copyToClipboard() {
-		if (isClipboardSupported) {
-			navigator.clipboard
-				.writeText(coupon.code)
-				.then(() => {
-					isCopied = true;
-					if (timeoutId) clearTimeout(timeoutId);
-					timeoutId = setTimeout(() => {
-						isCopied = false;
-					}, 3000);
-				})
-				.catch((err) => console.error("Failed to copy: ", err));
+	const removeAllCouponsMutation = createMutation({
+		mutationFn: removeAllCoupons,
+		onSuccess: () => {
+			// Re-apply the original coupon after successful removal
+			$applyCouponMutation.mutate(coupon.code);
+		},
+		onError: (error) => {
+			console.error("[Remove All Coupons Error]:", error);
+			triggerFragmentRefresh();
+		},
+	});
+
+	const addCartItemsMutation = createMutation({
+		mutationFn: addCartItems,
+		onSuccess: () => {
+			// After adding items, remove all coupons first
+			$removeAllCouponsMutation.mutate();
+		},
+	});
+
+	$: hasProducts = coupon.rule.selectedProducts?.value?.length > 0;
+
+	function handleApplyCoupon() {
+		couponApplied = false; // Reset success state on new attempt
+
+		// First check if we need to add products before applying the coupon
+		if (hasProducts) {
+			$addCartItemsMutation.mutate(
+				coupon.rule.selectedProducts.value.map((productId) => ({
+					id: Number(productId),
+					quantity: 1,
+				}))
+			);
+		} else {
+			// First remove any existing coupons then apply the new one
+			$removeAllCouponsMutation.mutate();
 		}
 	}
+
+	function getErrorMessage(error: unknown): string {
+		if (error instanceof LeatApiError) {
+			// Prioritize specific message, then data object, then status text
+			if (typeof error.data === "string") {
+				return error.data || error.statusText || "Error applying coupon";
+			}
+			return error.statusText || "Error applying coupon";
+		}
+
+		if (error instanceof Error) {
+			return error.message;
+		}
+		return "An unknown error occurred";
+	}
+
+	// Combine errors for display
+	$: combinedError =
+		$applyCouponMutation.error ||
+		$addCartItemsMutation.error ||
+		$removeAllCouponsMutation.error;
 </script>
 
 <div class="leat-dashboard-coupon-card">
@@ -46,197 +95,138 @@
 		{/if}
 	</div>
 
-	<h4 class="leat-dashboard-coupon-card__header">
-		{#if coupon.type === "spend_rule"}
-			{getSpendRuleLabel(
-				getTranslatedText(coupon.rule.label.value),
-				coupon.rule.creditCost.value,
-				$creditsName,
-				coupon.rule.discountValue?.value,
-				coupon.rule.discountType.value
-			)}
-		{:else if coupon.type === "promotion_rule"}
-			{getTranslatedText(coupon.rule.label.value)}
-		{/if}
-	</h4>
+	<div class="leat-dashboard-coupon-card__info">
+		<h4 class="leat-dashboard-coupon-card__header">
+			{#if coupon.type === "spend_rule"}
+				{getSpendRuleLabel(
+					getTranslatedText(coupon.rule.label.value),
+					coupon.rule.creditCost.value,
+					$creditsName,
+					coupon.rule.discountValue?.value,
+					coupon.rule.discountType.value
+				)}
+			{:else if coupon.type === "promotion_rule"}
+				{getTranslatedText(coupon.rule.label.value)}
+			{/if}
+		</h4>
 
-	{#if coupon.type === "spend_rule" && coupon.rule.instructions?.value}
-		<p class="leat-dashboard-coupon-card__description">
-			{getTranslatedText(coupon.rule.instructions.value)}
-		</p>
-	{/if}
-
-	<div class="coupon-input-wrapper">
-		<input
-			class="coupon-input"
-			class:has-copy-button={isClipboardSupported}
-			readonly
-			value={coupon.code}
-		/>
-
-		{#if isClipboardSupported}
-			<button class="copy-button" on:click={() => copyToClipboard()}>
-				{#if isCopied}
-					<Check size={16} />
-				{:else}
-					<Copy size={16} />
-				{/if}
-			</button>
+		{#if coupon.type === "spend_rule" && coupon.rule.instructions?.value}
+			<p class="leat-dashboard-coupon-card__description">
+				{getTranslatedText(coupon.rule.instructions.value)}
+			</p>
 		{/if}
 	</div>
 
-	<!-- <div class="leat-dashboard-coupon-card__action">
-		<Button variant="primary" on:click={() => cartApiService.addCoupon(coupon.code)}>
-			Apply coupon
+	<div class="leat-dashboard-coupon-card__action">
+		{#if combinedError && !couponApplied}
+			<div class="leat-dashboard-coupon-card__error">
+				{getErrorMessage(combinedError)}
+			</div>
+		{/if}
+
+		<Button
+			variant="primary"
+			on:click={handleApplyCoupon}
+			loading={$applyCouponMutation.isPending ||
+				$addCartItemsMutation.isPending ||
+				$removeAllCouponsMutation.isPending}
+			disabled={$applyCouponMutation.isPending ||
+				$addCartItemsMutation.isPending ||
+				$removeAllCouponsMutation.isPending}
+			class={couponApplied ? "leat-dashboard-coupon-card__button--success" : ""}
+		>
+			{#if couponApplied}
+				<div class="leat-dashboard-coupon-card__button-success">
+					<Check size={20} />
+					<span class="leat-sr-only">Applied</span>
+				</div>
+			{:else}
+				{getTranslatedText($pluginSettings.dashboard_coupon_cta)}
+			{/if}
 		</Button>
-	</div> -->
+	</div>
 </div>
 
 <style>
 	.leat-dashboard-coupon-card {
 		position: relative;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-start;
-		align-items: center;
+		display: grid;
+		grid-template-rows: auto auto 1fr;
 		background-color: var(--leat-dashboard-card-background-color, #fff);
-		padding: 12px;
+		padding: 16px;
 		text-align: center;
 		box-shadow:
 			0 0 #0000,
 			0 0 #0000,
 			0 1px 3px 0 rgb(0 0 0 / 0.1),
 			0 1px 2px -1px rgb(0 0 0 / 0.1);
-	}
-
-	/* .leat-dashboard-coupon-card__action {
-		margin-top: 12px;
-	} */
-
-	.coupon-input {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		max-width: 300px;
-		height: 1.8rem;
-		width: 100%;
-		border-radius: 0.375rem;
-		border: 1px solid var(--leat-input-border-color, hsl(240 5.9% 90%));
-		background-color: var(--leat-input-background-color, #fff);
-		padding: 0.5rem 0.75rem;
-		font-size: 0.675rem;
-		color: var(--leat-input-text-color, #000);
-		width: 100%;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		font-family: var(--leat-font-family-mono, monospace);
+		height: 100%;
 		box-sizing: border-box;
-	}
-
-	.coupon-input.has-copy-button {
-		padding-right: 2.5rem;
-	}
-
-	.coupon-input:focus-visible {
-		outline: none;
-		box-shadow: 0 0 0 2px
-			var(--leat-input-border-color, var(--wp--preset--color--contrast, #007cba));
-	}
-
-	.coupon-input:disabled {
-		cursor: not-allowed;
-		opacity: 0.5;
-	}
-
-	.coupon-input::placeholder {
-		color: var(--leat-input-placeholder-color, hsl(240 5.9% 90%));
-	}
-
-	.coupon-input::file-selector-button {
-		border: 0;
-		background-color: transparent;
-		font-size: 0.875rem;
-		font-weight: 500;
+		gap: 8px;
 	}
 
 	.leat-dashboard-coupon-card__icon {
-		width: 100%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin-bottom: 0.25rem;
+		height: 80px;
+		width: 100%;
 	}
 
 	.leat-dashboard-coupon-card__icon img {
-		max-width: 100%;
+		width: auto;
 		height: 80px;
+		max-width: 100%;
 		max-height: 100%;
 		object-fit: contain;
 		border-radius: 0.375rem;
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+	}
+
+	.leat-dashboard-coupon-card__info {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	h4.leat-dashboard-coupon-card__header {
 		font-size: 1rem;
-		margin: 0.5rem 0 1rem 0;
+		margin: 0;
+		overflow-wrap: break-word;
+		word-break: break-word;
 	}
 
 	.leat-dashboard-coupon-card__description {
-		font-size: 0.675rem;
-		margin: 0 0 0.5rem 0;
+		font-size: 0.75rem;
+		margin: 8px 0 0;
+		overflow-wrap: break-word;
+		word-break: break-word;
 	}
 
-	.coupon-input-wrapper {
-		position: relative;
-		display: inline-block;
-		max-width: 200px;
+	.leat-dashboard-coupon-card__action {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 8px;
+		margin-top: auto;
+	}
+
+	.leat-dashboard-coupon-card__error {
+		color: var(--leat-error-color, #dc2626);
+		font-size: 0.75rem;
+		text-align: center;
 		width: 100%;
 	}
 
-	.copy-button {
-		position: absolute;
-		right: 0.25rem;
-		top: 50%;
-		z-index: 10;
-		transform: translateY(-50%);
-		background: none;
-		border: none;
-		cursor: pointer;
-		color: var(--leat-input-text-color, #000);
-		opacity: 0.7;
-		transition:
-			opacity 0.2s,
-			color 0.2s;
-		padding: 0.25rem;
+	.leat-dashboard-coupon-card__button--success {
+		background-color: var(--leat-success-color, #22c55e) !important;
+		border-color: var(--leat-success-color, #22c55e) !important;
+	}
+
+	.leat-dashboard-coupon-card__button-success {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		outline: none;
-	}
-
-	.copy-button:hover {
-		opacity: 1;
-	}
-
-	.copy-button {
-		position: absolute;
-		right: 0.25rem;
-		top: 50%;
-		transform: translateY(-50%);
-		background: none;
-		border: none;
-		cursor: pointer;
-		color: var(--leat-input-text-color, #000);
-		opacity: 0.7;
-		transition: opacity 0.2s;
-		padding: 0.25rem;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		outline: none;
-	}
-
-	.copy-button:hover {
-		opacity: 1;
+		gap: 4px;
 	}
 </style>
