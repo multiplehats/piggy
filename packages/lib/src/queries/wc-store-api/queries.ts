@@ -245,3 +245,48 @@ export async function applyCoupon(code: string): Promise<StoreAPIResponse> {
 		throw error;
 	}
 }
+
+export async function removeCoupon(code: string): Promise<StoreAPIResponse> {
+	try {
+		const { data, error } = await api.delete<StoreAPIResponse>(
+			`${baseUrl}/cart/coupons/${code}`
+		);
+
+		if (error) {
+			throw new LeatApiError(error.status, error.statusText, error.data);
+		}
+
+		if (!data) {
+			throw new LeatApiError(400, "Bad Request", "No data returned from API");
+		}
+
+		return data;
+	} catch (error) {
+		console.error("Store API error removing coupon:", error);
+		throw error;
+	}
+}
+
+/**
+ * Remove all coupons from the cart
+ *
+ * @returns Promise with cart data
+ */
+export async function removeAllCoupons(): Promise<StoreAPIResponse> {
+	try {
+		const { data, error } = await api.delete<StoreAPIResponse>(`${baseUrl}/cart/coupons`);
+
+		if (error) {
+			throw new LeatApiError(error.status, error.statusText, error.data);
+		}
+
+		if (!data) {
+			throw new LeatApiError(400, "Bad Request", "No data returned from API");
+		}
+
+		return data;
+	} catch (error) {
+		console.error("Store API error removing all coupons:", error);
+		throw error;
+	}
+}
