@@ -73,6 +73,9 @@
 	type={showApiKey ? "text" : "password"}
 	bind:value={$settingsState.api_key.value}
 	inputWrapperClass="max-w-lg"
+	autocomplete="off"
+	data-1p-ignore
+	data-lpignore="true"
 >
 	<button
 		type="button"

@@ -276,6 +276,15 @@ class Settings
 			'description' => __('The text that will be displayed on the button that allows users to claim their reward.', 'leat-crm'),
 		);
 		$settings[] = array(
+			'id'          => 'dashboard_coupon_cta',
+			'default'     => array(
+				'default' => __('Use coupon', 'leat-crm'),
+			),
+			'type'        => 'translatable_text',
+			'label'       => __('Use coupon button', 'leat-crm'),
+			'description' => __('The text that will be displayed on the button that allows users to use a coupon.', 'leat-crm'),
+		);
+		$settings[] = array(
 			'id'          => 'dashboard_spend_cta',
 			'default'     => array(
 				'default' => __('Unlock', 'leat-crm'),

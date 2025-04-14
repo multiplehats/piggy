@@ -4,10 +4,12 @@ export const QueryKeys = {
 	coupons: "coupons",
 	contact: "contact",
 	tiers: "tiers",
+	cart: "cart",
 } as const;
 
 export const MutationKeys = {
 	claimReward: "claimReward",
 	claimSpendRule: "claimSpendRule",
 	joinProgram: "joinProgram",
+	applyCoupon: "applyCoupon",
 } as const;

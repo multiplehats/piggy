@@ -17,7 +17,6 @@ use Leat\WebhookManager;
 use Leat\WooCommerceAccountTab;
 
 use Leat\Domain\Services\ApiService;
-use Leat\Domain\Services\Cart\CartManager;
 use Leat\Domain\Services\Customer\CustomerAttributeSync;
 use Leat\Domain\Services\Customer\CustomerCreationHandler;
 use Leat\Domain\Services\Customer\CustomerProfileDisplay;
@@ -397,12 +396,6 @@ class Bootstrap
 			}
 		);
 		$this->container->register(
-			CartManager::class,
-			function (Container $container) {
-				return new CartManager($container->get(SpendRulesService::class), $container->get(Logger::class));
-			}
-		);
-		$this->container->register(
 			CustomerAttributeSync::class,
 			function (Container $container) {
 				return new CustomerAttributeSync(
@@ -461,8 +454,7 @@ class Bootstrap
 					$container->get(CustomerCreationHandler::class),
 					$container->get(CustomerProfileDisplay::class),
 					$container->get(OrderProcessor::class),
-					$container->get(OrderCreditHandler::class),
-					$container->get(CartManager::class)
+					$container->get(OrderCreditHandler::class)
 				);
 			}
 		);

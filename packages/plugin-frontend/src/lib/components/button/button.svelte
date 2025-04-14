@@ -57,13 +57,14 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		height: 32px;
 		justify-content: center;
 		background-color: var(--leat-color-primary, var(--wp--preset--color--contrast, #007cba));
 		color: var(--leat-color-white, var(--wp--preset--color--base, #fff));
 		font-size: var(--leat-font-size-base, 0.85rem);
 		text-decoration: none;
 		border: none;
-		padding: 0.6rem 1rem;
+		padding: 0.6rem 0.85rem;
 		border-radius: 5px;
 		cursor: pointer;
 	}
