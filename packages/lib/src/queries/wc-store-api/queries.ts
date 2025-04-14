@@ -188,21 +188,15 @@ export async function applyCoupon(code: string): Promise<StoreAPICartResponse> {
 	}
 }
 
-export async function removeCoupon(code: string): Promise<StoreAPICartResponse> {
+export async function removeCoupon(code: string): Promise<boolean> {
 	try {
-		const { data, error } = await api.delete<StoreAPICartResponse>(
-			`${baseUrl}/cart/coupons/${code}`
-		);
+		const { error } = await api.delete<StoreAPICartResponse>(`${baseUrl}/cart/coupons/${code}`);
 
 		if (error) {
 			throw new LeatApiError(error.status, error.statusText, error.data);
 		}
 
-		if (!data) {
-			throw new LeatApiError(400, "Bad Request", "No data returned from API");
-		}
-
-		return data;
+		return true;
 	} catch (error) {
 		console.error("Store API error removing coupon:", error);
 		throw error;

@@ -1,9 +1,17 @@
 <script lang="ts">
 	import Gift from "lucide-svelte/icons/gift";
 	import Check from "lucide-svelte/icons/check";
+	import X from "lucide-svelte/icons/x";
 	import type { Coupon } from "@leat/lib";
 	import { getSpendRuleLabel, getTranslatedText } from "@leat/i18n";
-	import { LeatApiError, addCartItems, applyCoupon, getCart, removeAllCoupons } from "@leat/lib";
+	import {
+		LeatApiError,
+		addCartItems,
+		applyCoupon,
+		getCart,
+		removeAllCoupons,
+		removeCoupon,
+	} from "@leat/lib";
 	import { createMutation, createQuery } from "@tanstack/svelte-query";
 	import Button from "./button/button.svelte";
 	import { creditsName, pluginSettings } from "$lib/modules/settings";
@@ -23,6 +31,8 @@
 		mutationKey: [MutationKeys.applyCoupon, coupon.code],
 		onSuccess: () => {
 			couponApplied = true;
+			// Refetch cart to update the UI
+			$cartQuery.refetch();
 		},
 		onError: () => {
 			couponApplied = false;
@@ -40,9 +50,27 @@
 		},
 	});
 
+	const removeCouponMutation = createMutation({
+		mutationFn: (code: string) => removeCoupon(code),
+		onSuccess: () => {
+			couponApplied = false;
+			// Refetch cart to update the UI
+			$cartQuery.refetch();
+		},
+	});
+
 	$: hasProducts = coupon.rule.selectedProducts?.value?.length > 0;
 
+	// Check if this coupon is already applied in the cart
+	$: isAlreadyApplied = $cartQuery.data?.coupons?.some((c) => c.code === coupon.code) ?? false;
+
+	// Set couponApplied state based on cart data or mutation success
+	$: couponApplied = isAlreadyApplied || couponApplied;
+
 	function handleApplyCoupon(code: string) {
+		// Don't do anything if the coupon is already applied
+		if (isAlreadyApplied) return;
+
 		couponApplied = false; // Reset success state on new attempt
 
 		// First check if we need to add products before applying the coupon
@@ -62,6 +90,7 @@
 		} else {
 			// Check if cart has items and has coupons
 			if ($cartQuery.data?.items_count === 0 && $cartQuery.data?.coupons.length > 0) {
+				console.info("[Remove All Coupons]");
 				// If cart has no items, and has coupons, remove all coupons first.
 				$removeAllCouponsMutation.mutate(undefined, {
 					onSuccess: () => {
@@ -95,11 +124,11 @@
 	$: combinedError =
 		$applyCouponMutation.error ||
 		$addCartItemsMutation.error ||
-		$removeAllCouponsMutation.error;
+		$removeAllCouponsMutation.error ||
+		$removeCouponMutation.error;
 </script>
 
 <div class="leat-dashboard-coupon-card">
-	{coupon.code}
 	<div class="leat-dashboard-coupon-card__icon">
 		{#if coupon.rule?.image?.value}
 			<img src={coupon.rule.image.value} alt={coupon.code} />
@@ -131,33 +160,55 @@
 	</div>
 
 	<div class="leat-dashboard-coupon-card__action">
-		{#if combinedError && !couponApplied}
+		{#if combinedError && (!couponApplied || $removeCouponMutation.error)}
 			<div class="leat-dashboard-coupon-card__error">
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html getErrorMessage(combinedError)}
 			</div>
 		{/if}
 
-		<Button
-			variant="primary"
-			on:click={() => handleApplyCoupon(coupon.code)}
-			loading={$applyCouponMutation.isPending ||
-				$addCartItemsMutation.isPending ||
-				$removeAllCouponsMutation.isPending}
-			disabled={$applyCouponMutation.isPending ||
-				$addCartItemsMutation.isPending ||
-				$removeAllCouponsMutation.isPending}
-			class={couponApplied ? "leat-dashboard-coupon-card__button--success" : ""}
-		>
-			{#if couponApplied}
-				<div class="leat-dashboard-coupon-card__button-success">
-					<Check size={20} />
-					<span class="leat-sr-only">Applied</span>
-				</div>
-			{:else}
-				{getTranslatedText($pluginSettings.dashboard_coupon_cta)}
-			{/if}
-		</Button>
+		<div class="leat-dashboard-coupon-card__button-container">
+			<div
+				class="leat-dashboard-coupon-card__button-wrapper {isAlreadyApplied || couponApplied
+					? 'is-applied'
+					: ''}"
+			>
+				<Button
+					variant="primary"
+					on:click={() => handleApplyCoupon(coupon.code)}
+					loading={$applyCouponMutation.isPending ||
+						$addCartItemsMutation.isPending ||
+						$removeAllCouponsMutation.isPending}
+					disabled={isAlreadyApplied ||
+						$applyCouponMutation.isPending ||
+						$addCartItemsMutation.isPending ||
+						$removeAllCouponsMutation.isPending}
+					class={couponApplied || isAlreadyApplied
+						? "leat-dashboard-coupon-card__button--success"
+						: ""}
+				>
+					{#if couponApplied || isAlreadyApplied}
+						<div class="leat-dashboard-coupon-card__button-success">
+							<Check size={16} />
+							<span class="leat-sr-only">Applied</span>
+						</div>
+					{:else}
+						{getTranslatedText($pluginSettings.dashboard_coupon_cta)}
+					{/if}
+				</Button>
+
+				{#if isAlreadyApplied || couponApplied}
+					<button
+						class="leat-dashboard-coupon-card__remove-button"
+						on:click={() => $removeCouponMutation.mutate(coupon.code)}
+						disabled={$removeCouponMutation.isPending}
+						aria-label="Remove coupon"
+					>
+						<X size={14} />
+					</button>
+				{/if}
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -232,10 +283,71 @@
 		width: 100%;
 	}
 
+	.leat-dashboard-coupon-card__button-container {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	.leat-dashboard-coupon-card__button-wrapper {
+		position: relative;
+		display: flex;
+		max-width: 180px;
+	}
+
+	.leat-dashboard-coupon-card__button-wrapper.is-applied {
+		display: flex;
+		align-items: stretch;
+	}
+
+	.leat-dashboard-coupon-card__button-wrapper.is-applied :global(.leat-button) {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		flex: 1;
+		margin: 0;
+	}
+
 	.leat-dashboard-coupon-card__button-success {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 4px;
+	}
+
+	.leat-dashboard-coupon-card__remove-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--leat-color-primary, var(--wp--preset--color--contrast, #007cba));
+		border: 0;
+		border-left: 1px solid rgba(255, 255, 255, 0.3);
+		color: white;
+		cursor: pointer;
+		width: 30px;
+		padding: 0;
+		transition: background-color 0.2s;
+		border-top-right-radius: 5px;
+		border-bottom-right-radius: 5px;
+		margin: 0;
+	}
+
+	.leat-dashboard-coupon-card__remove-button:hover {
+		background-color: var(--leat-color-primary-dark, #0069a8);
+	}
+
+	.leat-dashboard-coupon-card__remove-button:disabled {
+		opacity: 0.7;
+		cursor: not-allowed;
+	}
+
+	.leat-sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border-width: 0;
 	}
 </style>
