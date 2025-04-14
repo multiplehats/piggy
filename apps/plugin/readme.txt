@@ -202,3 +202,8 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 * Feature: Sell prepaid balance top-ups directly through WooCommerce products.
 * Feature: Automatically reverse prepaid top-ups for specific order statuses (e.g., 'refunded', 'cancelled').
 * Feature: Supports 'WPC Name Your Price for WooCommerce' for selling variable prepaid amounts.
+
+= 1.2.0 =
+
+* Enhancement: Improved WooCommerce coupon handling with automatic cart application and better error handling.
+* Enhancement: Added protection to prevent password managers (1Password, LastPass) from auto-filling the API Key field.

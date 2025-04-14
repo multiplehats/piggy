@@ -12,7 +12,7 @@ use Leat\Domain\Services\Order\{
 	OrderProcessor,
 	OrderCreditHandler
 };
-use Leat\Domain\Services\Cart\CartManager;
+
 use Leat\Domain\Services\EarnRules;
 use Leat\Domain\Services\SpendRulesService;
 use Leat\Settings;
@@ -95,13 +95,6 @@ class LoyaltyManager
 	private $order_credit_handler;
 
 	/**
-	 * CartManager instance.
-	 *
-	 * @var CartManager
-	 */
-	private $cart_manager;
-
-	/**
 	 * LoyaltyManager constructor.
 	 *
 	 * @param Connection $connection
@@ -113,7 +106,6 @@ class LoyaltyManager
 	 * @param CustomerProfileDisplay $profile_display
 	 * @param OrderProcessor $order_processor
 	 * @param OrderCreditHandler $order_credit_handler
-	 * @param CartManager $cart_manager
 	 */
 	public function __construct(
 		Logger $logger,
@@ -126,7 +118,6 @@ class LoyaltyManager
 		CustomerProfileDisplay $profile_display,
 		OrderProcessor $order_processor,
 		OrderCreditHandler $order_credit_handler,
-		CartManager $cart_manager
 	) {
 		$this->logger = $logger;
 		$this->connection = $connection;
@@ -138,7 +129,6 @@ class LoyaltyManager
 		$this->profile_display = $profile_display;
 		$this->order_processor = $order_processor;
 		$this->order_credit_handler = $order_credit_handler;
-		$this->cart_manager = $cart_manager;
 
 		$this->register_hooks();
 	}
@@ -152,12 +142,6 @@ class LoyaltyManager
 		add_action('edit_user_profile', [$this->profile_display, 'show_claimed_rewards_on_profile']);
 		add_action('wp_login', [$this->attribute_sync, 'sync_attributes_on_login'], 10, 2);
 		add_action('wp_logout', [$this->attribute_sync, 'sync_attributes_on_logout']);
-
-		add_action('woocommerce_applied_coupon', [$this->cart_manager, 'handle_applied_coupon'], 10, 1);
-		add_action('woocommerce_removed_coupon', [$this->cart_manager, 'handle_removed_coupon'], 10, 1);
-		add_action('woocommerce_before_calculate_totals', [$this->cart_manager, 'adjust_cart_item_prices'], 10, 1);
-		add_filter('woocommerce_product_get_sale_price', [$this->cart_manager, 'remove_sale_price_for_discounted_products'], 10, 2);
-		add_filter('woocommerce_product_get_price', [$this->cart_manager, 'adjust_price_for_discounted_products'], 10, 2);
 
 		$reward_status = $this->settings->get_setting_value_by_id('reward_order_statuses');
 		add_action('woocommerce_order_status_' . $reward_status, [$this->order_processor, 'sync_attributes_on_order_completed'], 10, 1);
