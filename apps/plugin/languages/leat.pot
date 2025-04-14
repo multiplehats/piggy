@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Leat CRM 1.1.0\n"
+"Project-Id-Version: Leat CRM 1.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/leat-crm\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-07T12:18:39+00:00\n"
+"POT-Creation-Date: 2025-04-14T12:38:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: leat-crm\n"
@@ -424,12 +424,12 @@ msgid "Webhook signature for verification"
 msgstr ""
 
 #. translators: %s: Required WooCommerce version
-#: src/Domain/Bootstrap.php:202
+#: src/Domain/Bootstrap.php:201
 msgid "The Leat plugin requires at least version %s of WooCommerce and has been deactivated. Please update WooCommerce."
 msgstr ""
 
 #. translators: %1$s is the install command, %2$s is the build command, %3$s is the watch command.
-#: src/Domain/Bootstrap.php:264
+#: src/Domain/Bootstrap.php:263
 msgid "Leat requires files to be built—it looks like the dist folder is empty. From the plugin directory, run %1$s to install dependencies, %2$s to build the files or %3$s to build the files and watch for changes."
 msgstr ""
 
@@ -468,22 +468,18 @@ msgstr ""
 #: src/Domain/Services/EarnRules.php:98
 #: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:27
 #: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:29
-#: dist/admin/assets/index-f67ae016.js:14108
-#: dist/admin/assets/index-f67ae016.js:16814
 msgid "Status"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:102
 #: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:31
 #: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:33
-#: dist/admin/assets/index-f67ae016.js:9394
 msgid "Active"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:103
 #: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:32
 #: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:34
-#: dist/admin/assets/index-f67ae016.js:9396
 msgid "Inactive"
 msgstr ""
 
@@ -494,8 +490,6 @@ msgstr ""
 #: src/Domain/Services/EarnRules.php:110
 #: src/Infrastructure/Formatters/WPPromotionRuleFormatter.php:59
 #: src/Infrastructure/Formatters/WPSpendRuleFormatter.php:41
-#: dist/admin/assets/index-f67ae016.js:14072
-#: dist/admin/assets/index-f67ae016.js:16778
 msgid "Title"
 msgstr ""
 
@@ -509,27 +503,22 @@ msgid "Type"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:123
-#: dist/admin/assets/index-f67ae016.js:14916
 msgid "Like on Facebook"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:124
-#: dist/admin/assets/index-f67ae016.js:14920
 msgid "Follow on TikTok"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:125
-#: dist/admin/assets/index-f67ae016.js:14924
 msgid "Follow on Instagram"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:126
-#: dist/admin/assets/index-f67ae016.js:14928
 msgid "Place an order"
 msgstr ""
 
 #: src/Domain/Services/EarnRules.php:128
-#: dist/admin/assets/index-f67ae016.js:14933
 msgid "Create an account"
 msgstr ""
 
@@ -1650,7 +1639,6 @@ msgid "Show the tiers on the dashboard."
 msgstr ""
 
 #: src/Settings.php:196
-#: dist/admin/assets/index-f67ae016.js:34437
 msgid "Loyalty Program"
 msgstr ""
 
@@ -1748,104 +1736,116 @@ msgid "The text that will be displayed on the button that allows users to claim 
 msgstr ""
 
 #: src/Settings.php:281
-msgid "Unlock"
+msgid "Use coupon"
 msgstr ""
 
 #: src/Settings.php:284
-msgid "Spend credits button"
+msgid "Use coupon button"
 msgstr ""
 
 #: src/Settings.php:285
-msgid "The text that will be displayed on the button that allows users to spend their credits."
+msgid "The text that will be displayed on the button that allows users to use a coupon."
 msgstr ""
 
 #: src/Settings.php:290
-msgid "Gift Card Order Status"
+msgid "Unlock"
 msgstr ""
 
-#: src/Settings.php:291
-msgid "When should gift cards be created and sent to customers?"
+#: src/Settings.php:293
+msgid "Spend credits button"
 msgstr ""
 
-#: src/Settings.php:298
-msgid "Cancel gift cards on these order statuses"
+#: src/Settings.php:294
+msgid "The text that will be displayed on the button that allows users to spend their credits."
 msgstr ""
 
 #: src/Settings.php:299
-msgid "Select which order statuses will invalidate previously issued gift cards. When an order containing a gift card purchase changes to any of these statuses, the gift card will be canceled. This happens only once, when the order first reaches any selected status."
+msgid "Gift Card Order Status"
+msgstr ""
+
+#: src/Settings.php:300
+msgid "When should gift cards be created and sent to customers?"
 msgstr ""
 
 #: src/Settings.php:307
-msgid "Update gift card balance on these order statuses"
+msgid "Cancel gift cards on these order statuses"
 msgstr ""
 
 #: src/Settings.php:308
-msgid "Select which order statuses will update a purchased gift card's balance in the system. For example, if both \"Processing\" and \"Completed\" are selected, the gift card balance will be updated when the order reaches either status. The system prevents duplicate processing."
+msgid "Select which order statuses will invalidate previously issued gift cards. When an order containing a gift card purchase changes to any of these statuses, the gift card will be canceled. This happens only once, when the order first reaches any selected status."
 msgstr ""
 
 #: src/Settings.php:316
-msgid "Accept Gift Cards"
+msgid "Update gift card balance on these order statuses"
 msgstr ""
 
 #: src/Settings.php:317
-msgid "If enabled, customers will be able to redeem Leat gift cards."
-msgstr ""
-
-#: src/Settings.php:324
-msgid "Disable Gift Card Recipient Email"
+msgid "Select which order statuses will update a purchased gift card's balance in the system. For example, if both \"Processing\" and \"Completed\" are selected, the gift card balance will be updated when the order reaches either status. The system prevents duplicate processing."
 msgstr ""
 
 #: src/Settings.php:325
-msgid "If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer's own email address."
+msgid "Accept Gift Cards"
 msgstr ""
 
-#: src/Settings.php:332
-msgid "Checking Balance Text"
+#: src/Settings.php:326
+msgid "If enabled, customers will be able to redeem Leat gift cards."
 msgstr ""
 
 #: src/Settings.php:333
-msgid "The text shown while checking a gift card balance."
+msgid "Disable Gift Card Recipient Email"
 msgstr ""
 
-#: src/Settings.php:335
-msgid "Checking gift card balance..."
+#: src/Settings.php:334
+msgid "If enabled, customers will not be asked for a recipient email during checkout when purchasing gift cards. The gift card will be sent to the customer's own email address."
+msgstr ""
+
+#: src/Settings.php:341
+msgid "Checking Balance Text"
 msgstr ""
 
 #: src/Settings.php:342
+msgid "The text shown while checking a gift card balance."
+msgstr ""
+
+#: src/Settings.php:344
+msgid "Checking gift card balance..."
+msgstr ""
+
+#: src/Settings.php:351
 msgid "Gift Card Applied Success Message"
 msgstr ""
 
 #. translators: %s: a list of placeholders
-#: src/Settings.php:344
+#: src/Settings.php:353
 msgid "The success message shown when a gift card is applied. Use placeholders: %s"
 msgstr ""
 
 #. translators: %1$s: gift card code, %2$s: gift card balance
-#: src/Settings.php:347
+#: src/Settings.php:356
 msgid "Gift card {{ code }} applied. Balance: {{ balance }}"
 msgstr ""
 
-#: src/Settings.php:354
+#: src/Settings.php:363
 msgid "Only Reward Known Contacts"
 msgstr ""
 
-#: src/Settings.php:355
+#: src/Settings.php:364
 msgid "If enabled, credits will only be attributed to contacts that already exist in Leat. New contacts will not be created automatically."
 msgstr ""
 
-#: src/Settings.php:363
+#: src/Settings.php:372
 msgid "Prepaid Top-up Order Status"
 msgstr ""
 
-#: src/Settings.php:364
+#: src/Settings.php:373
 msgid "Select the order status that triggers adding value to the customer's prepaid balance."
 msgstr ""
 
-#: src/Settings.php:371
+#: src/Settings.php:380
 msgid "Reverse Prepaid Top-up Statuses"
 msgstr ""
 
-#: src/Settings.php:372
+#: src/Settings.php:381
 msgid "Select order statuses that should reverse a previously completed prepaid top-up transaction."
 msgstr ""
 
@@ -1861,152 +1861,4 @@ msgstr ""
 #. translators: %1$s: gift card code, %2$s: gift card balance
 #: src/Utils/GiftcardDisplay.php:52
 msgid "✅ Gift card {{ code }} applied. Balance: {{ balance }}"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:614
-msgid "Save settings"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:632
-msgid "Go to Leat dashboard"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:2802
-msgid "Select a language"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:2830
-msgid "Languages"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:8023
-#: dist/admin/assets/index-f67ae016.js:8346
-msgid "Rule settings"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:8046
-msgid "The amount of credits customers will earn will be calculated based on the rules you have set up in the Leat Dashboard."
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:8606
-msgid "Select an option"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:9894
-#: dist/admin/assets/index-f67ae016.js:10719
-#: dist/admin/assets/index-f67ae016.js:28397
-#: dist/admin/assets/index-f67ae016.js:29599
-#: dist/admin/assets/index-f67ae016.js:31384
-#: dist/admin/assets/index-f67ae016.js:32177
-msgid "Save rule"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:9912
-#: dist/admin/assets/index-f67ae016.js:28415
-#: dist/admin/assets/index-f67ae016.js:34432
-msgid "General"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:9974
-msgid "Credit Calculation"
-msgstr ""
-
-#. translators: %s: Link to the Leat Dashboard
-#: dist/admin/assets/index-f67ae016.js:10006
-msgid "These settings control the appearance on your WordPress site. The actual credit calculation is configured in the <a href=\"%s\" class=\"underline\" target=\"_blank\" rel=\"noopener noreferrer\">Leat Dashboard</a>."
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:10453
-#: dist/admin/assets/index-f67ae016.js:29333
-msgid "Details"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:10848
-#: dist/admin/assets/index-f67ae016.js:29740
-msgid "New rule"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:14090
-#: dist/admin/assets/index-f67ae016.js:16796
-msgid "Created at"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:14844
-msgid "Create rules that reward customers with credits when they perform certain actions. For example, you can reward customers with credits when they create an account or place an order."
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:19440
-msgid "Existing Leat user?"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:19441
-msgid "Connect your account to get started."
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:19451
-msgid "New to Leat?"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:19452
-msgid "Create a new account to get started."
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:21566
-msgid "Show"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:21583
-msgid "Hide"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:21690
-msgid "Save API Key"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:21699
-msgid "Save your API key to connect to a shop"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:21927
-msgid "There was an error loading your shops. Please try again later."
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:21969
-msgid "Loading your shops..."
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:22207
-msgid "API key must be exactly 53 characters long"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:22339
-msgid "Connect to Leat"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:24261
-msgid "Only customers who have an account on your store will be included in the loyalty program."
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:24668
-msgid "Back"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:24686
-msgid "Save and continue"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:34447
-msgid "Giftcards"
-msgstr ""
-
-#: dist/admin/assets/index-f67ae016.js:34452
-msgid "Customer Dashboard"
-msgstr ""
-
-#: dist/frontend/assets/index-574026e9.js:3935
-msgid "Reward image"
-msgstr ""
-
-#: dist/frontend/assets/index-574026e9.js:4910
-msgid "Tier image"
 msgstr ""
