@@ -3,12 +3,7 @@
  */
 import { api } from "../client.js";
 import { LeatApiError } from "../errors.js";
-import type {
-	AddCartItemBatchParams,
-	BatchResponse,
-	StoreAPICartResponse,
-	StoreAPIResponse,
-} from "./types";
+import type { AddCartItemBatchParams, BatchResponse, StoreAPICartResponse } from "./types";
 
 const baseUrl = "/wc/store/v1";
 
@@ -19,9 +14,9 @@ const baseUrl = "/wc/store/v1";
  * @param quantity Quantity
  * @returns Promise with cart data
  */
-export async function addSingleItemToCart(id: number, quantity = 1): Promise<StoreAPIResponse> {
+export async function addSingleItemToCart(id: number, quantity = 1): Promise<StoreAPICartResponse> {
 	try {
-		const { data, error } = await api.post<StoreAPIResponse>(`${baseUrl}/cart/add-item`, {
+		const { data, error } = await api.post<StoreAPICartResponse>(`${baseUrl}/cart/add-item`, {
 			id,
 			quantity,
 		});
@@ -51,69 +46,10 @@ export async function addCartItems(items: AddCartItemBatchParams[]): Promise<Sto
 	try {
 		// If only one item, use the direct method
 		if (items.length === 1) {
-			const response = await addSingleItemToCart(items[0].id, items[0].quantity);
-			// Convert to the new response format
-			return {
-				items: response.items.map((item) => ({
-					key: "",
-					id: Number(item.id),
-					type: "variation",
-					quantity: item.quantity,
-					name: item.name,
-				})),
-				items_count: response.items_count,
-				totals: {
-					total_items: "",
-					total_price: "",
-					currency_symbol: "",
-				},
-			};
+			return await addSingleItemToCart(items[0].id, items[0].quantity);
+		} else {
+			return await batchAddCartItems(items);
 		}
-
-		// Create batch requests with full paths as required by the API
-		const requests = items.map((item) => ({
-			path: "/wc/store/v1/cart/add-item", // Full path as required by the API
-			method: "POST",
-			cache: "no-store",
-			body: {
-				id: item.id,
-				quantity: item.quantity,
-				variation: item.variation,
-			},
-		}));
-
-		// Use the full cart endpoint to get the complete cart data
-		const batchResponse = await api.post<BatchResponse>(`${baseUrl}/batch`, {
-			requests,
-		});
-
-		if (batchResponse.error) {
-			throw new LeatApiError(
-				batchResponse.error.status,
-				batchResponse.error.statusText,
-				batchResponse.error.data
-			);
-		}
-
-		// After batch request, get the full cart data
-		await getCart();
-
-		// Get the complete cart from the store API
-		const fullCartResponse = await api.get<StoreAPICartResponse>(`${baseUrl}/cart`);
-
-		if (fullCartResponse.error) {
-			throw new LeatApiError(
-				fullCartResponse.error.status,
-				fullCartResponse.error.statusText,
-				fullCartResponse.error.data
-			);
-		}
-
-		if (!fullCartResponse.data) {
-			throw new LeatApiError(400, "Bad Request", "No data returned from API");
-		}
-
-		return fullCartResponse.data;
 	} catch (error) {
 		console.error("Store API error:", error);
 		throw error;
@@ -125,9 +61,9 @@ export async function addCartItems(items: AddCartItemBatchParams[]): Promise<Sto
  *
  * @returns Promise with cart data
  */
-export async function getCart(): Promise<StoreAPIResponse> {
+export async function getCart(): Promise<StoreAPICartResponse> {
 	try {
-		const { data, error } = await api.get<StoreAPIResponse>(`${baseUrl}/cart`);
+		const { data, error } = await api.get<StoreAPICartResponse>(`${baseUrl}/cart`);
 
 		if (error) {
 			throw new LeatApiError(error.status, error.statusText, error.data);
@@ -178,11 +114,14 @@ export async function getCartVariationIds(): Promise<number[]> {
  * @param key The cart item key to remove
  * @returns Promise with cart data
  */
-export async function removeCartItem(key: string): Promise<StoreAPIResponse> {
+export async function removeCartItem(key: string): Promise<StoreAPICartResponse> {
 	try {
-		const { data, error } = await api.post<StoreAPIResponse>(`${baseUrl}/cart/remove-item`, {
-			key,
-		});
+		const { data, error } = await api.post<StoreAPICartResponse>(
+			`${baseUrl}/cart/remove-item`,
+			{
+				key,
+			}
+		);
 
 		if (error) {
 			throw new LeatApiError(error.status, error.statusText, error.data);
@@ -225,11 +164,14 @@ export async function findCartItemKeyByVariationId(variationId: number): Promise
  * @param code The coupon code to apply
  * @returns Promise with cart data
  */
-export async function applyCoupon(code: string): Promise<StoreAPIResponse> {
+export async function applyCoupon(code: string): Promise<StoreAPICartResponse> {
 	try {
-		const { data, error } = await api.post<StoreAPIResponse>(`${baseUrl}/cart/apply-coupon`, {
-			code,
-		});
+		const { data, error } = await api.post<StoreAPICartResponse>(
+			`${baseUrl}/cart/apply-coupon`,
+			{
+				code,
+			}
+		);
 
 		if (error) {
 			throw new LeatApiError(error.status, error.statusText, error.data);
@@ -246,9 +188,9 @@ export async function applyCoupon(code: string): Promise<StoreAPIResponse> {
 	}
 }
 
-export async function removeCoupon(code: string): Promise<StoreAPIResponse> {
+export async function removeCoupon(code: string): Promise<StoreAPICartResponse> {
 	try {
-		const { data, error } = await api.delete<StoreAPIResponse>(
+		const { data, error } = await api.delete<StoreAPICartResponse>(
 			`${baseUrl}/cart/coupons/${code}`
 		);
 
@@ -272,9 +214,9 @@ export async function removeCoupon(code: string): Promise<StoreAPIResponse> {
  *
  * @returns Promise with cart data
  */
-export async function removeAllCoupons(): Promise<StoreAPIResponse> {
+export async function removeAllCoupons(): Promise<StoreAPICartResponse> {
 	try {
-		const { data, error } = await api.delete<StoreAPIResponse>(`${baseUrl}/cart/coupons`);
+		const { data, error } = await api.delete<StoreAPICartResponse>(`${baseUrl}/cart/coupons`);
 
 		if (error) {
 			throw new LeatApiError(error.status, error.statusText, error.data);
@@ -287,6 +229,45 @@ export async function removeAllCoupons(): Promise<StoreAPIResponse> {
 		return data;
 	} catch (error) {
 		console.error("Store API error removing all coupons:", error);
+		throw error;
+	}
+}
+
+/**
+ * Add multiple items to cart in a batch request
+ *
+ * @param items Array of items with id, quantity and optional variation
+ * @returns Promise with cart data
+ */
+async function batchAddCartItems(items: AddCartItemBatchParams[]): Promise<StoreAPICartResponse> {
+	try {
+		const requests = items.map((item) => ({
+			path: `${baseUrl}/cart/add-item`,
+			method: "POST",
+			cache: "no-store",
+			body: {
+				id: item.id,
+				quantity: item.quantity,
+				...(item.variation && { variation: item.variation }),
+			},
+		}));
+
+		const { data, error } = await api.post<BatchResponse>(`${baseUrl}/batch`, {
+			requests,
+		});
+
+		if (error) {
+			throw new LeatApiError(error.status, error.statusText, error.data);
+		}
+
+		if (!data || !data.responses.length) {
+			throw new LeatApiError(400, "Bad Request", "No data returned from API");
+		}
+
+		// Return the last response which contains the final cart state
+		return data.responses[data.responses.length - 1].body;
+	} catch (error) {
+		console.error("Store API error in batch add:", error);
 		throw error;
 	}
 }

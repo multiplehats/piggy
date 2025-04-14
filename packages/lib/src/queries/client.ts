@@ -117,10 +117,10 @@ const logMiddleware: APIFetchMiddleware = (options, next) => {
 
 	result
 		.then(() => {
-			console.info(`[api] ${options.path} ${Date.now() - start}ms`);
+			console.info(`[api: ${options.method}] ${options.path} ${Date.now() - start}ms`);
 		})
 		.catch((e) => {
-			console.error(`[api] ${options.path} ${Date.now() - start}ms`, e);
+			console.error(`[api: ${options.method}] ${options.path} ${Date.now() - start}ms`, e);
 		});
 
 	return result;

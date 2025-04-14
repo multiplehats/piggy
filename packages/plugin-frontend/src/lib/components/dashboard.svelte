@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createQuery } from "@tanstack/svelte-query";
+	import { createQueries } from "@tanstack/svelte-query";
 	import BadgeEuro from "lucide-svelte/icons/badge-euro";
 	import ShoppingBag from "lucide-svelte/icons/shopping-bag";
 	import Layers from "lucide-svelte/icons/layers";
@@ -15,40 +15,39 @@
 	import { contactStore } from "$lib/stores";
 	import { isLoggedIn, pluginSettings } from "$lib/modules/settings";
 
-	const contactQuery = createQuery({
-		queryKey: [QueryKeys.contact],
-		queryFn: async () => await getContact(window.leatMiddlewareConfig.userId!),
-		enabled: window.leatMiddlewareConfig.userId !== null,
+	const queries = createQueries({
+		queries: [
+			{
+				queryKey: [QueryKeys.contact],
+				queryFn: async () => await getContact(window.leatMiddlewareConfig.userId!),
+				enabled: window.leatMiddlewareConfig.userId !== null,
+			},
+			{
+				queryKey: [QueryKeys.coupons],
+				queryFn: async () => await getCoupons(window.leatMiddlewareConfig.userId),
+				enabled: isLoggedIn,
+			},
+			{
+				queryKey: [QueryKeys.earnRules],
+				queryFn: async () => await getEarnRules(),
+			},
+			{
+				queryKey: [QueryKeys.spendRules],
+				queryFn: async () => await getSpendRules(window.leatMiddlewareConfig.userId),
+				enabled: isLoggedIn,
+			},
+			{
+				queryKey: [QueryKeys.tiers],
+				queryFn: async () => await getTiers(),
+			},
+		],
 	});
 
-	const couponsQuery = createQuery({
-		queryKey: [QueryKeys.coupons],
-		queryFn: async () => await getCoupons(window.leatMiddlewareConfig.userId),
-		enabled: isLoggedIn,
-	});
-
-	const earnRulesQuery = createQuery({
-		queryKey: [QueryKeys.earnRules],
-		queryFn: async () => await getEarnRules(),
-	});
-
-	const spendRulesQuery = createQuery({
-		queryKey: [QueryKeys.spendRules],
-		queryFn: async () => await getSpendRules(window.leatMiddlewareConfig.userId),
-		enabled: isLoggedIn,
-	});
-
-	const tiersQuery = createQuery({
-		queryKey: [QueryKeys.tiers],
-		queryFn: async () => await getTiers(),
-	});
-
-	$: contactStore.set($contactQuery.data ?? null);
+	$: contactStore.set($queries[0].data ?? null);
 
 	$: filteredSpendRules =
-		$spendRulesQuery.data?.filter(
-			(rule) => rule.status.value === "publish" && rule.label.value
-		) ?? [];
+		$queries[3].data?.filter((rule) => rule.status.value === "publish" && rule.label.value) ??
+		[];
 
 	$: navItems = [
 		{
@@ -74,8 +73,8 @@
 			id: "tiers",
 			text: getTranslatedText($pluginSettings?.dashboard_nav_tiers),
 			show: !!(
-				$tiersQuery.data?.tiers &&
-				$tiersQuery.data?.tiers.length > 0 &&
+				$queries[4].data?.tiers &&
+				$queries[4].data?.tiers.length > 0 &&
 				$pluginSettings?.dashboard_show_tiers === "on"
 			),
 		},
@@ -90,15 +89,15 @@
 <DashboardHeaderPts {navItems} />
 
 <DashboardCoupons
-	coupons={$couponsQuery.data}
-	isLoading={$couponsQuery.isLoading}
-	isSuccess={$couponsQuery.isSuccess}
+	coupons={$queries[1].data}
+	isLoading={$queries[1].isLoading}
+	isSuccess={$queries[1].isSuccess}
 />
 
-<DashboardEarn earnRules={$earnRulesQuery.data ?? []} />
+<DashboardEarn earnRules={$queries[2].data ?? []} />
 
 <DashboardRewards spendRules={filteredSpendRules} />
 
-{#if $tiersQuery.data?.tiers && $tiersQuery.data?.tiers.length > 0 && $pluginSettings?.dashboard_show_tiers === "on"}
-	<DashboardTiers tiers={$tiersQuery.data?.tiers} currentTier={$contactQuery.data?.tier} />
+{#if $queries[4].data?.tiers && $queries[4].data?.tiers.length > 0 && $pluginSettings?.dashboard_show_tiers === "on"}
+	<DashboardTiers tiers={$queries[4].data?.tiers} currentTier={$queries[0].data?.tier} />
 {/if}

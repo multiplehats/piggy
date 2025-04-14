@@ -15,17 +15,6 @@ export type AddCartItemBatchParams = {
 	}[];
 };
 
-export type BatchResponse = {
-	responses: {
-		body: StoreAPIResponse;
-	}[];
-};
-
-export type StoreAPIResponse = {
-	items_count: number;
-	items: CartItem[];
-};
-
 export type CartItem = {
 	id: string;
 	name: string;
@@ -49,6 +38,22 @@ export type CartItemResponse = {
 	}>;
 };
 
+export type CartCoupon = {
+	code: string;
+	discount_type: string;
+	totals: {
+		total_discount: string;
+		total_discount_tax: string;
+		currency_code: string;
+		currency_symbol: string;
+		currency_minor_unit: number;
+		currency_decimal_separator: string;
+		currency_thousand_separator: string;
+		currency_prefix: string;
+		currency_suffix: string;
+	};
+};
+
 export type StoreAPICartResponse = {
 	items: CartItemResponse[];
 	items_count: number;
@@ -57,4 +62,11 @@ export type StoreAPICartResponse = {
 		total_price: string;
 		currency_symbol: string;
 	};
+	coupons: CartCoupon[];
+};
+
+export type BatchResponse = {
+	responses: {
+		body: StoreAPICartResponse;
+	}[];
 };

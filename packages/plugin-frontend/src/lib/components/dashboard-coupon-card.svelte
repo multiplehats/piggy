@@ -3,51 +3,46 @@
 	import Check from "lucide-svelte/icons/check";
 	import type { Coupon } from "@leat/lib";
 	import { getSpendRuleLabel, getTranslatedText } from "@leat/i18n";
-	import { LeatApiError, addCartItems, applyCoupon, removeAllCoupons } from "@leat/lib";
-	import { createMutation } from "@tanstack/svelte-query";
+	import { LeatApiError, addCartItems, applyCoupon, getCart, removeAllCoupons } from "@leat/lib";
+	import { createMutation, createQuery } from "@tanstack/svelte-query";
 	import Button from "./button/button.svelte";
 	import { creditsName, pluginSettings } from "$lib/modules/settings";
-	import { triggerFragmentRefresh } from "$lib/utils/legacyEvents";
+	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 
 	export let coupon: Coupon;
+
 	let couponApplied = false;
+
+	const cartQuery = createQuery({
+		queryKey: [QueryKeys.cart],
+		queryFn: getCart,
+	});
 
 	const applyCouponMutation = createMutation({
 		mutationFn: applyCoupon,
+		mutationKey: [MutationKeys.applyCoupon, coupon.code],
 		onSuccess: () => {
 			couponApplied = true;
-			triggerFragmentRefresh();
 		},
-		onError: (error) => {
+		onError: () => {
 			couponApplied = false;
-			console.info("[Apply Coupon Error]:", error);
-			triggerFragmentRefresh();
 		},
 	});
 
 	const removeAllCouponsMutation = createMutation({
 		mutationFn: removeAllCoupons,
-		onSuccess: () => {
-			// Re-apply the original coupon after successful removal
-			$applyCouponMutation.mutate(coupon.code);
-		},
-		onError: (error) => {
-			console.error("[Remove All Coupons Error]:", error);
-			triggerFragmentRefresh();
-		},
 	});
 
 	const addCartItemsMutation = createMutation({
 		mutationFn: addCartItems,
 		onSuccess: () => {
-			// After adding items, remove all coupons first
-			$removeAllCouponsMutation.mutate();
+			console.info("[Add Cart Items Success]");
 		},
 	});
 
 	$: hasProducts = coupon.rule.selectedProducts?.value?.length > 0;
 
-	function handleApplyCoupon() {
+	function handleApplyCoupon(code: string) {
 		couponApplied = false; // Reset success state on new attempt
 
 		// First check if we need to add products before applying the coupon
@@ -56,11 +51,28 @@
 				coupon.rule.selectedProducts.value.map((productId) => ({
 					id: Number(productId),
 					quantity: 1,
-				}))
+				})),
+				{
+					onSuccess: () => {
+						// Apply the coupon after adding the products
+						$applyCouponMutation.mutate(code);
+					},
+				}
 			);
 		} else {
-			// First remove any existing coupons then apply the new one
-			$removeAllCouponsMutation.mutate();
+			// Check if cart has items and has coupons
+			if ($cartQuery.data?.items_count === 0 && $cartQuery.data?.coupons.length > 0) {
+				// If cart has no items, and has coupons, remove all coupons first.
+				$removeAllCouponsMutation.mutate(undefined, {
+					onSuccess: () => {
+						// Re-apply the original coupon after successful removal
+						$applyCouponMutation.mutate(code);
+					},
+				});
+			} else {
+				// If cart has items, just apply the coupon directly
+				$applyCouponMutation.mutate(code);
+			}
 		}
 	}
 
@@ -87,6 +99,7 @@
 </script>
 
 <div class="leat-dashboard-coupon-card">
+	{coupon.code}
 	<div class="leat-dashboard-coupon-card__icon">
 		{#if coupon.rule?.image?.value}
 			<img src={coupon.rule.image.value} alt={coupon.code} />
@@ -120,13 +133,14 @@
 	<div class="leat-dashboard-coupon-card__action">
 		{#if combinedError && !couponApplied}
 			<div class="leat-dashboard-coupon-card__error">
-				{getErrorMessage(combinedError)}
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+				{@html getErrorMessage(combinedError)}
 			</div>
 		{/if}
 
 		<Button
 			variant="primary"
-			on:click={handleApplyCoupon}
+			on:click={() => handleApplyCoupon(coupon.code)}
 			loading={$applyCouponMutation.isPending ||
 				$addCartItemsMutation.isPending ||
 				$removeAllCouponsMutation.isPending}
@@ -216,11 +230,6 @@
 		font-size: 0.75rem;
 		text-align: center;
 		width: 100%;
-	}
-
-	.leat-dashboard-coupon-card__button--success {
-		background-color: var(--leat-success-color, #22c55e) !important;
-		border-color: var(--leat-success-color, #22c55e) !important;
 	}
 
 	.leat-dashboard-coupon-card__button-success {

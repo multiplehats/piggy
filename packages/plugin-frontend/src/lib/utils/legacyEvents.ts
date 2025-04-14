@@ -6,11 +6,21 @@ let fragmentRequestTimeoutId: ReturnType<typeof setTimeout>;
 // that relies on the store, see
 // https://github.com/woocommerce/woocommerce-gutenberg-products-block/issues/1247
 export function triggerFragmentRefresh(): void {
+	console.info("[legacyEvents] triggerFragmentRefresh");
 	if (fragmentRequestTimeoutId) {
 		clearTimeout(fragmentRequestTimeoutId);
 	}
 	fragmentRequestTimeoutId = setTimeout(() => {
+		console.info("[legacyEvents] triggerFragmentRefresh");
+
+		// Trigger legacy WooCommerce cart fragment refresh
 		dispatchEvent("wc_fragment_refresh", {
+			bubbles: true,
+			cancelable: true,
+		});
+
+		// Also trigger the updated_wc_div event for block-based carts
+		dispatchEvent("updated_wc_div", {
 			bubbles: true,
 			cancelable: true,
 		});
