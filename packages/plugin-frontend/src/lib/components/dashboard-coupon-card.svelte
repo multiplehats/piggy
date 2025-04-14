@@ -8,8 +8,10 @@
 		LeatApiError,
 		addCartItems,
 		applyCoupon,
+		findCartItemKeyByVariationId,
 		getCart,
 		removeAllCoupons,
+		removeCartItem,
 		removeCoupon,
 	} from "@leat/lib";
 	import { createMutation, createQuery } from "@tanstack/svelte-query";
@@ -18,8 +20,6 @@
 	import { MutationKeys, QueryKeys } from "$lib/utils/query-keys";
 
 	export let coupon: Coupon;
-
-	let couponApplied = false;
 
 	const cartQuery = createQuery({
 		queryKey: [QueryKeys.cart],
@@ -30,12 +30,11 @@
 		mutationFn: applyCoupon,
 		mutationKey: [MutationKeys.applyCoupon, coupon.code],
 		onSuccess: () => {
-			couponApplied = true;
 			// Refetch cart to update the UI
 			$cartQuery.refetch();
 		},
 		onError: () => {
-			couponApplied = false;
+			// Error handling remains
 		},
 	});
 
@@ -45,33 +44,42 @@
 
 	const addCartItemsMutation = createMutation({
 		mutationFn: addCartItems,
-		onSuccess: () => {
-			console.info("[Add Cart Items Success]");
-		},
 	});
 
+	// Only use isApplied from cart data
+	$: isApplied = $cartQuery.data?.coupons?.some((c) => c.code === coupon.code) ?? false;
+
+	$: hasProducts = coupon.rule.selectedProducts?.value?.length > 0;
+
 	const removeCouponMutation = createMutation({
-		mutationFn: (code: string) => removeCoupon(code),
+		mutationFn: async (code: string) => {
+			// First check if this coupon has selected products
+			if (hasProducts && coupon.rule.selectedProducts?.value) {
+				// For each selected product in the coupon
+				for (const productId of coupon.rule.selectedProducts.value) {
+					// Find if this product is in the cart
+					const numProductId = Number(productId);
+					const cartItemKey = await findCartItemKeyByVariationId(numProductId);
+
+					// If found in cart, remove it
+					if (cartItemKey) {
+						await removeCartItem(cartItemKey);
+					}
+				}
+			}
+
+			// Then remove the coupon
+			return removeCoupon(code);
+		},
 		onSuccess: () => {
-			couponApplied = false;
 			// Refetch cart to update the UI
 			$cartQuery.refetch();
 		},
 	});
 
-	$: hasProducts = coupon.rule.selectedProducts?.value?.length > 0;
-
-	// Check if this coupon is already applied in the cart
-	$: isAlreadyApplied = $cartQuery.data?.coupons?.some((c) => c.code === coupon.code) ?? false;
-
-	// Set couponApplied state based on cart data or mutation success
-	$: couponApplied = isAlreadyApplied || couponApplied;
-
 	function handleApplyCoupon(code: string) {
 		// Don't do anything if the coupon is already applied
-		if (isAlreadyApplied) return;
-
-		couponApplied = false; // Reset success state on new attempt
+		if (isApplied) return;
 
 		// First check if we need to add products before applying the coupon
 		if (hasProducts) {
@@ -90,7 +98,6 @@
 		} else {
 			// Check if cart has items and has coupons
 			if ($cartQuery.data?.items_count === 0 && $cartQuery.data?.coupons.length > 0) {
-				console.info("[Remove All Coupons]");
 				// If cart has no items, and has coupons, remove all coupons first.
 				$removeAllCouponsMutation.mutate(undefined, {
 					onSuccess: () => {
@@ -160,7 +167,7 @@
 	</div>
 
 	<div class="leat-dashboard-coupon-card__action">
-		{#if combinedError && (!couponApplied || $removeCouponMutation.error)}
+		{#if combinedError && (!isApplied || $removeCouponMutation.error)}
 			<div class="leat-dashboard-coupon-card__error">
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html getErrorMessage(combinedError)}
@@ -168,26 +175,20 @@
 		{/if}
 
 		<div class="leat-dashboard-coupon-card__button-container">
-			<div
-				class="leat-dashboard-coupon-card__button-wrapper {isAlreadyApplied || couponApplied
-					? 'is-applied'
-					: ''}"
-			>
+			<div class="leat-dashboard-coupon-card__button-wrapper {isApplied ? 'is-applied' : ''}">
 				<Button
 					variant="primary"
 					on:click={() => handleApplyCoupon(coupon.code)}
 					loading={$applyCouponMutation.isPending ||
 						$addCartItemsMutation.isPending ||
 						$removeAllCouponsMutation.isPending}
-					disabled={isAlreadyApplied ||
+					disabled={isApplied ||
 						$applyCouponMutation.isPending ||
 						$addCartItemsMutation.isPending ||
 						$removeAllCouponsMutation.isPending}
-					class={couponApplied || isAlreadyApplied
-						? "leat-dashboard-coupon-card__button--success"
-						: ""}
+					class={isApplied ? "leat-dashboard-coupon-card__button--success" : ""}
 				>
-					{#if couponApplied || isAlreadyApplied}
+					{#if isApplied}
 						<div class="leat-dashboard-coupon-card__button-success">
 							<Check size={16} />
 							<span class="leat-sr-only">Applied</span>
@@ -197,7 +198,7 @@
 					{/if}
 				</Button>
 
-				{#if isAlreadyApplied || couponApplied}
+				{#if isApplied}
 					<button
 						class="leat-dashboard-coupon-card__remove-button"
 						on:click={() => $removeCouponMutation.mutate(coupon.code)}
