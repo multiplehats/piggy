@@ -26,6 +26,13 @@ export default {
 	},
 	resolve: {
 		extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"],
+		alias: {
+			"@leat/lib": path.resolve(__dirname, "../../packages/lib"),
+			"@leat/i18n": path.resolve(__dirname, "../../packages/i18n"),
+		},
+		extensionAlias: {
+			".js": [".js", ".ts", ".tsx"],
+		},
 	},
 	module: {
 		rules: [

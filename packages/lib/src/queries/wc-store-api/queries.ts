@@ -1,8 +1,8 @@
 /**
  * WooCommerce Store API Service
  */
-import { api } from "../client.js";
-import { LeatApiError } from "../errors.js";
+import { api } from "../client";
+import { LeatApiError } from "../errors";
 import type { AddCartItemBatchParams, BatchResponse, StoreAPICartResponse } from "./types";
 
 const baseUrl = "/wc/store/v1";

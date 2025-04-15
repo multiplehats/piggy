@@ -1,5 +1,5 @@
-import { api } from "../client.js";
-import { LeatApiError } from "../errors.js";
+import { api } from "../client";
+import { LeatApiError } from "../errors";
 import type {
 	GetContactResponse,
 	GetCouponsResponse,
