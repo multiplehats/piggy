@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { registerPlugin } from "@wordpress/plugins";
 import { getTranslatedText, replaceStrings } from "@leat/i18n";
 import "./giftcard-balance-checker.scss";
-import type { GetGiftcardBalanceResponse } from "@leat/lib/src/queries/types";
+import type { GetGiftcardBalanceResponse } from "@leat/lib";
 
 type GiftCardBalanceCheckerProps = {
 	couponCode?: string;
