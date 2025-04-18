@@ -22,8 +22,31 @@
 	export let id: $$Props["id"];
 	export { className as class };
 
-	const languages = window.leatMiddlewareConfig.languages;
-	const currentLanguage = window.leatMiddlewareConfig.currentLanguage;
+	// Ensure we have a valid value object
+	if (!value || typeof value !== "object") {
+		value = {};
+	}
+
+	// Get languages from config or fallback to at least one language
+	const config = window.leatMiddlewareConfig || {};
+	const languages =
+		Array.isArray(config.languages) && config.languages.length > 0
+			? config.languages
+			: [config.currentLanguage || "en_US"];
+
+	// Add any languages from existing values that might not be in the system anymore
+	// but skip the 'default' key as it's not a real language
+	if (value && typeof value === "object") {
+		const valueLanguages = Object.keys(value).filter((lang) => lang !== "default");
+		valueLanguages.forEach((lang) => {
+			if (!languages.includes(lang)) {
+				languages.push(lang);
+			}
+		});
+	}
+
+	const currentLanguage = config.currentLanguage || languages[0] || "en_US";
+
 	const items = languages.map((language) => ({
 		value: language,
 		label: language,
@@ -39,8 +62,9 @@
 				// If no values are set, use an empty string
 				inputValue = "";
 			} else {
-				// Use the selected language value, or the first available language value
-				inputValue = value[selected.value] || Object.values(value)[0] || "";
+				// Use the selected language value, default key value as fallback, or the first available value
+				inputValue =
+					value[selected.value] || value.default || Object.values(value)[0] || "";
 			}
 		}
 	}
@@ -59,10 +83,15 @@
 				[selected.value]: inputVal,
 			};
 
-			// If this is the first value being set, update all languages
-			if (Object.keys(value).length === 1) {
+			// If this is the first value being set and no default exists,
+			// update default and all other languages
+			if (Object.keys(value).length === 1 || !value.default) {
+				// Set default value for migration from old data
+				value.default = inputVal;
+
+				// Update all other languages
 				for (const lang of languages) {
-					if (lang !== selected.value) {
+					if (lang !== selected.value && !value[lang]) {
 						value[lang] = inputVal;
 					}
 				}

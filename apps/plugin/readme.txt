@@ -3,7 +3,7 @@ Contributors: leat
 Donate link: https://leat.com
 Tags: loyalty program, rewards, loyalty, vouchers, marketing automation
 Tested up to: 6.7.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -207,3 +207,10 @@ Your customer data and loyalty program settings are safely stored in your Leat a
 
 * Enhancement: Improved WooCommerce coupon handling with automatic cart application and better error handling.
 * Enhancement: Added protection to prevent password managers (1Password, LastPass) from auto-filling the API Key field.
+
+= 1.2.2 =
+
+* Enhancement: Improved multilingual support with better language detection and handling
+* Enhancement: Added support for translatable text settings across multiple languages
+* Enhancement: Added fallback mechanisms for missing language configurations
+* Bug fix: Fixed issues with language detection in admin settings

@@ -218,12 +218,32 @@ final class AssetsController
 	 */
 	protected function get_middleware_config()
 	{
-		$all_languages    = Common::get_languages();
+		// Get languages from Common first (plugin-based languages)
+		$all_languages = Common::get_languages();
 		$current_language = Common::get_current_language();
-		$api_key_set      = $this->connection->has_api_key();
-		$user_id          = is_user_logged_in() ? get_current_user_id() : null;
-		$contact          = $user_id ? $this->connection->get_contact_by_wp_id($user_id) : null;
-		$uuid             = $contact ? $contact['uuid'] : null;
+
+		// Get languages from settings (stored in translatable fields)
+		$stored_languages = $this->settings->get_all_translatable_languages();
+
+		// Merge languages from both sources
+		if (!empty($stored_languages)) {
+			$all_languages = array_values(array_unique(array_merge($all_languages, $stored_languages)));
+		}
+
+		$api_key_set = $this->connection->has_api_key();
+		$user_id = is_user_logged_in() ? get_current_user_id() : null;
+		$contact = $user_id ? $this->connection->get_contact_by_wp_id($user_id) : null;
+		$uuid = $contact ? $contact['uuid'] : null;
+
+		// Ensure we always have at least one language
+		if (empty($all_languages)) {
+			$all_languages = array(get_locale());
+		}
+
+		// Ensure current language is in the list of languages
+		if (!in_array($current_language, $all_languages)) {
+			$all_languages[] = $current_language;
+		}
 
 		$config = [
 			'apiKeySet'                => $api_key_set,

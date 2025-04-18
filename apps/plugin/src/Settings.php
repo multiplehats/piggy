@@ -541,6 +541,47 @@ class Settings
 	}
 
 	/**
+	 * Get all languages used in translatable text settings.
+	 *
+	 * @return array
+	 */
+	public function get_all_translatable_languages()
+	{
+		$languages = array();
+		$all_settings = $this->get_all_settings();
+
+		// Find all translatable text settings
+		$translatable_settings = array_filter(
+			$all_settings,
+			function ($setting) {
+				return isset($setting['type']) && $setting['type'] === 'translatable_text';
+			}
+		);
+
+		// Get values and extract languages
+		foreach ($translatable_settings as $setting) {
+			$id = $setting['id'];
+			$value = get_option('leat_' . $id, array());
+
+			// Handle stored JSON strings
+			if (is_string($value)) {
+				$value = json_decode($value, true);
+			}
+
+			if (is_array($value)) {
+				$languages = array_merge($languages, array_keys($value));
+			}
+		}
+
+		// Filter out 'default' as it's not a real language code
+		$languages = array_filter($languages, function ($lang) {
+			return $lang !== 'default';
+		});
+
+		return array_values(array_unique($languages));
+	}
+
+	/**
 	 * Update multiple settings.
 	 *
 	 * @param array $settings An array of settings to update.
